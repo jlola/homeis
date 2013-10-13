@@ -1,0 +1,26 @@
+﻿<html>
+	<head>
+		<meta http-equiv="content-type" content="text/html; charset=windows-1250">			
+	</head>
+	<body>    
+		<!-- Logindialog -->
+		<div data-role="fieldcontain" >
+						
+				<label for="login">
+					Jméno:
+				</label>
+				<input name="login" id="login" data-bind="value: login" placeholder="" value="" type="text">
+			
+		</div>
+		<div data-role="fieldcontain" data-bind="disable: logged">
+			
+				<label for="password">
+				Heslo:
+				</label>
+				<input name="password" id="password" data-bind="value: password" placeholder="" value="" type="password">
+			
+		</div>
+		<a data-role="button" id="btnLogin" data-bind="click: btnLoginClick">Přihlásit</a>
+	</body>
+</html>
+</meta>  

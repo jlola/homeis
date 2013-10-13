@@ -1,0 +1,60 @@
+<NotepadPlus>
+    <Project name="his">
+        <Folder name="App">
+            <Folder name="icons">
+                <File name="app\icons\Circle_Green.png" />
+                <File name="app\icons\Circle_Green_Internal.png" />
+                <File name="app\icons\Circle_Green_Internal.xcf" />
+                <File name="app\icons\Circle_Red.png" />
+                <File name="app\icons\Delete-icon.png" />
+                <File name="app\icons\dis-login.png" />
+                <File name="app\icons\exit.png" />
+                <File name="app\icons\Folder_Icon.png" />
+            </Folder>
+            <File name="app\app.css" />
+            <File name="app\app.js" />
+            <File name="app\folders.js" />
+            <File name="app\header.js" />
+            <File name="app\jqmhelpers.js" />
+            <File name="app\login.js" />
+            <File name="app\menu.js" />
+            <File name="app\onewirelist.js" />
+            <File name="app\socket.js" />
+            <File name="app\expression.js" />
+        </Folder>
+        <Folder name="lib">
+            <Folder name="images">
+                <File name="libs\images\ajax-loader.gif" />
+                <File name="libs\images\icons-18-black.png" />
+                <File name="libs\images\icons-18-white.png" />
+                <File name="libs\images\icons-36-black.png" />
+                <File name="libs\images\icons-36-white.png" />
+            </Folder>
+            <File name="libs\dis-login.png" />
+            <File name="libs\jquery-1.7.1.min.js" />
+            <File name="libs\jquery-1.9.1.js" />
+            <File name="libs\jquery-1.9.1.min.js" />
+            <File name="libs\jquery.mobile-1.3.0.css" />
+            <File name="libs\jquery.mobile-1.3.0.js" />
+            <File name="libs\jquery.mobile.custom.js" />
+            <File name="libs\jquery.mobile.custom.min.js" />
+            <File name="libs\jquery.mobile.custom.structure.css" />
+            <File name="libs\jquery.mobile.custom.structure.min.css" />
+            <File name="libs\jquery.mobile.custom.theme.css" />
+            <File name="libs\jquery.mobile.custom.theme.min.css" />
+            <File name="libs\jquery.rest.js" />
+            <File name="libs\jquery.rest.min.js" />
+            <File name="libs\knockout-2.0.0.js" />
+            <File name="libs\knockout-2.1.0.debug.js" />
+            <File name="libs\knockout-2.2.0.js" />
+            <File name="libs\knockout-2.2.1.js" />
+        </Folder>
+        <File name="folderdetail.html" />
+        <File name="folderselect.html" />
+        <File name="header.html" />
+        <File name="index.html" />
+        <File name="onewiredetail.html" />
+        <File name="onewirelist.html" />
+        <File name="expressiondetail.html" />
+    </Project>
+</NotepadPlus>

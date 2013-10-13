@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Home information system</title>
+    <link rel="stylesheet"  href="libs/jquery.mobile-1.3.0.css">    	
+	<link rel="shortcut icon" href="../../favicon.ico">    	
+	<script src="libs/jquery-1.9.1.min.js"></script>		
+	<script type="text/javascript" src="libs/jquery.rest.js"></script>    		
+	<script type="text/javascript" src="libs/knockout-2.2.1.js"></script>    		
+	<link rel="stylesheet"  href="app/app.css">    
+	<script>
+		  var App = window.App = {};
+		  App.ViewModels = {};
+		  App.Enums = {};
+		  App.DataObjects = {};
+		  App.Sockets = {};		  
+		  
+		   (function (App) {
+		//services enum
+			App.Enums.EServices = {	
+				connect: "connect",
+				onewiredevice: "onewiredevice/",
+				onewiredevices: "",
+				login: "login",
+				header: "header"
+			}
+			
+/////////////////EventWorker/////////////////////////////////////////////////////////							
+		// event worker object constructor
+		function EventWorker(){
+		 this.addHandler = EventWorker.addHandler;
+		}
+
+		// event worker static method
+		EventWorker.addHandler =
+		 function (eventRef, func,me) {
+			var self = me;
+		  var eventHandlers = eval(eventRef);
+		  if (typeof eventHandlers == 'function') { // not first handler
+		   eval(eventRef + " = function(event) { \
+									eventHandlers(event); \
+									if (func!=undefined) func(event); \
+								}");
+									
+		  } else { // first handler
+		   eval(eventRef + " = func;");
+		  }
+		 }				
+/////////////////Header/////////////////////////////////////////////////////////							
+		
+		App.ViewModels.Header = function() {
+			var self = this;
+			self.onStatusChanged = null;		
+			self = this;
+			self.login = ko.computed(function(){
+				if (true)
+				{
+					return 'a';
+				}
+				else
+				{
+					return ' ';
+				}
+			},this);
+		}
+		
+/////////////////MainDataObject/////////////////////////////////////////////////////////		
+		//id klienta - prepocita se pouze pri refreshi stranky
+		//var randomnumber=Math.floor(Math.random()*101);
+
+		App.DataObjects.MainDataObject = function( data,serviceId) {			
+			var self = this;
+					
+			//	JSON data
+			self.Data = data;
+			//id klienta zmeni se pri postbacku stranky a tim se vytvori nove spojeni na serveru
+			self.ClientId = randomnumber.toString();
+			//id obsluzne servisy App.Enums.EServices
+			self.Service = serviceId;
+			return self;
+		}
+		
+		
+/////////////////mainPage/////////////////////////////////////////////////////////
+			
+		App.ViewModels.MainPage = function(socket,loginpage) {
+			var self = this;		
+			self.socket = socket;
+			self.loginpage = loginpage;
+			self.settingsVisible = ko.observable(true);											
+			self.socketStatus = ko.observable();
+			
+			App.ViewModels.MainPage.prototype.StatusChanged = function(args)
+			{
+				switch(args.SocketStatus)
+				{
+					case App.Sockets.SocketStatus.Offline:
+						self.socketStatus('Offline');
+					 break;
+					 case App.Sockets.SocketStatus.Online:
+						self.socketStatus('Online');
+					 break;
+					 case App.Sockets.SocketStatus.Closing:
+						self.socketStatus('Closing');
+					 break;
+					 case App.Sockets.SocketStatus.Closed:
+						self.socketStatus('Closed');
+					 break;
+					 case App.Sockets.SocketStatus.Authenticate:
+						self.socketStatus('Authenticate');
+					 break;
+				}     				
+			}
+			
+			App.ViewModels.MainPage.prototype.LoginChanged = function(login)
+				{
+					self.socketStatus(login);
+				}
+			
+			//EventWorker.addHandler('self.socket.onStatusChanged',self.StatusChanged,this);
+			//EventWorker.addHandler('self.loginpage.onLoginChanged',self.LoginChanged,this);			
+			
+			return self;
+		}
+ /////////////////AppModel/////////////////////////////////////////////////////////
+		App.ViewModels.AppModel = function() {			  		
+			var self = this;
+			var url = location.protocol+'//'+location.hostname+(location.port ? ':'+location.port: '');
+			this.socket = new App.Sockets.Socket(url);		
+			
+			this.onewirelist = new App.ViewModels.OneWireListModel(this.socket);										
+            this.loginpage = new App.ViewModels.LogInModel(this.socket);			
+			this.mainpage = new App.ViewModels.MainPage(this.socket,this.loginpage);
+			this.header = new App.ViewModels.HeaderModel(this.socket);
+			this.folders = new App.ViewModels.FoldersModel(this.socket);
+			this.menu = new App.ViewModels.MenuModel();
+						
+			EventWorker.addHandler('self.loginpage.onLoginChanged',function(login){self.header.Update(login);},this);
+						
+			App.ViewModels.AppModel.prototype.OnConnect = function(value) { this.islogged = value; };			
+			App.ViewModels.AppModel.prototype.SetLogged = function(value) { this.islogged = value; };
+			App.ViewModels.AppModel.prototype.GetLogged = function() { return this.islogged; };
+			App.ViewModels.AppModel.prototype.GetOneWireList = function() { return this.onewirelist; };
+			App.ViewModels.AppModel.prototype.GetMainPage = function() { return this.mainpage; };			
+			App.ViewModels.AppModel.prototype.GetLogInPage = function() { return this.loginpage; };
+			App.ViewModels.AppModel.prototype.GetHeader = function() { return this.header; };
+			App.ViewModels.AppModel.prototype.GetFolders = function() { return this.folders; };
+			App.ViewModels.AppModel.prototype.GetMenu = function() { return this.menu; };
+						
+			return this;
+		}    		
+		
+  })(App)
+		  
+		$(document).on("mobileinit", function () {  	  
+				App.Instance = new App.ViewModels.AppModel();	 								
+		});
+	</script>
+	<script type="text/javascript" src="app/header.js"></script>        
+	<script type="text/javascript" src="app/menu.js"></script>  	
+	<script type="text/javascript" src="app/socket.js"></script>
+	<script type="text/javascript" src="app/jqmhelpers.js"></script>
+	<script type="text/javascript" src="app/login.js"></script>        
+    <script type="text/javascript" src="app/onewirelist.js"></script>  	
+	<script type="text/javascript" src="app/folders.js"></script>  	
+	<script type="text/javascript" src="app/expression.js"></script>  	
+    <script src="libs/jquery.mobile-1.3.0.js"></script>    	
+    <style>
+
+    </style>	
+</head>
+<body>
+<div data-role="page" class="jqm-demos ui-responsive-panel" id="demopage">
+
+    <div data-role="header" id="header" data-theme="b">        		
+    </div><!-- /header -->
+    <div data-role="content" id="demopagecontent">    	
+	</div><!-- /content -->    
+	<div data-role="panel" id="panel_menu" data-theme="c">        		
+    </div><!-- /panel -->		
+</div><!-- /page -->	
+	
+<div  data-role="page" id="folderSelect" data-close-btn="right">           
+			<div data-role="header" data-theme="b">		
+				<h2>Vyberte datový bod</h2>
+			</div><!-- /header -->
+			<div data-role="content">	
+				<!-- <h4 data-binding="text:jsmodel"></h4> -->				
+				 <br>
+					test
+				 <br>
+				<!--href="#demopage" <ul id="folderSelectId" data-role="listview"  data-bind="template: { name: folderTemplate, foreach: folders }" data-filter="true" data-split-icon="gear" data-split-theme="d">
+				</ul> -->									
+				
+			</div><!-- /content -->	       		
+		</div><!-- /panel -->	
+		             
+        <!-- //////////////////////////////////////////////////////////////////////////// -->
+	    <script type="text/javascript" src="app/app.js"></script>  
+</body>
+</html>

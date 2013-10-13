@@ -1,0 +1,70 @@
+<html>
+<head>
+	<meta http-equiv="content-type" content="text/html; charset=windows-1250"></meta>
+</head>
+	<body>
+		<div data-role="fieldcontain" >                                      
+			</div>
+			<div data-role="fieldcontain">
+				<label for="name">Název:</label>
+				<input name="name" id="name" data-bind="value: name, inputEnable: IsEnabled" placeholder="" value="" type="text">						
+			</div>
+			<div data-role="fieldcontain">
+				<label for="idval">Id:</label>
+				<input name="idval" id="idval" data-bind="value: address" disabled="false" placeholder="" value="" type="text">
+			</div>
+			
+				<fieldset data-role="controlgroup">	
+					<legend>Interní:</legend>
+					<input type="checkbox" data-bind="click: checkBoxChanged, checkbox: internal" disabled="false" name="" id="internal">
+					<label for="internal">Interní</label>
+				</fieldset>
+			
+			<div data-role="fieldcontain">
+				<label for="val">Hodnota:</label>
+				<input name="val" id="val" data-bind="value: formatedValue, inputEnable: ValueEnabled" disabled="false" placeholder="" value="">
+			</div>
+			<div data-role="fieldcontain">
+				<label for="val">Jednotka:</label>
+				<input name="val" id="val" data-bind="value: unit">
+			</div>
+			
+			<div data-role="fieldcontain">
+				<label for="direction">Směr komunikace:</label>
+				<input name="direction" id="direction" data-bind="value: directionLabel" disabled="false" placeholder="" value="" type="text">
+			</div>
+			<div data-role="fieldcontain">
+				<label for="selectionType">Typ:</label>
+				
+				<!-- <input name="type" id="type" data-bind="value: typeFormated" disabled="false" placeholder="" value="" type="text"> -->
+				<!-- <select id="selection" name="selection" data-native-menu="false" data-bind="jqmOptions: types, optionsValue: 'id', optionsText: 'name', value: selectedValue"></select> -->
+				<select name="selectionType" id="selectionType" data-native-menu="false" data-mini="false" data-bind="							
+						options: types,
+						optionsText: 'name',
+						optionsValue: 'id',
+						value: type,
+						SelectEnable: IsNew() && SaveEnabled() && internal()">
+				</select>
+			</div>
+			<form data-bind="visible:isForceVisible" >
+				
+					<fieldset data-role="controlgroup">
+						<legend>Simulační režim:</legend>
+						<input type="checkbox" data-bind="click: checkBoxChanged, checkbox: force" name="allowForceOutput" id="allowForceOutput">
+						<label for="allowForceOutput">Povolit nastavení</label>
+					</fieldset>
+				
+				<div data-role="fieldcontain" data-bind="visible:force">					
+					<label for="setOutput">Nastavit:</label>
+					<select name="setOutput" id="setOutput" data-bind="slider:setOutputState,value:setOutputState" data-role="slider">
+						<option value="0">Vypnuto</option>
+						<option value="1">Zapnuto</option>
+					</select>
+				</div>
+			</form>
+			
+			<a data-role="button" href="#demopage" data-bind="click:btnSave, ButtonEnable: SaveEnabled" data-inline="true">Uložit</a>
+			<a data-role="button" href="#demopage" data-bind="click:btnDelete, ButtonEnable: SaveEnabled" data-inline="true">Smazat</a>			
+			<a data-role="button" href="#demopage" data-bind="click:btnStorno" data-inline="true">Storno</a>
+	</body>
+</html>

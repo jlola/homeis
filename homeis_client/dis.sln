@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{80DB5BE3-BE74-4583-92AD-9059F016C85A}"
+	ProjectSection(SolutionItems) = preProject
+		index.html = index.html
+		logindialog.html = logindialog.html
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "app", "app", "{BB6CC52E-C67A-4C53-9117-F721A76C84FD}"
+	ProjectSection(SolutionItems) = preProject
+		app\app.css = app\app.css
+		app\app.js = app\app.js
+		app\login.js = app\login.js
+		app\onewirelist.js = app\onewirelist.js
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{BB6CC52E-C67A-4C53-9117-F721A76C84FD} = {80DB5BE3-BE74-4583-92AD-9059F016C85A}
+	EndGlobalSection
+EndGlobal
