@@ -28,3 +28,8 @@ http://stackoverflow.com/questions/2423777/is-it-possible-to-create-a-remote-rep
 --first commit
 git push -f origin master
 
+git add installed_libs.txt
+git commit -m "add installed.txt"
+git push
+
+
