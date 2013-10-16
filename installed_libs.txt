@@ -1,0 +1,30 @@
+apt-get install libxml++2.6-dev libxml++2.6-doc
+
+
+compile dallas
+-------------------
+apt-get install libusb-dev 
+
+configure eclipse to linker libraries add key usb
+
+cross compile libxml2
+-----------------------
+./configure --prefix=/root/raspberrypi --build=i686-linux --host=arm-linux-gnueabihf
+
+make
+
+make install
+
+configure eclipse - to linker libraries add key xml2
+
+cross compile httpdlib
+---------------------------
+./configure --prefix=/root/raspberrypi --build=i686-linux --host=arm-linux-gnueabihf
+
+Init GitHub workspace
+---------------------------------------------------
+http://stackoverflow.com/questions/2423777/is-it-possible-to-create-a-remote-repo-on-github-from-the-cli-without-ssh
+
+--first commit
+git push -f origin master
+
