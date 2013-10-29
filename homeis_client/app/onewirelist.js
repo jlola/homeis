@@ -56,25 +56,56 @@
 		self.logged = ko.observable(false);
 		self.internal = ko.observable(true);		
 		self.unit = ko.observable(" °C");
-		self.ValueEnabled = ko.computed(function(){
-			return self.internal() || self.direction()==App.Enums.EDirection.Write || self.direction()==App.Enums.EDirection.ReadWrite;
-		},this);
-		self.selectedValue = ko.observable(3);
-		//self.selTypeIndex = ko.observable(2);
-		self.address = ko.observable();		
-		self.setOutputState = ko.observable(0);		
-		self.setOutputStateChanged = function(newValue) {			
-			//alert(self.setOutputState());
-			//console.log(newValue);			
-		};
-		
-		self.setOutputState.subscribe(self.setOutputStateChanged);		
 		self.force = ko.observable(false);
 		self.direction = ko.observable(App.Enums.EDirection.Read);						
 		self.IsEnabled = ko.observable(false);		
 		self.value = ko.observable();
 		self.error = ko.observable(true);
+		
+		self.ValueEnabled = ko.computed(function(){
+			return self.internal() || self.direction()==App.Enums.EDirection.Write || self.direction()==App.Enums.EDirection.ReadWrite;
+		},this);
+		self.selectedValue = ko.observable(3);		
+		self.address = ko.observable();		
+		self.oldvalue = null;
+		self.setOutputState = ko.observable(0);		
+		self.setOutputStateChanged = function(newValue) {			
+			if (self.oldvalue!=self.value()&&self.oldvalue!=null) {
+				self.oldvalue = self.value();								
+				self.Save(function() {
+					App.Instance.GetOneWireList().Load(App.Instance.GetOneWireList().parentFolderId,function(){
+						App.Instance.GetOneWireList().Refresh();
+					});				 					
+				});				
+			}
+			else
+			{
+				self.oldvalue = self.value();
+			}
+			//console.log(newValue);
+			return true;			
+		};		
+		//self.setOutputState.subscribe(self.setOutputStateChanged);		
+		
+		self.value.subscribe(self.setOutputStateChanged);	
+		
+		self.valueTemplate = function() {
+			if (self.type()==4)	return "valueBooleanTemplate";
+			return "valueTemplateText";
+		}
+		
+		self.myPostProcessingLogic = function(elements) {
+		// "elements" is an array of DOM nodes just rendered by the template
+		// You can add custom post-processing logic here
+			$("div[id$='divalue']").trigger('create');			
+		}
+				
 		//self.CopyDataFrom(dataObject);
+		
+		self.errorUI = ko.computed(function(){
+			if (self.error()==false) return "Připojeno";
+			else return "Odpojeno";
+		},this);
 		
 		self.directionLabel = ko.computed(function() {
 			if (self.direction()==App.Enums.EDirection.Read)
@@ -105,19 +136,20 @@
 			self.error(dataObject.error);			
 			self.force(dataObject.force);			
 			self.unit(dataObject.unit);
+			self.IsNew(false);
 			//self.setOutputState(dataObject.value);			
 			self.internal(dataObject.internal==null?false:dataObject.internal);
 			self.selectedValue(self.type());					
-			self.formatedValue(self.GetFormatedValue(self.value(),self.type()));			
+			//self.formatedValue(self.GetFormatedValue(self.value(),self.type()));			
 			self.DirValueId = dataObject.DirValueId;
 			App.Helpers.SetDropDownListValue('selectionType',self.type());
 		};
 		
-		self.checkBoxChanged = function(object,event)
+		self.forceChanged = function(object,event)
 		{
 			self.force(!self.force())
 			
-			self.Save();
+			self.Save(function(){});
 			
 		};		
 		self.typeFormated = ko.computed(function() {
@@ -143,10 +175,7 @@
 				return 'app/icons/Circle_Green.png';
 			else
 				return 'app/icons/Circle_Red.png';
-		}, this);
-		
-		
-        self.formatedValue = ko.observable();
+		}, this);				       
 		
 		self.IsValueValid = function(pvalue,ptype)
 		{
@@ -184,8 +213,8 @@
 					return pvalue;
 				 break;				 
 				 case App.Enums.EDataType.Bool:
-					 if (pvalue==1) return 'True';
-					 else return 'False';
+					 if (pvalue==1) return '1';
+					 else return '0';
 				 break;				 							
 			}
 			return "";//.toFixed(2);		
@@ -199,7 +228,7 @@
 			dto.name = src.name();
 			dto.force = src.force();
 			dto.type = src.type();
-			dto.value = src.formatedValue();
+			dto.value = src.value();
 			dto.unit = src.unit();
 			//if (src.force()) dto.value = src.setOutputState();
 			return dto;
@@ -217,13 +246,7 @@
 			dto.internal = true;
 			dto.error = false;
 			return dto;
-		}
-		
-		// self.itemSelect = function(event,ui) {						 
-			 // //$.mobile.loadPage('#onewireDetail', { showLoadMsg: false } );				
-											
-			// return true;
-		// }
+		}				
 		
 		self.btnMove = function() {
 			
@@ -233,8 +256,8 @@
 		self.btnDelete = function() {
 			
 				self.Remove(function(){
-					LoadPage('#demopage','onewirelist.html',App.Instance.GetOneWireList(),function(){
-						App.Instance.GetOneWireList().Load();				 
+					App.Helpers.LoadPage('#demopage','onewirelist.html',App.Instance.GetOneWireList(),function(){
+						App.Instance.GetOneWireList().Load(self.list.parentFolderId);				 
 						App.Instance.GetOneWireList().Refresh();		
 					});
 				});
@@ -246,8 +269,8 @@
 			if (!self.internal())
 			{
 				self.Save(function(){
-					LoadPage('#demopage','onewirelist.html',App.Instance.GetOneWireList(),function(){
-						App.Instance.GetOneWireList().Load();				 
+					App.Helpers.LoadPage('#demopage','onewirelist.html',App.Instance.GetOneWireList(),function(){
+						App.Instance.GetOneWireList().Load(App.Instance.GetOneWireList().parentFolderId);				 
 						App.Instance.GetOneWireList().Refresh();		
 					});
 				});
@@ -256,15 +279,15 @@
 			}
 			else
 			{
-				var val = self.formatedValue()				
+				var val = self.value()				
 				if (!self.IsValueValid(val,self.type()))
 				{
 					alert('Zadaná hodnota neodpovídá datovému typu');
 					return false;
 				}
 				self.Save(function(){
-					LoadPage('#demopage','onewirelist.html',App.Instance.GetOneWireList(),function(){
-						App.Instance.GetOneWireList().Load();				 
+					App.Helpers.LoadPage('#demopage','onewirelist.html',App.Instance.GetOneWireList(),function(){
+						App.Instance.GetOneWireList().Load(App.Instance.GetOneWireList().parentFolderId);				 
 						App.Instance.GetOneWireList().Refresh();		
 					});
 				});
@@ -272,8 +295,8 @@
 			return true;
 		}
 		self.btnStorno = function() {			
-			LoadPage('#demopage','onewirelist.html',App.Instance.GetOneWireList(),function(){
-				//App.Instance.GetOneWireList().Load();				 
+			App.Helpers.LoadPage('#demopage','onewirelist.html',App.Instance.GetOneWireList(),function(){
+				App.Instance.GetOneWireList().Load(App.Instance.GetOneWireList().parentFolderId);				 
 				App.Instance.GetOneWireList().Refresh();		
 			});
 			return true;
@@ -339,21 +362,36 @@
 		self.socket = psocket;				
         self.isLogged = ko.observable(false); 
 		self.SelectedItem = ko.observable();
-		self.parentFolderId = ko.observable();
+		self.parentFolderId = "";
 		self.path = 'onewiredevices';
 		self.folderDevicesPath = 'onewiredevices/folder';
 		self.GetPath = function() { return self.path; }
 		self.Refresh = function(holderId) {		
 			if (holderId==null)
 			{
-				$('#oneWireListid').listview('refresh');
+				try
+				{
+					$('#oneWireListid').listview('refresh');				
+				}
+				catch(x)
+				{
+					$('#oneWireListid').listview().listview('refresh');				
+				}
+				
 			}
 			else
-			{
-				//holder = $(holderId).find("#oneWireListid");
-				$(holderId + ' #oneWireListid').listview('refresh');
-				//$(holderId).triger('create');
+			{	
+				try
+				{
+					$(holderId + ' #oneWireListid').listview('refresh');
+				}
+				catch(x)
+				{
+					$(holderId + ' #oneWireListid').listview().listview('refresh');				
+				}
+				
 			}
+			//$('#test').button('refresh');
 		}
 		
 		self.expressionSelect = function(event,ui) {						 
@@ -393,7 +431,7 @@
 						item.CopyDataFrom(ko.toJS(event));
 						item.IsNew(false);
 						item.IsEnabled(isLogged);
-						item.SaveEnabled(isLogged);				
+						item.SaveEnabled(isLogged);										
 					});
 				} else
 				{
@@ -602,37 +640,56 @@
 			if (self.parentFolderId!=null)
 			{					
 				self.socket.read(App.ViewModels.FolderModel.GetPath(),self.parentFolderId,function(data){			
-					self.parent = new App.ViewModels.FolderModel(self.socket,self);
-					self.parent.CopyDataFrom(data[0]);
-					self.parent.name('..');					
-					self.oneWireList.push(self.parent);
-					//self.sort();
-					//self.Refresh();	
-					if (callback!=null) callback();						
+					var match = ko.utils.arrayFirst(self.oneWireList(), function(item) {
+							return item.name() === '..';
+						});
+					if (match==null)
+					{
+						self.parent = new App.ViewModels.FolderModel(self.socket,self);						
+						self.oneWireList.push(self.parent);
+						//self.sort();
+						//self.Refresh();										
+					}
+					else self.parent = match;
+					
+					if (self.parent!=null) {
+						self.parent.CopyDataFrom(data[0]);						
+						self.parent.name('..');
+						//self.parent.parentId(null);
+					}
+					if (callback!=null) callback();											
 				});					
 			}
 			else if (callback!=null) callback();						
 		}
 		
+		self.myPostProcessingLogic = function(elements) {
+		// "elements" is an array of DOM nodes just rendered by the template
+		// You can add custom post-processing logic here
+			//$("div[id$='listinput']").trigger('create');
+		}
+		
 		//load function
 		self.Load = function(folderId,callback)
 		{
-				self.parentFolderId = folderId;
+			if (self.parentFolderId!=folderId || folderId==null) self.oneWireList.removeAll();				
+			self.parentFolderId = folderId;
 			self.isLogged(App.Instance.GetLogInPage().logged());
 			self.parent = null;	
 			//nacte data pro adresar
 			if (self.Mode()==App.Enums.OneWireListMode.Folders)
 			{
-				self.oneWireList.removeAll();				
+				
 				self.LoadFolders(folderId,function() {
-					self.Refresh();
+					//self.Refresh();
 					self.LoadExpressions(folderId,function() {
-						self.Refresh();
+						//self.Refresh();
 						self.LoadDevicesInFolder(folderId,function() {
-							self.Refresh();
+							//self.Refresh();
 							self.LoadParentFolder(folderId,function() {
 								self.sort();
 								self.Refresh();
+								//$('#demopage').trigger('pagecreate');								
 							});
 						});
 					});
@@ -672,6 +729,8 @@
 				if (left.name()=='..') return -1;
 				if (left instanceof App.ViewModels.ExpressionModel)
 					return 1;
+				if (right instanceof App.ViewModels.ExpressionModel)
+					return -1;
 				if (left instanceof App.ViewModels.FolderModel && right instanceof App.ViewModels.OneWireDevice)
 					return -1;
 				if (right instanceof App.ViewModels.FolderModel && left instanceof App.ViewModels.OneWireDevice)

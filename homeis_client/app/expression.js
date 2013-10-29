@@ -50,14 +50,19 @@
 		
 		self.btnRun = function(event,ui) {
 			self.socket.read('expression/folderrun',self.parentId(),function(data){							
+				if (data.message!=null)
+					alert(data.message);
+				else
+					alert("Script byl úspìšnì spuštìn");
 			});
 		}
 		
 		self.btnStorno = function(event,ui) {
 			self.parentId(event.parentId());
-			LoadPage('#demopage','onewirelist.html',App.Instance.GetOneWireList(),function(){
-				//App.Instance.GetOneWireList().Load(self.parentId());				 
-				App.Instance.GetOneWireList().Refresh();		
+			App.Helpers.LoadPage('#demopage','onewirelist.html',App.Instance.GetOneWireList(),function(){
+				App.Instance.GetOneWireList().Load(self.parentId(),function(){
+					App.Instance.GetOneWireList().Refresh();		
+				});				
 			});
 			return true;
 		}

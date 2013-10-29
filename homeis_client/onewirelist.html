@@ -8,7 +8,7 @@
 					<img class="ui-li-icon ui-corner-none devices_ico" width="80" height"80" data-bind="attr: { src: image }" />
 					<h1 data-bind="text:name"></h1>										  			 
 					<p class="ui-li-aside">
-						<label style="font-size:large" data-bind="text:formatedValue"></label>
+						<label style="font-size:large" data-bind="text:value"></label>
 						<label style="font-size:large" data-bind="text:unit"></label>
 					</p>
 				</a>
@@ -19,13 +19,16 @@
         </script>
 		
 		<script type="text/html" id="ds2413Template">
-            <li>
-				<a href="#" enabled="true" data-role="button" data-icon-pos='notext' data-bind="click: $parent.itemSelect" >
+            <li>				
+				<a href="#" enabled="false" data-role="button" data-icon-pos='notext' data-bind="click: $parent.itemSelect" >
 					<img class="ui-li-icon ui-corner-none devices_ico" width="80" height"80" data-bind="attr: { src: image }" />
-					<h1 data-bind="text:name"></h1>					
-					<p class="ui-li-aside">					
-						<label style="font-size:large" data-bind="text:formatedValue"></label>
-					</p>
+					<h1 data-bind="text:name"></h1>															
+					<div class="ui-li-aside" id="listinput" data-role="fieldcontain">					
+						<select id="slider" data-role="slider" data-bind="sliderEnable:force,jqmFlip:value">
+							<option value="0">Vypnuto</option>
+							<option value="1">Zapnuto</option>
+						</select>												
+					</div>
 				</a>				
 				<a href="#" data-bind="click:$parent.removeValueId, visible: $parent.isLogged && $parent.Mode()==App.Enums.OneWireListMode.Folders" data-icon="delete">
 					Odstranit					
@@ -64,7 +67,7 @@
 		 <a data-role="button" href="#" data-inline="true" data-bind="click:btnInsertExpression, visible:isLogged && Mode()==App.Enums.OneWireListMode.Folders" >Vložit výraz</a>
 		 <br>
 		 <br>
-		<ul id="oneWireListid" data-role="listview"  data-bind="template: { name: OneWireTemplate, foreach: oneWireList }" data-filter="true" data-split-icon="gear" data-split-theme="d">
+		<ul id="oneWireListid" data-role="listview"  data-bind="template: { name: OneWireTemplate, foreach: oneWireList, afterRender: myPostProcessingLogic }" data-filter="true" data-split-icon="gear" data-split-theme="d">
 		</ul>									
 									
 	</body>

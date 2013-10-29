@@ -49,6 +49,17 @@
 		}
 	};
 	
+	ko.bindingHandlers.sliderEnable = {		
+		update: function(element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
+			$(element).slider();
+			var valueProp = valueAccessor();
+			if (valueProp())
+				$(element).slider('enable');
+			else
+				$(element).slider('disable');
+		}
+	};
+	
 	ko.bindingHandlers.ButtonEnable = {		
 		update: function(element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
 			$(element).button();
@@ -101,30 +112,30 @@
 		}		
 	};
 	
-	ko.bindingHandlers.slider = {
-		init: function(element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
-			// use setTimeout with 0 to run this after Knockout is done
-			setTimeout(function () {
-				// $(element) doesn't work as that has been removed from the DOM
-				var curSlider = $('#' + element.id);
-				// helper function that updates the slider and refreshes the thumb location
-				function setSliderValue(newValue) {
-					curSlider.val(newValue).slider('refresh');
-				}
-				
-				curSlider.slider();
-				
-				// subscribe to the bound observable and update the slider when it changes
-				valueAccessor().subscribe(setSliderValue);
-				// set up the initial value, which of course is NOT stored in curSlider, but the original element :\
-				setSliderValue($(element).val());
-				// subscribe to the slider's change event and update the bound observable
-				curSlider.bind('change', function () {
-					valueAccessor()(curSlider.val());
-				});
-			}, 0);
+	ko.bindingHandlers.jqmFlip = {
+    init: function (element, valueAccessor) {
+        var result = ko.bindingHandlers.value.init.apply(this, arguments);		       
+        try {
+            $(element).slider("refresh");
+        } catch (x) {
+			$(element).slider();
+			$(element).slider("refresh");
+			//console.log(x.message);
 		}
-	};
+        return result;
+    },
+    update: function (element, valueAccessor) {
+        ko.bindingHandlers.value.update.apply(this, arguments);
+        var value = valueAccessor();
+        var valueUnwrapped = ko.utils.unwrapObservable(value);
+        try {
+            $(element).slider("refresh");
+        } catch (x) {
+			console.log(x.message);
+		}
+    }
+};
+	
 	
 	// ko.bindingHandlers.jqmOptions = {
             // init: function (element, valueAccessor, allBindingsAccessor, viewModel) {
@@ -187,11 +198,14 @@
 		var holder = $(holderId).find(":jqmData(role=content)");
 		if (holder)
 		{
-			//$.mobile.loadPage(pageFile);			
+			//$.mobile.loadPage(pageFile);				
+			ko.cleanNode($(holder)[0]);
 			$(holder).load(pageFile, function () {											
 				$(holderId).trigger("pagecreate");								
 				//$.mobile.loadPage(holderId, { showLoadMsg: false } );
+				//ko.cleanNode(this);				
 				if (model!=null) ko.applyBindings(model,this);
+							
 				if (callback!=null) callback();				
 			});	
 		}		

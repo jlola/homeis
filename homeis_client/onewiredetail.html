@@ -3,6 +3,19 @@
 	<meta http-equiv="content-type" content="text/html; charset=windows-1250"></meta>
 </head>
 	<body>
+		<script type="text/html" id="valueBooleanTemplate">
+			<label for="divalueselect">Hodnota:</label>
+            <select id="divalueselect" data-bind="sliderEnable:force, jqmFlip:value"  data-role="slider">
+					<option value="0">Vypnuto</option>
+					<option value="1">Zapnuto</option>
+			</select>			
+        </script>
+		
+		<script type="text/html" id="valueTemplateText">
+			<label for="editvalue" style='float: left'>Hodnota:</label>
+			<input name="editvalue" style='float: left' id="editvalue" data-bind="value: formatedValue, inputEnable: ValueEnabled" disabled="false" type="text">
+		</script>
+		
 		<div data-role="fieldcontain" >                                      
 			</div>
 			<div data-role="fieldcontain">
@@ -14,19 +27,23 @@
 				<input name="idval" id="idval" data-bind="value: address" disabled="false" placeholder="" value="" type="text">
 			</div>
 			
+			<div data-role="fieldcontain">
+				<label for="state">Stav:</label>
+				<input name="state" id="state" data-bind="value: errorUI" disabled="false" placeholder="" value="" type="text">
+			</div data-role="fieldcontain">
+			
 				<fieldset data-role="controlgroup">	
-					<legend>Interní:</legend>
-					<input type="checkbox" data-bind="click: checkBoxChanged, checkbox: internal" disabled="false" name="" id="internal">
+					<legend  style='float: left' for="internal">Interní:</legend>
 					<label for="internal">Interní</label>
+					<input style='float: left' id="internal" type="checkbox" data-bind="checkbox: internal" disabled="false" name="internal">					
 				</fieldset>
 			
-			<div data-role="fieldcontain">
-				<label for="val">Hodnota:</label>
-				<input name="val" id="val" data-bind="value: formatedValue, inputEnable: ValueEnabled" disabled="false" placeholder="" value="">
+			<div data-role="fieldcontain" id="divalue" data-bind="template: { name: valueTemplate, afterRender: myPostProcessingLogic }">				
+				<!-- <input name="val" id="val" data-bind="value: formatedValue, inputEnable: ValueEnabled" disabled="false" placeholder="" value=""> -->				
 			</div>
 			<div data-role="fieldcontain">
-				<label for="val">Jednotka:</label>
-				<input name="val" id="val" data-bind="value: unit">
+				<label for="unit">Jednotka:</label>
+				<input name="unit" id="unit" data-bind="value: unit">
 			</div>
 			
 			<div data-role="fieldcontain">
@@ -50,17 +67,17 @@
 				
 					<fieldset data-role="controlgroup">
 						<legend>Simulační režim:</legend>
-						<input type="checkbox" data-bind="click: checkBoxChanged, checkbox: force" name="allowForceOutput" id="allowForceOutput">
-						<label for="allowForceOutput">Povolit nastavení</label>
+						<input type="checkbox" data-bind="click: forceChanged, checkbox: force" name="allowForceOutput" id="allowForceOutput">
+						<label for="allowForceOutput">Povolit sumlační režim</label>
 					</fieldset>
 				
-				<div data-role="fieldcontain" data-bind="visible:force">					
+				<!-- <div data-role="fieldcontain" data-bind="visible:force">					
 					<label for="setOutput">Nastavit:</label>
 					<select name="setOutput" id="setOutput" data-bind="slider:setOutputState,value:setOutputState" data-role="slider">
 						<option value="0">Vypnuto</option>
 						<option value="1">Zapnuto</option>
 					</select>
-				</div>
+				</div> -->
 			</form>
 			
 			<a data-role="button" href="#demopage" data-bind="click:btnSave, ButtonEnable: SaveEnabled" data-inline="true">Uložit</a>

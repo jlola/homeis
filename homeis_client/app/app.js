@@ -62,24 +62,24 @@
 		}		
 	 }
 	 
-	 LoadPage = function (holderId,pageFile,model,callback)
-	 {		
-		var holder = $(holderId).find(":jqmData(role=content)");
-		if (holder)
-		{
-			//$.mobile.loadPage(pageFile);			
-			$(holder).load(pageFile, function () {											
-				$(holderId).trigger("pagecreate");								
-				ko.applyBindings(model,this);
-				callback();				
-			});	
-		}		
-	 }
+	 // LoadPage = function (holderId,pageFile,model,callback)
+	 // {		
+		// var holder = $(holderId).find(":jqmData(role=content)");
+		// if (holder)
+		// {
+			// //$.mobile.loadPage(pageFile);			
+			// $(holder).load(pageFile, function () {											
+				// $(holderId).trigger("pagecreate");								
+				// ko.applyBindings(model,this);
+				// callback();				
+			// });	
+		// }		
+	 // }
 	 
 	$("#demopage").on( "pageinit", function( event ) {				
 		LoadHeader(this,"header.html");
 		LoadPanelExt(this,'#panel_menu',"menu.html");
-		LoadPage(this,'onewirelist.html',App.Instance.GetOneWireList(),function(){
+		App.Helpers.LoadPage(this,'onewirelist.html',App.Instance.GetOneWireList(),function(){
 			App.Instance.GetOneWireList().Mode(App.Enums.OneWireListMode.Folders);
 			App.Instance.GetOneWireList().Load();				 
 			App.Instance.GetOneWireList().Refresh();		
