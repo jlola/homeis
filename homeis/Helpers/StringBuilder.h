@@ -9,6 +9,7 @@
 #define STRINGBUILDER_H_
 
 #include <string.h>
+#include <stdarg.h>
 
 #define MAX_BUFFER 5000
 

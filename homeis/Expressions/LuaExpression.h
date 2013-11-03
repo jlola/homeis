@@ -39,6 +39,7 @@ class LuaExpression : public HisBase, public IExpression
 {
 private:
 	bool running;
+	string lastEvaluateError;
 	HisDevFolder* folder;
 	HisDevices* devices;
 	vector<HisDevValueBase*> values;
@@ -56,6 +57,7 @@ private:
 	void StartListening();
 	void StopListening();
 public:
+	string GetLastEvaluateError();
 	LuaExpression(HisDevFolder* folder,HisDevices* hisDevices, string expressionName);
 	LuaExpression(xmlNodePtr pnode,HisDevices* hisDevices);
 	void ReloadValues();

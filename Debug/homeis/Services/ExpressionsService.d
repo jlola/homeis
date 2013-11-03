@@ -100,7 +100,8 @@ homeis/Services/ExpressionsService.d: \
  /root/raspiworkspace/dis/lua-5.2.1/src/luaconf.h \
  /root/raspiworkspace/dis/lua-5.2.1/src/lauxlib.h \
  /root/raspiworkspace/dis/lua-5.2.1/src/lua.h \
- /root/raspiworkspace/dis/lua-5.2.1/src/lualib.h
+ /root/raspiworkspace/dis/lua-5.2.1/src/lualib.h \
+ /root/raspiworkspace/dis/homeis/Common/HisException.h
 
 ../homeis/Services/ExpressionsService.h:
 
@@ -303,3 +304,5 @@ homeis/Services/ExpressionsService.d: \
 /root/raspiworkspace/dis/lua-5.2.1/src/lua.h:
 
 /root/raspiworkspace/dis/lua-5.2.1/src/lualib.h:
+
+/root/raspiworkspace/dis/homeis/Common/HisException.h:

@@ -33,84 +33,68 @@ extern "C" {
 
 }
 
-///* the Lua interpreter */
-//lua_State* L;
-//
-//int luaadd ( int x, int y )
-//{
-//	int sum;
-//
-//	lua_pushboolean(L,false);
-//	lua_setglobal(L, "vstup");
-//
-//	lua_pushboolean(L,false);
-//	lua_setglobal(L, "vystup");
-//
-//
-//	/* the function name */
-//	lua_getglobal(L, "add");
-//
-//	/* the first argument */
-//	//lua_pushnumber(L, x);
-//
-//	/* the second argument */
-//	//lua_pushnumber(L, y);
-//
-//	/* call the function with 2 arguments, return 1 result */
-//	if (lua_pcall(L, 0, 0, 0))
-//	{
-//		printf("Error %s",lua_tostring(L,-1));
-//	}
-//
-//	/* get the result */
-//	//sum = (int)lua_tointeger(L, -1);
-//	//lua_pop(L, 1);
-//
-//	lua_getglobal(L,"vystup");
-//    bool vystup = lua_toboolean(L,-1);
-//
-//    lua_getglobal(L,"vstup");
-//    bool vstup = lua_toboolean(L,-1);
-//
-//
-//	return sum;
-//}
+std::string code = "i = 0 \
+function loop() \
+	print(\"loop.lua\");	\
+\
+	while i < 4 \
+	do \
+		print(\"lua_loop iteration\"); \
+		sleep(10);\
+\
+	i = i + 1; \
+	end \
+end ";
+
+bool running = true;
+
+int lua_finish(lua_State *) {
+	    running = false;
+	    printf("lua_finish called\n");
+	    return 0;
+	}
+
+	int lua_sleep(lua_State *L) {
+		int rtrn = lua_tointeger(L, -1);      /* Get the single number arg */
+	    printf("lua_sleep called %d ms\n",rtrn);
+	    return lua_yield(L,0);
+	}
 
 int main(int argc, char **argv)
 {
+	int status;
+	    lua_State* L = luaL_newstate();
+	    luaL_openlibs(L);
 
-//		int sum;
-//
-//		/* initialize Lua */
-//		L = luaL_newstate();                        /* Create Lua state variable */
-//
-//		/* load Lua base libraries */
-//		luaL_openlibs(L);
-//
-//		/* load the script */
-//		//luaL_dofile(L, "add.lua");
-//		if (luaL_dostring(L,
-//
-//				" appName = \"test\"\
-//				function add () \
-//				vystup = not vstup\
-//					 vstup = true\
-//				  end \
-//				"))
-//		{
-//			printf("error running function `f': %s\n",lua_tostring(L, -1));
-//			return 1;
-//		}
-//
-//		/* call the add function */
-//		sum = luaadd( 10, 15 );
-//
-//		/* print the result */
-//		printf( "The sum is %d\\n", sum );
-//
-//		/* cleanup Lua */
-//		lua_close(L);
+	    lua_register(L, "sleep", lua_sleep);
+	    lua_register(L, "finish", lua_finish);
+	    status = luaL_dostring(L,code.c_str());
+	    if ( status != LUA_OK ) {
+	    	printf("isstring: %s\n", lua_tostring(L, -1));
+	    	return 0;
+	    }
+	    lua_pcall(L, 0, 0, 0);
 
+	    lua_State* cL = lua_newthread(L);
+
+	    lua_getglobal(cL, "loop");
+
+	    while (running) {
+
+	        status = lua_resume(cL,NULL,0);
+	        if (status == LUA_YIELD) {
+	            printf("loop yielding\n");
+	        } else {
+	            running=false; // you can't try to resume if it didn't yield
+	            // catch any errors below
+	            if (status == LUA_ERRRUN && lua_isstring(cL, -1)) {
+	                printf("isstring: %s\n", lua_tostring(cL, -1));
+	                lua_pop(cL, -1);
+	            }
+	        }
+	    }
+
+	    lua_close(L);
 
 	HomeIsServer server("/dev/ttyAMA0",81);
 	server.Start();

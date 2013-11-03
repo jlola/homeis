@@ -15,7 +15,9 @@
 #include "homeis/Helpers/File.h"
 #include "homeis/Helpers/Directory.h"
 #include "homeis/Helpers/logger.h"
+#include "homeis/Helpers/StringBuilder.h"
 #include "homeis/Common/HisException.h"
+
 
 
 
@@ -64,6 +66,11 @@ void LuaExpression::SetName(string name)
 			HisBase::SetName(name);
 		else throw HisException("Expression name: " + name + "already exists");
 	}
+}
+
+string LuaExpression::GetLastEvaluateError()
+{
+	return lastEvaluateError;
 }
 
 void LuaExpression::SetRunning(bool blRunning)
@@ -404,8 +411,9 @@ bool LuaExpression::Evaluate()
 	/* load string and check syntax */
 	if (luaL_dostring(L,code.c_str()))
 	{
-		CLogger::Error("error running function `f': %s\n",lua_tostring(L, -1));
-		return 1;
+		lastEvaluateError = StringBuilder::Format("Error load Lua script: %s\n",lua_tostring(L, -1));
+		CLogger::Error(lastEvaluateError.c_str());
+		throw HisException(lastEvaluateError);
 	}
 
 	/* set golabl variables */
@@ -417,8 +425,9 @@ bool LuaExpression::Evaluate()
 	//call function
 	if (lua_pcall(L, 0, 0, 0))
 	{
-		CLogger::Error("error primming running Lua script: %s",  lua_tostring(L, -1));    /* Error out if Lua file has an error */
-		return false;
+		lastEvaluateError = StringBuilder::Format("Error running Lua script: %s",  lua_tostring(L, -1));
+		CLogger::Error(lastEvaluateError.c_str());    /* Error out if Lua file has an error */
+		throw HisException(lastEvaluateError);
 	}
 
 	//get global variables

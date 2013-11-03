@@ -6,6 +6,7 @@
  */
 
 #include "ExpressionsService.h"
+#include "homeis/Common/HisException.h"
 
 ExpressionService::ExpressionService(HisDevFolderRoot* folder)
 {
@@ -25,46 +26,67 @@ void ExpressionService::render_GET(const http_request& req, http_response** res)
 	string strid = req.get_arg("id");
 	string path = req.get_path();
 
-	//run all expressions in folder
-	if (path.find("/api/expression/folderrun")!=string::npos)
+	try
 	{
-		HisDevFolder* folder = NULL;
-		vector<LuaExpression*> expressions;
-		HisDevFolder* rootFolder = root->GetFolder();
-		if(!strid.empty())
+		//run all expressions in folder
+		if (path.find("/api/expression/folderrun")!=string::npos)
 		{
-			CUUID id = CUUID::Parse(strid);
-			folder = dynamic_cast<HisDevFolder*>(rootFolder->Find(id));
-		}
-
-		if (folder!=NULL)
-		{
-			expressions = folder->GetItems<LuaExpression>();
-			for (size_t i=0;i<expressions.size();i++)
+			HisDevFolder* folder = NULL;
+			vector<LuaExpression*> expressions;
+			HisDevFolder* rootFolder = root->GetFolder();
+			if(!strid.empty())
 			{
-				expressions[i]->Evaluate();
+				CUUID id = CUUID::Parse(strid);
+				folder = dynamic_cast<HisDevFolder*>(rootFolder->Find(id));
+			}
+
+			if (folder!=NULL)
+			{
+				expressions = folder->GetItems<LuaExpression>();
+				for (size_t i=0;i<expressions.size();i++)
+				{
+					expressions[i]->Evaluate();
+				}
+			}
+		}//load data for all expression in folder
+		else if (path.find("/api/expression/folder")!=string::npos)
+		{
+			HisDevFolder* folder = NULL;
+			vector<LuaExpression*> expressions;
+			HisDevFolder* rootFolder = root->GetFolder();
+			if(!strid.empty())
+			{
+				CUUID id = CUUID::Parse(strid);
+				folder = dynamic_cast<HisDevFolder*>(rootFolder->Find(id));
+			}
+
+			if (folder!=NULL)
+			{
+				expressions = folder->GetItems<LuaExpression>();
+				for (size_t i=0;i<expressions.size();i++)
+				{
+					ExpressionToJson(expressions[i],respjsondoc);
+				}
 			}
 		}
-	}//load data for all expression in folder
-	else if (path.find("/api/expression/folder")!=string::npos)
+	}
+	catch(HisException ex)
 	{
-		HisDevFolder* folder = NULL;
-		vector<LuaExpression*> expressions;
-		HisDevFolder* rootFolder = root->GetFolder();
-		if(!strid.empty())
-		{
-			CUUID id = CUUID::Parse(strid);
-			folder = dynamic_cast<HisDevFolder*>(rootFolder->Find(id));
-		}
+		//Document respjsondoc;
+		respjsondoc.Clear();
+			//respjsondoc.SetArray();
+		respjsondoc.SetObject();
+		StringBuffer buffer;
+		string msg = ex.what();
+		Value jsonvalue;
+		jsonvalue.SetString(msg.c_str(),msg.length(),respjsondoc.GetAllocator());
+		respjsondoc.AddMember("message",jsonvalue, respjsondoc.GetAllocator());
 
-		if (folder!=NULL)
-		{
-			expressions = folder->GetItems<LuaExpression>();
-			for (size_t i=0;i<expressions.size();i++)
-			{
-				ExpressionToJson(expressions[i],respjsondoc);
-			}
-		}
+//		PrettyWriter<StringBuffer> wr(buffer);
+//		respjsondoc.Accept(wr);
+//		std::string json = buffer.GetString();
+//		*res = new http_string_response(json, 202, "application/json");
+//		return;
 	}
 
 	StringBuffer buffer;

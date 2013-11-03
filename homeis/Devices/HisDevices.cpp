@@ -171,15 +171,24 @@ void HisDevices::AddScanned()
 {
 
 	std::vector<LOW_device*> lowdevices = network->getDevices<LOW_device>();
+	size_t found = lowdevices.size();
 	//create new devices
-	for(uint i=0;i<lowdevices.size();i++)
+	for(size_t i=0;i<found;i++)
 	{
 		LOW_device* pdev = lowdevices[i];
-		int finded = Find(pdev->getID());
-		if (finded<0)
+		try
 		{
-			HisDevDallas* hisdev = (HisDevDallas*)HisDevFactory::Instance().Create(pdev);
-			Add(hisdev);
+			int finded = Find(pdev->getID());
+			if (finded<0)
+			{
+				HisDevDallas* hisdev = (HisDevDallas*)HisDevFactory::Instance().Create(pdev);
+				Add(hisdev);
+			}
+		}
+		catch(...)
+		{
+			CLogger::Info("Error add scaned device");
+
 		}
 	}
 }
@@ -248,8 +257,12 @@ int HisDevices::Find(LOW_deviceID pid)
 {
 	for(uint i=0;i<devices.size();i++)
 	{
-		LOW_deviceID id =  ((HisDevDallas*)devices[i])->GetId();
-		if (id==pid) return i;
+		HisDevDallas* dallas = dynamic_cast<HisDevDallas*>(devices[i]);
+		if (dallas!=NULL)
+		{
+			LOW_deviceID id =  dallas->GetId();
+			if (id==pid) return i;
+		}
 	}
 
 	return -1;
