@@ -33,7 +33,7 @@ extern "C" {
 
 }
 
-std::string code = "i = 0 \
+std::string code = "i = 1 \
 function loop() \
 	print(\"loop.lua\");	\
 \
