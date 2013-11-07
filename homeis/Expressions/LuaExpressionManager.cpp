@@ -7,27 +7,10 @@
 
 #include "LuaExpressionManager.h"
 
-LuaExpressionManager::LuaExpressionManager(HisDevFolderRoot *rootFolder)
+LuaExpressionManager::LuaExpressionManager(string pFileName) :
+	HisCollectionBase(pFileName)
 {
 
 }
 
-void LuaExpressionManager::Load()
-{
 
-}
-
-void LuaExpressionManager::Save()
-{
-
-}
-
-LuaExpression* LuaExpressionManager::CreateExpression(string name)
-{
-	for(size_t i=0;i<expressions.size();i++)
-	{
-		if (expressions[i]->GetName()==name) return NULL;
-	}
-
-
-}

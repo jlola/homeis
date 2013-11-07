@@ -16,6 +16,7 @@
 #include "homeis/Helpers/Directory.h"
 #include "homeis/Helpers/logger.h"
 #include "homeis/Helpers/StringBuilder.h"
+#include "homeis/Helpers/HisDateTime.h"
 #include "homeis/Common/HisException.h"
 
 
@@ -40,14 +41,16 @@ LuaExpression::LuaExpression(xmlNodePtr pnode,HisDevices* hisDevices) :
 	HisBase(pnode)
 {
 	devices = hisDevices;
-	running = false;
+	inEvalFunc = false;
+	runningAllowed = false;
 	CreateFolder();
 }
 
 LuaExpression::LuaExpression(HisDevFolder* pfolder,HisDevices* hisDevices, string expressionName) :
 	HisBase()
 {
-	running = false;
+	inEvalFunc = false;
+	runningAllowed = false;
 	if (pfolder==NULL)
 	{
 		CLogger::Fatal("LuaExpression | Constructor can not be called with empty folder");
@@ -75,17 +78,17 @@ string LuaExpression::GetLastEvaluateError()
 
 void LuaExpression::SetRunning(bool blRunning)
 {
-	if (running!=blRunning)
+	if (runningAllowed!=blRunning)
 	{
 		if (blRunning) StartListening();
 		else StopListening();
-		running = blRunning;
+		runningAllowed = blRunning;
 	}
 }
 
 bool LuaExpression::GetRunning()
 {
-	return running;
+	return runningAllowed;
 }
 
 string LuaExpression::GetDescription()
@@ -393,48 +396,96 @@ string LuaExpression::GetLuaCodeInFuncion(string funcName, string luaCodeFilePat
 			end";
 }
 
+int LuaExpression::delays;
+
+int lua_sleep(lua_State *L) {
+	LuaExpression::delays = lua_tointeger(L, -1);      /* Get the single number arg */
+    printf("lua_sleep called %d ms\n",LuaExpression::delays);
+    return lua_yield(L,0);
+}
+
 bool LuaExpression::Evaluate()
 {
+	if (inEvalFunc) return false;
+	inEvalFunc = true;
 	this->ReloadValues();
-	/* the Lua interpreter */
-	lua_State* L;
 
-	/* initialize Lua */
-	L = luaL_newstate();                        /* Create Lua state variable */
-
-	/* load Lua base libraries */
-	luaL_openlibs(L);
-
-	/* add code to function */
-	string code = GetLuaCodeInFuncion("runExpression",GetFileName(GetName()));
-
-	/* load string and check syntax */
-	if (luaL_dostring(L,code.c_str()))
+	if (!running && runningAllowed)
 	{
-		lastEvaluateError = StringBuilder::Format("Error load Lua script: %s\n",lua_tostring(L, -1));
-		CLogger::Error(lastEvaluateError.c_str());
-		throw HisException(lastEvaluateError);
+		LuaExpression::delays = -1;
+		nextTime = 0;
+		/* initialize Lua */
+		L = luaL_newstate();                        /* Create Lua state variable */
+
+		/* load Lua base libraries */
+		luaL_openlibs(L);
+
+		lua_register(L, "sleep", lua_sleep);
+
+		/* add code to function */
+		string code = GetLuaCodeInFuncion("runExpression",GetFileName(GetName()));
+
+		/* load string and check syntax */
+		if (luaL_dostring(L,code.c_str()))
+		{
+			lastEvaluateError = StringBuilder::Format("Error load Lua script: %s\n",lua_tostring(L, -1));
+			CLogger::Error(lastEvaluateError.c_str());
+			throw HisException(lastEvaluateError);
+		}
+
+		/* set golabl variables */
+		SetGlobals(L);
+
+		/**/
+		cL = lua_newthread(L);
+
+		/* load func name to top stack */
+		lua_getglobal(cL,"runExpression");
+
+		running = true;
+
+		//call function
+//		if (lua_pcall(L, 0, 0, 0))
+//		{
+//			lastEvaluateError = StringBuilder::Format("Error running Lua script: %s",  lua_tostring(L, -1));
+//			CLogger::Error(lastEvaluateError.c_str());    /* Error out if Lua file has an error */
+//			throw HisException(lastEvaluateError);
+//		}
 	}
 
-	/* set golabl variables */
-	SetGlobals(L);
-
-	/* load func name to top stack */
-	lua_getglobal(L,"runExpression");
-
-	//call function
-	if (lua_pcall(L, 0, 0, 0))
+	if (running)
 	{
-		lastEvaluateError = StringBuilder::Format("Error running Lua script: %s",  lua_tostring(L, -1));
-		CLogger::Error(lastEvaluateError.c_str());    /* Error out if Lua file has an error */
-		throw HisException(lastEvaluateError);
+		if (runningAllowed)
+		{
+			int64_t curTimeUs = HisDateTime::timeval_to_usec(HisDateTime::Now());
+
+			if (curTimeUs > nextTime)
+			{
+				int status = lua_resume(cL,NULL,0);
+
+				if (status == LUA_YIELD && LuaExpression::delays != -1)
+				{
+					nextTime = curTimeUs+LuaExpression::delays*1000000;
+					running = true;
+					//get global variables
+					GetGlobals(L);
+				}
+				else
+				{
+					running = false;
+					//get global variables
+					GetGlobals(L);
+					lua_close(L);
+				}
+			}
+		}
+		else
+		{
+			lua_close(L);
+			running = false;
+		}
 	}
-
-	//get global variables
-	GetGlobals(L);
-
-	lua_close(L);
-
+	inEvalFunc = false;
 	return true;
 }
 
@@ -480,7 +531,7 @@ void LuaExpression::DoInternalSave(xmlNodePtr & node)
 	//pri loudovani si ulozim nazev
 	oldName = GetName();
 	xmlSetProp(node,BAD_CAST PROP_DESCRIPTION, BAD_CAST description.c_str());
-	xmlSetProp(node,BAD_CAST PROP_RUNNING, running ? BAD_CAST "1" : BAD_CAST "0");
+	xmlSetProp(node,BAD_CAST PROP_RUNNING, GetRunning() ? BAD_CAST "1" : BAD_CAST "0");
 }
 
 void LuaExpression::DoInternalLoad(xmlNodePtr & node)

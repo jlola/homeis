@@ -9,6 +9,7 @@ homeis/Expressions/LuaExpression.d: \
  /root/raspiworkspace/dis/homeis/Helpers/logger.h \
  /root/raspiworkspace/dis/linuxcs/linuxcs.h \
  /root/raspiworkspace/dis/homeis/Helpers/StringBuilder.h \
+ /root/raspiworkspace/dis/homeis/Helpers/HisDateTime.h \
  /root/raspiworkspace/dis/homeis/Common/HisException.h \
  /root/raspiworkspace/dis/lua-5.2.1/src/lua.h \
  /root/raspiworkspace/dis/lua-5.2.1/src/luaconf.h \
@@ -106,6 +107,8 @@ homeis/Expressions/LuaExpression.d: \
 /root/raspiworkspace/dis/linuxcs/linuxcs.h:
 
 /root/raspiworkspace/dis/homeis/Helpers/StringBuilder.h:
+
+/root/raspiworkspace/dis/homeis/Helpers/HisDateTime.h:
 
 /root/raspiworkspace/dis/homeis/Common/HisException.h:
 

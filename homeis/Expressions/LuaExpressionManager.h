@@ -8,20 +8,30 @@
 #ifndef LUAEXPRESSIONMANAGER_H_
 #define LUAEXPRESSIONMANAGER_H_
 #include <vector>
+#include <iostream>
+#include <algorithm>    // std::sort
+#include <string>
+#include <vector>
+
+#include <libxml/parser.h>
+#include <libxml/tree.h>
+
 #include "LuaExpression.h"
+#include "homeis/Common/HisCollectionBase.h"
+
 #include "homeis/Devices/Folder/HisDevFolderRoot.h"
 
-class LuaExpressionManager
+using namespace std;
+
+class LuaExpressionManager : public HisCollectionBase
 {
+	xmlDocPtr doc;       /* document pointer */
 	vector<LuaExpression*> expressions;
+	string fileName;
 public:
-	LuaExpressionManager(HisDevFolderRoot *rootFolder);
-	void Load();
-	void Save();
-	LuaExpression* Find(std::string expressionName);
+	LuaExpressionManager(string pFileName);
 	//schould be unique name
-	bool Add(LuaExpression* newExpression);
-	LuaExpression* CreateExpression(string name);
+	//bool Add(LuaExpression* newExpression);
 };
 
 

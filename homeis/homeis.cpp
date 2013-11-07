@@ -46,55 +46,55 @@ function loop() \
 	end \
 end ";
 
-bool running = true;
-
-int lua_finish(lua_State *) {
-	    running = false;
-	    printf("lua_finish called\n");
-	    return 0;
-	}
-
-	int lua_sleep(lua_State *L) {
-		int rtrn = lua_tointeger(L, -1);      /* Get the single number arg */
-	    printf("lua_sleep called %d ms\n",rtrn);
-	    return lua_yield(L,0);
-	}
+//bool running = true;
+//
+//int lua_finish(lua_State *) {
+//	    running = false;
+//	    printf("lua_finish called\n");
+//	    return 0;
+//	}
+//int rtrn;
+//	int lua_sleep(lua_State *L) {
+//		rtrn = lua_tointeger(L, -1);      /* Get the single number arg */
+//	    //printf("lua_sleep called %d ms\n",rtrn);
+//	    return lua_yield(L,1);
+//	}
 
 int main(int argc, char **argv)
 {
-	int status;
-	    lua_State* L = luaL_newstate();
-	    luaL_openlibs(L);
-
-	    lua_register(L, "sleep", lua_sleep);
-	    lua_register(L, "finish", lua_finish);
-	    status = luaL_dostring(L,code.c_str());
-	    if ( status != LUA_OK ) {
-	    	printf("isstring: %s\n", lua_tostring(L, -1));
-	    	return 0;
-	    }
-	    lua_pcall(L, 0, 0, 0);
-
-	    lua_State* cL = lua_newthread(L);
-
-	    lua_getglobal(cL, "loop");
-
-	    while (running) {
-
-	        status = lua_resume(cL,NULL,0);
-	        if (status == LUA_YIELD) {
-	            printf("loop yielding\n");
-	        } else {
-	            running=false; // you can't try to resume if it didn't yield
-	            // catch any errors below
-	            if (status == LUA_ERRRUN && lua_isstring(cL, -1)) {
-	                printf("isstring: %s\n", lua_tostring(cL, -1));
-	                lua_pop(cL, -1);
-	            }
-	        }
-	    }
-
-	    lua_close(L);
+//	int status;
+//	    lua_State* L = luaL_newstate();
+//	    luaL_openlibs(L);
+//
+//	    lua_register(L, "sleep", lua_sleep);
+//	    lua_register(L, "finish", lua_finish);
+//	    status = luaL_dostring(L,code.c_str());
+//	    if ( status != LUA_OK ) {
+//	    	printf("isstring: %s\n", lua_tostring(L, -1));
+//	    	return 0;
+//	    }
+//	    lua_pcall(L, 0, 0, 0);
+//
+//	    lua_State* cL = lua_newthread(L);
+//
+//	    lua_getglobal(cL, "loop");
+//
+//	    while (running) {
+//
+//	        status = lua_resume(cL,NULL,0);
+//	        if (status == LUA_YIELD) {
+//	            printf("loop yielding %d ms\n",rtrn);
+//	        } else {
+//	            running=false; // you can't try to resume if it didn't yield
+//	            // catch any errors below
+//	            if (status == LUA_ERRRUN && lua_isstring(cL, -1)) {
+//	                printf("isstring: %s\n", lua_tostring(cL, -1));
+//	                lua_pop(cL, -1);
+//	            }
+//	        }
+//	    }
+//
+//	    lua_close(L);
 
 	HomeIsServer server("/dev/ttyAMA0",81);
 	server.Start();

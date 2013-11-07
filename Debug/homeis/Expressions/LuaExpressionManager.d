@@ -1,7 +1,6 @@
 homeis/Expressions/LuaExpressionManager.d: \
  ../homeis/Expressions/LuaExpressionManager.cpp \
  ../homeis/Expressions/LuaExpressionManager.h \
- ../homeis/Expressions/LuaExpression.h \
  /root/raspberrypi/libxml2-2.8.0/include/libxml2/libxml/parser.h \
  /root/raspberrypi/libxml2-2.8.0/include/libxml2/libxml/xmlversion.h \
  /root/raspberrypi/libxml2-2.8.0/include/libxml2/libxml/xmlexports.h \
@@ -23,6 +22,7 @@ homeis/Expressions/LuaExpressionManager.d: \
  /root/raspberrypi/libxml2-2.8.0/include/libxml2/libxml/SAX2.h \
  /root/raspberrypi/libxml2-2.8.0/include/libxml2/libxml/xmlmemory.h \
  /root/raspberrypi/libxml2-2.8.0/include/libxml2/libxml/threads.h \
+ ../homeis/Expressions/LuaExpression.h \
  /root/raspiworkspace/dis/homeis/Expressions/Expression.h \
  /root/raspiworkspace/dis/homeis/Common/HisBase.h \
  /root/raspiworkspace/dis/homeis/Common/CUUID.h \
@@ -84,11 +84,10 @@ homeis/Expressions/LuaExpressionManager.d: \
  /root/raspiworkspace/dis/lua-5.2.1/src/lauxlib.h \
  /root/raspiworkspace/dis/lua-5.2.1/src/lua.h \
  /root/raspiworkspace/dis/lua-5.2.1/src/lualib.h \
+ /root/raspiworkspace/dis/homeis/Common/HisCollectionBase.h \
  /root/raspiworkspace/dis/homeis/Devices/Folder/HisDevFolderRoot.h
 
 ../homeis/Expressions/LuaExpressionManager.h:
-
-../homeis/Expressions/LuaExpression.h:
 
 /root/raspberrypi/libxml2-2.8.0/include/libxml2/libxml/parser.h:
 
@@ -131,6 +130,8 @@ homeis/Expressions/LuaExpressionManager.d: \
 /root/raspberrypi/libxml2-2.8.0/include/libxml2/libxml/xmlmemory.h:
 
 /root/raspberrypi/libxml2-2.8.0/include/libxml2/libxml/threads.h:
+
+../homeis/Expressions/LuaExpression.h:
 
 /root/raspiworkspace/dis/homeis/Expressions/Expression.h:
 
@@ -253,5 +254,7 @@ homeis/Expressions/LuaExpressionManager.d: \
 /root/raspiworkspace/dis/lua-5.2.1/src/lua.h:
 
 /root/raspiworkspace/dis/lua-5.2.1/src/lualib.h:
+
+/root/raspiworkspace/dis/homeis/Common/HisCollectionBase.h:
 
 /root/raspiworkspace/dis/homeis/Devices/Folder/HisDevFolderRoot.h:

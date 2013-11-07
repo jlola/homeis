@@ -5,15 +5,18 @@
 # Add inputs and outputs from these tool invocations to the build variables 
 CPP_SRCS += \
 ../homeis/Common/CUUID.cpp \
-../homeis/Common/HisBase.cpp 
+../homeis/Common/HisBase.cpp \
+../homeis/Common/HisCollectionBase.cpp 
 
 OBJS += \
 ./homeis/Common/CUUID.o \
-./homeis/Common/HisBase.o 
+./homeis/Common/HisBase.o \
+./homeis/Common/HisCollectionBase.o 
 
 CPP_DEPS += \
 ./homeis/Common/CUUID.d \
-./homeis/Common/HisBase.d 
+./homeis/Common/HisBase.d \
+./homeis/Common/HisCollectionBase.d 
 
 
 # Each subdirectory must supply rules for building sources it contributes

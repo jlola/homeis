@@ -38,7 +38,12 @@ using namespace std;
 class LuaExpression : public HisBase, public IExpression
 {
 private:
+	bool inEvalFunc;
+	int64_t nextTime;
+	bool runningAllowed;
 	bool running;
+	lua_State* L;
+	lua_State* cL;
 	string lastEvaluateError;
 	HisDevFolder* folder;
 	HisDevices* devices;
@@ -57,6 +62,7 @@ private:
 	void StartListening();
 	void StopListening();
 public:
+	static int delays;
 	string GetLastEvaluateError();
 	LuaExpression(HisDevFolder* folder,HisDevices* hisDevices, string expressionName);
 	LuaExpression(xmlNodePtr pnode,HisDevices* hisDevices);

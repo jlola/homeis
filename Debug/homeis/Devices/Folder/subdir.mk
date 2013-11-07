@@ -6,17 +6,20 @@
 CPP_SRCS += \
 ../homeis/Devices/Folder/HisDevFolder.cpp \
 ../homeis/Devices/Folder/HisDevFolderRoot.cpp \
-../homeis/Devices/Folder/HisDevValueId.cpp 
+../homeis/Devices/Folder/HisDevValueId.cpp \
+../homeis/Devices/Folder/HisExpressionIdHolder.cpp 
 
 OBJS += \
 ./homeis/Devices/Folder/HisDevFolder.o \
 ./homeis/Devices/Folder/HisDevFolderRoot.o \
-./homeis/Devices/Folder/HisDevValueId.o 
+./homeis/Devices/Folder/HisDevValueId.o \
+./homeis/Devices/Folder/HisExpressionIdHolder.o 
 
 CPP_DEPS += \
 ./homeis/Devices/Folder/HisDevFolder.d \
 ./homeis/Devices/Folder/HisDevFolderRoot.d \
-./homeis/Devices/Folder/HisDevValueId.d 
+./homeis/Devices/Folder/HisDevValueId.d \
+./homeis/Devices/Folder/HisExpressionIdHolder.d 
 
 
 # Each subdirectory must supply rules for building sources it contributes
