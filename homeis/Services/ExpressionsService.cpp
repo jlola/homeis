@@ -108,6 +108,10 @@ void ExpressionService::ExpressionToJson(LuaExpression *pExpression, Document & 
 	jsonvalue.SetString(strvalue.c_str(),strvalue.length(),respjsondoc.GetAllocator());
 	d.AddMember("expression",jsonvalue, respjsondoc.GetAllocator());
 
+	strvalue = pExpression->GetLastEvaluateError();
+	jsonvalue.SetString(strvalue.c_str(),strvalue.length(),respjsondoc.GetAllocator());
+	d.AddMember("errormessage",jsonvalue, respjsondoc.GetAllocator());
+
 	strvalue = pExpression->GetDescription();
 	jsonvalue.SetString(strvalue.c_str(),strvalue.length(),respjsondoc.GetAllocator());
 	d.AddMember("description",jsonvalue, respjsondoc.GetAllocator());
@@ -126,6 +130,50 @@ void ExpressionService::ExpressionToJson(LuaExpression *pExpression, Document & 
 		d.AddMember("parentId",jsonvalue, respjsondoc.GetAllocator());
 	}
 	respjsondoc.PushBack(d, respjsondoc.GetAllocator());
+}
+
+bool ExpressionService::DeleteExpression(string strid,string & message)
+{
+	if (strid.empty()) {
+		message = "DeleteExpression | Id is empty. Can not be deleted";
+		return false;
+	}
+
+
+	HisDevFolder* rootFolder = root->GetFolder();
+	if(!strid.empty())
+	{
+		CUUID id = CUUID::Parse(strid);
+		LuaExpression* expression = dynamic_cast<LuaExpression*>(rootFolder->Find(id));
+		if (expression!=NULL)
+		{
+			if (!expression->GetRunning())
+			{
+				HisDevFolder* parentFolder = dynamic_cast<HisDevFolder*>(expression->GetParent());
+				if (parentFolder!=NULL)
+				{
+					parentFolder->Remove(expression->GetRecordId());
+					delete(expression);
+					root->Save();
+					return true;
+				}
+				else
+				{
+					message = "DeleteExpression | Parent folder is empty.";
+				}
+			}
+			else
+			{
+				message = "DeleteExpression | Expression is running. Can not be deleted.";
+			}
+		}
+		else
+		{
+			message = "DeleteExpression | Expression not found";
+		}
+	}
+
+	return false;
 }
 
 bool ExpressionService::CreateOrUpdateExpression(string strJson)
@@ -166,7 +214,7 @@ bool ExpressionService::CreateOrUpdateExpression(string strJson)
 		}
 		else
 		{
-			expressionObj = new LuaExpression(parent,devices,name);
+			expressionObj = new LuaExpression(parent,devices,name,NULL);
 			parent->Add(expressionObj);
 			saveReq = true;
 		}
@@ -244,6 +292,20 @@ void ExpressionService::render_PUT(const http_request& req, http_response** res)
 
 void ExpressionService::render_DELETE(const http_request& req, http_response** res)
 {
-
+	string message = "";
+	if (req.get_user()=="a" && req.get_pass()=="a")
+	{
+		string strid = req.get_arg("id");
+		if (DeleteExpression(strid,message))
+		{
+			*res = new http_string_response("", 200, "application/json");
+			return;
+		}
+	}
+	else
+	{
+		message = "ExpressionDelete | Autentication error";
+	}
+	*res = new http_string_response(message.c_str(), 204, "application/json");
 }
 

@@ -101,16 +101,22 @@ homeis/HomeIsServer.d: ../homeis/HomeIsServer.cpp \
  /root/raspiworkspace/dis/rapidjson/filestream.h \
  /root/raspiworkspace/dis/homeis/Devices/Folder/HisDevFolder.h \
  /root/raspiworkspace/dis/homeis/Devices/Folder/HisDevFolderRoot.h \
- ../homeis/Services/ExpressionsService.h \
- /root/raspiworkspace/dis/homeis/Expressions/LuaExpression.h \
- /root/raspiworkspace/dis/homeis/Expressions/Expression.h \
+ ../homeis/Expressions/LuaExpression.h \
+ /root/raspiworkspace/dis/homeis/Expressions/IExpression.h \
  /root/raspiworkspace/dis/homeis/Devices/HisDevices.h \
  /root/raspiworkspace/dis/homeis/Devices/ValueEventArgs.h \
+ /root/raspiworkspace/dis/homeis/Expressions/ExpressionRuntime.h \
+ /root/raspiworkspace/dis/onewirelibrary/OneWire++/threadOW++/LOW_thread_mutex.h \
+ /root/raspiworkspace/dis/onewirelibrary/OneWire++/threadOW++/LOW_thread_Factory.h \
+ /root/raspiworkspace/dis/homeis/Expressions/IExpression.h \
  /root/raspiworkspace/dis/lua-5.2.1/src/lua.h \
  /root/raspiworkspace/dis/lua-5.2.1/src/luaconf.h \
  /root/raspiworkspace/dis/lua-5.2.1/src/lauxlib.h \
  /root/raspiworkspace/dis/lua-5.2.1/src/lua.h \
  /root/raspiworkspace/dis/lua-5.2.1/src/lualib.h \
+ /root/raspiworkspace/dis/homeis/Common/HisLock.h \
+ ../homeis/Services/ExpressionsService.h \
+ /root/raspiworkspace/dis/homeis/Expressions/LuaExpression.h \
  /root/raspiworkspace/dis/homeis/Devices/HisDevFactory.h \
  /root/raspiworkspace/dis/homeis/Devices/HisDevTemp18B20.h \
  /root/raspiworkspace/dis/onewirelibrary/OneWire++/deviceOW++/LOW_devDS1820.h \
@@ -129,7 +135,8 @@ homeis/HomeIsServer.d: ../homeis/HomeIsServer.cpp \
  /root/raspiworkspace/dis/onewirelibrary/OneWire++/portOW++/LOW_portUsb_Factory.h \
  /root/raspiworkspace/dis/onewirelibrary/OneWire++/portOW++/LOW_portUsbDevice.h \
  /root/raspiworkspace/dis/onewirelibrary/OneWire++/LOW_helper_msglog.h \
- /root/raspiworkspace/dis/onewirelibrary/OneWire++/LOW_objectSynchronizer.h
+ /root/raspiworkspace/dis/onewirelibrary/OneWire++/LOW_objectSynchronizer.h \
+ ../homeis/Expressions/ExpressionRuntime.h
 
 /root/raspiworkspace/dis/homeis/Devices/HisDevices.h:
 
@@ -337,15 +344,21 @@ homeis/HomeIsServer.d: ../homeis/HomeIsServer.cpp \
 
 /root/raspiworkspace/dis/homeis/Devices/Folder/HisDevFolderRoot.h:
 
-../homeis/Services/ExpressionsService.h:
+../homeis/Expressions/LuaExpression.h:
 
-/root/raspiworkspace/dis/homeis/Expressions/LuaExpression.h:
-
-/root/raspiworkspace/dis/homeis/Expressions/Expression.h:
+/root/raspiworkspace/dis/homeis/Expressions/IExpression.h:
 
 /root/raspiworkspace/dis/homeis/Devices/HisDevices.h:
 
 /root/raspiworkspace/dis/homeis/Devices/ValueEventArgs.h:
+
+/root/raspiworkspace/dis/homeis/Expressions/ExpressionRuntime.h:
+
+/root/raspiworkspace/dis/onewirelibrary/OneWire++/threadOW++/LOW_thread_mutex.h:
+
+/root/raspiworkspace/dis/onewirelibrary/OneWire++/threadOW++/LOW_thread_Factory.h:
+
+/root/raspiworkspace/dis/homeis/Expressions/IExpression.h:
 
 /root/raspiworkspace/dis/lua-5.2.1/src/lua.h:
 
@@ -356,6 +369,12 @@ homeis/HomeIsServer.d: ../homeis/HomeIsServer.cpp \
 /root/raspiworkspace/dis/lua-5.2.1/src/lua.h:
 
 /root/raspiworkspace/dis/lua-5.2.1/src/lualib.h:
+
+/root/raspiworkspace/dis/homeis/Common/HisLock.h:
+
+../homeis/Services/ExpressionsService.h:
+
+/root/raspiworkspace/dis/homeis/Expressions/LuaExpression.h:
 
 /root/raspiworkspace/dis/homeis/Devices/HisDevFactory.h:
 
@@ -394,3 +413,5 @@ homeis/HomeIsServer.d: ../homeis/HomeIsServer.cpp \
 /root/raspiworkspace/dis/onewirelibrary/OneWire++/LOW_helper_msglog.h:
 
 /root/raspiworkspace/dis/onewirelibrary/OneWire++/LOW_objectSynchronizer.h:
+
+../homeis/Expressions/ExpressionRuntime.h:

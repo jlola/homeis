@@ -6,17 +6,20 @@
 CPP_SRCS += \
 ../homeis/Common/CUUID.cpp \
 ../homeis/Common/HisBase.cpp \
-../homeis/Common/HisCollectionBase.cpp 
+../homeis/Common/HisCollectionBase.cpp \
+../homeis/Common/HisLock.cpp 
 
 OBJS += \
 ./homeis/Common/CUUID.o \
 ./homeis/Common/HisBase.o \
-./homeis/Common/HisCollectionBase.o 
+./homeis/Common/HisCollectionBase.o \
+./homeis/Common/HisLock.o 
 
 CPP_DEPS += \
 ./homeis/Common/CUUID.d \
 ./homeis/Common/HisBase.d \
-./homeis/Common/HisCollectionBase.d 
+./homeis/Common/HisCollectionBase.d \
+./homeis/Common/HisLock.d 
 
 
 # Each subdirectory must supply rules for building sources it contributes

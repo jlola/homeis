@@ -2,7 +2,7 @@
  * HisDevices.h
  *
  *  Created on: Feb 16, 2013
- *      Author: root
+ *      Author: Josef Lola
  */
 
 #ifndef HISDEVICES_H_

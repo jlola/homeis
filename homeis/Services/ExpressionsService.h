@@ -17,6 +17,7 @@
 #include "homeis/Devices/Folder/HisDevFolderRoot.h"
 #include "homeis/Devices/Folder/HisDevValueId.h"
 #include "VirtualDevices/HisDevVirtual.h"
+#include "homeis/Expressions/IExpression.h"
 #include "homeis/Expressions/LuaExpression.h"
 
 using namespace std;
@@ -32,6 +33,7 @@ private:
 public:
 	ExpressionService(HisDevFolderRoot* folder);
 	~ExpressionService(void);
+	bool DeleteExpression(string strid,string & message);
 	void ExpressionToJson(LuaExpression *pExpression, Document & respjsondoc);
 	void render_GET(const http_request&, http_response**);
 	void render_POST(const http_request& r, http_response** res);

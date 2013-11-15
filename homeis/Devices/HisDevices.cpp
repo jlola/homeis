@@ -2,7 +2,7 @@
  * HisDevices.cpp
  *
  *  Created on: Feb 16, 2013
- *      Author: root
+ *      Author: Josef Lola
  */
 
 #include <iostream>
@@ -250,6 +250,7 @@ void HisDevices::Refresh()
 	for(uint i=0;i<devices.size();i++)
 	{
 		devices[i]->Refresh();
+		usleep(1000);
 	}
 }
 

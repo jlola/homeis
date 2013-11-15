@@ -98,6 +98,10 @@ homeis/homeis.d: ../homeis/homeis.cpp \
  /root/raspiworkspace/dis/homeis/Devices/Folder/HisDevFolderRoot.h \
  /root/raspiworkspace/dis/homeis/Devices/Folder/HisDevFolder.h \
  /root/raspiworkspace/dis/homeis/Devices/Folder/HisDevValueId.h \
+ ../homeis/Expressions/ExpressionRuntime.h \
+ /root/raspiworkspace/dis/onewirelibrary/OneWire++/threadOW++/LOW_thread_mutex.h \
+ /root/raspiworkspace/dis/onewirelibrary/OneWire++/threadOW++/LOW_thread_Factory.h \
+ ../homeis/Expressions/IExpression.h \
  /root/raspiworkspace/dis/homeis/Helpers/File.h ../homeis/Common/CUUID.h \
  /root/raspiworkspace/dis/lua-5.2.1/src/lua.h \
  /root/raspiworkspace/dis/lua-5.2.1/src/luaconf.h \
@@ -302,6 +306,14 @@ homeis/homeis.d: ../homeis/homeis.cpp \
 /root/raspiworkspace/dis/homeis/Devices/Folder/HisDevFolder.h:
 
 /root/raspiworkspace/dis/homeis/Devices/Folder/HisDevValueId.h:
+
+../homeis/Expressions/ExpressionRuntime.h:
+
+/root/raspiworkspace/dis/onewirelibrary/OneWire++/threadOW++/LOW_thread_mutex.h:
+
+/root/raspiworkspace/dis/onewirelibrary/OneWire++/threadOW++/LOW_thread_Factory.h:
+
+../homeis/Expressions/IExpression.h:
 
 /root/raspiworkspace/dis/homeis/Helpers/File.h:
 

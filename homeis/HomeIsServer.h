@@ -2,7 +2,7 @@
  * HomeIsServer.h
  *
  *  Created on: Feb 17, 2013
- *      Author: root
+ *      Author: Josef Lola
  */
 
 #ifndef HOMEISSERVER_H_
@@ -19,6 +19,7 @@
 #include "LOW_devDS1820.h"
 #include <httpserver.hpp>
 #include "homeis/Devices/Folder/HisDevFolderRoot.h"
+#include "Expressions/ExpressionRuntime.h"
 
 using namespace httpserver;
 using namespace std;
@@ -29,6 +30,7 @@ class HomeIsServer
 	LOW_network  oneWireNet;
 	HisDevRuntime* runtime;
 	HisDevFolderRoot* rootFolder;
+	ExpressionRuntime* expressionRuntime;
 	webserver ws_i;
 	HisDevices* devs;
 	bool InitOneWireLib(string port);

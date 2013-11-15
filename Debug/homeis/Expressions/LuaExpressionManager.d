@@ -23,10 +23,14 @@ homeis/Expressions/LuaExpressionManager.d: \
  /root/raspberrypi/libxml2-2.8.0/include/libxml2/libxml/xmlmemory.h \
  /root/raspberrypi/libxml2-2.8.0/include/libxml2/libxml/threads.h \
  ../homeis/Expressions/LuaExpression.h \
- /root/raspiworkspace/dis/homeis/Expressions/Expression.h \
- /root/raspiworkspace/dis/homeis/Common/HisBase.h \
+ /root/raspiworkspace/dis/homeis/Expressions/IExpression.h \
+ /root/raspiworkspace/dis/srutil/event/event.hpp \
+ /root/raspiworkspace/dis/srutil/delegate/delegate.hpp \
+ /root/raspiworkspace/dis/srutil/delegate/detail/delegate_list.hpp \
+ /root/raspiworkspace/dis/srutil/delegate/detail/delegate_template.hpp \
  /root/raspiworkspace/dis/homeis/Common/CUUID.h \
  /root/raspiworkspace/dis/uuid/uuid.h \
+ /root/raspiworkspace/dis/homeis/Common/HisBase.h \
  /root/raspiworkspace/dis/rapidjson/document.h \
  /root/raspiworkspace/dis/rapidjson/reader.h \
  /root/raspiworkspace/dis/rapidjson/rapidjson.h \
@@ -72,18 +76,19 @@ homeis/Expressions/LuaExpressionManager.d: \
  /root/raspiworkspace/dis/homeis/Helpers/HisDateTime.h \
  /root/raspiworkspace/dis/homeis/Devices/EDataSource.h \
  /root/raspiworkspace/dis/homeis/Devices/HisDevValue.h \
- /root/raspiworkspace/dis/srutil/event/event.hpp \
- /root/raspiworkspace/dis/srutil/delegate/delegate.hpp \
- /root/raspiworkspace/dis/srutil/delegate/detail/delegate_list.hpp \
- /root/raspiworkspace/dis/srutil/delegate/detail/delegate_template.hpp \
  /root/raspiworkspace/dis/homeis/Helpers/converter.h \
  /root/raspiworkspace/dis/homeis/Devices/EHisDevDirection.h \
  /root/raspiworkspace/dis/homeis/Devices/ValueEventArgs.h \
+ /root/raspiworkspace/dis/homeis/Expressions/ExpressionRuntime.h \
+ /root/raspiworkspace/dis/onewirelibrary/OneWire++/threadOW++/LOW_thread_mutex.h \
+ /root/raspiworkspace/dis/onewirelibrary/OneWire++/threadOW++/LOW_thread_Factory.h \
+ /root/raspiworkspace/dis/homeis/Expressions/IExpression.h \
  /root/raspiworkspace/dis/lua-5.2.1/src/lua.h \
  /root/raspiworkspace/dis/lua-5.2.1/src/luaconf.h \
  /root/raspiworkspace/dis/lua-5.2.1/src/lauxlib.h \
  /root/raspiworkspace/dis/lua-5.2.1/src/lua.h \
  /root/raspiworkspace/dis/lua-5.2.1/src/lualib.h \
+ /root/raspiworkspace/dis/homeis/Common/HisLock.h \
  /root/raspiworkspace/dis/homeis/Common/HisCollectionBase.h \
  /root/raspiworkspace/dis/homeis/Devices/Folder/HisDevFolderRoot.h
 
@@ -133,13 +138,21 @@ homeis/Expressions/LuaExpressionManager.d: \
 
 ../homeis/Expressions/LuaExpression.h:
 
-/root/raspiworkspace/dis/homeis/Expressions/Expression.h:
+/root/raspiworkspace/dis/homeis/Expressions/IExpression.h:
 
-/root/raspiworkspace/dis/homeis/Common/HisBase.h:
+/root/raspiworkspace/dis/srutil/event/event.hpp:
+
+/root/raspiworkspace/dis/srutil/delegate/delegate.hpp:
+
+/root/raspiworkspace/dis/srutil/delegate/detail/delegate_list.hpp:
+
+/root/raspiworkspace/dis/srutil/delegate/detail/delegate_template.hpp:
 
 /root/raspiworkspace/dis/homeis/Common/CUUID.h:
 
 /root/raspiworkspace/dis/uuid/uuid.h:
+
+/root/raspiworkspace/dis/homeis/Common/HisBase.h:
 
 /root/raspiworkspace/dis/rapidjson/document.h:
 
@@ -231,19 +244,19 @@ homeis/Expressions/LuaExpressionManager.d: \
 
 /root/raspiworkspace/dis/homeis/Devices/HisDevValue.h:
 
-/root/raspiworkspace/dis/srutil/event/event.hpp:
-
-/root/raspiworkspace/dis/srutil/delegate/delegate.hpp:
-
-/root/raspiworkspace/dis/srutil/delegate/detail/delegate_list.hpp:
-
-/root/raspiworkspace/dis/srutil/delegate/detail/delegate_template.hpp:
-
 /root/raspiworkspace/dis/homeis/Helpers/converter.h:
 
 /root/raspiworkspace/dis/homeis/Devices/EHisDevDirection.h:
 
 /root/raspiworkspace/dis/homeis/Devices/ValueEventArgs.h:
+
+/root/raspiworkspace/dis/homeis/Expressions/ExpressionRuntime.h:
+
+/root/raspiworkspace/dis/onewirelibrary/OneWire++/threadOW++/LOW_thread_mutex.h:
+
+/root/raspiworkspace/dis/onewirelibrary/OneWire++/threadOW++/LOW_thread_Factory.h:
+
+/root/raspiworkspace/dis/homeis/Expressions/IExpression.h:
 
 /root/raspiworkspace/dis/lua-5.2.1/src/lua.h:
 
@@ -254,6 +267,8 @@ homeis/Expressions/LuaExpressionManager.d: \
 /root/raspiworkspace/dis/lua-5.2.1/src/lua.h:
 
 /root/raspiworkspace/dis/lua-5.2.1/src/lualib.h:
+
+/root/raspiworkspace/dis/homeis/Common/HisLock.h:
 
 /root/raspiworkspace/dis/homeis/Common/HisCollectionBase.h:
 

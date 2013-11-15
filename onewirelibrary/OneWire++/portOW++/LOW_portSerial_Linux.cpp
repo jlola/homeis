@@ -316,7 +316,7 @@ void LOW_portSerial_Linux::tty_write( const uint8_t inWriteByte)
     written = write( serialFD, &inWriteByte, 1);
     if ( written == -1 )
       throw portSerial_error( errno, "Error writing single byte to TTY", __FILE__, __LINE__);
-    usleep(100);
+    //usleep(100);
     //tcdrain( serialFD);
   //}
   //while ( written != 1 );

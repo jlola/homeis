@@ -79,6 +79,10 @@ homeis/Common/HisBase.d: ../homeis/Common/HisBase.cpp \
  /root/raspiworkspace/dis/homeis/Devices/HisDevIO2413.h \
  /root/raspiworkspace/dis/onewirelibrary/OneWire++/deviceOW++/LOW_devDS2413.h \
  /root/raspiworkspace/dis/homeis/Devices/HisDevices.h \
+ /root/raspiworkspace/dis/homeis/Expressions/ExpressionRuntime.h \
+ /root/raspiworkspace/dis/onewirelibrary/OneWire++/threadOW++/LOW_thread_mutex.h \
+ /root/raspiworkspace/dis/onewirelibrary/OneWire++/threadOW++/LOW_thread_Factory.h \
+ /root/raspiworkspace/dis/homeis/Expressions/IExpression.h \
  /root/raspiworkspace/dis/homeis/Devices/Folder/HisDevFolderRoot.h \
  /root/raspiworkspace/dis/homeis/Devices/Folder/HisDevFolder.h \
  /root/raspiworkspace/dis/homeis/Devices/Folder/HisDevValueId.h
@@ -242,6 +246,14 @@ homeis/Common/HisBase.d: ../homeis/Common/HisBase.cpp \
 /root/raspiworkspace/dis/onewirelibrary/OneWire++/deviceOW++/LOW_devDS2413.h:
 
 /root/raspiworkspace/dis/homeis/Devices/HisDevices.h:
+
+/root/raspiworkspace/dis/homeis/Expressions/ExpressionRuntime.h:
+
+/root/raspiworkspace/dis/onewirelibrary/OneWire++/threadOW++/LOW_thread_mutex.h:
+
+/root/raspiworkspace/dis/onewirelibrary/OneWire++/threadOW++/LOW_thread_Factory.h:
+
+/root/raspiworkspace/dis/homeis/Expressions/IExpression.h:
 
 /root/raspiworkspace/dis/homeis/Devices/Folder/HisDevFolderRoot.h:
 

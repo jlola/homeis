@@ -12,6 +12,7 @@
 #include "HisDevTemp18B20.h"
 #include "HisDevIO2413.h"
 #include "homeis/Devices/HisDevices.h"
+#include "homeis/Expressions/ExpressionRuntime.h"
 #include "Folder/HisDevFolderRoot.h"
 
 class HisDevFactory
@@ -20,6 +21,7 @@ private:
 	static HisDevFactory instance;
 	HisDevices* devices;
 	HisDevFolderRoot *rootFolder;
+	ExpressionRuntime* expressionRuntime;
 
 	HisDevFactory();
 	virtual ~HisDevFactory();
@@ -29,6 +31,8 @@ public:
 	void SetDevices(HisDevices* pdevices);
 
 	void SetRooFolder(HisDevFolderRoot* proot);
+
+	void SetExpressionRuntime(ExpressionRuntime *pExpressionRuntime);
 
 	HisBase *Create(xmlNodePtr node);
 

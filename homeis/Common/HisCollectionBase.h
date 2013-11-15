@@ -23,8 +23,9 @@ protected:
 public:
 	size_t FindIndex(CUUID Id);
 	void Delete(size_t index);
-	void Add(HisBase *hisBase);
-	void Load();
+	virtual void Add(HisBase *hisBase);
+	virtual void Load();
+	virtual void Save();
 	size_t Size();
 	HisCollectionBase(std::string fileName);
 	HisBase *operator[](size_t i);

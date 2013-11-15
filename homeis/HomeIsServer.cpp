@@ -2,7 +2,7 @@
  * HomeIsServer.cpp
  *
  *  Created on: Feb 17, 2013
- *      Author: root
+ *      Author: Josef Lola
  */
 
 //#include "stdafx.h"
@@ -26,8 +26,10 @@
 #include "Services/FileController.h"
 #include "Services/OneWireDevicesService.h"
 #include "Services/FoldersService.h"
+#include "Expressions/LuaExpression.h"
 #include "Services/ExpressionsService.h"
 #include "HisDevFactory.h"
+
 //#include "OneWireDevicesService.h"
 //#include "EchoService.h"
 //#include "LogInService.h"
@@ -85,6 +87,7 @@ void HomeIsServer::InitWebServer()
 	ws_i.register_resource(string("api/expression/folderrun/{id}"), &expressionService, true);
 	ws_i.register_resource(string("api/expression/folder/{id}"), &expressionService, true);
 	ws_i.register_resource(string("api/expression/{id}"), &expressionService, true);
+	ws_i.register_resource(string("api/expression"), &expressionService, true);
 
 	ws_i.register_resource(string("api/folders"), &foldersService, true);
 	ws_i.register_resource(string("api/folder"), &foldersService, true);
@@ -98,15 +101,19 @@ bool HomeIsServer::InitHisDevices()
 {
 	devs = new HisDevices(File::getexepath() + "/devices.xml",&oneWireNet);
 	devs->Load();
+	devs->AddScanned();
 	HisDevFactory::Instance().SetDevices(devs);
 
-	//devs->Refresh();
-	devs->AddScanned();
+	expressionRuntime = new ExpressionRuntime();
+	HisDevFactory::Instance().SetExpressionRuntime(expressionRuntime);
+
 	rootFolder = new HisDevFolderRoot(File::getexepath() + "/folders.xml");
 	rootFolder->Load();
 	HisDevFactory::Instance().SetRooFolder(rootFolder);
 
 	runtime = new HisDevRuntime(*devs);
+
+	expressionRuntime->Start();
 	runtime->Start();
 	return true;
 }

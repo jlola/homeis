@@ -35,20 +35,24 @@ extern "C" {
 
 #include "LuaExpression.h"
 
-#define EXPRESSION_FOLDER "Expressions"
 
-LuaExpression::LuaExpression(xmlNodePtr pnode,HisDevices* hisDevices) :
+
+LuaExpression::LuaExpression(xmlNodePtr pnode,HisDevices* hisDevices,ExpressionRuntime *pExpressionRuntime) :
 	HisBase(pnode)
 {
+	mutex = HisLock::CreateMutex();
+	expressionRuntime = pExpressionRuntime;
 	devices = hisDevices;
 	inEvalFunc = false;
 	runningAllowed = false;
 	CreateFolder();
 }
 
-LuaExpression::LuaExpression(HisDevFolder* pfolder,HisDevices* hisDevices, string expressionName) :
+LuaExpression::LuaExpression(HisDevFolder* pfolder,HisDevices* hisDevices, string expressionName,ExpressionRuntime *pExpressionRuntime) :
 	HisBase()
 {
+	mutex = HisLock::CreateMutex();
+	expressionRuntime = pExpressionRuntime;
 	inEvalFunc = false;
 	runningAllowed = false;
 	if (pfolder==NULL)
@@ -59,6 +63,11 @@ LuaExpression::LuaExpression(HisDevFolder* pfolder,HisDevices* hisDevices, strin
 	folder = pfolder;
 	devices = hisDevices;
 	SetName(expressionName);
+}
+
+CUUID LuaExpression::GetRecordId()
+{
+	return HisBase::GetRecordId();
 }
 
 void LuaExpression::SetName(string name)
@@ -78,11 +87,20 @@ string LuaExpression::GetLastEvaluateError()
 
 void LuaExpression::SetRunning(bool blRunning)
 {
+	HisLock lock(mutex);
+
 	if (runningAllowed!=blRunning)
 	{
-		if (blRunning) StartListening();
-		else StopListening();
 		runningAllowed = blRunning;
+		if (blRunning) {
+			//StartListening();
+			expressionRuntime->Add(this);
+		}
+		else
+		{
+			//StopListening();
+			expressionRuntime->Remove(this);
+		}
 	}
 }
 
@@ -400,7 +418,7 @@ int LuaExpression::delays;
 
 int lua_sleep(lua_State *L) {
 	LuaExpression::delays = lua_tointeger(L, -1);      /* Get the single number arg */
-    printf("lua_sleep called %d ms\n",LuaExpression::delays);
+    printf("lua_sleep called %d s\n",LuaExpression::delays);
     return lua_yield(L,0);
 }
 
@@ -412,6 +430,7 @@ bool LuaExpression::Evaluate()
 
 	if (!running && runningAllowed)
 	{
+		lastEvaluateError.clear();
 		LuaExpression::delays = -1;
 		nextTime = 0;
 		/* initialize Lua */
@@ -421,6 +440,7 @@ bool LuaExpression::Evaluate()
 		luaL_openlibs(L);
 
 		lua_register(L, "sleep", lua_sleep);
+		lua_register(L, "delay", lua_sleep);
 
 		/* add code to function */
 		string code = GetLuaCodeInFuncion("runExpression",GetFileName(GetName()));
@@ -430,7 +450,9 @@ bool LuaExpression::Evaluate()
 		{
 			lastEvaluateError = StringBuilder::Format("Error load Lua script: %s\n",lua_tostring(L, -1));
 			CLogger::Error(lastEvaluateError.c_str());
-			throw HisException(lastEvaluateError);
+			//throw HisException(lastEvaluateError);
+			inEvalFunc = false;
+			return false;
 		}
 
 		/* set golabl variables */
@@ -558,4 +580,9 @@ void LuaExpression::DoInternalLoad(xmlNodePtr & node)
 xmlChar* LuaExpression::GetNodeNameInternal()
 {
 	return BAD_CAST NODE_EXPRESSION;
+}
+
+LuaExpression::~LuaExpression()
+{
+
 }

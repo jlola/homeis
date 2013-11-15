@@ -32,6 +32,21 @@ HisBase *HisCollectionBase::operator[](size_t i)
 	return NULL;
 }
 
+void HisCollectionBase::Save()
+{
+	for(size_t i=0;i<items.size();i++)
+	{
+		items[i]->Save();
+	}
+
+	FILE* f = fopen(fileName.c_str(),"w");
+	if (f != NULL)
+	{
+		xmlDocDump( f, doc);
+		fclose( f );
+	}
+}
+
 void HisCollectionBase::Load()
 {
 	xmlNodePtr root_node = NULL;/* node pointers */
@@ -46,7 +61,6 @@ void HisCollectionBase::Load()
 			this->Delete(i);
 		}
 	}
-	//network->searchDevices<LOW_device>(false);
 
 	if (doc!=NULL)
 	{

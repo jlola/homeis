@@ -73,17 +73,22 @@ homeis/Devices/HisDevFactory.d: ../homeis/Devices/HisDevFactory.cpp \
  ../homeis/Devices/HisDallas.h ../homeis/Devices/HisDevIO2413.h \
  /root/raspiworkspace/dis/onewirelibrary/OneWire++/deviceOW++/LOW_devDS2413.h \
  /root/raspiworkspace/dis/homeis/Expressions/LuaExpression.h \
- /root/raspiworkspace/dis/homeis/Expressions/Expression.h \
+ /root/raspiworkspace/dis/homeis/Expressions/IExpression.h \
  /root/raspiworkspace/dis/homeis/Devices/Folder/HisDevFolder.h \
  /root/raspiworkspace/dis/homeis/Devices/Folder/HisDevValueId.h \
  /root/raspiworkspace/dis/homeis/Devices/HisDevices.h \
  /root/raspiworkspace/dis/homeis/Devices/HisDevBase.h \
  /root/raspiworkspace/dis/homeis/Devices/ValueEventArgs.h \
+ /root/raspiworkspace/dis/homeis/Expressions/ExpressionRuntime.h \
+ /root/raspiworkspace/dis/onewirelibrary/OneWire++/threadOW++/LOW_thread_mutex.h \
+ /root/raspiworkspace/dis/onewirelibrary/OneWire++/threadOW++/LOW_thread_Factory.h \
+ /root/raspiworkspace/dis/homeis/Expressions/IExpression.h \
  /root/raspiworkspace/dis/lua-5.2.1/src/lua.h \
  /root/raspiworkspace/dis/lua-5.2.1/src/luaconf.h \
  /root/raspiworkspace/dis/lua-5.2.1/src/lauxlib.h \
  /root/raspiworkspace/dis/lua-5.2.1/src/lua.h \
  /root/raspiworkspace/dis/lua-5.2.1/src/lualib.h \
+ /root/raspiworkspace/dis/homeis/Common/HisLock.h \
  ../homeis/Devices/HisDevFactory.h \
  ../homeis/Devices/Folder/HisDevFolderRoot.h
 
@@ -243,7 +248,7 @@ homeis/Devices/HisDevFactory.d: ../homeis/Devices/HisDevFactory.cpp \
 
 /root/raspiworkspace/dis/homeis/Expressions/LuaExpression.h:
 
-/root/raspiworkspace/dis/homeis/Expressions/Expression.h:
+/root/raspiworkspace/dis/homeis/Expressions/IExpression.h:
 
 /root/raspiworkspace/dis/homeis/Devices/Folder/HisDevFolder.h:
 
@@ -255,6 +260,14 @@ homeis/Devices/HisDevFactory.d: ../homeis/Devices/HisDevFactory.cpp \
 
 /root/raspiworkspace/dis/homeis/Devices/ValueEventArgs.h:
 
+/root/raspiworkspace/dis/homeis/Expressions/ExpressionRuntime.h:
+
+/root/raspiworkspace/dis/onewirelibrary/OneWire++/threadOW++/LOW_thread_mutex.h:
+
+/root/raspiworkspace/dis/onewirelibrary/OneWire++/threadOW++/LOW_thread_Factory.h:
+
+/root/raspiworkspace/dis/homeis/Expressions/IExpression.h:
+
 /root/raspiworkspace/dis/lua-5.2.1/src/lua.h:
 
 /root/raspiworkspace/dis/lua-5.2.1/src/luaconf.h:
@@ -264,6 +277,8 @@ homeis/Devices/HisDevFactory.d: ../homeis/Devices/HisDevFactory.cpp \
 /root/raspiworkspace/dis/lua-5.2.1/src/lua.h:
 
 /root/raspiworkspace/dis/lua-5.2.1/src/lualib.h:
+
+/root/raspiworkspace/dis/homeis/Common/HisLock.h:
 
 ../homeis/Devices/HisDevFactory.h:
 

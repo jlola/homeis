@@ -38,10 +38,10 @@ homeis/Expressions/LuaExpression.d: \
  /root/raspberrypi/libxml2-2.8.0/include/libxml2/libxml/SAX2.h \
  /root/raspberrypi/libxml2-2.8.0/include/libxml2/libxml/xmlmemory.h \
  /root/raspberrypi/libxml2-2.8.0/include/libxml2/libxml/threads.h \
- /root/raspiworkspace/dis/homeis/Expressions/Expression.h \
- /root/raspiworkspace/dis/homeis/Common/HisBase.h \
+ /root/raspiworkspace/dis/homeis/Expressions/IExpression.h \
  /root/raspiworkspace/dis/homeis/Common/CUUID.h \
  /root/raspiworkspace/dis/uuid/uuid.h \
+ /root/raspiworkspace/dis/homeis/Common/HisBase.h \
  /root/raspiworkspace/dis/rapidjson/document.h \
  /root/raspiworkspace/dis/rapidjson/reader.h \
  /root/raspiworkspace/dis/rapidjson/rapidjson.h \
@@ -88,7 +88,12 @@ homeis/Expressions/LuaExpression.d: \
  /root/raspiworkspace/dis/homeis/Devices/HisDevValue.h \
  /root/raspiworkspace/dis/homeis/Helpers/converter.h \
  /root/raspiworkspace/dis/homeis/Devices/EHisDevDirection.h \
- /root/raspiworkspace/dis/homeis/Devices/ValueEventArgs.h
+ /root/raspiworkspace/dis/homeis/Devices/ValueEventArgs.h \
+ /root/raspiworkspace/dis/homeis/Expressions/ExpressionRuntime.h \
+ /root/raspiworkspace/dis/onewirelibrary/OneWire++/threadOW++/LOW_thread_mutex.h \
+ /root/raspiworkspace/dis/onewirelibrary/OneWire++/threadOW++/LOW_thread_Factory.h \
+ /root/raspiworkspace/dis/homeis/Expressions/IExpression.h \
+ /root/raspiworkspace/dis/homeis/Common/HisLock.h
 
 /root/raspiworkspace/dis/srutil/event/event.hpp:
 
@@ -166,13 +171,13 @@ homeis/Expressions/LuaExpression.d: \
 
 /root/raspberrypi/libxml2-2.8.0/include/libxml2/libxml/threads.h:
 
-/root/raspiworkspace/dis/homeis/Expressions/Expression.h:
-
-/root/raspiworkspace/dis/homeis/Common/HisBase.h:
+/root/raspiworkspace/dis/homeis/Expressions/IExpression.h:
 
 /root/raspiworkspace/dis/homeis/Common/CUUID.h:
 
 /root/raspiworkspace/dis/uuid/uuid.h:
+
+/root/raspiworkspace/dis/homeis/Common/HisBase.h:
 
 /root/raspiworkspace/dis/rapidjson/document.h:
 
@@ -267,3 +272,13 @@ homeis/Expressions/LuaExpression.d: \
 /root/raspiworkspace/dis/homeis/Devices/EHisDevDirection.h:
 
 /root/raspiworkspace/dis/homeis/Devices/ValueEventArgs.h:
+
+/root/raspiworkspace/dis/homeis/Expressions/ExpressionRuntime.h:
+
+/root/raspiworkspace/dis/onewirelibrary/OneWire++/threadOW++/LOW_thread_mutex.h:
+
+/root/raspiworkspace/dis/onewirelibrary/OneWire++/threadOW++/LOW_thread_Factory.h:
+
+/root/raspiworkspace/dis/homeis/Expressions/IExpression.h:
+
+/root/raspiworkspace/dis/homeis/Common/HisLock.h:

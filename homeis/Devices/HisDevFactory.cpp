@@ -45,6 +45,11 @@ HisDevFactory & HisDevFactory::Instance()
 	return HisDevFactory::instance;
 }
 
+void HisDevFactory::SetExpressionRuntime(ExpressionRuntime *pExpressionRuntime)
+{
+	expressionRuntime = pExpressionRuntime;
+}
+
 void HisDevFactory::SetDevices(HisDevices* pdevices)
 {
 	devices = pdevices;
@@ -64,7 +69,7 @@ HisBase *HisDevFactory::Create(xmlNodePtr node)
 	if (!xmlStrcmp(node->name,NODE_VALUE))
 		return HisDevValueBase::Create(node);
 	if (!xmlStrcmp(node->name,NODE_EXPRESSION))
-		return new LuaExpression(node,devices);
+		return new LuaExpression(node,devices,expressionRuntime);
 	CLogger::Error("HisDevFactory::Create | Not implemented %s constructor.",node->name);
 	return NULL;
 }

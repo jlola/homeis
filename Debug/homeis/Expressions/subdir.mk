@@ -4,14 +4,17 @@
 
 # Add inputs and outputs from these tool invocations to the build variables 
 CPP_SRCS += \
+../homeis/Expressions/ExpressionRuntime.cpp \
 ../homeis/Expressions/LuaExpression.cpp \
 ../homeis/Expressions/LuaExpressionManager.cpp 
 
 OBJS += \
+./homeis/Expressions/ExpressionRuntime.o \
 ./homeis/Expressions/LuaExpression.o \
 ./homeis/Expressions/LuaExpressionManager.o 
 
 CPP_DEPS += \
+./homeis/Expressions/ExpressionRuntime.d \
 ./homeis/Expressions/LuaExpression.d \
 ./homeis/Expressions/LuaExpressionManager.d 
 
