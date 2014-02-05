@@ -76,7 +76,7 @@ void HomeIsServer::InitWebServer()
 	FileController fc = FileController();
 	OneWireDevicesService owds = OneWireDevicesService(*devs,*rootFolder);
 	FoldersService foldersService= FoldersService(rootFolder);
-	ExpressionService expressionService = ExpressionService(rootFolder);
+	ExpressionService expressionService = ExpressionService(rootFolder,expressionRuntime, devs);
 	ws_i.register_resource(string("files/{path}"), &fc, true);
 
 	ws_i.register_resource(string("api/onewiredevices"), &owds, true);

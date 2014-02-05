@@ -68,7 +68,10 @@ homeis/Devices/HisDevRunTime.d: ../homeis/Devices/HisDevRunTime.cpp \
  /root/raspiworkspace/dis/rapidjson/internal/pow10.h \
  /root/raspiworkspace/dis/rapidjson/internal/stack.h \
  /root/raspiworkspace/dis/rapidjson/internal/strfunc.h \
- ../homeis/Devices/HisDevRunTime.h ../homeis/Devices/HisDevices.h
+ ../homeis/Devices/HisDevRunTime.h ../homeis/Devices/HisDevices.h \
+ /root/raspiworkspace/dis/homeis/Common/HisLock.h \
+ /root/raspiworkspace/dis/onewirelibrary/OneWire++/threadOW++/LOW_thread_mutex.h \
+ /root/raspiworkspace/dis/onewirelibrary/OneWire++/threadOW++/LOW_thread_Factory.h
 
 /root/raspberrypi/libxml2-2.8.0/include/libxml2/libxml/parser.h:
 
@@ -217,3 +220,9 @@ homeis/Devices/HisDevRunTime.d: ../homeis/Devices/HisDevRunTime.cpp \
 ../homeis/Devices/HisDevRunTime.h:
 
 ../homeis/Devices/HisDevices.h:
+
+/root/raspiworkspace/dis/homeis/Common/HisLock.h:
+
+/root/raspiworkspace/dis/onewirelibrary/OneWire++/threadOW++/LOW_thread_mutex.h:
+
+/root/raspiworkspace/dis/onewirelibrary/OneWire++/threadOW++/LOW_thread_Factory.h:

@@ -105,8 +105,14 @@ void FoldersService::render_POST(const http_request& req, http_response** res)
 			return;
 		}
 	}
+	else
+	{
+		string message = "Autentication error";
+		*res = new http_string_response(message.c_str(), 401, "application/json");
+		return;
+	}
 
-	*res = new http_string_response("", 204, "application/json");
+	*res = new http_string_response("", 403, "application/json");
 }
 
 bool FoldersService::UpdateFolder(string strid, string strJson)
@@ -203,8 +209,14 @@ void FoldersService::render_PUT(const http_request& req, http_response** res)
 			return;
 		}
 	}
+	else
+	{
+		string message = "Autentication error";
+		*res = new http_string_response(message.c_str(), 401, "application/json");
+		return;
+	}
 
-	*res = new http_string_response("", 204, "application/json");
+	*res = new http_string_response("", 403, "application/json");
 
 }
 
@@ -228,7 +240,13 @@ void FoldersService::render_DELETE(const http_request& req, http_response** res)
 			return;
 		}
 	}
+	else
+	{
+		string message = "Autentication error";
+		*res = new http_string_response(message.c_str(), 401, "application/json");
+		return;
+	}
 
-	*res = new http_string_response("", 204, "application/json");
+	*res = new http_string_response("", 403, "application/json");
 
 }

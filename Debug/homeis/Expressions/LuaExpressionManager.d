@@ -78,17 +78,17 @@ homeis/Expressions/LuaExpressionManager.d: \
  /root/raspiworkspace/dis/homeis/Devices/HisDevValue.h \
  /root/raspiworkspace/dis/homeis/Helpers/converter.h \
  /root/raspiworkspace/dis/homeis/Devices/EHisDevDirection.h \
- /root/raspiworkspace/dis/homeis/Devices/ValueEventArgs.h \
- /root/raspiworkspace/dis/homeis/Expressions/ExpressionRuntime.h \
+ /root/raspiworkspace/dis/homeis/Common/HisLock.h \
  /root/raspiworkspace/dis/onewirelibrary/OneWire++/threadOW++/LOW_thread_mutex.h \
  /root/raspiworkspace/dis/onewirelibrary/OneWire++/threadOW++/LOW_thread_Factory.h \
+ /root/raspiworkspace/dis/homeis/Devices/ValueEventArgs.h \
+ /root/raspiworkspace/dis/homeis/Expressions/ExpressionRuntime.h \
  /root/raspiworkspace/dis/homeis/Expressions/IExpression.h \
  /root/raspiworkspace/dis/lua-5.2.1/src/lua.h \
  /root/raspiworkspace/dis/lua-5.2.1/src/luaconf.h \
  /root/raspiworkspace/dis/lua-5.2.1/src/lauxlib.h \
  /root/raspiworkspace/dis/lua-5.2.1/src/lua.h \
  /root/raspiworkspace/dis/lua-5.2.1/src/lualib.h \
- /root/raspiworkspace/dis/homeis/Common/HisLock.h \
  /root/raspiworkspace/dis/homeis/Common/HisCollectionBase.h \
  /root/raspiworkspace/dis/homeis/Devices/Folder/HisDevFolderRoot.h
 
@@ -248,13 +248,15 @@ homeis/Expressions/LuaExpressionManager.d: \
 
 /root/raspiworkspace/dis/homeis/Devices/EHisDevDirection.h:
 
-/root/raspiworkspace/dis/homeis/Devices/ValueEventArgs.h:
-
-/root/raspiworkspace/dis/homeis/Expressions/ExpressionRuntime.h:
+/root/raspiworkspace/dis/homeis/Common/HisLock.h:
 
 /root/raspiworkspace/dis/onewirelibrary/OneWire++/threadOW++/LOW_thread_mutex.h:
 
 /root/raspiworkspace/dis/onewirelibrary/OneWire++/threadOW++/LOW_thread_Factory.h:
+
+/root/raspiworkspace/dis/homeis/Devices/ValueEventArgs.h:
+
+/root/raspiworkspace/dis/homeis/Expressions/ExpressionRuntime.h:
 
 /root/raspiworkspace/dis/homeis/Expressions/IExpression.h:
 
@@ -267,8 +269,6 @@ homeis/Expressions/LuaExpressionManager.d: \
 /root/raspiworkspace/dis/lua-5.2.1/src/lua.h:
 
 /root/raspiworkspace/dis/lua-5.2.1/src/lualib.h:
-
-/root/raspiworkspace/dis/homeis/Common/HisLock.h:
 
 /root/raspiworkspace/dis/homeis/Common/HisCollectionBase.h:
 

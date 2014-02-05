@@ -6,6 +6,7 @@
  */
 
 #include "HisLock.h"
+#include "logger.h"
 
 LOW_thread_mutex* HisLock::CreateMutex()
 {
@@ -15,7 +16,15 @@ LOW_thread_mutex* HisLock::CreateMutex()
 HisLock::HisLock(LOW_thread_mutex* pmutex) :
 			mutex(pmutex)
 {
-	mutex->lock();
+	try
+	{
+		mutex->lock();
+	}
+	catch(LOW_exception & ex)
+	{
+		CLogger::Info(ex.message.c_str());
+		throw;
+	}
 }
 
 HisLock::~HisLock()

@@ -8,8 +8,10 @@
 #include "ExpressionsService.h"
 #include "homeis/Common/HisException.h"
 
-ExpressionService::ExpressionService(HisDevFolderRoot* folder)
+ExpressionService::ExpressionService(HisDevFolderRoot* folder,ExpressionRuntime *pexpressionRuntime, HisDevices* pdevices)
 {
+	devices = pdevices;
+	expressionRuntime = pexpressionRuntime;
 	root = folder;
 }
 
@@ -139,7 +141,6 @@ bool ExpressionService::DeleteExpression(string strid,string & message)
 		return false;
 	}
 
-
 	HisDevFolder* rootFolder = root->GetFolder();
 	if(!strid.empty())
 	{
@@ -176,118 +177,146 @@ bool ExpressionService::DeleteExpression(string strid,string & message)
 	return false;
 }
 
-bool ExpressionService::CreateOrUpdateExpression(string strJson)
+LuaExpression* ExpressionService::CreateOrUpdateExpression(string strJson,string & message)
 {
-	Document document;	// Default template parameter uses UTF8 and MemoryPoolAllocator.
-
-	if (document.Parse<0>((char*)strJson.c_str()).HasParseError())
-		return false;
-
-	CUUID parentid;
-	if (document.HasMember("parentId"))
+	try
 	{
-		parentid = CUUID::Parse(document["parentId"].GetString());
-	}
+		Document document;	// Default template parameter uses UTF8 and MemoryPoolAllocator.
 
-	CUUID expressionid;
-	if (document.HasMember("id"))
+		if (document.Parse<0>((char*)strJson.c_str()).HasParseError())
+			return false;
+
+		CUUID parentid;
+		if (document.HasMember("parentId"))
+		{
+			parentid = CUUID::Parse(document["parentId"].GetString());
+		}
+
+		CUUID expressionid;
+		if (document.HasMember("id"))
+		{
+			expressionid = CUUID::Parse(document["id"].GetString());
+		}
+
+		LuaExpression* expressionObj = NULL;
+		HisDevFolder* parent = dynamic_cast<HisDevFolder*>(root->GetFolder()->Find(parentid));
+		if (parent==NULL) parent = root->GetFolder();
+		bool saveReq = false;
+		expressionObj = dynamic_cast<LuaExpression*>(parent->Find(expressionid));
+
+		if (document.HasMember("name"))
+		{
+			string name = document["name"].GetString();
+			if (expressionObj!=NULL)
+			{
+				if (expressionObj->GetName()!=name)
+				{
+					expressionObj->SetName(name);
+					saveReq = true;
+				}
+			}
+			else
+			{
+				expressionObj = new LuaExpression(parent,devices,name,expressionRuntime );
+				parent->Add(expressionObj);
+				saveReq = true;
+			}
+
+			if (document.HasMember("description"))
+			{
+				string description = document["description"].GetString();
+				if (description!=expressionObj->GetDescription())
+				{
+					expressionObj->SetDescription(description);
+					saveReq = true;
+				}
+			}
+
+			if (document.HasMember("expression"))
+			{
+				string strexpression = document["expression"].GetString();
+				if (strexpression!=expressionObj->GetExpression())
+				{
+					expressionObj->SetExpression(strexpression);
+					saveReq = true;
+				}
+			}
+
+			if (document.HasMember("running"))
+			{
+				string strrunning = document["running"].GetString();
+				bool running = strrunning=="1" ? true : false;
+				if (running!=expressionObj->GetRunning())
+				{
+					expressionObj->SetRunning(running);
+					saveReq = true;
+				}
+			}
+
+			if (saveReq) root->Save();
+		}
+		return expressionObj;
+	}
+	catch(HisException ex)
 	{
-		expressionid = CUUID::Parse(document["id"].GetString());
+		message = ex.what();
+		return NULL;
 	}
-
-	LuaExpression* expressionObj = NULL;
-	HisDevFolder* parent = dynamic_cast<HisDevFolder*>(root->GetFolder()->Find(parentid));
-	if (parent==NULL) parent = root->GetFolder();
-	bool saveReq = false;
-	expressionObj = dynamic_cast<LuaExpression*>(parent->Find(expressionid));
-
-	if (document.HasMember("name"))
-	{
-		string name = document["name"].GetString();
-		if (expressionObj!=NULL)
-		{
-			if (expressionObj->GetName()!=name)
-			{
-				expressionObj->SetName(name);
-				saveReq = true;
-			}
-		}
-		else
-		{
-			expressionObj = new LuaExpression(parent,devices,name,NULL);
-			parent->Add(expressionObj);
-			saveReq = true;
-		}
-
-		if (document.HasMember("description"))
-		{
-			string description = document["description"].GetString();
-			if (description!=expressionObj->GetDescription())
-			{
-				expressionObj->SetDescription(description);
-				saveReq = true;
-			}
-		}
-
-		if (document.HasMember("expression"))
-		{
-			string strexpression = document["expression"].GetString();
-			if (strexpression!=expressionObj->GetExpression())
-			{
-				expressionObj->SetExpression(strexpression);
-				saveReq = true;
-			}
-		}
-
-		if (document.HasMember("running"))
-		{
-			string strrunning = document["running"].GetString();
-			bool running = strrunning=="1" ? true : false;
-			if (running!=expressionObj->GetRunning())
-			{
-				expressionObj->SetRunning(running);
-				saveReq = true;
-			}
-		}
-
-		if (saveReq) root->Save();
-		return true;
-	}
-
-
-	return false;
 }
 
 void ExpressionService::render_POST(const http_request& req, http_response** res)
 {
 	std::string content = req.get_content();
+	string message = "";
 
 	if (req.get_user()=="a" && req.get_pass()=="a")
 	{
-
-		if (CreateOrUpdateExpression(content))
+		LuaExpression* expression = CreateOrUpdateExpression(content,message);
+		if (expression!=NULL)
 		{
-			*res = new http_string_response("", 200, "application/json");
+			Document respjsondoc;
+			respjsondoc.SetArray();
+
+			ExpressionToJson(expression,respjsondoc);
+
+			StringBuffer buffer;
+			PrettyWriter<StringBuffer> wr(buffer);
+			respjsondoc.Accept(wr);
+			std::string json = buffer.GetString();
+
+			*res = new http_string_response(json, 200, "application/json");
 			return;
 		}
 	}
-	*res = new http_string_response("", 204, "application/json");
+	else
+	{
+		string message = "Autentication error";
+		*res = new http_string_response(message.c_str(), 401, "application/json");
+		return;
+	}
+	*res = new http_string_response(message.c_str(), 403, "application/json");
 }
 
 void ExpressionService::render_PUT(const http_request& req, http_response** res)
 {
 	std::string content = req.get_content();
-
+	string message = "";
 	if (req.get_user()=="a" && req.get_pass()=="a")
 	{
 
-		if (CreateOrUpdateExpression(content))
+		if (CreateOrUpdateExpression(content,message))
 		{
 			*res = new http_string_response("", 200, "application/json");
 			return;
 		}
 	}
-	*res = new http_string_response("", 204, "application/json");
+	else
+	{
+		message = "Autentication error";
+		*res = new http_string_response(message.c_str(), 401, "application/json");
+		return;
+	}
+	*res = new http_string_response(message, 403, "application/json");
 }
 
 void ExpressionService::render_DELETE(const http_request& req, http_response** res)
@@ -298,14 +327,16 @@ void ExpressionService::render_DELETE(const http_request& req, http_response** r
 		string strid = req.get_arg("id");
 		if (DeleteExpression(strid,message))
 		{
-			*res = new http_string_response("", 200, "application/json");
+			*res = new http_string_response("OK", 200, "application/json");
 			return;
 		}
 	}
 	else
 	{
-		message = "ExpressionDelete | Autentication error";
+		message = "Autentication error";
+		*res = new http_string_response(message.c_str(), 401, "application/json");
+		return;
 	}
-	*res = new http_string_response(message.c_str(), 204, "application/json");
+	*res = new http_string_response(message.c_str(), 403, "application/json");
 }
 

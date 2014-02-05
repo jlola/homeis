@@ -7,6 +7,7 @@ CPP_SRCS += \
 ../homeis/Devices/HisDallas.cpp \
 ../homeis/Devices/HisDevBase.cpp \
 ../homeis/Devices/HisDevFactory.cpp \
+../homeis/Devices/HisDevIO2406.cpp \
 ../homeis/Devices/HisDevIO2413.cpp \
 ../homeis/Devices/HisDevRunTime.cpp \
 ../homeis/Devices/HisDevValue.cpp \
@@ -17,6 +18,7 @@ OBJS += \
 ./homeis/Devices/HisDallas.o \
 ./homeis/Devices/HisDevBase.o \
 ./homeis/Devices/HisDevFactory.o \
+./homeis/Devices/HisDevIO2406.o \
 ./homeis/Devices/HisDevIO2413.o \
 ./homeis/Devices/HisDevRunTime.o \
 ./homeis/Devices/HisDevValue.o \
@@ -27,6 +29,7 @@ CPP_DEPS += \
 ./homeis/Devices/HisDallas.d \
 ./homeis/Devices/HisDevBase.d \
 ./homeis/Devices/HisDevFactory.d \
+./homeis/Devices/HisDevIO2406.d \
 ./homeis/Devices/HisDevIO2413.d \
 ./homeis/Devices/HisDevRunTime.d \
 ./homeis/Devices/HisDevValue.d \

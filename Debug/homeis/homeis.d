@@ -73,6 +73,9 @@ homeis/homeis.d: ../homeis/homeis.cpp \
  /root/raspiworkspace/dis/rapidjson/internal/pow10.h \
  /root/raspiworkspace/dis/rapidjson/internal/stack.h \
  /root/raspiworkspace/dis/rapidjson/internal/strfunc.h \
+ /root/raspiworkspace/dis/homeis/Common/HisLock.h \
+ /root/raspiworkspace/dis/onewirelibrary/OneWire++/threadOW++/LOW_thread_mutex.h \
+ /root/raspiworkspace/dis/onewirelibrary/OneWire++/threadOW++/LOW_thread_Factory.h \
  ../homeis/HomeIsServer.h \
  /root/raspiworkspace/dis/onewirelibrary/OneWire++/linkOW++/LOW_linkPassiveSerial.h \
  /root/raspiworkspace/dis/onewirelibrary/OneWire++/linkOW++/LOW_link.h \
@@ -99,8 +102,6 @@ homeis/homeis.d: ../homeis/homeis.cpp \
  /root/raspiworkspace/dis/homeis/Devices/Folder/HisDevFolder.h \
  /root/raspiworkspace/dis/homeis/Devices/Folder/HisDevValueId.h \
  ../homeis/Expressions/ExpressionRuntime.h \
- /root/raspiworkspace/dis/onewirelibrary/OneWire++/threadOW++/LOW_thread_mutex.h \
- /root/raspiworkspace/dis/onewirelibrary/OneWire++/threadOW++/LOW_thread_Factory.h \
  ../homeis/Expressions/IExpression.h \
  /root/raspiworkspace/dis/homeis/Helpers/File.h ../homeis/Common/CUUID.h \
  /root/raspiworkspace/dis/lua-5.2.1/src/lua.h \
@@ -257,6 +258,12 @@ homeis/homeis.d: ../homeis/homeis.cpp \
 
 /root/raspiworkspace/dis/rapidjson/internal/strfunc.h:
 
+/root/raspiworkspace/dis/homeis/Common/HisLock.h:
+
+/root/raspiworkspace/dis/onewirelibrary/OneWire++/threadOW++/LOW_thread_mutex.h:
+
+/root/raspiworkspace/dis/onewirelibrary/OneWire++/threadOW++/LOW_thread_Factory.h:
+
 ../homeis/HomeIsServer.h:
 
 /root/raspiworkspace/dis/onewirelibrary/OneWire++/linkOW++/LOW_linkPassiveSerial.h:
@@ -308,10 +315,6 @@ homeis/homeis.d: ../homeis/homeis.cpp \
 /root/raspiworkspace/dis/homeis/Devices/Folder/HisDevValueId.h:
 
 ../homeis/Expressions/ExpressionRuntime.h:
-
-/root/raspiworkspace/dis/onewirelibrary/OneWire++/threadOW++/LOW_thread_mutex.h:
-
-/root/raspiworkspace/dis/onewirelibrary/OneWire++/threadOW++/LOW_thread_Factory.h:
 
 ../homeis/Expressions/IExpression.h:
 

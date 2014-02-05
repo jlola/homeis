@@ -6,7 +6,9 @@ homeis/Common/HisLock.d: ../homeis/Common/HisLock.cpp \
  /root/raspiworkspace/dis/onewirelibrary/OneWire++/LOW_objectSynchronizerMacros.h \
  /root/raspiworkspace/dis/onewirelibrary/OneWire++/threadOW++/LOW_thread_Factory.h \
  /root/raspiworkspace/dis/onewirelibrary/OneWire++/threadOW++/LOW_thread_mutex.h \
- /root/raspiworkspace/dis/onewirelibrary/OneWire++/threadOW++/LOW_thread_rwlock.h
+ /root/raspiworkspace/dis/onewirelibrary/OneWire++/threadOW++/LOW_thread_rwlock.h \
+ /root/raspiworkspace/dis/homeis/Helpers/logger.h \
+ /root/raspiworkspace/dis/linuxcs/linuxcs.h
 
 ../homeis/Common/HisLock.h:
 
@@ -23,3 +25,7 @@ homeis/Common/HisLock.d: ../homeis/Common/HisLock.cpp \
 /root/raspiworkspace/dis/onewirelibrary/OneWire++/threadOW++/LOW_thread_mutex.h:
 
 /root/raspiworkspace/dis/onewirelibrary/OneWire++/threadOW++/LOW_thread_rwlock.h:
+
+/root/raspiworkspace/dis/homeis/Helpers/logger.h:
+
+/root/raspiworkspace/dis/linuxcs/linuxcs.h:

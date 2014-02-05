@@ -243,53 +243,53 @@ uint8_t LOW_portSerial_Linux::tty_readByte( const bool inTrashExtraReply, const 
 {
   __LOW_SYNCHRONIZE_METHOD_WRITE_WEAK__
 
-  //fd_set         readset;
-  //struct timeval wait_tm;
-  //int            selRet;
+  fd_set         readset;
+  struct timeval wait_tm;
+  int            selRet;
   uint8_t        retVal = 0;
   uint8_t readByte;
+
  // for( int a=0; a<((inTrashExtraReply==true)?2:1); a++) {
 
    // while ( true ) {
-    	if ( read( serialFD, &readByte, 1) != 1 )
-    	      throw portSerial_error( "Unexpected short read", __FILE__, __LINE__);
-    	return readByte;
+//    	if ( read( serialFD, &readByte, 1) != 1 )
+//    	      throw portSerial_error( "Unexpected short read", __FILE__, __LINE__);
+//    	return readByte;
 
       // Setup for wait for a response or timeout
-//      wait_tm.tv_usec = 0;
-//      wait_tm.tv_sec  = inSecTimeout;
-//      FD_ZERO( &readset);
-//      FD_SET( serialFD, &readset);
+
+      wait_tm.tv_usec = 0;
+      wait_tm.tv_sec  = inSecTimeout;
+      FD_ZERO( &readset);
+      FD_SET( serialFD, &readset);
 
       // Read byte if it doesn't timeout first
-//      selRet = select( serialFD+1, &readset, NULL, NULL, &wait_tm);
-//      if( selRet > 0 ) {
-//
-//        if( FD_ISSET( serialFD, &readset) )
-//        {
-//          uint8_t readByte;
-//
-//          if ( read( serialFD, &readByte, 1) != 1 )
-//            throw portSerial_error( "Unexpected short read", __FILE__, __LINE__);
-//
-//          if ( a == 0 )
-//            retVal = readByte;
-//
-//          LOW_helper_msglog::printDebug( LOW_helper_msglog::portSerial_dl, "LOW_linkDS2480B: TTY READ: %02x read cycle: %d\n", readByte, a);
-//
-//          break;
-//        }
-//
-//      }
-//      else if ( selRet == 0 ) {
-//        throw portSerial_error( "TTY operation timed out", __FILE__, __LINE__);
-//      }
-//      else {
-//        throw portSerial_error( errno, "Unexpected error in select call", __FILE__, __LINE__);
-//      }
+      selRet = select( serialFD+1, &readset, NULL, NULL, &wait_tm);
+      if( selRet > 0 ) {
 
-    //}
-//  }
+        if( FD_ISSET( serialFD, &readset) )
+        {
+          uint8_t readByte;
+
+          if ( read( serialFD, &readByte, 1) != 1 )
+            throw portSerial_error( "Unexpected short read", __FILE__, __LINE__);
+
+          //if ( a == 0 )
+            retVal = readByte;
+
+          //LOW_helper_msglog::printDebug( LOW_helper_msglog::portSerial_dl, "LOW_linkDS2480B: TTY READ: %02x read cycle: %d\n", readByte, a);
+
+          //break;
+        }
+
+      }
+      else if ( selRet == 0 ) {
+        throw portSerial_error( "TTY operation timed out", __FILE__, __LINE__);
+      }
+      else {
+        throw portSerial_error( errno, "Unexpected error in select call", __FILE__, __LINE__);
+      }
+
 
   return retVal;
 }

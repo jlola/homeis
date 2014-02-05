@@ -46,6 +46,7 @@ LuaExpression::LuaExpression(xmlNodePtr pnode,HisDevices* hisDevices,ExpressionR
 	inEvalFunc = false;
 	runningAllowed = false;
 	CreateFolder();
+	running = false;
 }
 
 LuaExpression::LuaExpression(HisDevFolder* pfolder,HisDevices* hisDevices, string expressionName,ExpressionRuntime *pExpressionRuntime) :
@@ -63,6 +64,7 @@ LuaExpression::LuaExpression(HisDevFolder* pfolder,HisDevices* hisDevices, strin
 	folder = pfolder;
 	devices = hisDevices;
 	SetName(expressionName);
+	running = false;
 }
 
 CUUID LuaExpression::GetRecordId()
@@ -483,6 +485,7 @@ bool LuaExpression::Evaluate()
 
 			if (curTimeUs > nextTime)
 			{
+				SetGlobals(L);
 				int status = lua_resume(cL,NULL,0);
 
 				if (status == LUA_YIELD && LuaExpression::delays != -1)
@@ -584,5 +587,5 @@ xmlChar* LuaExpression::GetNodeNameInternal()
 
 LuaExpression::~LuaExpression()
 {
-
+	File::Delete(GetFileName(GetName()));
 }

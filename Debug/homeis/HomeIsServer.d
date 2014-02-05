@@ -72,6 +72,9 @@ homeis/HomeIsServer.d: ../homeis/HomeIsServer.cpp \
  /root/raspiworkspace/dis/rapidjson/internal/pow10.h \
  /root/raspiworkspace/dis/rapidjson/internal/stack.h \
  /root/raspiworkspace/dis/rapidjson/internal/strfunc.h \
+ /root/raspiworkspace/dis/homeis/Common/HisLock.h \
+ /root/raspiworkspace/dis/onewirelibrary/OneWire++/threadOW++/LOW_thread_mutex.h \
+ /root/raspiworkspace/dis/onewirelibrary/OneWire++/threadOW++/LOW_thread_Factory.h \
  /root/raspiworkspace/dis/homeis/Helpers/File.h ../homeis/Tags/TagBase.h \
  /root/raspiworkspace/dis/homeis/Devices/HisDevRunTime.h \
  /root/raspiworkspace/dis/homeis/Devices/HisDevices.h \
@@ -106,15 +109,12 @@ homeis/HomeIsServer.d: ../homeis/HomeIsServer.cpp \
  /root/raspiworkspace/dis/homeis/Devices/HisDevices.h \
  /root/raspiworkspace/dis/homeis/Devices/ValueEventArgs.h \
  /root/raspiworkspace/dis/homeis/Expressions/ExpressionRuntime.h \
- /root/raspiworkspace/dis/onewirelibrary/OneWire++/threadOW++/LOW_thread_mutex.h \
- /root/raspiworkspace/dis/onewirelibrary/OneWire++/threadOW++/LOW_thread_Factory.h \
  /root/raspiworkspace/dis/homeis/Expressions/IExpression.h \
  /root/raspiworkspace/dis/lua-5.2.1/src/lua.h \
  /root/raspiworkspace/dis/lua-5.2.1/src/luaconf.h \
  /root/raspiworkspace/dis/lua-5.2.1/src/lauxlib.h \
  /root/raspiworkspace/dis/lua-5.2.1/src/lua.h \
  /root/raspiworkspace/dis/lua-5.2.1/src/lualib.h \
- /root/raspiworkspace/dis/homeis/Common/HisLock.h \
  ../homeis/Services/ExpressionsService.h \
  /root/raspiworkspace/dis/homeis/Expressions/LuaExpression.h \
  /root/raspiworkspace/dis/homeis/Devices/HisDevFactory.h \
@@ -284,6 +284,12 @@ homeis/HomeIsServer.d: ../homeis/HomeIsServer.cpp \
 
 /root/raspiworkspace/dis/rapidjson/internal/strfunc.h:
 
+/root/raspiworkspace/dis/homeis/Common/HisLock.h:
+
+/root/raspiworkspace/dis/onewirelibrary/OneWire++/threadOW++/LOW_thread_mutex.h:
+
+/root/raspiworkspace/dis/onewirelibrary/OneWire++/threadOW++/LOW_thread_Factory.h:
+
 /root/raspiworkspace/dis/homeis/Helpers/File.h:
 
 ../homeis/Tags/TagBase.h:
@@ -354,10 +360,6 @@ homeis/HomeIsServer.d: ../homeis/HomeIsServer.cpp \
 
 /root/raspiworkspace/dis/homeis/Expressions/ExpressionRuntime.h:
 
-/root/raspiworkspace/dis/onewirelibrary/OneWire++/threadOW++/LOW_thread_mutex.h:
-
-/root/raspiworkspace/dis/onewirelibrary/OneWire++/threadOW++/LOW_thread_Factory.h:
-
 /root/raspiworkspace/dis/homeis/Expressions/IExpression.h:
 
 /root/raspiworkspace/dis/lua-5.2.1/src/lua.h:
@@ -369,8 +371,6 @@ homeis/HomeIsServer.d: ../homeis/HomeIsServer.cpp \
 /root/raspiworkspace/dis/lua-5.2.1/src/lua.h:
 
 /root/raspiworkspace/dis/lua-5.2.1/src/lualib.h:
-
-/root/raspiworkspace/dis/homeis/Common/HisLock.h:
 
 ../homeis/Services/ExpressionsService.h:
 

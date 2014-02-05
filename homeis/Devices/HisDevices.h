@@ -10,6 +10,7 @@
 
 #include "HisDevBase.h"
 #include "homeis/Common/CUUID.h"
+#include "homeis/Common/HisLock.h"
 
 using namespace std;
 
@@ -18,6 +19,7 @@ class HisDevices {
 	string devicesFileName;
 	LOW_network *network;
 	std::vector<HisDevBase*> devices;
+	LOW_thread_mutex  *__expressionMutex;  /**< Mutex for exclusive access. */
 public:
 	HisDevices(string fileName,LOW_network *network);
 	int Find(CUUID RecordId);

@@ -154,7 +154,13 @@ void OneWireDevicesService::render_POST(const http_request& req, http_response**
 			}
 		}
 	}
-	*res = new http_string_response("", 204, "application/json");
+	else
+	{
+		string message = "Autentication error";
+		*res = new http_string_response(message.c_str(), 401, "application/json");
+		return;
+	}
+	*res = new http_string_response("", 403, "application/json");
 }
 
 void OneWireDevicesService::render_PUT(const http_request& req, http_response** res)
@@ -183,8 +189,14 @@ void OneWireDevicesService::render_PUT(const http_request& req, http_response** 
 			}
 		}
 	}
+	else
+	{
+		string message = "Autentication error";
+		*res = new http_string_response(message.c_str(), 401, "application/json");
+		return;
+	}
 
-	*res = new http_string_response("", 204, "application/json");
+	*res = new http_string_response("", 403, "application/json");
 }
 
 void OneWireDevicesService::render_DELETE(const http_request& req, http_response** res)
@@ -215,6 +227,13 @@ void OneWireDevicesService::render_DELETE(const http_request& req, http_response
 			}
 		}
 	}
+	else
+	{
+		string message = "Autentication error";
+		*res = new http_string_response(message.c_str(), 401, "application/json");
+		return;
+	}
+
 	Document respjsondoc;
 	//respjsondoc.SetArray();
 	respjsondoc.SetObject();
@@ -228,7 +247,7 @@ void OneWireDevicesService::render_DELETE(const http_request& req, http_response
 	PrettyWriter<StringBuffer> wr(buffer);
 	respjsondoc.Accept(wr);
 	std::string json = buffer.GetString();
-	*res = new http_string_response(json, 202, "application/json");
+	*res = new http_string_response(json, 403, "application/json");
 }
 
 string OneWireDevicesService::DeleteDevice(string strDevValueRecordId)

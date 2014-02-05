@@ -73,6 +73,9 @@ homeis/Services/OneWireDevicesService.d: \
  /root/raspiworkspace/dis/rapidjson/internal/pow10.h \
  /root/raspiworkspace/dis/rapidjson/internal/stack.h \
  /root/raspiworkspace/dis/rapidjson/internal/strfunc.h \
+ /root/raspiworkspace/dis/homeis/Common/HisLock.h \
+ /root/raspiworkspace/dis/onewirelibrary/OneWire++/threadOW++/LOW_thread_mutex.h \
+ /root/raspiworkspace/dis/onewirelibrary/OneWire++/threadOW++/LOW_thread_Factory.h \
  /root/raspiworkspace/dis/rapidjson/prettywriter.h \
  /root/raspiworkspace/dis/rapidjson/writer.h \
  /root/raspiworkspace/dis/rapidjson/stringbuffer.h \
@@ -242,6 +245,12 @@ homeis/Services/OneWireDevicesService.d: \
 /root/raspiworkspace/dis/rapidjson/internal/stack.h:
 
 /root/raspiworkspace/dis/rapidjson/internal/strfunc.h:
+
+/root/raspiworkspace/dis/homeis/Common/HisLock.h:
+
+/root/raspiworkspace/dis/onewirelibrary/OneWire++/threadOW++/LOW_thread_mutex.h:
+
+/root/raspiworkspace/dis/onewirelibrary/OneWire++/threadOW++/LOW_thread_Factory.h:
 
 /root/raspiworkspace/dis/rapidjson/prettywriter.h:
 

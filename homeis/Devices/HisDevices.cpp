@@ -36,6 +36,7 @@ HisDevices::HisDevices(string fileName,LOW_network* pnetwork)
 	devicesFileName = fileName;
 	doc = NULL;
 	network=pnetwork;
+	this->__expressionMutex = HisLock::CreateMutex();
 }
 
 HisDevBase *HisDevices::operator[](unsigned int i)
