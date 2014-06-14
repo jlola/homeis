@@ -84,7 +84,7 @@ void HomeIsServer::InitWebServer()
 	ws_i.register_resource(string("api/onewiredevices/folder/{id}"), &owds, true);
 
 	//run all expressions in folder
-	ws_i.register_resource(string("api/expression/folderrun/{id}"), &expressionService, true);
+	ws_i.register_resource(string("api/expression/run/{id}"), &expressionService, true);
 	ws_i.register_resource(string("api/expression/folder/{id}"), &expressionService, true);
 	ws_i.register_resource(string("api/expression/{id}"), &expressionService, true);
 	ws_i.register_resource(string("api/expression"), &expressionService, true);
@@ -121,14 +121,23 @@ bool HomeIsServer::InitHisDevices()
 bool HomeIsServer::InitOneWireLib(string port)
 {
 	// stuff for the passive adapter
-	LOW_linkPassiveSerial  *passiveLink = 0;
+	//LOW_linkPassiveSerial  *passiveLink = 0;
+	//LOW_linkDS2480B *ds2480Link = 0;
+	LOW_linkDS2490 *ds2490Link = 0;
 	try {
 
 		//LOW_helper_msglog::printMessage( "Harald's predefined setup: Adding passive adapter to network.\n");
 		//"/dev/ttyAMA0"
-		LOW_portSerialFactory::portSpecifier_t  ttyS1 = LOW_portSerialFactory::portSpecifier_t( serialPort );
-		passiveLink = new LOW_linkPassiveSerial( ttyS1);
-		oneWireNet.addLink( passiveLink);
+
+		//LOW_portSerialFactory::portSpecifier_t  ttyS1 = LOW_portSerialFactory::portSpecifier_t( serialPort );
+		//ds2480Link = new LOW_linkDS2480B(ttyS1,LOW_linkDS2480B::RXPOL_val_t::RXPOL_NORM,true);
+		LOW_portUsb_Factory::usbDeviceSpecifier_t usb = LOW_portUsb_Factory::usbDeviceSpecifier_t(port);
+		ds2490Link = new LOW_linkDS2490(usb,false,false);
+		//passiveLink = new LOW_linkPassiveSerial( ttyS1);
+		//oneWireNet.addLink( passiveLink);
+		//oneWireNet.addLink( ds2480Link);
+		oneWireNet.addLink(ds2490Link);
+
 
 		//oneWireLinks.push_back( passiveLink);
 	}

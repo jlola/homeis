@@ -26,6 +26,27 @@ bool MFindProc(HisBase* hisbase,void* args)
 	return false;
 }
 
+bool FindExpressionProc(HisBase* hisbase,void* args)
+{
+	CUUID* uuid = (CUUID*)args;
+	IExpression* expression = dynamic_cast<IExpression*>(hisbase);
+	if (expression!=NULL)
+	{
+		if (expression->GetRecordId() ==(*uuid)) return true;
+	}
+	return false;
+}
+
+IExpression* HisDevFolderRoot::FindExpression(CUUID expressionId)
+{
+	if (this->folder!=NULL)
+	{
+		HisBase* expressionBase = folder->Find(FindExpressionProc,&expressionId);
+		return dynamic_cast<IExpression*>(expressionBase);
+	}
+	return NULL;
+}
+
 HisDevValueId* HisDevFolderRoot::FindValueId(CUUID devValueId)
 {
 	if (this->folder!=NULL)

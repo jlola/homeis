@@ -94,6 +94,7 @@ homeis/HomeIsServer.d: ../homeis/HomeIsServer.cpp \
  /root/raspiworkspace/dis/homeis/Devices/Folder/HisDevFolder.h \
  /root/raspiworkspace/dis/homeis/Devices/Folder/HisDevValueId.h \
  /root/raspiworkspace/dis/homeis/Devices/Folder/HisDevFolderRoot.h \
+ /root/raspiworkspace/dis/homeis/Expressions/IExpression.h \
  /root/raspiworkspace/dis/homeis/Devices/Folder/HisDevValueId.h \
  /root/raspiworkspace/dis/homeis/Devices/VirtualDevices/HisDevVirtual.h \
  /root/raspiworkspace/dis/homeis/Devices/HisDevBase.h \
@@ -105,7 +106,6 @@ homeis/HomeIsServer.d: ../homeis/HomeIsServer.cpp \
  /root/raspiworkspace/dis/homeis/Devices/Folder/HisDevFolder.h \
  /root/raspiworkspace/dis/homeis/Devices/Folder/HisDevFolderRoot.h \
  ../homeis/Expressions/LuaExpression.h \
- /root/raspiworkspace/dis/homeis/Expressions/IExpression.h \
  /root/raspiworkspace/dis/homeis/Devices/HisDevices.h \
  /root/raspiworkspace/dis/homeis/Devices/ValueEventArgs.h \
  /root/raspiworkspace/dis/homeis/Expressions/ExpressionRuntime.h \
@@ -330,6 +330,8 @@ homeis/HomeIsServer.d: ../homeis/HomeIsServer.cpp \
 
 /root/raspiworkspace/dis/homeis/Devices/Folder/HisDevFolderRoot.h:
 
+/root/raspiworkspace/dis/homeis/Expressions/IExpression.h:
+
 /root/raspiworkspace/dis/homeis/Devices/Folder/HisDevValueId.h:
 
 /root/raspiworkspace/dis/homeis/Devices/VirtualDevices/HisDevVirtual.h:
@@ -351,8 +353,6 @@ homeis/HomeIsServer.d: ../homeis/HomeIsServer.cpp \
 /root/raspiworkspace/dis/homeis/Devices/Folder/HisDevFolderRoot.h:
 
 ../homeis/Expressions/LuaExpression.h:
-
-/root/raspiworkspace/dis/homeis/Expressions/IExpression.h:
 
 /root/raspiworkspace/dis/homeis/Devices/HisDevices.h:
 

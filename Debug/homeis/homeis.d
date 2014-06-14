@@ -101,6 +101,7 @@ homeis/homeis.d: ../homeis/homeis.cpp \
  /root/raspiworkspace/dis/homeis/Devices/Folder/HisDevFolderRoot.h \
  /root/raspiworkspace/dis/homeis/Devices/Folder/HisDevFolder.h \
  /root/raspiworkspace/dis/homeis/Devices/Folder/HisDevValueId.h \
+ /root/raspiworkspace/dis/homeis/Expressions/IExpression.h \
  ../homeis/Expressions/ExpressionRuntime.h \
  ../homeis/Expressions/IExpression.h \
  /root/raspiworkspace/dis/homeis/Helpers/File.h ../homeis/Common/CUUID.h \
@@ -313,6 +314,8 @@ homeis/homeis.d: ../homeis/homeis.cpp \
 /root/raspiworkspace/dis/homeis/Devices/Folder/HisDevFolder.h:
 
 /root/raspiworkspace/dis/homeis/Devices/Folder/HisDevValueId.h:
+
+/root/raspiworkspace/dis/homeis/Expressions/IExpression.h:
 
 ../homeis/Expressions/ExpressionRuntime.h:
 

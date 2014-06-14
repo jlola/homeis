@@ -96,6 +96,7 @@ homeis/Services/OneWireDevicesService.d: \
  /root/raspiworkspace/dis/homeis/Devices/Folder/HisDevFolder.h \
  /root/raspiworkspace/dis/homeis/Devices/Folder/HisDevValueId.h \
  /root/raspiworkspace/dis/homeis/Devices/Folder/HisDevFolderRoot.h \
+ /root/raspiworkspace/dis/homeis/Expressions/IExpression.h \
  /root/raspiworkspace/dis/homeis/Devices/Folder/HisDevValueId.h \
  /root/raspiworkspace/dis/homeis/Devices/VirtualDevices/HisDevVirtual.h \
  /root/raspiworkspace/dis/homeis/Devices/HisDevBase.h
@@ -291,6 +292,8 @@ homeis/Services/OneWireDevicesService.d: \
 /root/raspiworkspace/dis/homeis/Devices/Folder/HisDevValueId.h:
 
 /root/raspiworkspace/dis/homeis/Devices/Folder/HisDevFolderRoot.h:
+
+/root/raspiworkspace/dis/homeis/Expressions/IExpression.h:
 
 /root/raspiworkspace/dis/homeis/Devices/Folder/HisDevValueId.h:
 

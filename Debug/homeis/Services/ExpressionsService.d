@@ -47,6 +47,11 @@ homeis/Services/ExpressionsService.d: \
  /root/raspiworkspace/dis/homeis/Common/HisBase.h \
  /root/raspiworkspace/dis/homeis/Devices/Folder/HisDevValueId.h \
  /root/raspiworkspace/dis/homeis/Devices/Folder/HisDevFolderRoot.h \
+ /root/raspiworkspace/dis/homeis/Expressions/IExpression.h \
+ /root/raspiworkspace/dis/srutil/event/event.hpp \
+ /root/raspiworkspace/dis/srutil/delegate/delegate.hpp \
+ /root/raspiworkspace/dis/srutil/delegate/detail/delegate_list.hpp \
+ /root/raspiworkspace/dis/srutil/delegate/detail/delegate_template.hpp \
  /root/raspiworkspace/dis/homeis/Devices/Folder/HisDevValueId.h \
  /root/raspiworkspace/dis/homeis/Devices/VirtualDevices/HisDevVirtual.h \
  /root/raspiworkspace/dis/homeis/Devices/HisDevBase.h \
@@ -85,13 +90,8 @@ homeis/Services/ExpressionsService.d: \
  /root/raspiworkspace/dis/homeis/Helpers/HisDateTime.h \
  /root/raspiworkspace/dis/homeis/Devices/EDataSource.h \
  /root/raspiworkspace/dis/homeis/Devices/HisDevValue.h \
- /root/raspiworkspace/dis/srutil/event/event.hpp \
- /root/raspiworkspace/dis/srutil/delegate/delegate.hpp \
- /root/raspiworkspace/dis/srutil/delegate/detail/delegate_list.hpp \
- /root/raspiworkspace/dis/srutil/delegate/detail/delegate_template.hpp \
  /root/raspiworkspace/dis/homeis/Helpers/converter.h \
  /root/raspiworkspace/dis/homeis/Devices/EHisDevDirection.h \
- /root/raspiworkspace/dis/homeis/Expressions/IExpression.h \
  /root/raspiworkspace/dis/homeis/Expressions/LuaExpression.h \
  /root/raspiworkspace/dis/homeis/Devices/HisDevices.h \
  /root/raspiworkspace/dis/homeis/Devices/HisDevBase.h \
@@ -202,6 +202,16 @@ homeis/Services/ExpressionsService.d: \
 
 /root/raspiworkspace/dis/homeis/Devices/Folder/HisDevFolderRoot.h:
 
+/root/raspiworkspace/dis/homeis/Expressions/IExpression.h:
+
+/root/raspiworkspace/dis/srutil/event/event.hpp:
+
+/root/raspiworkspace/dis/srutil/delegate/delegate.hpp:
+
+/root/raspiworkspace/dis/srutil/delegate/detail/delegate_list.hpp:
+
+/root/raspiworkspace/dis/srutil/delegate/detail/delegate_template.hpp:
+
 /root/raspiworkspace/dis/homeis/Devices/Folder/HisDevValueId.h:
 
 /root/raspiworkspace/dis/homeis/Devices/VirtualDevices/HisDevVirtual.h:
@@ -278,19 +288,9 @@ homeis/Services/ExpressionsService.d: \
 
 /root/raspiworkspace/dis/homeis/Devices/HisDevValue.h:
 
-/root/raspiworkspace/dis/srutil/event/event.hpp:
-
-/root/raspiworkspace/dis/srutil/delegate/delegate.hpp:
-
-/root/raspiworkspace/dis/srutil/delegate/detail/delegate_list.hpp:
-
-/root/raspiworkspace/dis/srutil/delegate/detail/delegate_template.hpp:
-
 /root/raspiworkspace/dis/homeis/Helpers/converter.h:
 
 /root/raspiworkspace/dis/homeis/Devices/EHisDevDirection.h:
-
-/root/raspiworkspace/dis/homeis/Expressions/IExpression.h:
 
 /root/raspiworkspace/dis/homeis/Expressions/LuaExpression.h:
 

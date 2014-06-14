@@ -4,5 +4,5 @@
 
 USER_OBJS :=
 
-LIBS := -lpthread -lxml2 -lmicrohttpd
+LIBS := -lpthread -lusb-1.0 -lxml2 -lmicrohttpd
 

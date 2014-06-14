@@ -424,6 +424,15 @@ int lua_sleep(lua_State *L) {
     return lua_yield(L,0);
 }
 
+bool LuaExpression::ForceEvaluate()
+{
+	bool saveRunning = runningAllowed;
+	runningAllowed = true;
+	bool result = Evaluate();
+	runningAllowed = saveRunning;
+	return result;
+}
+
 bool LuaExpression::Evaluate()
 {
 	if (inEvalFunc) return false;
@@ -587,5 +596,6 @@ xmlChar* LuaExpression::GetNodeNameInternal()
 
 LuaExpression::~LuaExpression()
 {
+	SetRunning(false);
 	File::Delete(GetFileName(GetName()));
 }

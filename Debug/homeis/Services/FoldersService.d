@@ -48,6 +48,11 @@ homeis/Services/FoldersService.d: ../homeis/Services/FoldersService.cpp \
  /root/raspiworkspace/dis/homeis/Devices/Folder/HisDevValueId.h \
  /root/raspiworkspace/dis/homeis/Devices/Folder/HisDevFolderRoot.h \
  /root/raspiworkspace/dis/homeis/Devices/Folder/HisDevFolder.h \
+ /root/raspiworkspace/dis/homeis/Expressions/IExpression.h \
+ /root/raspiworkspace/dis/srutil/event/event.hpp \
+ /root/raspiworkspace/dis/srutil/delegate/delegate.hpp \
+ /root/raspiworkspace/dis/srutil/delegate/detail/delegate_list.hpp \
+ /root/raspiworkspace/dis/srutil/delegate/detail/delegate_template.hpp \
  ../homeis/Services/EItemType.h
 
 /root/raspiworkspace/dis/libhttpserver-master/src/httpserver.hpp:
@@ -147,5 +152,15 @@ homeis/Services/FoldersService.d: ../homeis/Services/FoldersService.cpp \
 /root/raspiworkspace/dis/homeis/Devices/Folder/HisDevFolderRoot.h:
 
 /root/raspiworkspace/dis/homeis/Devices/Folder/HisDevFolder.h:
+
+/root/raspiworkspace/dis/homeis/Expressions/IExpression.h:
+
+/root/raspiworkspace/dis/srutil/event/event.hpp:
+
+/root/raspiworkspace/dis/srutil/delegate/delegate.hpp:
+
+/root/raspiworkspace/dis/srutil/delegate/detail/delegate_list.hpp:
+
+/root/raspiworkspace/dis/srutil/delegate/detail/delegate_template.hpp:
 
 ../homeis/Services/EItemType.h:

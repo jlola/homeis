@@ -86,6 +86,7 @@ homeis/Devices/HisDevices.d: ../homeis/Devices/HisDevices.cpp \
  ../homeis/Devices/Folder/HisDevFolderRoot.h \
  /root/raspiworkspace/dis/homeis/Devices/Folder/HisDevFolder.h \
  /root/raspiworkspace/dis/homeis/Devices/Folder/HisDevValueId.h \
+ /root/raspiworkspace/dis/homeis/Expressions/IExpression.h \
  ../homeis/Devices/VirtualDevices/HisDevVirtual.h \
  /root/raspiworkspace/dis/homeis/Devices/HisDevBase.h \
  ../homeis/Devices/HisDevices.h
@@ -269,6 +270,8 @@ homeis/Devices/HisDevices.d: ../homeis/Devices/HisDevices.cpp \
 /root/raspiworkspace/dis/homeis/Devices/Folder/HisDevFolder.h:
 
 /root/raspiworkspace/dis/homeis/Devices/Folder/HisDevValueId.h:
+
+/root/raspiworkspace/dis/homeis/Expressions/IExpression.h:
 
 ../homeis/Devices/VirtualDevices/HisDevVirtual.h:
 

@@ -86,7 +86,8 @@ homeis/Common/HisBase.d: ../homeis/Common/HisBase.cpp \
  /root/raspiworkspace/dis/homeis/Expressions/IExpression.h \
  /root/raspiworkspace/dis/homeis/Devices/Folder/HisDevFolderRoot.h \
  /root/raspiworkspace/dis/homeis/Devices/Folder/HisDevFolder.h \
- /root/raspiworkspace/dis/homeis/Devices/Folder/HisDevValueId.h
+ /root/raspiworkspace/dis/homeis/Devices/Folder/HisDevValueId.h \
+ /root/raspiworkspace/dis/homeis/Expressions/IExpression.h
 
 ../homeis/Common/HisBase.h:
 
@@ -263,3 +264,5 @@ homeis/Common/HisBase.d: ../homeis/Common/HisBase.cpp \
 /root/raspiworkspace/dis/homeis/Devices/Folder/HisDevFolder.h:
 
 /root/raspiworkspace/dis/homeis/Devices/Folder/HisDevValueId.h:
+
+/root/raspiworkspace/dis/homeis/Expressions/IExpression.h:

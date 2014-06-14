@@ -86,6 +86,7 @@ public:
 	void DoInternalLoad(xmlNodePtr & node);
 	void DoInternalSave(xmlNodePtr & node);
 	bool Evaluate();
+	bool ForceEvaluate();
 	size_t GetCountInputs();
 	size_t GetCountOutputs();
 	void SetRunning(bool running);

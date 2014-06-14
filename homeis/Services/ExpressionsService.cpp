@@ -31,25 +31,24 @@ void ExpressionService::render_GET(const http_request& req, http_response** res)
 	try
 	{
 		//run all expressions in folder
-		if (path.find("/api/expression/folderrun")!=string::npos)
+		if (path.find("/api/expression/run")!=string::npos)
 		{
-			HisDevFolder* folder = NULL;
-			vector<LuaExpression*> expressions;
-			HisDevFolder* rootFolder = root->GetFolder();
+			LuaExpression* expression = NULL;
+
 			if(!strid.empty())
 			{
 				CUUID id = CUUID::Parse(strid);
-				folder = dynamic_cast<HisDevFolder*>(rootFolder->Find(id));
+				expression = dynamic_cast<LuaExpression*>(root->FindExpression(id));
 			}
 
-			if (folder!=NULL)
+			if (expression!=NULL)
 			{
-				expressions = folder->GetItems<LuaExpression>();
-				for (size_t i=0;i<expressions.size();i++)
+				if (!expression->ForceEvaluate())
 				{
-					expressions[i]->Evaluate();
+					throw HisException(expression->GetLastEvaluateError());
 				}
 			}
+
 		}//load data for all expression in folder
 		else if (path.find("/api/expression/folder")!=string::npos)
 		{
@@ -74,8 +73,7 @@ void ExpressionService::render_GET(const http_request& req, http_response** res)
 	}
 	catch(HisException ex)
 	{
-		//Document respjsondoc;
-		respjsondoc.Clear();
+
 			//respjsondoc.SetArray();
 		respjsondoc.SetObject();
 		StringBuffer buffer;
@@ -84,11 +82,11 @@ void ExpressionService::render_GET(const http_request& req, http_response** res)
 		jsonvalue.SetString(msg.c_str(),msg.length(),respjsondoc.GetAllocator());
 		respjsondoc.AddMember("message",jsonvalue, respjsondoc.GetAllocator());
 
-//		PrettyWriter<StringBuffer> wr(buffer);
-//		respjsondoc.Accept(wr);
-//		std::string json = buffer.GetString();
-//		*res = new http_string_response(json, 202, "application/json");
-//		return;
+		PrettyWriter<StringBuffer> wr(buffer);
+		respjsondoc.Accept(wr);
+		std::string json = buffer.GetString();
+		*res = new http_string_response(json, 403, "application/json");
+		return;
 	}
 
 	StringBuffer buffer;

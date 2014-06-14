@@ -139,6 +139,13 @@ void OneWireDevicesService::render_POST(const http_request& req, http_response**
 	std::string content = req.get_content();
 	string path = req.get_path();
 
+	string message;
+
+	Document respjsondoc;
+	respjsondoc.SetArray();
+	//respjsondoc.SetObject();
+	StringBuffer buffer;
+
 	if (req.get_user()=="a" && req.get_pass()=="a")
 	{
 		if (path.find("/api/onewiredevices")!=string::npos)
@@ -148,7 +155,15 @@ void OneWireDevicesService::render_POST(const http_request& req, http_response**
 			{
 				if (UpdateDevice(vritualdev->GetValues()[0]->GetAddress(),content))
 				{
-					*res = new http_string_response("", 200, "application/json");
+					HisDevValueBase* value = vritualdev->GetValues()[0];
+					string id = vritualdev->GetValues()[0]->GetRecordId().ToString().c_str();
+					Value d(kObjectType);
+					FillDeviceToJson(d,NULL,value,respjsondoc);
+					respjsondoc.PushBack(d,respjsondoc.GetAllocator());
+					PrettyWriter<StringBuffer> wr(buffer);
+					respjsondoc.Accept(wr);
+					std::string json = buffer.GetString();
+					*res = new http_string_response(json, 200, "application/json");
 					return;
 				}
 			}

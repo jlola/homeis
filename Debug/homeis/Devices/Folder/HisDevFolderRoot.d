@@ -32,7 +32,12 @@ homeis/Devices/Folder/HisDevFolderRoot.d: \
  /root/raspiworkspace/dis/rapidjson/internal/stack.h \
  /root/raspiworkspace/dis/rapidjson/internal/strfunc.h \
  /root/raspiworkspace/dis/homeis/Devices/Folder/HisDevFolder.h \
- /root/raspiworkspace/dis/homeis/Devices/Folder/HisDevValueId.h
+ /root/raspiworkspace/dis/homeis/Devices/Folder/HisDevValueId.h \
+ /root/raspiworkspace/dis/homeis/Expressions/IExpression.h \
+ /root/raspiworkspace/dis/srutil/event/event.hpp \
+ /root/raspiworkspace/dis/srutil/delegate/delegate.hpp \
+ /root/raspiworkspace/dis/srutil/delegate/detail/delegate_list.hpp \
+ /root/raspiworkspace/dis/srutil/delegate/detail/delegate_template.hpp
 
 ../homeis/Devices/Folder/HisDevFolderRoot.h:
 
@@ -99,3 +104,13 @@ homeis/Devices/Folder/HisDevFolderRoot.d: \
 /root/raspiworkspace/dis/homeis/Devices/Folder/HisDevFolder.h:
 
 /root/raspiworkspace/dis/homeis/Devices/Folder/HisDevValueId.h:
+
+/root/raspiworkspace/dis/homeis/Expressions/IExpression.h:
+
+/root/raspiworkspace/dis/srutil/event/event.hpp:
+
+/root/raspiworkspace/dis/srutil/delegate/delegate.hpp:
+
+/root/raspiworkspace/dis/srutil/delegate/detail/delegate_list.hpp:
+
+/root/raspiworkspace/dis/srutil/delegate/detail/delegate_template.hpp:

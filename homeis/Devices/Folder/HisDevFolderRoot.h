@@ -15,6 +15,7 @@
 #include "homeis/Common/CUUID.h"
 #include "homeis/Common/HisBase.h"
 #include "homeis/Devices/Folder/HisDevFolder.h"
+#include "homeis/Expressions/IExpression.h"
 
 using namespace std;
 
@@ -27,6 +28,7 @@ public:
 	void Load();
 	void Save();
 	HisDevValueId* FindValueId(CUUID devValueId);
+	IExpression* FindExpression(CUUID expressionId);
 	HisDevFolder *GetFolder();
 	HisDevFolderRoot(string ppath);
 	~HisDevFolderRoot();

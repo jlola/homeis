@@ -4,8 +4,10 @@ apt-get install libxml++2.6-dev libxml++2.6-doc
 compile dallas
 -------------------
 apt-get install libusb-dev 
-
-configure eclipse to linker libraries add key usb
+download and build libusb
+./configure --prefix=/root/raspberrypi/libusb --build=i686-linux --host=arm-linux-gnueabihf --disable-udev
+configure eclipse to linker libraries add key: usb-1.0
+add path to lib
 
 cross compile libxml2
 -----------------------
