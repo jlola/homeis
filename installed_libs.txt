@@ -34,4 +34,8 @@ git add installed_libs.txt
 git commit -m "add installed.txt"
 git push
 
-
+--commit
+git commit -m "commit description" -a
+git push -f origin master
+username: jlola
+password: 5EsDkE1
