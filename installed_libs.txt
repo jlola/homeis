@@ -6,6 +6,11 @@ compile dallas
 apt-get install libusb-dev 
 download and build libusb
 ./configure --prefix=/root/raspberrypi/libusb --build=i686-linux --host=arm-linux-gnueabihf --disable-udev
+
+compile libusb compat
+./configure --prefix=/root/raspberrypi/libusbcompat --build=i686-linux --host=arm-linux-gnueabihf LIBUSB_1_0_CFLAGS="-I/root/raspberrypi/libusb/include/libusb-1.0" LIBUSB_1_0_LIBS="-L/root/raspberrypi/libusb/lib"
+
+
 configure eclipse to linker libraries add key: usb-1.0
 add path to lib
 

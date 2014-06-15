@@ -7,6 +7,7 @@ zdroj: http://www.linuxproblem.org/art_9.html
 1. Remove all hosts: rm .ssh/known_hosts
 2. create dir: ssh pi@192.168.1.10 mkdir -p .ssh
 3. Write key to file: cat .ssh/id_rsa.pub | ssh pi@192.168.1.10 'cat >> .ssh/authorized_keys'
+4. login password: disdis
 
 Uvolneni seriovyho portu
 -------------------------------------------------------------------------------------------
@@ -23,6 +24,10 @@ You must be root to edit this (e.g. use sudo nano /boot/cmdline.txt). Be careful
 T0:23:respawn:/sbin/getty -L ttyAMA0 115200 vt100
 You will need to edit this file to comment out the second line, i.e.
 #T0:23:respawn:/sbin/getty -L ttyAMA0 115200 vt100
+
+Uvolneni ds2490 usb portu
+--------------------------------
+sudo modprobe -r ds2490
 
 Install libhttpserverd10
 ----------------------------------

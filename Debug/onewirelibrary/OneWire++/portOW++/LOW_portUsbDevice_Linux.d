@@ -17,7 +17,8 @@ onewirelibrary/OneWire++/portOW++/LOW_portUsbDevice_Linux.d: \
  /root/raspiworkspace/dis/onewirelibrary/OneWire++/threadOW++/LOW_thread_Factory.h \
  /root/raspiworkspace/dis/onewirelibrary/OneWire++/threadOW++/LOW_thread_mutex.h \
  /root/raspiworkspace/dis/onewirelibrary/OneWire++/threadOW++/LOW_thread_rwlock.h \
- /root/raspiworkspace/dis/onewirelibrary/OneWire++/threadOW++/LOW_thread_rwlock.h
+ /root/raspiworkspace/dis/onewirelibrary/OneWire++/threadOW++/LOW_thread_rwlock.h \
+ /root/raspberrypi/include/usb.h
 
 ../onewirelibrary/OneWire++/portOW++/LOW_portUsbDevice_Linux.h:
 
@@ -54,3 +55,5 @@ onewirelibrary/OneWire++/portOW++/LOW_portUsbDevice_Linux.d: \
 /root/raspiworkspace/dis/onewirelibrary/OneWire++/threadOW++/LOW_thread_rwlock.h:
 
 /root/raspiworkspace/dis/onewirelibrary/OneWire++/threadOW++/LOW_thread_rwlock.h:
+
+/root/raspberrypi/include/usb.h:

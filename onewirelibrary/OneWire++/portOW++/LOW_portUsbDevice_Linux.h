@@ -24,7 +24,7 @@
 #include "LOW_objectSynchronizer.h"
 
 
-//#include "usb.h"
+#include "usb.h"
 
 
 
@@ -100,7 +100,7 @@ public:
   virtual unsigned int bulkRead( const usbEndpoint_t inEP, 
                                  byteVec_t &outData, const usbTimeout_t inTimeout);
                              
-
+  void reset();
                              
 //=======================================================================================
 protected:
@@ -154,8 +154,8 @@ private:
   // attributes
   //
 
-  //struct usb_device *usbLibDevice; /**< libusb's device structure. */
-  //usb_dev_handle    *usbLibDevHdl; /**< libusb's handle to USB device. */
+  struct usb_device *usbLibDevice; /**< libusb's device structure. */
+  usb_dev_handle    *usbLibDevHdl; /**< libusb's handle to USB device. */
 
 
   //=====================================================================================

@@ -70,6 +70,8 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/uuid}&quot;"/>
 									<listOptionValue builtIn="false" value="/root/raspberrypi/libxml2-2.8.0/include/libxml2"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/lua-5.2.1/src}&quot;"/>
+									<listOptionValue builtIn="false" value="/root/raspberrypi/include"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/libs/libusbcompat/include}&quot;"/>
 								</option>
 								<option id="gnu.cpp.compiler.option.other.other.324598985" name="Other flags" superClass="gnu.cpp.compiler.option.other.other" value="-c -std=c++0x -g" valueType="string"/>
 								<option id="gnu.cpp.compiler.option.warnings.pedantic.2051605766" name="Pedantic (-pedantic)" superClass="gnu.cpp.compiler.option.warnings.pedantic" value="false" valueType="boolean"/>
@@ -110,6 +112,8 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/uuid}&quot;"/>
 									<listOptionValue builtIn="false" value="/root/raspberrypi/libxml2-2.8.0/include/libxml2"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/lua-5.2.1/src}&quot;"/>
+									<listOptionValue builtIn="false" value="/root/raspberrypi/include"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/libs/libusbcompat/include}&quot;"/>
 								</option>
 								<option id="gnu.c.compiler.option.misc.other.1019956290" name="Other flags" superClass="gnu.c.compiler.option.misc.other" value="-c" valueType="string"/>
 								<option id="gnu.c.compiler.option.preprocessor.def.symbols.1910208984" name="Defined symbols (-D)" superClass="gnu.c.compiler.option.preprocessor.def.symbols" valueType="definedSymbols">
@@ -121,8 +125,9 @@
 							<tool id="cdt.managedbuild.tool.gnu.c.linker.exe.debug.2037371696" name="GCC C Linker" superClass="cdt.managedbuild.tool.gnu.c.linker.exe.debug"/>
 							<tool command="arm-linux-gnueabihf-g++" id="cdt.managedbuild.tool.gnu.cpp.linker.exe.debug.1870919744" name="GCC C++ Linker" superClass="cdt.managedbuild.tool.gnu.cpp.linker.exe.debug">
 								<option id="gnu.cpp.link.option.paths.849865549" name="Library search path (-L)" superClass="gnu.cpp.link.option.paths" valueType="libPaths">
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/libs/libusbcompat/lib}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/libs/libusb/lib}&quot;"/>
 									<listOptionValue builtIn="false" value="/root/raspberrypi/tools/arm-bcm2708/gcc-linaro-arm-linux-gnueabihf-raspbian/arm-linux-gnueabihf/libc/lib/arm-linux-gnueabihf"/>
-									<listOptionValue builtIn="false" value="/root/raspberrypi/libsub/lib"/>
 									<listOptionValue builtIn="false" value="/root/raspberrypi/tools/arm-bcm2708/arm-bcm2708hardfp-linux-gnueabi/arm-bcm2708hardfp-linux-gnueabi/lib"/>
 									<listOptionValue builtIn="false" value="/root/raspberrypi/tools/arm-bcm2708/gcc-linaro-arm-linux-gnueabihf-raspbian/arm-linux-gnueabihf/libc/lib"/>
 									<listOptionValue builtIn="false" value="/root/raspberrypi/tools/arm-bcm2708/gcc-linaro-arm-linux-gnueabihf-raspbian/lib/gcc/arm-linux-gnueabihf/4.7.2"/>
@@ -133,6 +138,7 @@
 								<option id="gnu.cpp.link.option.libs.1146903556" name="Libraries (-l)" superClass="gnu.cpp.link.option.libs" valueType="libs">
 									<listOptionValue builtIn="false" value="pthread"/>
 									<listOptionValue builtIn="false" value="usb-1.0"/>
+									<listOptionValue builtIn="false" value="usb"/>
 									<listOptionValue builtIn="false" value="xml2"/>
 									<listOptionValue builtIn="false" value="microhttpd"/>
 								</option>
@@ -169,7 +175,6 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/Websocket Server/WebsocketServer/src}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/Websocket Server/WebsocketProtocol/src}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/src}&quot;"/>
-									<listOptionValue builtIn="false" value="/usr/include"/>
 									<listOptionValue builtIn="false" value="/lib"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/homeis/Devices}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/homeis/Helpers}&quot;"/>
@@ -180,6 +185,8 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/uuid}&quot;"/>
 									<listOptionValue builtIn="false" value="/root/raspberrypi/libxml2-2.8.0/include/libxml2"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/lua-5.2.1/src}&quot;"/>
+									<listOptionValue builtIn="false" value="/root/raspberrypi/include"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/libs/libusbcompat/include}&quot;"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.assembler.input.590498356" superClass="cdt.managedbuild.tool.gnu.assembler.input"/>
 							</tool>

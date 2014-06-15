@@ -96,7 +96,8 @@ int main(int argc, char **argv)
 //
 //	    lua_close(L);
 
-	HomeIsServer server("/dev/ttyAMA0",81);
+	//"/dev/ttyAMA0"
+	HomeIsServer server("001/004",81);
 	server.Start();
 	server.Stop();
 

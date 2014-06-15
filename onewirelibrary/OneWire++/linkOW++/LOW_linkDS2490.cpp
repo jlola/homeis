@@ -686,7 +686,7 @@ void LOW_linkDS2490::readDeviceStatus( deviceFeedback_t &outDevFeedback, resultC
   deviceFeedbackRaw_t  feedbackData;
 
   unsigned int readBytes = usbDevice->bulkRead( usbStatusInEP, sizeof( feedbackData),
-                                                reinterpret_cast<LOW_portUsbDevice::msgData_t>(&feedbackData), 500);
+                                                reinterpret_cast<LOW_portUsbDevice::msgData_t>(&feedbackData), 1000);
   if ( readBytes < 16 )
     throw comm_error( "Short read from status endpoint", __FILE__, __LINE__);
 
