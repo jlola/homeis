@@ -1,6 +1,6 @@
-scp dis pi@192.168.1.7:/home/pi/homeis
+scp dis linaro@192.168.1.9:/home/linaro/homeis
 
-ssh pi@192.168.1.7 <<'ENDSSH'
+ssh linaro@192.168.1.9 <<'ENDSSH'
 sudo gdbserver :2345 homeis/dis
 ENDSSH
 

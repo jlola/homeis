@@ -131,12 +131,24 @@ bool HomeIsServer::InitOneWireLib(string port)
 
 		//LOW_portSerialFactory::portSpecifier_t  ttyS1 = LOW_portSerialFactory::portSpecifier_t( serialPort );
 		//ds2480Link = new LOW_linkDS2480B(ttyS1,LOW_linkDS2480B::RXPOL_val_t::RXPOL_NORM,true);
-		LOW_portUsb_Factory::usbDeviceSpecifier_t usb = LOW_portUsb_Factory::usbDeviceSpecifier_t(port);
-		ds2490Link = new LOW_linkDS2490(usb,false,false);
-		//passiveLink = new LOW_linkPassiveSerial( ttyS1);
-		//oneWireNet.addLink( passiveLink);
-		//oneWireNet.addLink( ds2480Link);
-		oneWireNet.addLink(ds2490Link);
+		LOW_portUsb_Factory::usbDevSpecVec_t adapters = LOW_portUsb_Factory::getPortSpecifiers(LOW_linkDS2490::usbVendorID,LOW_linkDS2490::usbProductID);
+
+		if (adapters.size()>0)
+		{
+			printf("Found adapter DS2490 at: %s\n",adapters[0].c_str());
+			LOW_portUsb_Factory::usbDeviceSpecifier_t usb = LOW_portUsb_Factory::usbDeviceSpecifier_t(adapters[0]);
+			ds2490Link = new LOW_linkDS2490(usb,false,false);
+			//passiveLink = new LOW_linkPassiveSerial( ttyS1);
+			//oneWireNet.addLink( passiveLink);
+			//oneWireNet.addLink( ds2480Link);
+			oneWireNet.addLink(ds2490Link);
+			printf("Adapter DS2490 successfully initialized\n");
+		}
+		else
+		{
+			printf("Error DS2490 not found.\n");
+			return false;
+		}
 
 
 		//oneWireLinks.push_back( passiveLink);

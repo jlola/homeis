@@ -25,6 +25,7 @@ HisDevValueBase::HisDevValueBase(std::string pdevaddr, EHisDevDirection direct, 
 	datatype = pdatatype;
 	devaddr = pdevaddr;
 	deviceError = true;
+	allowForceOutput = false;
 }
 
 HisDevValueBase::HisDevValueBase(xmlNodePtr pnode) :
@@ -247,7 +248,7 @@ bool HisDevValueBase::ForceStringValue(string strvalue)
 				int val = Converter::stoi(strvalue,10);
 				if (val!=value->GetValue())
 					value->ForceValue(val);
-				return false;
+				return true;
 			}
 			case EDataType::String:
 			{
@@ -258,11 +259,10 @@ bool HisDevValueBase::ForceStringValue(string strvalue)
 			}
 			case EDataType::Uint:
 			{
-				//HisDevValue<uint16_t>* value = dynamic_cast<HisDevValue<uint16_t>*>(this);
-//				HisDevValue<int>* value = dynamic_cast<HisDevValue<int>*>(this);
-//				int val = Converter::stoi(strvalue,10);
-//				value->ForceValue(val);
-				return false;
+				HisDevValue<uint32_t>* value = dynamic_cast<HisDevValue<uint32_t>*>(this);
+				int val = Converter::stoi(strvalue,10);
+				value->ForceValue(val);
+				return true;
 			}
 			case EDataType::Unknown:
 				return false;
@@ -271,7 +271,7 @@ bool HisDevValueBase::ForceStringValue(string strvalue)
 	}
 	catch(...)
 	{
-		CLogger::Error("Error set value");
+		CLogger::Error(string("HisDevValue::ForceStringValue | Error set value: " + strvalue).c_str());
 	}
 	return false;
 }
@@ -309,7 +309,7 @@ std::string HisDevValueBase::GetStringValue()
 		}
 		case EDataType::Uint:
 		{
-			HisDevValue<uint16_t>* value = dynamic_cast<HisDevValue<uint16_t>*>(this);
+			HisDevValue<uint32_t>* value = dynamic_cast<HisDevValue<uint32_t>*>(this);
 			std::ostringstream s;
 			s << value->GetValue();
 			return s.str();

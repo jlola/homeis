@@ -73,7 +73,7 @@
 									<listOptionValue builtIn="false" value="/root/raspberrypi/include"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/libs/libusbcompat/include}&quot;"/>
 								</option>
-								<option id="gnu.cpp.compiler.option.other.other.324598985" name="Other flags" superClass="gnu.cpp.compiler.option.other.other" value="-c -std=c++0x -g" valueType="string"/>
+								<option id="gnu.cpp.compiler.option.other.other.324598985" name="Other flags" superClass="gnu.cpp.compiler.option.other.other" value="-c -std=c++0x -g -march=armv7-a" valueType="string"/>
 								<option id="gnu.cpp.compiler.option.warnings.pedantic.2051605766" name="Pedantic (-pedantic)" superClass="gnu.cpp.compiler.option.warnings.pedantic" value="false" valueType="boolean"/>
 								<option id="gnu.cpp.compiler.option.preprocessor.def.356825098" name="Defined symbols (-D)" superClass="gnu.cpp.compiler.option.preprocessor.def" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="_HTTPSERVER_HPP_INSIDE_"/>
@@ -115,7 +115,7 @@
 									<listOptionValue builtIn="false" value="/root/raspberrypi/include"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/libs/libusbcompat/include}&quot;"/>
 								</option>
-								<option id="gnu.c.compiler.option.misc.other.1019956290" name="Other flags" superClass="gnu.c.compiler.option.misc.other" value="-c" valueType="string"/>
+								<option id="gnu.c.compiler.option.misc.other.1019956290" name="Other flags" superClass="gnu.c.compiler.option.misc.other" value="-c -march=armv7-a" valueType="string"/>
 								<option id="gnu.c.compiler.option.preprocessor.def.symbols.1910208984" name="Defined symbols (-D)" superClass="gnu.c.compiler.option.preprocessor.def.symbols" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="_HTTPSERVER_HPP_INSIDE_"/>
 									<listOptionValue builtIn="false" value="HTTPSERVER_COMPILATION"/>
@@ -145,7 +145,7 @@
 								<option id="gnu.cpp.link.option.other.1854234515" name="Other options (-Xlinker [option])" superClass="gnu.cpp.link.option.other" valueType="stringList">
 									<listOptionValue builtIn="false" value="-lrt"/>
 								</option>
-								<option id="gnu.cpp.link.option.flags.557195787" name="Linker flags" superClass="gnu.cpp.link.option.flags" value="" valueType="string"/>
+								<option id="gnu.cpp.link.option.flags.557195787" name="Linker flags" superClass="gnu.cpp.link.option.flags" value="-march=armv7-a" valueType="string"/>
 								<option id="gnu.cpp.link.option.shared.836416066" name="Shared (-shared)" superClass="gnu.cpp.link.option.shared" value="false" valueType="boolean"/>
 								<option id="gnu.cpp.link.option.nodeflibs.1215097719" name="Do not use default libraries (-nodefaultlibs)" superClass="gnu.cpp.link.option.nodeflibs" value="false" valueType="boolean"/>
 								<option id="gnu.cpp.link.option.implname.1723667010" name="Import Library name (-Wl,--out-implib=)" superClass="gnu.cpp.link.option.implname" value="" valueType="string"/>
@@ -188,6 +188,7 @@
 									<listOptionValue builtIn="false" value="/root/raspberrypi/include"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/libs/libusbcompat/include}&quot;"/>
 								</option>
+								<option id="gnu.both.asm.option.flags.681896401" superClass="gnu.both.asm.option.flags" value="-march=armv7-a" valueType="string"/>
 								<inputType id="cdt.managedbuild.tool.gnu.assembler.input.590498356" superClass="cdt.managedbuild.tool.gnu.assembler.input"/>
 							</tool>
 						</toolChain>

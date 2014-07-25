@@ -60,8 +60,6 @@ end ";
 //	    return lua_yield(L,1);
 //	}
 
-int main(int argc, char **argv)
-{
 //	int status;
 //	    lua_State* L = luaL_newstate();
 //	    luaL_openlibs(L);
@@ -96,8 +94,12 @@ int main(int argc, char **argv)
 //
 //	    lua_close(L);
 
+int main(int argc, char **argv)
+{
+	printf("Home information system v.1.0.2\n");
+	printf("-------------------------------\n");
 	//"/dev/ttyAMA0"
-	HomeIsServer server("001/004",81);
+	HomeIsServer server("",81);
 	server.Start();
 	server.Stop();
 

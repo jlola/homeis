@@ -183,7 +183,10 @@ void HisDevices::AddScanned()
 			if (finded<0)
 			{
 				HisDevDallas* hisdev = (HisDevDallas*)HisDevFactory::Instance().Create(pdev);
-				Add(hisdev);
+				if (hisdev!=NULL)
+					Add(hisdev);
+				else
+					CLogger::Error("Unsupported family code: %i",pdev->getFamilyCode());
 			}
 		}
 		catch(...)

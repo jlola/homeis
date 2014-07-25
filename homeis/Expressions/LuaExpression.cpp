@@ -439,6 +439,12 @@ bool LuaExpression::Evaluate()
 	inEvalFunc = true;
 	this->ReloadValues();
 
+	if (!ExistsName(GetName()))
+	{
+		inEvalFunc = false;
+		return false;
+	}
+
 	if (!running && runningAllowed)
 	{
 		lastEvaluateError.clear();
