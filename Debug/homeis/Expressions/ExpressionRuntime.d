@@ -15,7 +15,10 @@ homeis/Expressions/ExpressionRuntime.d: \
  /root/raspiworkspace/dis/srutil/delegate/detail/delegate_list.hpp \
  /root/raspiworkspace/dis/srutil/delegate/detail/delegate_template.hpp \
  /root/raspiworkspace/dis/homeis/Common/CUUID.h \
- /root/raspiworkspace/dis/uuid/uuid.h
+ /root/raspiworkspace/dis/uuid/uuid.h \
+ /root/raspiworkspace/dis/homeis/Helpers/logger.h \
+ /root/raspiworkspace/dis/linuxcs/linuxcs.h \
+ /root/raspiworkspace/dis/stack_trace.h
 
 /root/raspiworkspace/dis/homeis/Common/HisLock.h:
 
@@ -48,3 +51,9 @@ homeis/Expressions/ExpressionRuntime.d: \
 /root/raspiworkspace/dis/homeis/Common/CUUID.h:
 
 /root/raspiworkspace/dis/uuid/uuid.h:
+
+/root/raspiworkspace/dis/homeis/Helpers/logger.h:
+
+/root/raspiworkspace/dis/linuxcs/linuxcs.h:
+
+/root/raspiworkspace/dis/stack_trace.h:

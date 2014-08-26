@@ -4,6 +4,8 @@ libhttpserver-master/examples/Test.d: \
  /root/raspiworkspace/dis/libhttpserver-master/src/httpserver.hpp \
  /root/raspiworkspace/dis/libhttpserver-master/src/httpserver/http_utils.hpp \
  /root/raspberrypi/libmicrohttpd/include/microhttpd.h \
+ /root/gcc-linaro-arm-linux-gnueabihf/lib/gcc/arm-linux-gnueabihf/4.8.2/include/stdarg.h \
+ /root/gcc-linaro-arm-linux-gnueabihf/lib/gcc/arm-linux-gnueabihf/4.8.2/include/stdint.h \
  /root/raspiworkspace/dis/libhttpserver-master/src/httpserver/http_endpoint.hpp \
  /root/raspiworkspace/dis/libhttpserver-master/src/httpserver/http_resource.hpp \
  /root/raspiworkspace/dis/libhttpserver-master/src/httpserver/http_response.hpp \
@@ -19,6 +21,10 @@ libhttpserver-master/examples/Test.d: \
 /root/raspiworkspace/dis/libhttpserver-master/src/httpserver/http_utils.hpp:
 
 /root/raspberrypi/libmicrohttpd/include/microhttpd.h:
+
+/root/gcc-linaro-arm-linux-gnueabihf/lib/gcc/arm-linux-gnueabihf/4.8.2/include/stdarg.h:
+
+/root/gcc-linaro-arm-linux-gnueabihf/lib/gcc/arm-linux-gnueabihf/4.8.2/include/stdint.h:
 
 /root/raspiworkspace/dis/libhttpserver-master/src/httpserver/http_endpoint.hpp:
 

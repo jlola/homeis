@@ -118,13 +118,13 @@ public:
 		HisDevValueBase::HisDevValueBase(addr, direct, pdatatype,pPinNumber)
 	{
 
-		//value = default();
+		value = T(0);
 	}
 
 	HisDevValue(xmlNodePtr pnode) :
 		HisDevValueBase::HisDevValueBase(pnode)
 	{
-
+		value = T(0);
 	}
 
 	/*

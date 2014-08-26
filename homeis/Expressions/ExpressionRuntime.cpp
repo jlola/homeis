@@ -9,6 +9,13 @@
 
 #include "homeis/Common/HisLock.h"
 #include "ExpressionRuntime.h"
+#include "homeis/Helpers/logger.h"
+
+extern "C" {
+
+#include "stack_trace.h"
+
+}
 
 ExpressionRuntime::ExpressionRuntime()
 {
@@ -29,6 +36,7 @@ void ExpressionRuntime::Evaluate()
 
 void* ExpressionRuntime::ThreadFunction(void* obj)
 {
+	//set_signal_handler("/home/linaro/homeis/dis");
 	ExpressionRuntime* runtime = (ExpressionRuntime*)obj;
 
 	while(runtime->running)
@@ -73,8 +81,16 @@ int ExpressionRuntime::Find(IExpression* expression)
 
 void ExpressionRuntime::Start()
 {
+	/* Initialize thread creation attributes */
+
+	int s = pthread_attr_init(&attr);
+   if (s != 0)
+	   //handle_error_en(s, "pthread_attr_init");
+	   CLogger::Error("pthread_attr_init");
+
+
 	running = true;
-	pthread_create( &thread, NULL, ExpressionRuntime::ThreadFunction, (void*)this );
+	pthread_create( &thread, &attr, ExpressionRuntime::ThreadFunction, (void*)this );
 }
 void ExpressionRuntime::Stop()
 {

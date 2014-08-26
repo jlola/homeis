@@ -4,6 +4,8 @@ homeis/Services/ExpressionsService.d: \
  /root/raspiworkspace/dis/libhttpserver-master/src/httpserver.hpp \
  /root/raspiworkspace/dis/libhttpserver-master/src/httpserver/http_utils.hpp \
  /root/raspberrypi/libmicrohttpd/include/microhttpd.h \
+ /root/gcc-linaro-arm-linux-gnueabihf/lib/gcc/arm-linux-gnueabihf/4.8.2/include/stdarg.h \
+ /root/gcc-linaro-arm-linux-gnueabihf/lib/gcc/arm-linux-gnueabihf/4.8.2/include/stdint.h \
  /root/raspiworkspace/dis/libhttpserver-master/src/httpserver/http_endpoint.hpp \
  /root/raspiworkspace/dis/libhttpserver-master/src/httpserver/http_resource.hpp \
  /root/raspiworkspace/dis/libhttpserver-master/src/httpserver/http_response.hpp \
@@ -103,6 +105,8 @@ homeis/Services/ExpressionsService.d: \
  /root/raspiworkspace/dis/homeis/Expressions/IExpression.h \
  /root/raspiworkspace/dis/lua-5.2.1/src/lua.h \
  /root/raspiworkspace/dis/lua-5.2.1/src/luaconf.h \
+ /root/gcc-linaro-arm-linux-gnueabihf/lib/gcc/arm-linux-gnueabihf/4.8.2/include-fixed/limits.h \
+ /root/gcc-linaro-arm-linux-gnueabihf/lib/gcc/arm-linux-gnueabihf/4.8.2/include-fixed/syslimits.h \
  /root/raspiworkspace/dis/lua-5.2.1/src/lauxlib.h \
  /root/raspiworkspace/dis/lua-5.2.1/src/lua.h \
  /root/raspiworkspace/dis/lua-5.2.1/src/lualib.h \
@@ -115,6 +119,10 @@ homeis/Services/ExpressionsService.d: \
 /root/raspiworkspace/dis/libhttpserver-master/src/httpserver/http_utils.hpp:
 
 /root/raspberrypi/libmicrohttpd/include/microhttpd.h:
+
+/root/gcc-linaro-arm-linux-gnueabihf/lib/gcc/arm-linux-gnueabihf/4.8.2/include/stdarg.h:
+
+/root/gcc-linaro-arm-linux-gnueabihf/lib/gcc/arm-linux-gnueabihf/4.8.2/include/stdint.h:
 
 /root/raspiworkspace/dis/libhttpserver-master/src/httpserver/http_endpoint.hpp:
 
@@ -313,6 +321,10 @@ homeis/Services/ExpressionsService.d: \
 /root/raspiworkspace/dis/lua-5.2.1/src/lua.h:
 
 /root/raspiworkspace/dis/lua-5.2.1/src/luaconf.h:
+
+/root/gcc-linaro-arm-linux-gnueabihf/lib/gcc/arm-linux-gnueabihf/4.8.2/include-fixed/limits.h:
+
+/root/gcc-linaro-arm-linux-gnueabihf/lib/gcc/arm-linux-gnueabihf/4.8.2/include-fixed/syslimits.h:
 
 /root/raspiworkspace/dis/lua-5.2.1/src/lauxlib.h:
 

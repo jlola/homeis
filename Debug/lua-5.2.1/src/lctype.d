@@ -1,11 +1,24 @@
 lua-5.2.1/src/lctype.d: ../lua-5.2.1/src/lctype.c \
  ../lua-5.2.1/src/lctype.h ../lua-5.2.1/src/lua.h \
- ../lua-5.2.1/src/luaconf.h ../lua-5.2.1/src/llimits.h
+ /root/gcc-linaro-arm-linux-gnueabihf/lib/gcc/arm-linux-gnueabihf/4.8.2/include/stdarg.h \
+ /root/gcc-linaro-arm-linux-gnueabihf/lib/gcc/arm-linux-gnueabihf/4.8.2/include/stddef.h \
+ ../lua-5.2.1/src/luaconf.h \
+ /root/gcc-linaro-arm-linux-gnueabihf/lib/gcc/arm-linux-gnueabihf/4.8.2/include-fixed/limits.h \
+ /root/gcc-linaro-arm-linux-gnueabihf/lib/gcc/arm-linux-gnueabihf/4.8.2/include-fixed/syslimits.h \
+ ../lua-5.2.1/src/llimits.h
 
 ../lua-5.2.1/src/lctype.h:
 
 ../lua-5.2.1/src/lua.h:
 
+/root/gcc-linaro-arm-linux-gnueabihf/lib/gcc/arm-linux-gnueabihf/4.8.2/include/stdarg.h:
+
+/root/gcc-linaro-arm-linux-gnueabihf/lib/gcc/arm-linux-gnueabihf/4.8.2/include/stddef.h:
+
 ../lua-5.2.1/src/luaconf.h:
+
+/root/gcc-linaro-arm-linux-gnueabihf/lib/gcc/arm-linux-gnueabihf/4.8.2/include-fixed/limits.h:
+
+/root/gcc-linaro-arm-linux-gnueabihf/lib/gcc/arm-linux-gnueabihf/4.8.2/include-fixed/syslimits.h:
 
 ../lua-5.2.1/src/llimits.h:

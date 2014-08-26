@@ -27,7 +27,7 @@ void* HisDevRuntime::ThreadFunction(void* obj)
 
 	while(runtime->running)
 	{
-		//usleep(1000000);
+		usleep(10);
 		runtime->devices.Refresh();
 	}
 

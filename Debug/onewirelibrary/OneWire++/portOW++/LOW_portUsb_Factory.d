@@ -18,7 +18,9 @@ onewirelibrary/OneWire++/portOW++/LOW_portUsb_Factory.d: \
  /root/raspiworkspace/dis/onewirelibrary/OneWire++/threadOW++/LOW_thread_mutex.h \
  /root/raspiworkspace/dis/onewirelibrary/OneWire++/threadOW++/LOW_thread_rwlock.h \
  /root/raspiworkspace/dis/onewirelibrary/OneWire++/threadOW++/LOW_thread_rwlock.h \
- /root/raspberrypi/include/usb.h
+ /root/raspberrypi/include/usb.h \
+ /root/gcc-linaro-arm-linux-gnueabihf/lib/gcc/arm-linux-gnueabihf/4.8.2/include-fixed/limits.h \
+ /root/gcc-linaro-arm-linux-gnueabihf/lib/gcc/arm-linux-gnueabihf/4.8.2/include-fixed/syslimits.h
 
 ../onewirelibrary/OneWire++/portOW++/LOW_portUsb_Factory.h:
 
@@ -57,3 +59,7 @@ onewirelibrary/OneWire++/portOW++/LOW_portUsb_Factory.d: \
 /root/raspiworkspace/dis/onewirelibrary/OneWire++/threadOW++/LOW_thread_rwlock.h:
 
 /root/raspberrypi/include/usb.h:
+
+/root/gcc-linaro-arm-linux-gnueabihf/lib/gcc/arm-linux-gnueabihf/4.8.2/include-fixed/limits.h:
+
+/root/gcc-linaro-arm-linux-gnueabihf/lib/gcc/arm-linux-gnueabihf/4.8.2/include-fixed/syslimits.h:

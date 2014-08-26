@@ -19,6 +19,7 @@ using namespace std;
 
 class ExpressionRuntime
 {
+	pthread_attr_t attr;
 	pthread_t thread;
 	bool running;
 	vector<IExpression*> expressions;

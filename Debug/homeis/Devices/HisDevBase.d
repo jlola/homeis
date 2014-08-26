@@ -1,5 +1,6 @@
 homeis/Devices/HisDevBase.d: ../homeis/Devices/HisDevBase.cpp \
  /root/raspiworkspace/dis/homeis/Helpers/converter.h \
+ /root/gcc-linaro-arm-linux-gnueabihf/lib/gcc/arm-linux-gnueabihf/4.8.2/include/stdint.h \
  /root/raspberrypi/libxml2-2.8.0/include/libxml2/libxml/parser.h \
  /root/raspberrypi/libxml2-2.8.0/include/libxml2/libxml/xmlversion.h \
  /root/raspberrypi/libxml2-2.8.0/include/libxml2/libxml/xmlexports.h \
@@ -70,6 +71,8 @@ homeis/Devices/HisDevBase.d: ../homeis/Devices/HisDevBase.cpp \
  /root/raspiworkspace/dis/rapidjson/internal/strfunc.h
 
 /root/raspiworkspace/dis/homeis/Helpers/converter.h:
+
+/root/gcc-linaro-arm-linux-gnueabihf/lib/gcc/arm-linux-gnueabihf/4.8.2/include/stdint.h:
 
 /root/raspberrypi/libxml2-2.8.0/include/libxml2/libxml/parser.h:
 

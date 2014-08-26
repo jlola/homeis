@@ -31,7 +31,11 @@ HisDevValueBase::HisDevValueBase(std::string pdevaddr, EHisDevDirection direct, 
 HisDevValueBase::HisDevValueBase(xmlNodePtr pnode) :
 	HisBase::HisBase(pnode)
 {
-
+	pinNumber = 0;
+	direction = EHisDevDirection::Read;
+	datatype = EDataType::Int;
+	deviceError = true;
+	allowForceOutput = false;
 }
 
 bool HisDevValueBase::GetForceOutput()
@@ -52,6 +56,7 @@ HisDevValueBase::HisDevValueBase(HisDevValueBase & src)
 	direction = src.direction;
 	datatype = src.datatype;
 	deviceError = src.deviceError;
+	allowForceOutput = false;
 }
 
 HisDevValueBase* HisDevValueBase::Create(xmlNodePtr pNode)

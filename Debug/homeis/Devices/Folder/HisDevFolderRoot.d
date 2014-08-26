@@ -2,6 +2,7 @@ homeis/Devices/Folder/HisDevFolderRoot.d: \
  ../homeis/Devices/Folder/HisDevFolderRoot.cpp \
  ../homeis/Devices/Folder/HisDevFolderRoot.h \
  /root/raspberrypi/libxml2-2.8.0/include/libxml2/libxml/parser.h \
+ /root/gcc-linaro-arm-linux-gnueabihf/lib/gcc/arm-linux-gnueabihf/4.8.2/include/stdarg.h \
  /root/raspberrypi/libxml2-2.8.0/include/libxml2/libxml/xmlversion.h \
  /root/raspberrypi/libxml2-2.8.0/include/libxml2/libxml/xmlexports.h \
  /root/raspberrypi/libxml2-2.8.0/include/libxml2/libxml/tree.h \
@@ -42,6 +43,8 @@ homeis/Devices/Folder/HisDevFolderRoot.d: \
 ../homeis/Devices/Folder/HisDevFolderRoot.h:
 
 /root/raspberrypi/libxml2-2.8.0/include/libxml2/libxml/parser.h:
+
+/root/gcc-linaro-arm-linux-gnueabihf/lib/gcc/arm-linux-gnueabihf/4.8.2/include/stdarg.h:
 
 /root/raspberrypi/libxml2-2.8.0/include/libxml2/libxml/xmlversion.h:
 

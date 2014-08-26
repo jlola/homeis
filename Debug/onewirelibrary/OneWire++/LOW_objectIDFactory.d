@@ -2,6 +2,7 @@ onewirelibrary/OneWire++/LOW_objectIDFactory.d: \
  ../onewirelibrary/OneWire++/LOW_objectIDFactory.cpp \
  ../onewirelibrary/OneWire++/LOW_objectIDFactory.h \
  ../onewirelibrary/OneWire++/LOW_types.h \
+ /root/gcc-linaro-arm-linux-gnueabihf/lib/gcc/arm-linux-gnueabihf/4.8.2/include/stdint.h \
  ../onewirelibrary/OneWire++/LOW_objectSynchronizer.h \
  ../onewirelibrary/OneWire++/platformOW++/LOW_platformMisc.h \
  /root/raspiworkspace/dis/onewirelibrary/OneWire++/LOW_exception.h \
@@ -21,6 +22,8 @@ onewirelibrary/OneWire++/LOW_objectIDFactory.d: \
 ../onewirelibrary/OneWire++/LOW_objectIDFactory.h:
 
 ../onewirelibrary/OneWire++/LOW_types.h:
+
+/root/gcc-linaro-arm-linux-gnueabihf/lib/gcc/arm-linux-gnueabihf/4.8.2/include/stdint.h:
 
 ../onewirelibrary/OneWire++/LOW_objectSynchronizer.h:
 

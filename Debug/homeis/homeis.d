@@ -3,6 +3,7 @@ homeis/homeis.d: ../homeis/homeis.cpp \
  /root/raspiworkspace/dis/homeis/Devices/HisDevices.h \
  /root/raspiworkspace/dis/homeis/Devices/HisDevBase.h \
  /root/raspberrypi/libxml2-2.8.0/include/libxml2/libxml/parser.h \
+ /root/gcc-linaro-arm-linux-gnueabihf/lib/gcc/arm-linux-gnueabihf/4.8.2/include/stdarg.h \
  /root/raspberrypi/libxml2-2.8.0/include/libxml2/libxml/xmlversion.h \
  /root/raspberrypi/libxml2-2.8.0/include/libxml2/libxml/xmlexports.h \
  /root/raspberrypi/libxml2-2.8.0/include/libxml2/libxml/tree.h \
@@ -107,9 +108,13 @@ homeis/homeis.d: ../homeis/homeis.cpp \
  /root/raspiworkspace/dis/homeis/Helpers/File.h ../homeis/Common/CUUID.h \
  /root/raspiworkspace/dis/lua-5.2.1/src/lua.h \
  /root/raspiworkspace/dis/lua-5.2.1/src/luaconf.h \
+ /root/gcc-linaro-arm-linux-gnueabihf/lib/gcc/arm-linux-gnueabihf/4.8.2/include-fixed/limits.h \
+ /root/gcc-linaro-arm-linux-gnueabihf/lib/gcc/arm-linux-gnueabihf/4.8.2/include-fixed/syslimits.h \
  /root/raspiworkspace/dis/lua-5.2.1/src/lauxlib.h \
  /root/raspiworkspace/dis/lua-5.2.1/src/lua.h \
- /root/raspiworkspace/dis/lua-5.2.1/src/lualib.h
+ /root/raspiworkspace/dis/lua-5.2.1/src/lualib.h \
+ /root/raspiworkspace/dis/stack_trace.h \
+ /root/raspiworkspace/dis/libcrash-master/crash.h
 
 /root/raspiworkspace/dis/homeis/Devices/HisDevRunTime.h:
 
@@ -118,6 +123,8 @@ homeis/homeis.d: ../homeis/homeis.cpp \
 /root/raspiworkspace/dis/homeis/Devices/HisDevBase.h:
 
 /root/raspberrypi/libxml2-2.8.0/include/libxml2/libxml/parser.h:
+
+/root/gcc-linaro-arm-linux-gnueabihf/lib/gcc/arm-linux-gnueabihf/4.8.2/include/stdarg.h:
 
 /root/raspberrypi/libxml2-2.8.0/include/libxml2/libxml/xmlversion.h:
 
@@ -329,8 +336,16 @@ homeis/homeis.d: ../homeis/homeis.cpp \
 
 /root/raspiworkspace/dis/lua-5.2.1/src/luaconf.h:
 
+/root/gcc-linaro-arm-linux-gnueabihf/lib/gcc/arm-linux-gnueabihf/4.8.2/include-fixed/limits.h:
+
+/root/gcc-linaro-arm-linux-gnueabihf/lib/gcc/arm-linux-gnueabihf/4.8.2/include-fixed/syslimits.h:
+
 /root/raspiworkspace/dis/lua-5.2.1/src/lauxlib.h:
 
 /root/raspiworkspace/dis/lua-5.2.1/src/lua.h:
 
 /root/raspiworkspace/dis/lua-5.2.1/src/lualib.h:
+
+/root/raspiworkspace/dis/stack_trace.h:
+
+/root/raspiworkspace/dis/libcrash-master/crash.h:

@@ -24,6 +24,7 @@ C_UPPER_DEPS :=
 # Every subdirectory with source files must be described here
 SUBDIRS := \
 uuid \
+. \
 onewirelibrary \
 onewirelibrary/OneWire++/threadOW++ \
 onewirelibrary/OneWire++/portOW++ \
@@ -36,6 +37,7 @@ lua-5.2.1/src \
 linuxcs \
 libhttpserver-master/src \
 libhttpserver-master/examples \
+libcrash-master \
 homeis \
 homeis/Tags \
 homeis/Services \
@@ -45,5 +47,4 @@ homeis/Devices/VirtualDevices \
 homeis/Devices \
 homeis/Devices/Folder \
 homeis/Common \
-. \
 

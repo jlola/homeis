@@ -11,6 +11,7 @@
 HisBase::HisBase()
 {
 	isnew = true;
+	isloaded = false;
 	node = NULL;
 	parent = NULL;
 }

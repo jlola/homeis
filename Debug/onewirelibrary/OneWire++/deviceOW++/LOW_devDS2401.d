@@ -4,6 +4,7 @@ onewirelibrary/OneWire++/deviceOW++/LOW_devDS2401.d: \
  /root/raspiworkspace/dis/onewirelibrary/OneWire++/LOW_device.h \
  /root/raspiworkspace/dis/onewirelibrary/OneWire++/linkOW++/LOW_link.h \
  /root/raspiworkspace/dis/onewirelibrary/OneWire++/LOW_types.h \
+ /root/gcc-linaro-arm-linux-gnueabihf/lib/gcc/arm-linux-gnueabihf/4.8.2/include/stdint.h \
  /root/raspiworkspace/dis/onewirelibrary/OneWire++/LOW_exception.h \
  /root/raspiworkspace/dis/onewirelibrary/OneWire++/platformOW++/LOW_platformMiscFactory.h \
  /root/raspiworkspace/dis/onewirelibrary/OneWire++/LOW_objectSynchronizerMacros.h \
@@ -34,6 +35,8 @@ onewirelibrary/OneWire++/deviceOW++/LOW_devDS2401.d: \
 /root/raspiworkspace/dis/onewirelibrary/OneWire++/linkOW++/LOW_link.h:
 
 /root/raspiworkspace/dis/onewirelibrary/OneWire++/LOW_types.h:
+
+/root/gcc-linaro-arm-linux-gnueabihf/lib/gcc/arm-linux-gnueabihf/4.8.2/include/stdint.h:
 
 /root/raspiworkspace/dis/onewirelibrary/OneWire++/LOW_exception.h:
 

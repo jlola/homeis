@@ -1,5 +1,6 @@
 homeis/Devices/HisDevFactory.d: ../homeis/Devices/HisDevFactory.cpp \
  /root/raspiworkspace/dis/homeis/Helpers/converter.h \
+ /root/gcc-linaro-arm-linux-gnueabihf/lib/gcc/arm-linux-gnueabihf/4.8.2/include/stdint.h \
  /root/raspberrypi/libxml2-2.8.0/include/libxml2/libxml/parser.h \
  /root/raspberrypi/libxml2-2.8.0/include/libxml2/libxml/xmlversion.h \
  /root/raspberrypi/libxml2-2.8.0/include/libxml2/libxml/xmlexports.h \
@@ -86,6 +87,8 @@ homeis/Devices/HisDevFactory.d: ../homeis/Devices/HisDevFactory.cpp \
  /root/raspiworkspace/dis/homeis/Expressions/IExpression.h \
  /root/raspiworkspace/dis/lua-5.2.1/src/lua.h \
  /root/raspiworkspace/dis/lua-5.2.1/src/luaconf.h \
+ /root/gcc-linaro-arm-linux-gnueabihf/lib/gcc/arm-linux-gnueabihf/4.8.2/include-fixed/limits.h \
+ /root/gcc-linaro-arm-linux-gnueabihf/lib/gcc/arm-linux-gnueabihf/4.8.2/include-fixed/syslimits.h \
  /root/raspiworkspace/dis/lua-5.2.1/src/lauxlib.h \
  /root/raspiworkspace/dis/lua-5.2.1/src/lua.h \
  /root/raspiworkspace/dis/lua-5.2.1/src/lualib.h \
@@ -93,6 +96,8 @@ homeis/Devices/HisDevFactory.d: ../homeis/Devices/HisDevFactory.cpp \
  ../homeis/Devices/Folder/HisDevFolderRoot.h
 
 /root/raspiworkspace/dis/homeis/Helpers/converter.h:
+
+/root/gcc-linaro-arm-linux-gnueabihf/lib/gcc/arm-linux-gnueabihf/4.8.2/include/stdint.h:
 
 /root/raspberrypi/libxml2-2.8.0/include/libxml2/libxml/parser.h:
 
@@ -273,6 +278,10 @@ homeis/Devices/HisDevFactory.d: ../homeis/Devices/HisDevFactory.cpp \
 /root/raspiworkspace/dis/lua-5.2.1/src/lua.h:
 
 /root/raspiworkspace/dis/lua-5.2.1/src/luaconf.h:
+
+/root/gcc-linaro-arm-linux-gnueabihf/lib/gcc/arm-linux-gnueabihf/4.8.2/include-fixed/limits.h:
+
+/root/gcc-linaro-arm-linux-gnueabihf/lib/gcc/arm-linux-gnueabihf/4.8.2/include-fixed/syslimits.h:
 
 /root/raspiworkspace/dis/lua-5.2.1/src/lauxlib.h:
 

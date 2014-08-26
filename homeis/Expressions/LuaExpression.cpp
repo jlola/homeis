@@ -43,10 +43,14 @@ LuaExpression::LuaExpression(xmlNodePtr pnode,HisDevices* hisDevices,ExpressionR
 	mutex = HisLock::CreateMutex();
 	expressionRuntime = pExpressionRuntime;
 	devices = hisDevices;
+	nextTime = 0;
 	inEvalFunc = false;
 	runningAllowed = false;
 	CreateFolder();
 	running = false;
+	L = NULL;
+	cL = NULL;
+	folder = NULL;
 }
 
 LuaExpression::LuaExpression(HisDevFolder* pfolder,HisDevices* hisDevices, string expressionName,ExpressionRuntime *pExpressionRuntime) :
@@ -55,6 +59,7 @@ LuaExpression::LuaExpression(HisDevFolder* pfolder,HisDevices* hisDevices, strin
 	mutex = HisLock::CreateMutex();
 	expressionRuntime = pExpressionRuntime;
 	inEvalFunc = false;
+	nextTime = 0;
 	runningAllowed = false;
 	if (pfolder==NULL)
 	{
@@ -65,6 +70,8 @@ LuaExpression::LuaExpression(HisDevFolder* pfolder,HisDevices* hisDevices, strin
 	devices = hisDevices;
 	SetName(expressionName);
 	running = false;
+	L = NULL;
+	cL = NULL;
 }
 
 CUUID LuaExpression::GetRecordId()
@@ -597,7 +604,7 @@ void LuaExpression::DoInternalLoad(xmlNodePtr & node)
 
 xmlChar* LuaExpression::GetNodeNameInternal()
 {
-	return BAD_CAST NODE_EXPRESSION;
+	return /*BAD_CAST*/ NODE_EXPRESSION;
 }
 
 LuaExpression::~LuaExpression()

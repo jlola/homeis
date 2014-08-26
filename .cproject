@@ -34,13 +34,8 @@
 							<tool id="cdt.managedbuild.tool.gnu.archiver.base.1018907610" name="GCC Archiver" superClass="cdt.managedbuild.tool.gnu.archiver.base"/>
 							<tool command="arm-linux-gnueabihf-g++" id="cdt.managedbuild.tool.gnu.cpp.compiler.exe.debug.537593220" name="GCC C++ Compiler" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.exe.debug">
 								<option id="gnu.cpp.compiler.exe.debug.option.optimization.level.860297926" name="Optimization Level" superClass="gnu.cpp.compiler.exe.debug.option.optimization.level" value="gnu.cpp.compiler.optimization.level.none" valueType="enumerated"/>
-								<option id="gnu.cpp.compiler.exe.debug.option.debugging.level.2113788355" name="Debug Level" superClass="gnu.cpp.compiler.exe.debug.option.debugging.level" value="gnu.cpp.compiler.debugging.level.max" valueType="enumerated"/>
+								<option id="gnu.cpp.compiler.exe.debug.option.debugging.level.2113788355" name="Debug Level" superClass="gnu.cpp.compiler.exe.debug.option.debugging.level" value="gnu.cpp.compiler.debugging.level.default" valueType="enumerated"/>
 								<option id="gnu.cpp.compiler.option.include.paths.302114748" name="Include paths (-I)" superClass="gnu.cpp.compiler.option.include.paths" valueType="includePath">
-									<listOptionValue builtIn="false" value="/root/raspberrypi/tools/arm-bcm2708/gcc-linaro-arm-linux-gnueabihf-raspbian/lib/gcc/arm-linux-gnueabihf/4.7.2/include"/>
-									<listOptionValue builtIn="false" value="/root/raspberrypi/tools/arm-bcm2708/gcc-linaro-arm-linux-gnueabihf-raspbian/lib/gcc/arm-linux-gnueabihf/4.7.2/finclude-fixed"/>
-									<listOptionValue builtIn="false" value="/root/raspberrypi/tools/arm-bcm2708/gcc-linaro-arm-linux-gnueabihf-raspbian/lib/gcc/arm-linux-gnueabihf/4.7.2/finclude"/>
-									<listOptionValue builtIn="false" value="/root/raspberrypi/tools/arm-bcm2708/gcc-linaro-arm-linux-gnueabihf-raspbian/arm-linux-gnueabihf/libc/usr/include"/>
-									<listOptionValue builtIn="false" value="/root/raspberrypi/tools/arm-bcm2708/gcc-linaro-arm-linux-gnueabihf-raspbian/arm-linux-gnueabihf/include"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/PushFramework/include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/PushFramework/private}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/src}&quot;"/>
@@ -72,24 +67,23 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/lua-5.2.1/src}&quot;"/>
 									<listOptionValue builtIn="false" value="/root/raspberrypi/include"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/libs/libusbcompat/include}&quot;"/>
+									<listOptionValue builtIn="false" value="/root/gcc-linaro-arm-linux-gnueabihf/lib/gcc/arm-linux-gnueabihf/4.8.2/include"/>
+									<listOptionValue builtIn="false" value="/root/gcc-linaro-arm-linux-gnueabihf/lib/gcc/arm-linux-gnueabihf/4.8.2/include-fixed"/>
 								</option>
-								<option id="gnu.cpp.compiler.option.other.other.324598985" name="Other flags" superClass="gnu.cpp.compiler.option.other.other" value="-c -std=c++0x -g -march=armv7-a" valueType="string"/>
+								<option id="gnu.cpp.compiler.option.other.other.324598985" name="Other flags" superClass="gnu.cpp.compiler.option.other.other" value="-c -std=c++0x -g -march=armv7-a  -funwind-tables -fno-optimize-sibling-calls" valueType="string"/>
 								<option id="gnu.cpp.compiler.option.warnings.pedantic.2051605766" name="Pedantic (-pedantic)" superClass="gnu.cpp.compiler.option.warnings.pedantic" value="false" valueType="boolean"/>
 								<option id="gnu.cpp.compiler.option.preprocessor.def.356825098" name="Defined symbols (-D)" superClass="gnu.cpp.compiler.option.preprocessor.def" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="_HTTPSERVER_HPP_INSIDE_"/>
 									<listOptionValue builtIn="false" value="HTTPSERVER_COMPILATION"/>
 								</option>
+								<option id="gnu.cpp.compiler.option.debugging.prof.829863213" name="Generate prof information (-p)" superClass="gnu.cpp.compiler.option.debugging.prof" value="true" valueType="boolean"/>
+								<option id="gnu.cpp.compiler.option.debugging.gprof.1499636621" name="Generate gprof information (-pg)" superClass="gnu.cpp.compiler.option.debugging.gprof" value="true" valueType="boolean"/>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.1651025650" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
 							</tool>
 							<tool command="arm-linux-gnueabihf-gcc" id="cdt.managedbuild.tool.gnu.c.compiler.exe.debug.1393414392" name="GCC C Compiler" superClass="cdt.managedbuild.tool.gnu.c.compiler.exe.debug">
 								<option defaultValue="gnu.c.optimization.level.none" id="gnu.c.compiler.exe.debug.option.optimization.level.916851658" name="Optimization Level" superClass="gnu.c.compiler.exe.debug.option.optimization.level" valueType="enumerated"/>
-								<option id="gnu.c.compiler.exe.debug.option.debugging.level.1100047703" name="Debug Level" superClass="gnu.c.compiler.exe.debug.option.debugging.level" value="gnu.c.debugging.level.max" valueType="enumerated"/>
+								<option id="gnu.c.compiler.exe.debug.option.debugging.level.1100047703" name="Debug Level" superClass="gnu.c.compiler.exe.debug.option.debugging.level" value="gnu.c.debugging.level.default" valueType="enumerated"/>
 								<option id="gnu.c.compiler.option.include.paths.576708731" name="Include paths (-I)" superClass="gnu.c.compiler.option.include.paths" valueType="includePath">
-									<listOptionValue builtIn="false" value="/root/raspberrypi/tools/arm-bcm2708/gcc-linaro-arm-linux-gnueabihf-raspbian/lib/gcc/arm-linux-gnueabihf/4.7.2/include"/>
-									<listOptionValue builtIn="false" value="/root/raspberrypi/tools/arm-bcm2708/gcc-linaro-arm-linux-gnueabihf-raspbian/lib/gcc/arm-linux-gnueabihf/4.7.2/finclude-fixed"/>
-									<listOptionValue builtIn="false" value="/root/raspberrypi/tools/arm-bcm2708/gcc-linaro-arm-linux-gnueabihf-raspbian/lib/gcc/arm-linux-gnueabihf/4.7.2/finclude"/>
-									<listOptionValue builtIn="false" value="/root/raspberrypi/tools/arm-bcm2708/gcc-linaro-arm-linux-gnueabihf-raspbian/arm-linux-gnueabihf/libc/usr/include"/>
-									<listOptionValue builtIn="false" value="/root/raspberrypi/tools/arm-bcm2708/gcc-linaro-arm-linux-gnueabihf-raspbian/arm-linux-gnueabihf/include"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/PushFramework/include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/PushFramework/private}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/PushFramework}&quot;"/>
@@ -114,12 +108,16 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/lua-5.2.1/src}&quot;"/>
 									<listOptionValue builtIn="false" value="/root/raspberrypi/include"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/libs/libusbcompat/include}&quot;"/>
+									<listOptionValue builtIn="false" value="/root/gcc-linaro-arm-linux-gnueabihf/lib/gcc/arm-linux-gnueabihf/4.8.2/include"/>
+									<listOptionValue builtIn="false" value="/root/gcc-linaro-arm-linux-gnueabihf/lib/gcc/arm-linux-gnueabihf/4.8.2/include-fixed"/>
 								</option>
-								<option id="gnu.c.compiler.option.misc.other.1019956290" name="Other flags" superClass="gnu.c.compiler.option.misc.other" value="-c -march=armv7-a" valueType="string"/>
+								<option id="gnu.c.compiler.option.misc.other.1019956290" name="Other flags" superClass="gnu.c.compiler.option.misc.other" value="-c -march=armv7-a -funwind-tables -fno-optimize-sibling-calls" valueType="string"/>
 								<option id="gnu.c.compiler.option.preprocessor.def.symbols.1910208984" name="Defined symbols (-D)" superClass="gnu.c.compiler.option.preprocessor.def.symbols" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="_HTTPSERVER_HPP_INSIDE_"/>
 									<listOptionValue builtIn="false" value="HTTPSERVER_COMPILATION"/>
 								</option>
+								<option id="gnu.c.compiler.option.debugging.prof.833424362" name="Generate prof information (-p)" superClass="gnu.c.compiler.option.debugging.prof" value="true" valueType="boolean"/>
+								<option id="gnu.c.compiler.option.debugging.gprof.564149668" name="Generate gprof information (-pg)" superClass="gnu.c.compiler.option.debugging.gprof" value="true" valueType="boolean"/>
 								<inputType id="cdt.managedbuild.tool.gnu.c.compiler.input.947546508" superClass="cdt.managedbuild.tool.gnu.c.compiler.input"/>
 							</tool>
 							<tool id="cdt.managedbuild.tool.gnu.c.linker.exe.debug.2037371696" name="GCC C Linker" superClass="cdt.managedbuild.tool.gnu.c.linker.exe.debug"/>
@@ -145,12 +143,14 @@
 								<option id="gnu.cpp.link.option.other.1854234515" name="Other options (-Xlinker [option])" superClass="gnu.cpp.link.option.other" valueType="stringList">
 									<listOptionValue builtIn="false" value="-lrt"/>
 								</option>
-								<option id="gnu.cpp.link.option.flags.557195787" name="Linker flags" superClass="gnu.cpp.link.option.flags" value="-march=armv7-a" valueType="string"/>
+								<option id="gnu.cpp.link.option.flags.557195787" name="Linker flags" superClass="gnu.cpp.link.option.flags" value="-march=armv7-a -rdynamic -lrt" valueType="string"/>
 								<option id="gnu.cpp.link.option.shared.836416066" name="Shared (-shared)" superClass="gnu.cpp.link.option.shared" value="false" valueType="boolean"/>
 								<option id="gnu.cpp.link.option.nodeflibs.1215097719" name="Do not use default libraries (-nodefaultlibs)" superClass="gnu.cpp.link.option.nodeflibs" value="false" valueType="boolean"/>
 								<option id="gnu.cpp.link.option.implname.1723667010" name="Import Library name (-Wl,--out-implib=)" superClass="gnu.cpp.link.option.implname" value="" valueType="string"/>
 								<option id="gnu.cpp.link.option.nostdlibs.1369284249" name="No startup or default libs (-nostdlib)" superClass="gnu.cpp.link.option.nostdlibs" value="false" valueType="boolean"/>
 								<option id="gnu.cpp.link.option.userobjs.363528126" name="Other objects" superClass="gnu.cpp.link.option.userobjs"/>
+								<option id="gnu.cpp.link.option.debugging.prof.1622891783" name="Generate prof information (-p)" superClass="gnu.cpp.link.option.debugging.prof" value="true" valueType="boolean"/>
+								<option id="gnu.cpp.link.option.debugging.gprof.62722920" name="Generate gprof information (-pg)" superClass="gnu.cpp.link.option.debugging.gprof" value="true" valueType="boolean"/>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.linker.input.583171200" superClass="cdt.managedbuild.tool.gnu.cpp.linker.input">
 									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
 									<additionalInput kind="additionalinput" paths="$(LIBS)"/>
@@ -158,11 +158,6 @@
 							</tool>
 							<tool command="arm-linux-gnueabihf-as" id="cdt.managedbuild.tool.gnu.assembler.exe.debug.551488479" name="GCC Assembler" superClass="cdt.managedbuild.tool.gnu.assembler.exe.debug">
 								<option id="gnu.both.asm.option.include.paths.1293405522" name="Include paths (-I)" superClass="gnu.both.asm.option.include.paths" valueType="includePath">
-									<listOptionValue builtIn="false" value="/root/raspberrypi/tools/arm-bcm2708/gcc-linaro-arm-linux-gnueabihf-raspbian/lib/gcc/arm-linux-gnueabihf/4.7.2/include"/>
-									<listOptionValue builtIn="false" value="/root/raspberrypi/tools/arm-bcm2708/gcc-linaro-arm-linux-gnueabihf-raspbian/lib/gcc/arm-linux-gnueabihf/4.7.2/finclude"/>
-									<listOptionValue builtIn="false" value="/root/raspberrypi/tools/arm-bcm2708/gcc-linaro-arm-linux-gnueabihf-raspbian/arm-linux-gnueabihf/libc/usr/include"/>
-									<listOptionValue builtIn="false" value="/root/raspberrypi/tools/arm-bcm2708/gcc-linaro-arm-linux-gnueabihf-raspbian/arm-linux-gnueabihf/finclude"/>
-									<listOptionValue builtIn="false" value="/root/raspberrypi/tools/arm-bcm2708/gcc-linaro-arm-linux-gnueabihf-raspbian/lib/gcc/arm-linux-gnueabihf/4.7.2/include-fixed"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/onewirelibrary}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/OneWire}&quot;"/>
@@ -187,10 +182,22 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/lua-5.2.1/src}&quot;"/>
 									<listOptionValue builtIn="false" value="/root/raspberrypi/include"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/libs/libusbcompat/include}&quot;"/>
+									<listOptionValue builtIn="false" value="/root/gcc-linaro-arm-linux-gnueabihf/lib/gcc/arm-linux-gnueabihf/4.8.2/include"/>
+									<listOptionValue builtIn="false" value="/root/gcc-linaro-arm-linux-gnueabihf/lib/gcc/arm-linux-gnueabihf/4.8.2/include-fixed"/>
 								</option>
-								<option id="gnu.both.asm.option.flags.681896401" superClass="gnu.both.asm.option.flags" value="-march=armv7-a" valueType="string"/>
+								<option id="gnu.both.asm.option.flags.681896401" name="Assembler flags" superClass="gnu.both.asm.option.flags" value="-march=armv7-a" valueType="string"/>
 								<inputType id="cdt.managedbuild.tool.gnu.assembler.input.590498356" superClass="cdt.managedbuild.tool.gnu.assembler.input"/>
 							</tool>
+						</toolChain>
+					</folderInfo>
+					<folderInfo id="cdt.managedbuild.config.gnu.exe.debug.1454666133.462277692" name="/" resourcePath="libcrash-master">
+						<toolChain id="cdt.managedbuild.toolchain.gnu.exe.debug.1996306831" name="Linux GCC" superClass="cdt.managedbuild.toolchain.gnu.exe.debug" unusedChildren="">
+							<tool id="cdt.managedbuild.tool.gnu.archiver.base.951941779" name="GCC Archiver" superClass="cdt.managedbuild.tool.gnu.archiver.base.1018907610"/>
+							<tool id="cdt.managedbuild.tool.gnu.cpp.compiler.exe.debug.1611678186" name="GCC C++ Compiler" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.exe.debug.537593220"/>
+							<tool id="cdt.managedbuild.tool.gnu.c.compiler.exe.debug.255165534" name="GCC C Compiler" superClass="cdt.managedbuild.tool.gnu.c.compiler.exe.debug.1393414392"/>
+							<tool id="cdt.managedbuild.tool.gnu.c.linker.exe.debug.894110225" name="GCC C Linker" superClass="cdt.managedbuild.tool.gnu.c.linker.exe.debug.2037371696"/>
+							<tool id="cdt.managedbuild.tool.gnu.cpp.linker.exe.debug.689069163" name="GCC C++ Linker" superClass="cdt.managedbuild.tool.gnu.cpp.linker.exe.debug.1870919744"/>
+							<tool id="cdt.managedbuild.tool.gnu.assembler.exe.debug.893559839" name="GCC Assembler" superClass="cdt.managedbuild.tool.gnu.assembler.exe.debug.551488479"/>
 						</toolChain>
 					</folderInfo>
 					<fileInfo id="cdt.managedbuild.config.gnu.exe.debug.1454666133.2137839783" name="littletest.hpp" rcbsApplicability="disable" resourcePath="libhttpserver-master/test/littletest.hpp" toolsToInvoke=""/>

@@ -5,8 +5,8 @@ Konfigurace ssh
 zdroj: http://www.linuxproblem.org/art_9.html
 
 1. Remove all hosts: rm .ssh/known_hosts
-2. create dir: ssh pi@192.168.1.10 mkdir -p .ssh
-3. Write key to file: cat .ssh/id_rsa.pub | ssh pi@192.168.1.10 'cat >> .ssh/authorized_keys'
+2. create dir: ssh linaro@192.168.1.5 mkdir -p .ssh
+3. Write key to file: cat .ssh/id_rsa.pub | ssh linaro@192.168.1.5 'cat >> .ssh/authorized_keys'
 4. login password: disdis
 
 Uvolneni seriovyho portu

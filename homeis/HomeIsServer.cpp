@@ -66,8 +66,8 @@ void HomeIsServer::Start()
 	Init();
 }
 
-HomeIsServer::HomeIsServer(string SerialPort,int TcpPort) :
-		serialPort(SerialPort),ws_i(create_webserver(TcpPort).max_threads(5))
+HomeIsServer::HomeIsServer(string address,int TcpPort) :
+		serialPort(address),ws_i(create_webserver(TcpPort).max_threads(5))
 {
 }
 

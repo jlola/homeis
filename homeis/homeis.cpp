@@ -20,6 +20,7 @@
 #include "Common/CUUID.h"
 #include "homeis/Devices/Folder/HisDevFolder.h"
 #include "homeis/Devices/Folder/HisDevFolderRoot.h"
+
 //#include "homeis/Expressions/LuaExpression.h"
 
 #define luac_c
@@ -30,6 +31,9 @@ extern "C" {
 #include "lua.h"                                /* Always include this when calling Lua */
 #include "lauxlib.h"                            /* Always include this when calling Lua */
 #include "lualib.h"                             /* Always include this when calling Lua */
+
+#include "stack_trace.h"
+#include "libcrash-master/crash.h"
 
 }
 
@@ -94,10 +98,16 @@ end ";
 //
 //	    lua_close(L);
 
+char buf[128];
+
 int main(int argc, char **argv)
 {
-	printf("Home information system v.1.0.2\n");
+	printf("Home information system v.1.0.4\n");
 	printf("-------------------------------\n");
+	int ret = register_crash_handler(argv[0],(unsigned char *)&buf);
+	assert(ret==0);
+	//set_signal_handler(argv[0]);
+
 	//"/dev/ttyAMA0"
 	HomeIsServer server("",81);
 	server.Start();

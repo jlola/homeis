@@ -2,6 +2,7 @@ onewirelibrary/OneWire++/LOW_deviceID.d: \
  ../onewirelibrary/OneWire++/LOW_deviceID.cpp \
  ../onewirelibrary/OneWire++/LOW_deviceID.h \
  ../onewirelibrary/OneWire++/LOW_types.h \
+ /root/gcc-linaro-arm-linux-gnueabihf/lib/gcc/arm-linux-gnueabihf/4.8.2/include/stdint.h \
  ../onewirelibrary/OneWire++/LOW_deviceIDRaw.h \
  ../onewirelibrary/OneWire++/LOW_exception.h \
  /root/raspiworkspace/dis/onewirelibrary/OneWire++/platformOW++/LOW_platformMiscFactory.h \
@@ -23,6 +24,8 @@ onewirelibrary/OneWire++/LOW_deviceID.d: \
 ../onewirelibrary/OneWire++/LOW_deviceID.h:
 
 ../onewirelibrary/OneWire++/LOW_types.h:
+
+/root/gcc-linaro-arm-linux-gnueabihf/lib/gcc/arm-linux-gnueabihf/4.8.2/include/stdint.h:
 
 ../onewirelibrary/OneWire++/LOW_deviceIDRaw.h:
 
