@@ -22,6 +22,7 @@
 #include "homeis/Devices/Folder/HisDevFolderRoot.h"
 
 //#include "homeis/Expressions/LuaExpression.h"
+#include "linuxservice.h"
 
 #define luac_c
 #define LUA_CORE
@@ -102,7 +103,10 @@ char buf[128];
 
 int main(int argc, char **argv)
 {
-	printf("Home information system v.1.0.4\n");
+	//startservice();
+	redirect_stdout("~/log.txt");
+
+	printf("Home information system v.1.0.5\n");
 	printf("-------------------------------\n");
 	int ret = register_crash_handler(argv[0],(unsigned char *)&buf);
 	assert(ret==0);
@@ -113,5 +117,5 @@ int main(int argc, char **argv)
 	server.Start();
 	server.Stop();
 
- 	return 0;
+	exit(EXIT_SUCCESS);
 }

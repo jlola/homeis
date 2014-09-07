@@ -87,9 +87,10 @@ class HisDevTemp18B20 : public HisDevDallas
 	  for( int a=0; a<1; a++) {
 	    if ( inDoConversion )
 	    	tempdev->cmd_ConvertT();
-
-	    if (usleep(1000000)!=0)
-	    	CLogger::Error("Error usleep in HisDevTemp18B20::Read()");
+	    int sleeperrcode = 0;
+	    sleeperrcode = sleep(1);
+	    if (sleeperrcode!=0)
+	    	CLogger::Error("Error usleep in HisDevTemp18B20::getTemperature() Error code:%d",sleeperrcode);
 
 	    tempdev->cmd_ReadScratchpad( &scratchpad);
 	    if ( ! (scratchpad.tempLSB==0xaa && scratchpad.tempMSB==0x00) )

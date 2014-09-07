@@ -427,7 +427,7 @@ int LuaExpression::delays;
 
 int lua_sleep(lua_State *L) {
 	LuaExpression::delays = lua_tointeger(L, -1);      /* Get the single number arg */
-    printf("lua_sleep called %d s\n",LuaExpression::delays);
+    //printf("lua_sleep called %d s\n",LuaExpression::delays);
     return lua_yield(L,0);
 }
 

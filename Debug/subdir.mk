@@ -4,20 +4,23 @@
 
 # Add inputs and outputs from these tool invocations to the build variables 
 CPP_SRCS += \
-../dis.cpp 
+../dis.cpp \
+../linuxservice.cpp 
 
 C_SRCS += \
 ../stackt_trace.c 
 
 OBJS += \
 ./dis.o \
+./linuxservice.o \
 ./stackt_trace.o 
 
 C_DEPS += \
 ./stackt_trace.d 
 
 CPP_DEPS += \
-./dis.d 
+./dis.d \
+./linuxservice.d 
 
 
 # Each subdirectory must supply rules for building sources it contributes

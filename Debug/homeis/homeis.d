@@ -106,6 +106,7 @@ homeis/homeis.d: ../homeis/homeis.cpp \
  ../homeis/Expressions/ExpressionRuntime.h \
  ../homeis/Expressions/IExpression.h \
  /root/raspiworkspace/dis/homeis/Helpers/File.h ../homeis/Common/CUUID.h \
+ /root/raspiworkspace/dis/linuxservice.h \
  /root/raspiworkspace/dis/lua-5.2.1/src/lua.h \
  /root/raspiworkspace/dis/lua-5.2.1/src/luaconf.h \
  /root/gcc-linaro-arm-linux-gnueabihf/lib/gcc/arm-linux-gnueabihf/4.8.2/include-fixed/limits.h \
@@ -331,6 +332,8 @@ homeis/homeis.d: ../homeis/homeis.cpp \
 /root/raspiworkspace/dis/homeis/Helpers/File.h:
 
 ../homeis/Common/CUUID.h:
+
+/root/raspiworkspace/dis/linuxservice.h:
 
 /root/raspiworkspace/dis/lua-5.2.1/src/lua.h:
 
