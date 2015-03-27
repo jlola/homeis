@@ -19,6 +19,10 @@
 
 */
 
+/**
+ * Constant to indicate that the nonce of the provided
+ * authentication code was wrong.
+ */
 #include "http_utils.hpp"
 #include "http_request.hpp"
 #include "string_utilities.hpp"

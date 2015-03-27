@@ -67,7 +67,8 @@ void HomeIsServer::Start()
 }
 
 HomeIsServer::HomeIsServer(string address,int TcpPort) :
-		serialPort(address),ws_i(create_webserver(TcpPort).max_threads(5))
+		serialPort(address),runtime(NULL),rootFolder(NULL),
+		expressionRuntime(NULL),ws_i(create_webserver(TcpPort).max_threads(5)),devs(NULL)
 {
 }
 
@@ -153,7 +154,7 @@ bool HomeIsServer::InitOneWireLib(string port)
 
 		//oneWireLinks.push_back( passiveLink);
 	}
-	catch( LOW_exception ex) {
+	catch( LOW_exception & ex) {
 		ex.logException();
 		return false;
 	}

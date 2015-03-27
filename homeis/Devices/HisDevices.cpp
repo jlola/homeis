@@ -139,7 +139,7 @@ void HisDevices::Load()
 			newhisdev->Load();
 			devices.push_back(newhisdev);
 		}
-		catch(LOW_netSegment::noDevice_error ex)
+		catch(LOW_netSegment::noDevice_error & ex)
 		{
 			cout << "Error "+id.getRomIDString();
 			CLogger::Info(string("No device error id: "+id.getRomIDString()).c_str());
@@ -209,7 +209,7 @@ void HisDevices::Delete(uint16_t index)
 	if (size>index)
 	{
 		HisDevBase* dev = devices[index];
-		xmlNodePtr node = dev->GetNodePtr();
+		//xmlNodePtr node = dev->GetNodePtr();
 		devices.erase(devices.begin() + index);
 		delete(dev);
 	}

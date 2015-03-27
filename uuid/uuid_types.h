@@ -6,8 +6,8 @@
 #if (!defined(_STDINT_H) && !defined(_UUID_STDINT_H))
 #define _UUID_STDINT_H
 
-typedef unsigned char uint8_t;
-typedef signed char int8_t;
+//typedef unsigned char uint8_t;
+//typedef signed char int8_t;
 
 #if (4 == 8)
 typedef int		int64_t;

@@ -96,7 +96,7 @@ void LOW_devDS1820::cmd_ConvertT() const
     getLink().writeData( ConvertT_COMMAND);
     
     // poll bits to detect conversion has finished
-    //while ( getLink().readDataBit() == false );
+    while ( getLink().readDataBit() == false );
 
   }
   else {

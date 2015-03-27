@@ -85,12 +85,18 @@ HisDevBase::~HisDevBase()
 HisDevBase::HisDevBase()
 {
 	scanPeriodMs = 10000;
+	dataSource = EDataSource::Const;
+	network = NULL;
+	enabled = false;
 }
 
 HisDevBase::HisDevBase(xmlNodePtr node)
 	: HisBase::HisBase(node)
 {
+	network = NULL;
 	scanPeriodMs = 10000;
+	dataSource = EDataSource::Const;
+	enabled = false;
 }
 
 void HisDevBase::DoInternalSave(xmlNodePtr & node)
@@ -112,7 +118,10 @@ timeval HisDevBase::ComputeNextScanTime()
 
 timeval HisDevBase::GetNextScanTime()
 {
-
+	timeval val;
+	val.tv_sec = 0;
+	val.tv_usec = 0;
+	return val;
 }
 
 void HisDevBase::Refresh()

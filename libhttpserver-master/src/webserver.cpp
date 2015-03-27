@@ -635,9 +635,9 @@ void* webserver::select(void* self)
     details::daemon_item* di = static_cast<details::daemon_item*>(self);
     while (true)
     {
-        FD_ZERO (&rs);
-        FD_ZERO (&ws);
-        FD_ZERO (&es);
+        //FD_ZERO (&rs);
+        //FD_ZERO (&ws);
+        //FD_ZERO (&es);
         if (MHD_YES != MHD_get_fdset (di->daemon, &rs, &ws, &es, &max))
             break; /* fatal internal error */
 

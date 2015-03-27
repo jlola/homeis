@@ -17,7 +17,7 @@
 #include "HisDevRunTime.h"
 
 HisDevRuntime::HisDevRuntime(HisDevices & pdevices) :
-	devices(pdevices)
+	devices(pdevices),thread(0),running(false)
 {
 }
 

@@ -112,7 +112,7 @@ public:
           LOW_helper_msglog::printDebug( LOW_helper_msglog::objSync_getLock_dl,
             "__synchronizeStaticRead: obtained lock from file %s, line %d\n", inFile.c_str(), inLine);
         }
-        catch ( LOW_thread_rwlock::thread_rwlock_error ex) {
+        catch ( LOW_thread_rwlock::thread_rwlock_error & ex) {
           LOW_helper_msglog::printDebug( LOW_helper_msglog::objSync_lockFailed_dl,
             "__synchronizeStaticRead: failed to obtain lock from file %s, line %d\n", inFile.c_str(), inLine);
           (*staticRwLock)->lockRead();  // now really block in the lock
@@ -164,7 +164,7 @@ public:
           LOW_helper_msglog::printDebug( LOW_helper_msglog::objSync_getLock_dl,
             "__synchronizeStaticWrite: obtained lock from file %s, line %d\n", inFile.c_str(), inLine);
         }
-        catch ( LOW_thread_rwlock::thread_rwlock_error ex) {
+        catch ( LOW_thread_rwlock::thread_rwlock_error & ex) {
           LOW_helper_msglog::printDebug( LOW_helper_msglog::objSync_lockFailed_dl,
             "__synchronizeStaticWrite: failed to obtain lock from file %s, line %d\n", inFile.c_str(), inLine);
           (*staticRwLock)->lockWrite();  // now really block in the lock
@@ -224,7 +224,7 @@ public:
           LOW_helper_msglog::printDebug( LOW_helper_msglog::objSync_getLock_dl,
             "__synchronizeStaticReadWeak: obtained lock from file %s, line %d\n", inFile.c_str(), inLine);
         }
-        catch ( LOW_thread_rwlock::thread_rwlock_error ex) {
+        catch ( LOW_thread_rwlock::thread_rwlock_error & ex) {
           if ( LOW_platformMisc::getThreadID() == inWriteLockHolder )
             wasObtainedWeakly = true;  // if it was me who has the lock, "obtain" it weakly
           else {
@@ -285,7 +285,7 @@ public:
           LOW_helper_msglog::printDebug( LOW_helper_msglog::objSync_getLock_dl,
             "__synchronizeStaticWriteWeak: obtained lock from file %s, line %d\n", inFile.c_str(), inLine);
         }
-        catch ( LOW_thread_rwlock::thread_rwlock_error ex) {
+        catch ( LOW_thread_rwlock::thread_rwlock_error & ex) {
           if ( LOW_platformMisc::getThreadID() == writeLockHolder )
             wasObtainedWeakly = true;  // if it was me who has the lock, "obtain" it weakly
           else {
@@ -354,7 +354,7 @@ protected:
           LOW_helper_msglog::printDebug( LOW_helper_msglog::objSync_getLock_dl,
             "__synchronizeMethodRead: obtained read lock from file %s, line %d\n", inFile.c_str(), inLine);
         }
-        catch ( LOW_thread_rwlock::thread_rwlock_error ex) {
+        catch ( LOW_thread_rwlock::thread_rwlock_error & ex) {
           LOW_helper_msglog::printDebug( LOW_helper_msglog::objSync_lockFailed_dl,
             "__synchronizeMethodRead: failed to obtain read lock from file %s, line %d\n", inFile.c_str(), inLine);
           objectSynchronizer.objectSyncRwlock->lockRead();  // now really block in the lock
@@ -403,7 +403,7 @@ protected:
           LOW_helper_msglog::printDebug( LOW_helper_msglog::objSync_getLock_dl,
             "__synchronizeMethodWrite: obtained write lock from file %s, line %d\n", inFile.c_str(), inLine);
         }
-        catch ( LOW_thread_rwlock::thread_rwlock_error ex) {
+        catch ( LOW_thread_rwlock::thread_rwlock_error & ex) {
           LOW_helper_msglog::printDebug( LOW_helper_msglog::objSync_lockFailed_dl,
             "__synchronizeMethodWrite: failed to obtain write lock from file %s, line %d\n", inFile.c_str(), inLine);
           objectSynchronizer.objectSyncRwlock->lockWrite();  // now really block in the lock
@@ -460,7 +460,7 @@ protected:
             LOW_helper_msglog::printDebug( LOW_helper_msglog::objSync_getLock_dl,
               "__synchronizeMethodReadWeak: obtain weak read lock from file %s, line %d\n", inFile.c_str(), inLine);
         }
-        catch ( LOW_thread_rwlock::thread_rwlock_error ex) {
+        catch ( LOW_thread_rwlock::thread_rwlock_error & ex) {
           if ( LOW_platformMisc::getThreadID() == objectSynchronizer.writeLockHolder )
             wasObtainedWeakly = true;  // if it was me who has the lock, "obtain" it weakly
           else {
@@ -518,7 +518,7 @@ protected:
           //  - our own thread cannot check as we are still here
           objectSynchronizer.writeLockHolder = LOW_platformMisc::getThreadID();  // set write lock indicator
         }
-        catch ( LOW_thread_rwlock::thread_rwlock_error ex) {
+        catch ( LOW_thread_rwlock::thread_rwlock_error & ex) {
           if ( LOW_platformMisc::getThreadID() == objectSynchronizer.writeLockHolder )
             wasObtainedWeakly = true;  // if it was me who has the lock, "obtain" it weakly
           else {

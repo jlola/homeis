@@ -72,7 +72,7 @@ void addActiveLink( LOW_link::linkPtrVec_t &inLinkList, LOW_network &inNet)
     inNet.addLink( activeLink);
     inLinkList.push_back( activeLink);
   }
-  catch( LOW_exception ex) {
+  catch( LOW_exception & ex) {
     ex.logException();
     if ( activeLink ) delete activeLink;
   }
@@ -89,7 +89,7 @@ void addPassiveLink( LOW_link::linkPtrVec_t &inLinkList, LOW_network &inNet)
     inNet.addLink( passiveLink);
     inLinkList.push_back( passiveLink);
   }
-  catch( LOW_exception ex) {
+  catch( LOW_exception & ex) {
     ex.logException();
     if ( passiveLink ) delete passiveLink;
   }
@@ -109,7 +109,7 @@ void addUsbLinkAutoAll( LOW_link::linkPtrVec_t &inLinkList, LOW_network &inNet)
       inNet.addLink( usbLink);
       inLinkList.push_back( usbLink);
     }
-    catch( LOW_exception ex) {
+    catch( LOW_exception & ex) {
       ex.logException();
       if ( usbLink ) delete usbLink;
     }
@@ -129,7 +129,7 @@ void addUsbLinkManual( LOW_link::linkPtrVec_t &inLinkList, LOW_network &inNet)
     inNet.addLink( usbLink);
     inLinkList.push_back( usbLink);
   }
-  catch( LOW_exception ex) {
+  catch( LOW_exception & ex) {
     ex.logException();
     if ( usbLink ) delete usbLink;
   }
@@ -444,7 +444,7 @@ void powerMenu( LOW_link::linkPtrVec_t &inLinkList)
         case 'q': keepLooping=false;                                                   break;
       }
     }
-    catch( LOW_exception ex) {
+    catch( LOW_exception & ex) {
       ex.logException();
     }
   }
@@ -511,7 +511,7 @@ void linkMenu( LOW_link::linkPtrVec_t &inLinkList, LOW_network &inNet)
         case 'q': keepLooping=false;                              break;
       }
     }
-    catch( LOW_exception ex) {
+    catch( LOW_exception & ex) {
       ex.logException();
     }
   }

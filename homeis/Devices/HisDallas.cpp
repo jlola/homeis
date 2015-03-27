@@ -26,12 +26,14 @@
 HisDevDallas::HisDevDallas(LOW_device* pdev)
 {
 	device = pdev;
+	DevError = false;
 }
 
 HisDevDallas::HisDevDallas(xmlNodePtr node,LOW_device* pdev) :
 	HisDevBase::HisDevBase(node)
 {
 	device = pdev;
+	DevError = false;
 }
 
 LOW_deviceID HisDevDallas::GetId(xmlNodePtr node)

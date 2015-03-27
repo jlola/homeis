@@ -9,7 +9,7 @@
 #include "FoldersService.h"
 #include "EItemType.h"
 #include "homeis/Common/CUUID.h"
-
+#include "death_handler.h"
 
 FoldersService::FoldersService(HisDevFolderRoot* proot)
 {

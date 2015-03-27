@@ -127,7 +127,7 @@ bool LOW_netSegment::verifyDevice( const LOW_deviceID inDevID, const bool inOnly
         LOW_device *theDev = getDevice<LOW_device>( inDevID);
         revitalizeDevice( theDev);
       }
-      catch ( LOW_exception ex) {
+      catch ( LOW_exception & ex) {
         return false;
       }
     }

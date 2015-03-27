@@ -163,9 +163,12 @@ const xmlChar* HisDevValueBase::GetNodeNameInternal()
 void HisDevValueBase::FireOnValueChanged(ValueChangedEventArgs args)
 {
 	size_t size = delegatesMap.size();
-	CLogger::Info(StringBuilder::Format("HisDevValueBase::FireOnValueChanged | delegatesMap.size=%d",size).c_str());
-	for (std::map<void*,OnValueChangedDelegate>::iterator it=delegatesMap.begin(); it!=delegatesMap.end(); it++)
-		it->second(args);
+	//CLogger::Info(StringBuilder::Format("HisDevValueBase::FireOnValueChanged | delegatesMap.size=%d",size).c_str());
+	if (size>0)
+	{
+		for (std::map<void*,OnValueChangedDelegate>::iterator it=delegatesMap.begin(); it!=delegatesMap.end(); it++)
+			it->second(args);
+	}
 }
 
 /*

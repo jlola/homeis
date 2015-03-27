@@ -25,10 +25,12 @@ class HisDevTemp18B20 : public HisDevDallas
 
 	LOW_devDS1820 *tempdev;
 	HisDevValue<double>* tempValue;
+	bool doConversion;
 
 	public:	HisDevTemp18B20(LOW_devDS1820* pdev) :
 		HisDevDallas::HisDevDallas(pdev)
 	{
+		doConversion = true;
 		tempdev = pdev;
 		CreateDataPoints();
 	}
@@ -37,6 +39,8 @@ class HisDevTemp18B20 : public HisDevDallas
 			HisDevDallas::HisDevDallas(node,pdev)
 	{
 		tempdev = pdev;
+		doConversion = true;
+		tempValue = NULL;
 	}
 
 	private: void CreateDataPoints()
@@ -84,18 +88,15 @@ class HisDevTemp18B20 : public HisDevDallas
 	{
 	  LOW_devDS1820::scratchpadDS1820_t  scratchpad;
 
-	  for( int a=0; a<1; a++) {
-	    if ( inDoConversion )
-	    	tempdev->cmd_ConvertT();
-	    int sleeperrcode = 0;
-	    sleeperrcode = sleep(1);
-	    if (sleeperrcode!=0)
-	    	CLogger::Error("Error usleep in HisDevTemp18B20::getTemperature() Error code:%d",sleeperrcode);
 
-	    tempdev->cmd_ReadScratchpad( &scratchpad);
-	    if ( ! (scratchpad.tempLSB==0xaa && scratchpad.tempMSB==0x00) )
-	      break;
+	  if ( inDoConversion )
+	  {
+		  tempdev->cmd_ConvertT();
 	  }
+
+	  tempdev->cmd_ReadScratchpad( &scratchpad);
+
+
 	  if ( scratchpad.tempLSB==0xaa && scratchpad.tempMSB==0x00 )
 	    throw data_error( "Illeagal data in scratchpad", __FILE__, __LINE__);
 
@@ -128,7 +129,10 @@ class HisDevTemp18B20 : public HisDevDallas
 		vector<HisDevValue<double>*> values = GetItems<HisDevValue<double>>();
 		try
 		{
-			tempvalue = getTemperature(true);
+			tempvalue = getTemperature(doConversion);
+
+			if (doConversion) doConversion = false;
+			else doConversion = true;
 
 			for (size_t i=0;i<values.size();i++)
 			{

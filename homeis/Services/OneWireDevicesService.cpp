@@ -13,6 +13,7 @@
 #include "HisDevValue.h"
 #include "EItemType.h"
 #include "homeis/Helpers/StringBuilder.h"
+#include "HisDallas.h"
 
 #include "OneWireDevicesService.h"
 
@@ -64,7 +65,7 @@ void OneWireDevicesService::render_GET(const http_request& req, http_response** 
 			HisDevValueBase* val = devices.FindValue(valueId);
 			if (val!=NULL)
 			{
-				FillDeviceToJson(d,valueIds[i],val,respjsondoc);
+				DevValueToJson(d,valueIds[i],val,respjsondoc);
 				respjsondoc.PushBack(d, respjsondoc.GetAllocator());
 			}
 		}
@@ -73,13 +74,10 @@ void OneWireDevicesService::render_GET(const http_request& req, http_response** 
 	{
 		for(uint16_t i=0;i<devices.Size();i++)
 		{
-			vector<HisDevValueBase*> tagvalues = devices[i]->GetValues();
-			for(uint16_t v=0;v<tagvalues.size();v++)
-			{
-				Value d(kObjectType);
-				FillDeviceToJson(d,NULL,tagvalues[v],respjsondoc);
-				respjsondoc.PushBack(d, respjsondoc.GetAllocator());
-			}
+			Value devjson(kObjectType);
+			FillDeviceToJson(devjson,devices[i],respjsondoc);
+			respjsondoc.PushBack(devjson, respjsondoc.GetAllocator());
+
 		}
 	}
 
@@ -90,7 +88,38 @@ void OneWireDevicesService::render_GET(const http_request& req, http_response** 
 	*res = new http_string_response(json, 200, "application/json");
 }
 
-void OneWireDevicesService::FillDeviceToJson(Value & d, HisDevValueId* valueId,HisDevValueBase* devValue,Document & respjsondoc)
+void OneWireDevicesService::FillDeviceToJson(Value & devjson, HisDevBase* dev,Document & respjsondoc)
+{
+
+	Value jsonvalue;
+	string strvalue = dev->GetName();
+	jsonvalue.SetString(strvalue.c_str(),strvalue.length(),respjsondoc.GetAllocator());
+	devjson.AddMember("Name",jsonvalue,respjsondoc.GetAllocator());
+
+	strvalue = dev->GetRecordId().ToString();
+	jsonvalue.SetString(strvalue.c_str(),strvalue.length(),respjsondoc.GetAllocator());
+	devjson.AddMember("Id",jsonvalue,respjsondoc.GetAllocator());
+
+	HisDevDallas* devDallas = dynamic_cast<HisDevDallas*>(dev);
+	if (devDallas!=NULL)
+	{
+		strvalue = devDallas->GetId().getRomIDString();
+		jsonvalue.SetString(strvalue.c_str(),strvalue.length(),respjsondoc.GetAllocator());
+		devjson.AddMember("Address",jsonvalue,respjsondoc.GetAllocator());
+	}
+
+	Value tagsjson(kArrayType);
+	vector<HisDevValueBase*> tagvalues = dev->GetValues();
+	for(uint16_t v=0;v<tagvalues.size();v++)
+	{
+		Value d(kObjectType);
+		DevValueToJson(d,NULL,tagvalues[v],respjsondoc);
+		tagsjson.PushBack(d,respjsondoc.GetAllocator());
+	}
+	devjson.AddMember("Tags",tagsjson,respjsondoc.GetAllocator());
+}
+
+void OneWireDevicesService::DevValueToJson(Value & d, HisDevValueId* valueId,HisDevValueBase* devValue,Document & respjsondoc)
 {
 	string strvalue = devValue->GetPinName();
 	Value jsonvalue;
@@ -150,15 +179,15 @@ void OneWireDevicesService::render_POST(const http_request& req, http_response**
 	{
 		if (path.find("/api/onewiredevices")!=string::npos)
 		{
-			HisDevVirtual* vritualdev = CreateDevice(content);
+			HisDevVirtual* vritualdev = CreateVirtualDevice(content);
 			if (vritualdev!=NULL)
 			{
-				if (UpdateDevice(vritualdev->GetValues()[0]->GetAddress(),content))
+				if (UpdateDevValue(vritualdev->GetValues()[0]->GetAddress(),content))
 				{
 					HisDevValueBase* value = vritualdev->GetValues()[0];
 					string id = vritualdev->GetValues()[0]->GetRecordId().ToString().c_str();
 					Value d(kObjectType);
-					FillDeviceToJson(d,NULL,value,respjsondoc);
+					DevValueToJson(d,NULL,value,respjsondoc);
 					respjsondoc.PushBack(d,respjsondoc.GetAllocator());
 					PrettyWriter<StringBuffer> wr(buffer);
 					respjsondoc.Accept(wr);
@@ -171,7 +200,7 @@ void OneWireDevicesService::render_POST(const http_request& req, http_response**
 	}
 	else
 	{
-		string message = "Autentication error";
+		string message = "Authentication error";
 		*res = new http_string_response(message.c_str(), 401, "application/json");
 		return;
 	}
@@ -185,11 +214,11 @@ void OneWireDevicesService::render_PUT(const http_request& req, http_response** 
 
 	if (req.get_user()=="a" && req.get_pass()=="a")
 	{
-		string strFolderId = req.get_arg("id");
 		if (path.find("/api/onewiredevices/folder")!=string::npos)
 		{
+			string strFolderId = req.get_arg("id");
 			//vytvori id datoveho bodu ve slozce
-			if (CreateValueId(strFolderId,content))
+			if (AddValueIdToFolder(strFolderId,content))
 			{
 				*res = new http_string_response("", 200, "application/json");
 				return;
@@ -197,7 +226,8 @@ void OneWireDevicesService::render_PUT(const http_request& req, http_response** 
 		}
 		else if (path.find("/api/onewiredevices")!=string::npos)
 		{
-			if (UpdateDevice(strFolderId,content))
+			string strDevId = req.get_arg("id");
+			if (UpdateDevice(strDevId,content))
 			{
 				*res = new http_string_response("", 200, "application/json");
 				return;
@@ -310,7 +340,7 @@ bool OneWireDevicesService::DeleteValueId(string strValueId)
 	return false;
 }
 
-bool OneWireDevicesService::CreateValueId(string strFolderId, string strJson)
+bool OneWireDevicesService::AddValueIdToFolder(string strFolderId, string strJson)
 {
 	Document document;	// Default template parameter uses UTF8 and MemoryPoolAllocator.
 
@@ -338,23 +368,76 @@ bool OneWireDevicesService::CreateValueId(string strFolderId, string strJson)
 	return false;
 }
 
-HisDevVirtual* OneWireDevicesService::CreateDevice(string strjson)
+HisDevVirtual* OneWireDevicesService::CreateVirtualDevice(string strjson)
 {
 	Document document;	// Default template parameter uses UTF8 and MemoryPoolAllocator.
 
 	if (document.Parse<0>((char*)strjson.c_str()).HasParseError())
 		return NULL;
-	if (document.HasMember("type"))
+	HisDevVirtual* virtualdev = NULL;
+	if (document.HasMember("Type"))
 	{
-		EDataType type = (EDataType)document["type"].GetInt();
-		HisDevVirtual* virtualdev = new HisDevVirtual(type);
+		virtualdev = new HisDevVirtual();
+		EDataType type = (EDataType)document["Type"].GetInt();
+		virtualdev->AddDevValue(type);
 		devices.Add(virtualdev);
-		return virtualdev;
 	}
-	return NULL;
+	if (document.HasMember("Name"))
+	{
+		virtualdev->SetName(document["Name"].GetString());
+	}
+	return virtualdev;
 }
 
-bool OneWireDevicesService::UpdateDevice(string address, string strjson)
+HisDevBase* OneWireDevicesService::UpdateDevice(string strDevId, string strjson)
+{
+	Document document;	// Default template parameter uses UTF8 and MemoryPoolAllocator.
+
+	if (document.Parse<0>((char*)strjson.c_str()).HasParseError())
+		return NULL;
+	HisDevBase* dev = NULL;
+
+	CUUID devId = CUUID::Parse(strDevId);
+	bool changed = false;
+	int index = devices.Find(devId);
+	if (index>=0)
+	{
+		dev = dynamic_cast<HisDevBase*>(devices[index]);
+		if (dev!=NULL)
+		{
+			if (document.HasMember("Name"))
+			{
+				if (dev->GetName()!=document["Name"].GetString())
+				{
+					dev->SetName(document["Name"].GetString());
+					changed = true;
+				}
+			}
+			if (document.HasMember("Tags"))
+			{
+				const Value& a = document["Tags"];
+				if (a.IsArray())
+				{
+					for (Value::ConstValueIterator itr = a.Begin(); itr != a.End(); ++itr)
+					{
+						if (itr->IsObject())
+						{
+							if (itr->HasMember("id"))
+							{
+								string tagname = itr->operator[]("id").GetString();
+							}
+						}
+					}
+				}
+			}
+		}
+		if (changed)
+			devices.Save();
+	}
+	return dev;
+}
+
+bool OneWireDevicesService::UpdateDevValue(string address, string strjson)
 {
 	Document document;	// Default template parameter uses UTF8 and MemoryPoolAllocator.
 

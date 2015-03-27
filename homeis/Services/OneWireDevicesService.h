@@ -22,10 +22,11 @@ class OneWireDevicesService : public http_resource<OneWireDevicesService>
 {
 	HisDevices & devices;
 	HisDevFolderRoot & rootFolder;
-	bool UpdateDevice(string address, string strjson);
+	bool UpdateDevValue(string address, string strjson);
 	//bool SetForce(string address, string force);
-	HisDevVirtual* CreateDevice(string strjson);
-	bool CreateValueId(string strFolerId, string strJson);
+	HisDevVirtual* CreateVirtualDevice(string strjson);
+	HisDevBase* UpdateDevice(string strjson,string strDevId);
+	bool AddValueIdToFolder(string strFolerId, string strJson);
 	bool DeleteValueId(string strValueId);
 	string DeleteDevice(string strDevValueRecordId);
 public:
@@ -35,7 +36,8 @@ public:
 	void render_POST(const http_request& r, http_response** res);
 	void render_PUT(const http_request& req, http_response** res);
 	void render_DELETE(const http_request& req, http_response** res);
-	void FillDeviceToJson(Value & d, HisDevValueId* valueId,HisDevValueBase* devValue,Document & respjsondoc);
+	void FillDeviceToJson(Value & d, HisDevBase* dev,Document & respjsondoc);
+	void DevValueToJson(Value & d, HisDevValueId* valueId,HisDevValueBase* devValue,Document & respjsondoc);
 };
 
 #endif /* ONEWIREDEVICESSERVICE_H_ */

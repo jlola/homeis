@@ -90,11 +90,11 @@ public:
   typedef uint16_t wiperPosition_t;  /**< Type for position setting of wiper. */
   
   /** DS2890 internal control register as defined by Dallas. */
-  typedef struct controlRegister_t {
+  typedef struct  {
     uint8_t  controlledWiperNum;  /**< Currently selected wiper to be manupulated by commands. */
     bool     isChargePumpOn;      /**< Whether charge punp is enabled. */
-  };
-  typedef struct controlRegister_t controlRegister_t;
+  } controlRegister_t;
+  //typedef struct controlRegister_t controlRegister_t;
 
 
   //=====================================================================================

@@ -23,15 +23,15 @@ protected:
 	virtual void DoInternalSave(xmlNodePtr & node);
 
 public:
-	HisDevVirtual(EDataType dataType);
+	HisDevVirtual();
 
 	HisDevVirtual(xmlNodePtr node);
 
 	HisDevValueBase* CreateHisDevValue(string strid,EHisDevDirection direction,EDataType ptype,int pinNo);
 
-	virtual void DoInternalRefresh();
+	HisDevValueBase* AddDevValue(EDataType ptype);
 
-	void CreateDataPoints();
+	virtual void DoInternalRefresh();
 
 	void WriteToDevice(ValueChangedEventArgs args);
 

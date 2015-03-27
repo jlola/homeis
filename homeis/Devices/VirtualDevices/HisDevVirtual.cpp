@@ -9,16 +9,15 @@
 #include "HisDevVirtual.h"
 
 
-HisDevVirtual::HisDevVirtual(EDataType dataType)
+HisDevVirtual::HisDevVirtual()
 {
-	type = dataType;
-
-	CreateDataPoints();
+	type = EDataType::Unknown;
 }
 
 HisDevVirtual::HisDevVirtual(xmlNodePtr node)
 	: HisDevBase::HisDevBase(node)
 {
+	type = EDataType::Unknown;
 }
 
 void HisDevVirtual::WriteToDevice(ValueChangedEventArgs args)
@@ -28,20 +27,6 @@ void HisDevVirtual::WriteToDevice(ValueChangedEventArgs args)
 	{
 		values[i]->FireOnValueChanged(args);
 	}
-}
-
-void HisDevVirtual::CreateDataPoints()
-{
-	std::string strid = this->GetRecordId().ToString();
-	WriteToDeviceRequestDelegate delegate = WriteToDeviceRequestDelegate::from_method<HisDevVirtual, &HisDevVirtual::WriteToDevice>(this);
-	//create data points
-	//xmlNodePtr valuenode = GetOrCreateNode(0,GetNodePtr());
-	HisDevValueBase* value;
-	value = CreateHisDevValue(strid, EHisDevDirection::ReadWrite, type, 0);
-	value->delegateWrite = delegate;
-	value->Load();
-	//values.push_back(value);
-	Add(value);
 }
 
 HisDevValueBase* HisDevVirtual::CreateHisDevValue(string strid,EHisDevDirection direction,EDataType ptype,int pinNo)
@@ -64,8 +49,22 @@ HisDevValueBase* HisDevVirtual::CreateHisDevValue(string strid,EHisDevDirection 
 		case EDataType::Uint:
 			result = new HisDevValue<unsigned int>(strid, EHisDevDirection::ReadWrite, ptype, pinNo);
 			break;
+		case EDataType::Unknown:
+			return result;
 	}
 	return result;
+}
+
+HisDevValueBase* HisDevVirtual::AddDevValue(EDataType ptype)
+{
+	std::string strid = this->GetRecordId().ToString();
+	vector<HisDevValueBase*> values = GetItems<HisDevValueBase>();
+	WriteToDeviceRequestDelegate delegate = WriteToDeviceRequestDelegate::from_method<HisDevVirtual, &HisDevVirtual::WriteToDevice>(this);
+	HisDevValueBase* value = CreateHisDevValue(strid, EHisDevDirection::ReadWrite, type, values.size());
+	value->delegateWrite = delegate;
+	value->Load();
+	Add(value);
+	return value;
 }
 
 void HisDevVirtual::DoInternalSave(xmlNodePtr & node)
@@ -80,9 +79,6 @@ void HisDevVirtual::DoInternalLoad(xmlNodePtr & node)
 	HisDevBase::DoInternalLoad(node);
 
 	WriteToDeviceRequestDelegate delegate = WriteToDeviceRequestDelegate::from_method<HisDevVirtual, &HisDevVirtual::WriteToDevice>(this);
-
-	//value->delegateWrite = delegate;
-	//value->Load();
 
 	vector<HisDevValueBase*> values = GetItems<HisDevValueBase>();
 

@@ -27,6 +27,7 @@
 #include <sys/stat.h>
 #include <sys/time.h>
 #include <sys/ioctl.h>
+#include <sys/select.h>
 
 #include <memory>
 #include <new>
@@ -260,7 +261,7 @@ uint8_t LOW_portSerial_Linux::tty_readByte( const bool inTrashExtraReply, const 
 
       wait_tm.tv_usec = 0;
       wait_tm.tv_sec  = inSecTimeout;
-      FD_ZERO( &readset);
+      //FD_ZERO( &readset);
       FD_SET( serialFD, &readset);
 
       // Read byte if it doesn't timeout first

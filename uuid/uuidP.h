@@ -38,7 +38,7 @@
 #include <uuid/uuid_types.h>
 #endif
 #include <sys/types.h>
-
+#include <stdint.h>
 #include <uuid/uuid.h>
 
 /*

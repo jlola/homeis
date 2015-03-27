@@ -18,14 +18,14 @@ class StringBuilder
 public:
 	static std::string Format ( const char *fmt, ... )
 	{
-	    char textString[MAX_BUFFER*5] = {'\0'};
+	    char textString[MAX_BUFFER] = {'\0'};
 
 	    // -- empty the buffer properly to ensure no leaks.
 	    memset(textString, '\0', sizeof(textString));
 
 	    va_list args;
 	    va_start ( args, fmt );
-	    vsnprintf ( textString, MAX_BUFFER*5, fmt, args );
+	    vsnprintf ( textString, MAX_BUFFER, fmt, args );
 	    va_end ( args );
 	    std::string retStr = textString;
 	    return retStr;

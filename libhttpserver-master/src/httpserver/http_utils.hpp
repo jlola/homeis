@@ -279,6 +279,7 @@ class arg_comparator {
 #else
             COMPARATOR(x, y, );
 #endif
+            return true;
         }
 };
 

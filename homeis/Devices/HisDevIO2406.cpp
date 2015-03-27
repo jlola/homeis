@@ -26,6 +26,11 @@
 HisDevIO2406::HisDevIO2406(xmlNodePtr node, LOW_devDS2406* pdev) :
 	HisDevDallas::HisDevDallas(node, pdev)
 {
+	valueAInput = NULL;
+	valueAOutput = NULL;
+
+	valueBInput = NULL;
+	valueBOutput = NULL;
 	dev = pdev;
 }
 

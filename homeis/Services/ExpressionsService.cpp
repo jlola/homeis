@@ -71,7 +71,7 @@ void ExpressionService::render_GET(const http_request& req, http_response** res)
 			}
 		}
 	}
-	catch(HisException ex)
+	catch(HisException & ex)
 	{
 
 			//respjsondoc.SetArray();
@@ -182,7 +182,7 @@ LuaExpression* ExpressionService::CreateOrUpdateExpression(string strJson,string
 		Document document;	// Default template parameter uses UTF8 and MemoryPoolAllocator.
 
 		if (document.Parse<0>((char*)strJson.c_str()).HasParseError())
-			return false;
+			return NULL;
 
 		CUUID parentid;
 		if (document.HasMember("parentId"))
@@ -255,7 +255,7 @@ LuaExpression* ExpressionService::CreateOrUpdateExpression(string strJson,string
 		}
 		return expressionObj;
 	}
-	catch(HisException ex)
+	catch(HisException & ex)
 	{
 		message = ex.what();
 		return NULL;

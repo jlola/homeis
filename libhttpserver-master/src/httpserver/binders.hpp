@@ -81,7 +81,10 @@ namespace details
                 generic_mem_ptr _spfunc;
 
             public:
-                binder()
+                binder() :
+                	pmem(NULL),
+                    _pfunc(NULL),
+                    _spfunc(NULL)
                 {
                 }
 
