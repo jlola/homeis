@@ -1,0 +1,32 @@
+﻿<div data-role="page" id="deviceDetailPage">
+	<script type="text/html" id="ds18b20Template2">
+		<li>
+			<a href="#" data-icon-pos='notext' data-bind="click:itemSelect">
+				<img class="ui-li-icon ui-corner-none devices_ico" width="80" height"80" data-bind="attr: { src: image }" />
+				<h1 data-bind="text:data.name"></h1>										  			 					
+				<span class="ui-li-aside">
+					<label style="font-size:large" data-bind="text:valueunit"></label>						
+				</span>
+			</a>								
+		</li>            
+	</script>
+	<div data-role="content">
+		<div data-role="fieldcontain">
+			<label for="name">Název:</label>
+			<input type="text" name="name" id="name" data-bind="value: data.Name" placeholder="" value="">
+		</div>
+		<div data-role="fieldcontain">
+			<label for="address">Adresa:</label>
+			<input type="text" name="address" id="address" data-bind="value: data.Address,inputEnable: NameEditEnabled" placeholder="" value="">
+		</div>
+		<br/>
+		<div>
+			<ul data-role="listview" data-collapsed="false" data-inset="false" data-bind="template: { name: OneWireTemplate, foreach: data.Tags }" data-split-theme="a" data-split-icon="gear" \>
+		</div>
+		<br/>
+		<input type="button" href="#" data-bind="click:btnNewTagClick, ButtonEnable: notisnew" data-inline="true" Value="Nový tag" />
+		<input type="button" href="#" data-bind="click:btnSaveClick, ButtonEnable: SaveEnabled" data-inline="true" Value="Uložit" />
+		<input type="button" href="#" data-bind="click:btnDeleteClick, ButtonEnable: DeleteEnabled" data-inline="true" Value="Smazat" />
+		<input type="button" href="#" data-bind="click:btnStornoClick" data-inline="true" value="Storno" />
+	</div>
+</div>

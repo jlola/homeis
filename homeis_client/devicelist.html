@@ -1,0 +1,89 @@
+		
+
+<div data-role="page" id="devicespage">
+	<div data-role="content">
+		<script type="text/html" id="ds18b20Template2">
+            <li>
+				<a href="#" data-icon-pos='notext' data-bind="click:itemSelect">
+					<img class="ui-li-icon ui-corner-none devices_ico" width="80" height"80" data-bind="attr: { src: image }" />
+					<h1 data-bind="text:data.name"></h1>										  			 					
+					<span class="ui-li-aside">
+						<label style="font-size:large" data-bind="text:valueunit"></label>						
+					</span>
+				</a>								
+            </li>            
+        </script>
+		
+		<script type="text/html" id="test">
+            <li>
+				testx
+            </li>            
+        </script>
+		
+		<script type="text/html" id="ds2413Template">
+            <li>				
+				<a href="#" enabled="false" data-role="button" data-icon-pos='notext' data-bind="click: $parent.itemSelect" >
+					<img class="ui-li-icon ui-corner-none devices_ico" width="80" height"80" data-bind="attr: { src: image }" />
+					<h1 data-bind="text:name"></h1>															
+					<div class="ui-li-aside" id="listinput" data-role="fieldcontain">					
+						<select id="slider" data-role="slider" data-bind="sliderEnable:force,jqmFlip:value">
+							<option value="0">Vypnuto</option>
+							<option value="1">Zapnuto</option>
+						</select>												
+					</div>
+				</a>				
+				<a href="#" data-bind="click:$parent.removeValueId, visible: $parent.isLogged && $parent.Mode()==App.Enums.OneWireListMode.Folders" data-icon="delete">
+					Odstranit					
+				</a>
+            </li>            
+        </script>
+		
+		<script type="text/html" id="folderTemplate">		
+            <li>
+				<a enabled="true" data-role="button" data-icon-pos='notext' data-bind="click: folderSelect" >
+					<img class="ui-li-icon ui-corner-none devices_ico" width="80" height"80" data-bind="attr: { src: image }" />					
+					<h1 data-bind="text:name"></h1>															
+				</a>				
+				<a href="#" data-bind="click:folderEdit">Detail</a>
+				
+            </li>            
+        </script>
+		
+		<script type="text/html" id="expressionTemplate">
+            <li>
+				<a enabled="true" data-role="button" data-icon-pos='notext' data-bind="click: $parent.expressionSelect" >
+					<img class="ui-li-icon ui-corner-none devices_ico" width="80" height"80" data-bind="attr: { src: image }" />					
+					<h1 data-bind="text:name"></h1>															
+				</a>				
+				<a href="#" data-bind="click:expressionDelete">Odstranit</a>
+				
+            </li>            
+        </script>
+		
+		<script type="text/html" id="devicesTemplate">
+						
+		</script>	
+	
+		<div data-bind="visible:isLogged">
+			<input type="button" href="#" data-bind="click:newDeviceClick" data-inline="true" value="Nový datový bod" />
+		</div>
+		<div data-role="collapsibleset" id="deviceListid" data-bind="foreach: Devices" data-filter="true" >											
+			<div data-role="collapsible" data-collapsed="false" data-inset="true">					
+				<h4 >
+					<span data-bind="text:data.Name"></span>
+					<span style="float:right;" data-bind="visible:isLogged" class="button-span">
+						<input type="button" data-bind="click:SettingsClick" data-theme='b' data-inline='true' value='Nastavení' data-mini='true' data-icon='gear' data-icon-pos='top' id="show-content"/>						
+					</span>
+					<!-- <div id="button-set" style="float:right;position: absolute;right: 0;margin-top: -27px !important;">							
+						test
+					</div> -->
+				</h4>
+				<ul data-role="listview" data-collapsed="false" data-inset="false" data-bind="template: { name: OneWireTemplate, foreach: data.Tags }" data-split-theme="a" data-split-icon="gear" \>										
+			</div>							
+		</div>												
+	</div>
+<div>
+
+
+    
+      

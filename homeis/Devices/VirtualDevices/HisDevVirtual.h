@@ -17,7 +17,6 @@
 
 class HisDevVirtual : public HisDevBase
 {
-	EDataType type;
 protected:
 	virtual void DoInternalLoad(xmlNodePtr & node);
 	virtual void DoInternalSave(xmlNodePtr & node);

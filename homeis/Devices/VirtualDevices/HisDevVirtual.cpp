@@ -11,13 +11,11 @@
 
 HisDevVirtual::HisDevVirtual()
 {
-	type = EDataType::Unknown;
 }
 
 HisDevVirtual::HisDevVirtual(xmlNodePtr node)
 	: HisDevBase::HisDevBase(node)
 {
-	type = EDataType::Unknown;
 }
 
 void HisDevVirtual::WriteToDevice(ValueChangedEventArgs args)
@@ -60,7 +58,7 @@ HisDevValueBase* HisDevVirtual::AddDevValue(EDataType ptype)
 	std::string strid = this->GetRecordId().ToString();
 	vector<HisDevValueBase*> values = GetItems<HisDevValueBase>();
 	WriteToDeviceRequestDelegate delegate = WriteToDeviceRequestDelegate::from_method<HisDevVirtual, &HisDevVirtual::WriteToDevice>(this);
-	HisDevValueBase* value = CreateHisDevValue(strid, EHisDevDirection::ReadWrite, type, values.size());
+	HisDevValueBase* value = CreateHisDevValue(strid, EHisDevDirection::ReadWrite, ptype, values.size());
 	value->delegateWrite = delegate;
 	value->Load();
 	Add(value);
