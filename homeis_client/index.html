@@ -1,20 +1,26 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html>
 <head>
-<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta charset="UTF-8" />
+	<meta http-equiv="content-type" content="text/html;"/>
+	<meta name="viewport" content="width=device-width, initial-scale=1"/>
     <title>Home information system</title>
-    <link rel="stylesheet"  href="libs/jquery.mobile-1.3.2.css">    	
-	<link rel="shortcut icon" href="../../favicon.ico">    	
-	<script src="libs/jquery-1.9.1.min.js"></script>		
-	<script type="text/javascript" src="libs/jquery.rest.js"></script>    		
-	<script type="text/javascript" src="libs/knockout-2.3.0.js"></script>    		
+    <link rel="stylesheet"  href="libs/jquery.mobile-1.4.5.css">    	
+	<link rel="stylesheet"  href="libs/jquery.mobile.structure-1.4.5.css">    	
 	<link rel="stylesheet"  href="app/app.css">    
+	<link rel="shortcut icon" href="../../favicon.ico">    	
+	<script src="libs/jquery-1.11.2.js"></script>		
+	<script type="text/javascript" src="libs/jquery.rest.js"></script>    		
+	<script type="text/javascript" src="libs/knockout-3.3.0.debug.js"></script>
+	<script type="text/javascript" src="libs/knockout.mapping-latest.debug.js"></script>
+	<script type="text/javascript" src="libs/jquery-syntax/jquery.syntax.min.js"></script>	
 	<script>
 		  var App = window.App = {};
 		  App.ViewModels = {};
 		  App.Enums = {};
 		  App.DataObjects = {};
 		  App.Sockets = {};		  
+		  App.Controllers = {};
 		  
 		   (function (App) {
 		//services enum
@@ -129,12 +135,15 @@
 			var url = location.protocol+'//'+location.hostname+(location.port ? ':'+location.port: '');
 			this.socket = new App.Sockets.Socket(url);		
 			
+			
+			this.devicesController = new App.Controllers.DevicesController(this.socket);
 			this.onewirelist = new App.ViewModels.OneWireListModel(this.socket);										
             this.loginpage = new App.ViewModels.LogInModel(this.socket);			
 			this.mainpage = new App.ViewModels.MainPage(this.socket,this.loginpage);
 			this.header = new App.ViewModels.HeaderModel(this.socket);
 			this.folders = new App.ViewModels.FoldersModel(this.socket);
 			this.menu = new App.ViewModels.MenuModel();
+			this.pageContainerBeforeShowFunc = null;
 						
 			EventWorker.addHandler('self.loginpage.onLoginChanged',function(login){self.header.Update(login);},this);
 						
@@ -147,43 +156,55 @@
 			App.ViewModels.AppModel.prototype.GetHeader = function() { return this.header; };
 			App.ViewModels.AppModel.prototype.GetFolders = function() { return this.folders; };
 			App.ViewModels.AppModel.prototype.GetMenu = function() { return this.menu; };
-						
+			App.ViewModels.AppModel.prototype.GetDevicesController = function() { return this.devicesController; };
+			App.ViewModels.AppModel.prototype.GetDeviceController = function() { return this.deviceController; };
+			App.ViewModels.AppModel.prototype.SetPageContainerBeforeShowFunc = function(f) { 
+				this.pageContainerBeforeShowFunc = f;
+			};
+			App.ViewModels.AppModel.prototype.GetPageContainerBeforeShowFunc = function() { 
+				return this.pageContainerBeforeShowFunc;
+			};
 			return this;
 		}    		
 		
   })(App)
 		  
 		$(document).on("mobileinit", function () {  	  
-				App.Instance = new App.ViewModels.AppModel();	 								
+			App.Instance = new App.ViewModels.AppModel();	 								
+			// This function highlights (by default) pre and code tags which are annotated correctly.						
+			
 		});
-	</script>
+	</script>	
 	<script type="text/javascript" src="app/header.js"></script>        
 	<script type="text/javascript" src="app/menu.js"></script>  	
 	<script type="text/javascript" src="app/socket.js"></script>
 	<script type="text/javascript" src="app/jqmhelpers.js"></script>
 	<script type="text/javascript" src="app/login.js"></script>        
     <script type="text/javascript" src="app/onewirelist.js"></script>  	
+	<script type="text/javascript" src="app/devicelist.js"></script>  	
 	<script type="text/javascript" src="app/folders.js"></script>  	
 	<script type="text/javascript" src="app/expression.js"></script>  	
-    <script src="libs/jquery.mobile-1.3.2.js"></script>    	
+	
+    <script src="libs/jquery.mobile-1.4.5.js"></script>    	
     <style>
 
     </style>	
 </head>
 <body>
-<div data-role="page" class="jqm-demos ui-responsive-panel" id="demopage">
 
-    <div data-role="header" id="header" data-theme="b">        		
-    </div><!-- /header -->
+<div data-role="header" id="header" data-position="fixed" data-theme="b">        				
+		<h1 data-bind="text: login"></h1>
+		<a href="#panel_menu" data-icon="bars" data-iconpos="notext" >Menu</a>	
+</div><!-- /header -->
+
+<div data-role="page" id="demopage">  		
     <div data-role="content" id="demopagecontent">    	
-	</div><!-- /content -->    
-	<div data-role="panel" id="panel_menu" data-theme="c">        		
-    </div><!-- /panel -->		
+	</div><!-- /content -->    		
 </div><!-- /page -->	
 	
 <div  data-role="page" id="folderSelect" data-close-btn="right">           
 			<div data-role="header" data-theme="b">		
-				<h2>Vyberte datov� bod</h2>
+				<h2>Vyberte datový bod</h2>
 			</div><!-- /header -->
 			<div data-role="content">	
 				<!-- <h4 data-binding="text:jsmodel"></h4> -->				
@@ -194,9 +215,18 @@
 				</ul> -->									
 				
 			</div><!-- /content -->	       		
-		</div><!-- /panel -->	
+</div><!-- /page -->	
+
+<div data-role="panel" id="panel_menu" data-display="reveal" data-theme="a">        		
+		<ul data-role="listview" >
+			<li><a href="#"  data-bind="click:btnonewirelist">Datové body</a></li>                            
+			<li><a href="#" data-bind="click:btnFolders">Složky hodnot</a></li>                    
+			<li><a href="#" data-bind="click:btnlogindialog">Přihlášení</a></li>
+		</ul> <!-- /listview -->
+	</div><!-- /panel -->
+		
 		             
-        <!-- //////////////////////////////////////////////////////////////////////////// -->
-	    <script type="text/javascript" src="app/app.js"></script>  
+  <!-- //////////////////////////////////////////////////////////////////////////// -->
+   <script type="text/javascript" src="app/app.js"></script>  
 </body>
 </html>

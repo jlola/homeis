@@ -15,7 +15,9 @@
 		}
 /////////////////Socket/////////////////////////////////////////////////////////							
 		App.Sockets.Socket = function(host) {
-			var host = "http://192.168.1.10:81";
+			var host = "http://192.168.88.250:81";
+			//var host = "http://teplomer.juricekpavel.net:81";
+			//var host = location.host+":81";
 			var self = this;						
 			//internal storage of socket
 			self.socket = null;					
@@ -28,33 +30,73 @@
 			});
 			
 			self.read = function(serviceId,par,callback)
-			{				
+			{											
 				if (self.client[serviceId]==null)
 					self.client.add(serviceId);
 				var service = self.client[serviceId];
 				if (par==null || par=='') 
-					service.read().done(function(data) {
-					  //'client.foo.read' is now cached for 5 seconds
-					  if (callback) callback(data);
-					});
+					response = service.read();					
 				else
-					service.read(par).done(function(data) {
-					  //'client.foo.read' is now cached for 5 seconds
-					  if (callback) callback(data);
-					});
+					response = service.read(par);
+				response.error(function(data)
+				{
+					var result = {};
+					result.success = false;
+					result.message = data.responseText;
+					result.statusText = data.statusText;
+					result.status = data.status;
+					if (response.status==200) 
+					{
+						result.success = true;
+					}
+					
+					if (callback!=null) callback(result);
+				});
+				response.done(function(data) {
+					var result = {};
+					result.success = false;
+					result.message = data;
+					result.statusText = response.statusText;
+					result.status = response.status;
+					if (response.status==200) 
+					{
+						result.success = true;
+					}
+					
+					if (callback!=null) callback(result);
+				});								
 			}
 			self.update = function(serviceId,id,data,callback)
 			{				
+				$.mobile.loading( "show", {
+						text: "Loading",
+						textVisible: false,						
+						textonly: false
+				});
+				
 				self.client[serviceId]=null;
 				if (self.client[serviceId]==null)
 					self.client.add(serviceId);				
 				var service = self.client[serviceId];
 				try
 				{					
-					service.update(id,ko.toJS(data)).done(function(data) {
-						//alert('Update error');
-						if (callback) callback(data);
-					});
+					response = service.update(id,ko.toJS(data));//.done(function(data) {
+						// //alert('Update error');
+						// if (callback) callback(data);
+					// });
+					response.complete(function(response){
+						var result = {};
+						result.success = false;
+						result.message = data;
+						result.statusText = response.statusText;
+						result.status = response.status;
+						if (response.status==200) 
+						{
+							result.success = true;
+						}
+						$.mobile.loading( "hide" );
+						if (callback!=null) callback(result);
+					});				
 				}
 				catch(ex)				
 				{
@@ -63,17 +105,34 @@
 			}
 			
 			self.destroy = function(serviceId,id,callback)
-			{				
+			{			
+				$.mobile.loading( "show", {
+						text: "Loading",
+						textVisible: false,						
+						textonly: false
+				});
+				
 				self.client[serviceId]=null;
 				if (self.client[serviceId]==null)
 					self.client.add(serviceId);				
 				var service = self.client[serviceId];
 				try
 				{					
-					service.del(id).done(function(data) {
-						alert(data.message);
-					});
-					if (callback!=null) callback();
+					response = service.del(id);	
+					
+					response.complete(function(resp){
+						var result = {};
+						result.success = false;
+						result.message = response.responseText;
+						result.statusText = response.statusText;
+						result.status = response.status;
+						if (response.status==200) 
+						{
+							result.success = true;
+						}
+						$.mobile.loading( "hide" );
+						if (callback!=null) callback(result);
+					});					
 				}
 				catch(ex)				
 				{
@@ -83,14 +142,33 @@
 			
 			self.create = function(serviceId,data,callback)
 			{				
+				$.mobile.loading( "show", {
+						text: "Loading",
+						textVisible: false,						
+						textonly: false
+				});
+				
 				self.client[serviceId]=null;
 				if (self.client[serviceId]==null)
 					self.client.add(serviceId);				
 				var service = self.client[serviceId];
 				try
 				{					
-					service.create(ko.toJS(data)).done(function(data) {
-						alert('Saving error');
+					response = service.create(ko.toJS(data)).done(function(data) {						
+					});
+					
+					response.complete(function(response){
+						var result = {};
+						result.success = false;
+						result.message = response.responseText;
+						result.statusText = response.statusText;
+						result.status = response.status;
+						if (response.status==200) 
+						{
+							result.success = true;
+						}
+						$.mobile.loading( "hide" );
+						if (callback!=null) callback(result);
 					});
 				}
 				catch(ex)				

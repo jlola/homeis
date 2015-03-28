@@ -1,15 +1,12 @@
-﻿<html><head>
-<meta http-equiv="content-type" content="text/html; charset=windows-1250"></meta>    			
-</head>
-	<body>
+﻿<div data-role="page" id="onewirelistpage">
+	<div data-role="content">
 		<script type="text/html" id="ds18b20Template">
             <li>
 				<a href="#" enabled="true" data-role="button" data-icon-pos='notext' data-bind="click: $parent.itemSelect" >
 					<img class="ui-li-icon ui-corner-none devices_ico" width="80" height"80" data-bind="attr: { src: image }" />
 					<h1 data-bind="text:name"></h1>										  			 
 					<p class="ui-li-aside">
-						<label style="font-size:large" data-bind="text:value"></label>
-						<label style="font-size:large" data-bind="text:unit"></label>
+						<label style="font-size:large" data-bind="text:valueunit"></label>						
 					</p>
 				</a>
 				<a href="#" data-bind="click:$parent.removeValueId,visible: $parent.isLogged && $parent.Mode()==App.Enums.OneWireListMode.Folders" data-icon="delete">
@@ -60,18 +57,16 @@
 		
 		<!-- ///////////////////////////////onewirelist///////////////////////////////////////////// -->				
 		<h4 data-bind="visible:Mode()!=App.Enums.OneWireListMode.DeviceSelect" ></h4>
-		<h2 data-bind="visible:Mode()!=App.Enums.OneWireListMode.DeviceSelect">Seznam zařízení na sběrnici</h2>
-		 <a data-role="button" href="#" data-inline="true" data-bind="click:btnNewDevice, visible:isLogged && Mode()==App.Enums.OneWireListMode.Devices" >Nový datový bod</a>
-		 <a data-role="button" href="#" data-inline="true" data-bind="click:btnNewFolder, visible:isLogged && Mode()==App.Enums.OneWireListMode.Folders" >Nová složka</a>
-		 <a data-role="button" href="#" data-inline="true" data-bind="click:btnInsertDevice, visible:isLogged && Mode()==App.Enums.OneWireListMode.Folders" >Vložit datový bod</a>
-		 <a data-role="button" href="#" data-inline="true" data-bind="click:btnInsertExpression, visible:isLogged && Mode()==App.Enums.OneWireListMode.Folders" >Vložit výraz</a>
-		 <br>
-		 <br>
-		<ul id="oneWireListid" data-role="listview"  data-bind="template: { name: OneWireTemplate, foreach: oneWireList, afterRender: myPostProcessingLogic }" data-filter="true" data-split-icon="gear" data-split-theme="d">
+		<h2 data-bind="visible:Mode()!=App.Enums.OneWireListMode.DeviceSelect">Seznam zařízení na sběrnici</h2>		
+		 <div data-bind="visible:isLogged && Mode()==App.Enums.OneWireListMode.Folders">
+			<input type="button" href="#" data-inline="true" data-bind="click:btnNewFolder" value="Nová složka" />		 		 
+			<input type="button" href="#" data-inline="true" data-bind="click:btnInsertDevice" value="Vložit datový bod"/>		 
+			<input type="button" href="#" data-inline="true" data-bind="click:btnInsertExpression" value="Vložit výraz" />
+		 </div>	
+		<ul id="oneWireListid" data-role="listview"  data-bind="template: { name: OneWireTemplate, foreach: oneWireList }" data-filter="true" data-split-icon="gear" data-split-theme="d">
 		</ul>									
-									
-	</body>
-</html>
+	</div>									
+</div>
 
    
     

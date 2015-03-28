@@ -7,3 +7,12 @@
     margin:8px;            
 }
 
+.custom-class
+{	
+	color: rgb(0,0,0);
+}
+
+/* .ui-disabled { 
+    opacity: 0.8 !important;
+	color: red;
+}  */

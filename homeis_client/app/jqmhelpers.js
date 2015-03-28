@@ -33,9 +33,11 @@
 	
 	//zkopiruje data z dto do objektu
 	App.Helpers.CopyFromDto = function(src,dst) {
+		dst.isLoading = true;
 		for (var key in dst.data) {
 			dst[key](src[key]);
 		}
+		dst.isLoading = false;
 	}
 				
 	ko.bindingHandlers.inputEnable = {		
@@ -43,9 +45,15 @@
 			$(element).textinput();
 			var valueProp = valueAccessor();
 			if (valueProp())
-				$(element).textinput('enable');
+			{
+				$(element).textinput('enable');						
+			}
 			else
-				$(element).textinput('disable');
+			{
+				$(element).textinput('disable');								
+				//$(element).addClass('ui-disabled');
+			}				
+			$(element).height( $(element)[0].scrollHeight );				
 		}
 	};
 	
@@ -62,12 +70,14 @@
 	
 	ko.bindingHandlers.ButtonEnable = {		
 		update: function(element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
-			$(element).button();
+			//$(element).button().button("refresh");
 			var valueProp = valueAccessor();
 			if (valueProp())
-				$(element).removeClass('ui-disabled');
+				//$(element).removeClass('ui-disabled');
+				$( element ).button( "enable" );
 			else
-				$(element).addClass('ui-disabled');						
+				//$(element).addClass('ui-disabled');						
+				$( element ).button( "disable" );
 		}
 	};
 	
@@ -121,7 +131,7 @@
 			$(element).slider();
 			$(element).slider("refresh");
 			//console.log(x.message);
-		}
+		}		
         return result;
     },
     update: function (element, valueAccessor) {
@@ -132,7 +142,7 @@
             $(element).slider("refresh");
         } catch (x) {
 			console.log(x.message);
-		}
+		}		
     }
 };
 	
@@ -188,6 +198,8 @@
 		}
 	};
 	
+	
+	
 	App.Helpers.SetDropDownListValue = function(elementid,value) {
 		//$('#selectionType').get(0),self.type(),self.type()
 		App.Helpers.ensureDropdownSelectionIsConsistentWithModelValue($('#'+elementid).get(0),value,value);
@@ -198,14 +210,20 @@
 		var holder = $(holderId).find(":jqmData(role=content)");
 		if (holder)
 		{
-			//$.mobile.loadPage(pageFile);				
+			var element = $(holder)[0];
+			var item = ko.dataFor(element);
+			if (item!=null && item.AutoRefresh!=null) item.AutoRefresh(false);
+			
 			ko.cleanNode($(holder)[0]);
 			$(holder).load(pageFile, function () {											
-				$(holderId).trigger("pagecreate");								
+				$(holderId).trigger("create");								
+				//$('[data-role="content"]').trigger('create');
 				//$.mobile.loadPage(holderId, { showLoadMsg: false } );
 				//ko.cleanNode(this);				
 				if (model!=null) ko.applyBindings(model,this);
-							
+				
+				if (model.AutoRefresh!=null) model.AutoRefresh(true);
+				
 				if (callback!=null) callback();				
 			});	
 		}		

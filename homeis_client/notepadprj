@@ -21,6 +21,8 @@
             <File name="app\onewirelist.js" />
             <File name="app\socket.js" />
             <File name="app\expression.js" />
+            <File name="app\devicelist.js" />
+            <File name="app\header.js" />
         </Folder>
         <Folder name="lib">
             <Folder name="images">
@@ -56,5 +58,9 @@
         <File name="onewiredetail.html" />
         <File name="onewirelist.html" />
         <File name="expressiondetail.html" />
+        <File name="menu.html" />
+        <File name="devicelist.html" />
+        <File name="deviceDetail.html" />
+        <File name="logindialog.html" />
     </Project>
 </NotepadPlus>

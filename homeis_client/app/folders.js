@@ -24,12 +24,14 @@
 		self.btnSave = function(){
 			 var dto = self.CreateDto(this);
 			if (dto.id==null || dto.id=='')
-				self.socket.create("folder",dto,function(data){
-					alert('Error saving');
+				self.socket.create("folder",dto,function(response){
+					if (response.success) alert('Uloženo');
+					else alert('Chyba pri ukaldani');					
 				});
 			else
-				self.socket.update("folder",self.id(),dto,function(data){
-					alert('Error saving');
+				self.socket.update("folder",self.id(),dto,function(response){
+					if (response.success) alert('Uloženo');
+					else alert('Chyba pri ukaldani');
 				});
 				
 			//alert(self.name());
@@ -60,6 +62,7 @@
 			return true;
 		}
 		self.folderSelect = function(event,ui) {
+			self.list.Clear();
 			if (event.name()=='..')
 				self.list.Load(event.parentId());
 			else

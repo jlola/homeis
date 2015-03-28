@@ -33,318 +33,17 @@
 	App.Enums.EDataType = {
 		Unknown: -1,
 		Int: 0,
-		Uint: 1,
+		UInt: 1,
 		Double: 2,
 		String: 3,
 		Bool: 4
 	}
 	
 '[]'
-	
-///////////////////////////////////////////////////OneWireDevice//////////////////////////////////////////////////////////////////////		
-    App.ViewModels.OneWireDevice = function (psocket,list) {
-        var self = this;
-		self.IsNew = ko.observable(true);
-		self.socket = psocket;
-		if (list!=null)
-			self.path = list.GetPath();			
-		self.SaveEnabled = ko.observable(false);
-		self.types = ko.observableArray(App.Helpers.CreateArray(App.Enums.EDataType));				
-		self.id = ko.observable();
-		self.name = ko.observable();
-		self.type = ko.observable(App.Enums.EDataType.Unknown);
-		self.logged = ko.observable(false);
-		self.internal = ko.observable(true);		
-		self.unit = ko.observable(" °C");
-		self.force = ko.observable(false);
-		self.direction = ko.observable(App.Enums.EDirection.Read);						
-		self.IsEnabled = ko.observable(false);		
-		self.value = ko.observable();
-		self.error = ko.observable(true);
-		
-		self.ValueEnabled = ko.computed(function(){
-			return self.internal() || self.direction()==App.Enums.EDirection.Write || self.direction()==App.Enums.EDirection.ReadWrite;
-		},this);
-		self.selectedValue = ko.observable(3);		
-		self.address = ko.observable();		
-		self.oldvalue = null;
-		self.setOutputState = ko.observable(0);		
-		self.setOutputStateChanged = function(newValue) {			
-			if (self.oldvalue!=self.value()&&self.oldvalue!=null) {
-				self.oldvalue = self.value();								
-				self.Save(function() {
-					App.Instance.GetOneWireList().Load(App.Instance.GetOneWireList().parentFolderId,function(){
-						App.Instance.GetOneWireList().Refresh();
-					});				 					
-				});				
-			}
-			else
-			{
-				self.oldvalue = self.value();
-			}
-			//console.log(newValue);
-			return true;			
-		};		
-		//self.setOutputState.subscribe(self.setOutputStateChanged);		
-		
-		self.value.subscribe(self.setOutputStateChanged);	
-		
-		self.valueTemplate = function() {
-			if (self.type()==4)	return "valueBooleanTemplate";
-			return "valueTemplateText";
-		}
-		
-		self.myPostProcessingLogic = function(elements) {
-		// "elements" is an array of DOM nodes just rendered by the template
-		// You can add custom post-processing logic here
-			$("div[id$='divalue']").trigger('create');			
-		}
-				
-		//self.CopyDataFrom(dataObject);
-		
-		self.errorUI = ko.computed(function(){
-			if (self.error()==false) return "Připojeno";
-			else return "Odpojeno";
-		},this);
-		
-		self.directionLabel = ko.computed(function() {
-			if (self.direction()==App.Enums.EDirection.Read)
-				return 'Čtení';
-			return 'Čtení/Zápis';
-		}, this);		
-		self.isForceVisible = ko.computed(function() {
-			if (((self.direction()==App.Enums.EDirection.Write || self.direction()==App.Enums.EDirection.ReadWrite) && !self.error())||
-				self.internal())
-				return true;
-			else
-				return false;
-			
-		}, this);
-		
-		App.ViewModels.OneWireDevice.prototype.CopyDataFrom = function(pdataObject)
-		{
-			if (pdataObject==null) return;
-			var self = this;			
-			dataObject = ko.toJS(pdataObject);			
-			self.id(dataObject.id);			
-			self.name(dataObject.name);			
-			self.address(dataObject.address);
-			self.list = list;			
-			self.type(dataObject.type);						
-			self.direction(dataObject.direction);			
-			self.value(dataObject.value);			
-			self.error(dataObject.error);			
-			self.force(dataObject.force);			
-			self.unit(dataObject.unit);
-			self.IsNew(false);
-			//self.setOutputState(dataObject.value);			
-			self.internal(dataObject.internal==null?false:dataObject.internal);
-			self.selectedValue(self.type());					
-			//self.formatedValue(self.GetFormatedValue(self.value(),self.type()));			
-			self.DirValueId = dataObject.DirValueId;
-			App.Helpers.SetDropDownListValue('selectionType',self.type());
-		};
-		
-		self.forceChanged = function(object,event)
-		{
-			self.force(!self.force())
-			
-			self.Save(function(){});
-			
-		};		
-		self.typeFormated = ko.computed(function() {
-			switch(self.type())
-			{
-				case App.Enums.EDataType.Int:
-					return 'Int';
-				case App.Enums.EDataType.Uint:
-					return 'Uint';
-				case App.Enums.EDataType.Double:
-					return 'Double';
-				case App.Enums.EDataType.String:
-					return 'String';
-				case App.Enums.EDataType.Bool:
-					return 'Bool';
-			}		
-		}, this);
-		
-		self.image = ko.computed(function() {
-			if (self.type()==null) return 'app/icons/Folder_Icon.png'
-			if (self.internal()) return 'app/icons/Circle_Green_Internal.png';
-			if (self.error() == false)
-				return 'app/icons/Circle_Green.png';
-			else
-				return 'app/icons/Circle_Red.png';
-		}, this);				       
-		
-		self.IsValueValid = function(pvalue,ptype)
-		{
-			try	
-			{
-				switch(ptype)
-				 {
-					 case App.Enums.EDataType.String:
-					 return true;
-					 case App.Enums.EDataType.Bool:
-						 App.Helpers.BooleanParse(pvalue);
-						 return true;
-					 break;
-					 case App.Enums.EDataType.Int:
-						if (!isNaN(parseInt(pvalue))) return true;						
-					 case App.Enums.EDataType.Double:
-						if (!isNaN(parseFloat(pvalue))) return true;						
-					 break;				
-				}
-			}
-			catch(ex)
-			{
-				console.log(ex);				
-			}
-			return false;
-		}
-		
-		self.GetFormatedValue = function(pvalue,ptype) {
-			 switch(ptype)
-			 {
-				 case App.Enums.EDataType.Uint:
-				 case App.Enums.EDataType.Int:
-				 case App.Enums.EDataType.Double:
-				 case App.Enums.EDataType.String:
-					return pvalue;
-				 break;				 
-				 case App.Enums.EDataType.Bool:
-					 if (pvalue==1) return '1';
-					 else return '0';
-				 break;				 							
-			}
-			return "";//.toFixed(2);		
-		 };
-				
-		
-		self.CreateDto = function(src)
-		{
-			var dto = new App.DataObjects.OneWireDeviceDto();
-			dto.id = src.address();
-			dto.name = src.name();
-			dto.force = src.force();
-			dto.type = src.type();
-			dto.value = src.value();
-			dto.unit = src.unit();
-			//if (src.force()) dto.value = src.setOutputState();
-			return dto;
-		}
-						
-		self.CreateEmptyDto = function()
-		{
-			var dto = new App.DataObjects.OneWireDeviceDto();
-			dto.id = 0;
-			dto.name = '';
-			dto.force = true;			
-			dto.value = '';
-			dto.type = -1;
-			dto.unit = '';
-			dto.internal = true;
-			dto.error = false;
-			return dto;
-		}				
-		
-		self.btnMove = function() {
-			
-			return true;
-		}	
 
-		self.btnDelete = function() {
-			
-				self.Remove(function(){
-					App.Helpers.LoadPage('#demopage','onewirelist.html',App.Instance.GetOneWireList(),function(){
-						App.Instance.GetOneWireList().Load(self.list.parentFolderId);				 
-						App.Instance.GetOneWireList().Refresh();		
-					});
-				});
-				
-				return true;												
-		}
-		
-		self.btnSave = function() {									
-			if (!self.internal())
-			{
-				self.Save(function(){
-					App.Helpers.LoadPage('#demopage','onewirelist.html',App.Instance.GetOneWireList(),function(){
-						App.Instance.GetOneWireList().Load(App.Instance.GetOneWireList().parentFolderId);				 
-						App.Instance.GetOneWireList().Refresh();		
-					});
-				});
-				
-				return true;
-			}
-			else
-			{
-				var val = self.value()				
-				if (!self.IsValueValid(val,self.type()))
-				{
-					alert('Zadaná hodnota neodpovídá datovému typu');
-					return false;
-				}
-				self.Save(function(){
-					App.Helpers.LoadPage('#demopage','onewirelist.html',App.Instance.GetOneWireList(),function(){
-						App.Instance.GetOneWireList().Load(App.Instance.GetOneWireList().parentFolderId);				 
-						App.Instance.GetOneWireList().Refresh();		
-					});
-				});
-			}			
-			return true;
-		}
-		self.btnStorno = function() {			
-			App.Helpers.LoadPage('#demopage','onewirelist.html',App.Instance.GetOneWireList(),function(){
-				App.Instance.GetOneWireList().Load(App.Instance.GetOneWireList().parentFolderId);				 
-				App.Instance.GetOneWireList().Refresh();		
-			});
-			return true;
-		}
-		
-        self.typetext = ko.computed(function () {
-            switch (self.type) {
-                case App.Enums.EOneWireType.Temperature:
-                    return 'Teplota';
-                case App.Enums.EOneWireType.IO2:
-                    return 'IO';
-            }
-        }, this);
-		
-		self.Remove = function(callback) {			
-			if (confirm('Opravdu si přejete odstranit zařízení: ' + self.name() + '?'))
-			{								
-				self.socket.destroy('onewiredevices/',self.id(),function(data){
-					if (callback!=null) callback();
-				});
-				
-			}
-		}
-		
-		self.Save = function(callback)
-		{
-			var dto = self.CreateDto(this);
-			if (self.IsNew())
-			{
-				 self.socket.create("onewiredevices",dto,function(data){
-					 alert('data');
-				 });
-				 if (callback!=null) callback();
-			}
-			else {
-				 self.socket.update("onewiredevices",self.address(),dto,function(data){
-					 alert('data');
-				 });
-				 if (callback!=null) callback();
-			}
-		};
-		
-		self.Load = function()
-		{
-			
-		};
-		return self;
-    };
+
+	
+
 ////////////////////////////////////////////////////OneWireListModel////////////////////////////////////////////////////////////////////////////
 	App.Enums.OneWireListMode = {	
 		Devices: 0,
@@ -355,7 +54,8 @@
 
     // Overall viewmodel for this screen, along with initial state
     App.ViewModels.OneWireListModel = function (psocket) {
-        var self = this;				
+        var self = this;						
+		
 		self.OnItemSelected = null;
 		self.Mode = ko.observable(App.Enums.OneWireListMode.Devices);
 		self.oneWireList = ko.observableArray();
@@ -366,32 +66,32 @@
 		self.path = 'onewiredevices';
 		self.folderDevicesPath = 'onewiredevices/folder';
 		self.GetPath = function() { return self.path; }
-		self.Refresh = function(holderId) {		
-			if (holderId==null)
-			{
-				try
-				{
-					$('#oneWireListid').listview('refresh');				
-				}
-				catch(x)
-				{
-					$('#oneWireListid').listview().listview('refresh');				
-				}
-				
+		self.AutoRefresh = function(enable) {
+			if (enable)
+			{				
+				self.interval = setInterval(function(){
+					self.Load(self.parentFolderId);					
+					self.Refresh();
+				},5000);	
 			}
 			else
-			{	
-				try
+			{
+				if (self.interval != null)
 				{
-					$(holderId + ' #oneWireListid').listview('refresh');
+					clearInterval(self.interval);
+					self.interval = null;
 				}
-				catch(x)
-				{
-					$(holderId + ' #oneWireListid').listview().listview('refresh');				
-				}
-				
 			}
-			//$('#test').button('refresh');
+		}
+		self.Refresh = function(holderId) {					
+			try
+			{
+				$('ul[data-role="listview"]').listview('refresh');									
+			}
+			catch(x)
+			{					
+				$('ul[data-role="listview"]').listview().listview('refresh');					
+			}							
 		}
 		
 		self.expressionSelect = function(event,ui) {						 
@@ -418,21 +118,9 @@
 		self.itemSelect = function(event,ui) {						 
 			
 				if (self.Mode()!=App.Enums.OneWireListMode.DeviceSelect)
-				{
-					App.Helpers.LoadPage('#demopage','onewiredetail.html', event, function(){
-						var isLogged = App.Instance.GetLogInPage().logged();
-						var element = $('#demopagecontent').get(0);
-						var item = ko.dataFor(element);
-						if (item == null)
-						{				
-							item = new App.ViewModels.OneWireDevice(self.socket,self.list);																			
-						}
-						else item = ko.dataFor(element);							
-						item.CopyDataFrom(ko.toJS(event));
-						item.IsNew(false);
-						item.IsEnabled(isLogged);
-						item.SaveEnabled(isLogged);										
-					});
+				{										
+					event.LoadPage();
+					
 				} else
 				{
 					if (confirm('Opravdu si přejete vložit: '+ event.name() + '?')) {						
@@ -466,14 +154,16 @@
 		self.OneWireTemplate = function(oneWireDevice) {
 			if (oneWireDevice instanceof App.ViewModels.ExpressionModel)
 				return 'expressionTemplate';
-			if (oneWireDevice.type()==App.Enums.EDataType.Int ||
-				oneWireDevice.type()==App.Enums.EDataType.Uint ||
-				oneWireDevice.type()==App.Enums.EDataType.Double ||
-				oneWireDevice.type()==App.Enums.EDataType.String)
+			if (oneWireDevice instanceof App.ViewModels.FolderModel)
+				return 'folderTemplate';
+			if (oneWireDevice.data.type()==App.Enums.EDataType.Int ||
+				oneWireDevice.data.type()==App.Enums.EDataType.UInt ||
+				oneWireDevice.data.type()==App.Enums.EDataType.Double ||
+				oneWireDevice.data.type()==App.Enums.EDataType.String)
 				return 'ds18b20Template';
-			if (oneWireDevice.type()==4)
+			if (oneWireDevice.data.type()==4)
 				return 'ds2413Template';						
-			return 'folderTemplate';
+			throw "Not supported type";
 		}
 		
 		self.btnNewFolder = function() {
@@ -510,43 +200,59 @@
 			return true;
 		}		
 		
-		self.btnInsertDevice = function() {			
+		self.btnInsertDevice = function(event) {			
 			$.mobile.changePage( '#folderSelect', { 
 					role: "dialog",
 					transition: "pop",				
 					changeHash: true			
 			});	
-			var list = new App.ViewModels.OneWireListModel(self.socket)			
+			event.AutoRefresh(false);
+			var list = new App.ViewModels.OneWireListModel(self.socket);			
 			list.Mode(App.Enums.OneWireListMode.DeviceSelect);
-			list.OnItemSelected = function(event) {
-				self.Load(self.parentFolderId);
-			};
-			list.Load(null,function(){
-				App.Helpers.LoadPage("#folderSelect" ,'onewirelist.html',list,function(){														
-					list.Refresh('#folderSelect');		
+			list.OnItemSelected = function(event) {			
+				event.list.AutoRefresh(false);			
+				self.Load(self.parentFolderId,function() {					
+				});	
+			};			
+			
+			App.Helpers.LoadPage("#folderSelect" ,'onewirelist.html',list,function(){																		
+				//vypnu autorefresh u listu dialogu po zavreni
+				$('#folderSelect').on('pagehide', function(){
+					list.AutoRefresh(false);
+					self.AutoRefresh(true);
 				});
-				list.parentFolderId = self.parentFolderId;
+				list.Load(null,function(){				
+					list.Refresh('#folderSelect');		
+					list.parentFolderId = self.parentFolderId;					
+				});				
 			});				 			 																		
 			return true;						
 		}
 		
 		self.btnNewDevice = function() {
-			App.Helpers.LoadPage('#demopage','onewiredetail.html', new App.ViewModels.OneWireDevice(self.socket,null,this), function(){
-				var item = ko.dataFor($('#demopagecontent').get(0));
-				if (item == null)						
-				{
-					item = new App.ViewModels.OneWireDevice(self.socket,null,this);								
-					ko.applyBindings(item,$('#demopagecontent').get(0));							
-				}
-				else
-				{
-					item.CopyDataFrom(item.CreateEmptyDto());
-				}
-				item.IsNew(true);
-				item.internal(true);
-				item.IsEnabled(self.isLogged);
-				item.SaveEnabled(self.isLogged);
-			});
+			// App.Helpers.LoadPage('#demopage','onewiredetail.html', new App.ViewModels.OneWireDevice(self.socket,null,this), function(){
+				// var item = ko.dataFor($('#demopagecontent').get(0));
+				// if (item == null)						
+				// {
+					// item = new App.ViewModels.OneWireDevice(self.socket,null,this);								
+					// ko.applyBindings(item,$('#demopagecontent').get(0));							
+				// }
+				// else
+				// {
+					// item.CopyDataFrom(item.CreateEmptyDto());
+				// }
+				// item.IsNew(true);
+				// item.internal(true);
+				// item.IsEnabled(self.isLogged);
+				// item.SaveEnabled(self.isLogged);
+			// });
+			App.Instance.SetPageContainerBeforeShowFunc( function( event, ui ) {
+				var element = ui.toPage;			
+				ko.applyBindings(new App.ViewModels.OneWireDevice(self.socket,null,this),element[0]);				
+				$('input[type="button"]').button().button('refresh');
+			} );
+			
+			$.mobile.pageContainer.pagecontainer("change","onewiredetail.html",{changeHash:false,reload:true});
 			return true;
 		}
 		
@@ -565,48 +271,73 @@
 		
 		self.LoadFolders = function(folderId,callback) {			
 			//seznam adresaru v adresari
-			self.socket.read(App.ViewModels.FoldersModel.GetPath(),self.parentFolderId,function(data){			
-				data.forEach(function (x) {
-					//zjistim, jestli jiz neni v seznamu
-					var match = ko.utils.arrayFirst(self.oneWireList(), function(item) {
-						return item.id() == x.id;
-					});
-					if (match==null) {						
-						match = new App.ViewModels.FolderModel(self.socket,self);
-						match.CopyDataFrom(x);
-						self.oneWireList.push(match);						
-					} else
+			self.socket.read(App.ViewModels.FoldersModel.GetPath(),self.parentFolderId,function(response){			
+				if (response.success)
 					{
-						match.CopyDataFrom(x);
-					}
-				});				
-				//self.sort();
-				//self.Refresh();
-				if (callback!=null) callback();
-			});
-		}
-		
-		self.LoadExpressions = function(folderId,callback) {
-			if (self.parentFolderId!=null) {				
-				self.socket.read('expression/folder',self.parentFolderId,function(data){			
+						data = response.message;
 					data.forEach(function (x) {
 						//zjistim, jestli jiz neni v seznamu
 						var match = ko.utils.arrayFirst(self.oneWireList(), function(item) {
 							return item.id() == x.id;
 						});
 						if (match==null) {						
-							match = new App.ViewModels.ExpressionModel(self.socket,self);
-							//match.CopyDataFrom(x);
-							App.Helpers.CopyFromDto(x,match);
+							match = new App.ViewModels.FolderModel(self.socket,self);
+							match.CopyDataFrom(x);
 							self.oneWireList.push(match);						
 						} else
 						{
 							match.CopyDataFrom(x);
 						}
 					});				
+					//odstranim ty co nejsou v doslych datech
+						
+						self.oneWireList.remove(function(x){
+								var match = ko.utils.arrayFirst(data, function(item) {
+										 return item.id === x.id();
+									 });
+								return (match===null && x.name()!='..' && (x instanceof App.ViewModels.FolderModel || folderId==null))
+							});
 					//self.sort();
 					//self.Refresh();
 					if (callback!=null) callback();
+				}
+			});
+		}
+		
+		self.LoadExpressions = function(folderId,callback) {
+			if (self.parentFolderId!=null) {				
+				self.socket.read('expression/folder',self.parentFolderId,function(response){			
+					if (response.success)
+					{
+						data = response.message;
+						data.forEach(function (x) {
+							//zjistim, jestli jiz neni v seznamu
+							var match = ko.utils.arrayFirst(self.oneWireList(), function(item) {
+								return item.id() == x.id;
+							});
+							if (match==null) {						
+								match = new App.ViewModels.ExpressionModel(self.socket,self);
+								//match.CopyDataFrom(x);
+								App.Helpers.CopyFromDto(x,match);
+								self.oneWireList.push(match);						
+							} else
+							{
+								match.CopyDataFrom(x);
+							}
+						});
+						//odstranim ty co nejsou v doslych datech
+						self.oneWireList().forEach(function(x){
+							var match = ko.utils.arrayFirst(data, function(item) {
+								return item.id === x.id();
+							});
+							if (match==null && x.name()!='..' && x instanceof App.ViewModels.ExpressionModel) {				
+								self.oneWireList.remove(x);
+							}
+						});						
+						//self.sort();
+						//self.Refresh();
+						if (callback!=null) callback();
+					}
 				});
 			} else if (callback!=null) callback();						;
 		}
@@ -614,24 +345,37 @@
 		self.LoadDevicesInFolder = function(folderId,callback) {
 			if (self.parentFolderId!=null)
 			{
-				self.socket.read(self.folderDevicesPath,self.parentFolderId,function(data){			
-					data.forEach(function (x) {
-						//zjistim, jestli jiz neni v seznamu
-						var match = ko.utils.arrayFirst(self.oneWireList(), function(item) {
-							return item.id() === x.id;
+				self.socket.read(self.folderDevicesPath,self.parentFolderId,function(response){			
+					if (response.success)
+					{
+						data = response.message;
+						data.forEach(function (x) {
+							//zjistim, jestli jiz neni v seznamu
+							var match = ko.utils.arrayFirst(self.oneWireList(), function(item) {
+								return item.data.id() === x.id;
+							});
+							if (match==null) {						
+								match = new App.ViewModels.TagModel(x);//new App.ViewModels.OneWireDevice(self.socket,self)						
+								//match.CopyDataFrom(x);
+								self.oneWireList.push(match);						
+							} else
+							{
+								match.CopyDataFrom(x);
+							}																
+						});	
+						//odstranim ty co nejsou v doslych datech
+						self.oneWireList().forEach(function(x){
+							var match = ko.utils.arrayFirst(data, function(item) {
+								return item.id === x.data.id();
+							});
+							if (match==null && x instanceof App.ViewModels.OneWireDevice) {				
+								self.oneWireList.remove(x);
+							}
 						});
-						if (match==null) {						
-							match = new App.ViewModels.OneWireDevice(self.socket,self)						
-							match.CopyDataFrom(x);
-							self.oneWireList.push(match);						
-						} else
-						{
-							match.CopyDataFrom(x);
-						}																
-					});				
-					//self.sort();
-					//self.Refresh();	
-					if (callback!=null) callback();					
+						//self.sort();
+						//self.Refresh();	
+						if (callback!=null) callback();					
+					}
 				});
 			} else if (callback!=null) callback();						
 		}
@@ -639,29 +383,53 @@
 		self.LoadParentFolder = function(folderId,callback) {
 			if (self.parentFolderId!=null)
 			{					
-				self.socket.read(App.ViewModels.FolderModel.GetPath(),self.parentFolderId,function(data){			
-					var match = ko.utils.arrayFirst(self.oneWireList(), function(item) {
-							return item.name() === '..';
-						});
-					if (match==null)
+				self.socket.read(App.ViewModels.FolderModel.GetPath(),self.parentFolderId,function(response){			
+					if (response.success)
 					{
-						self.parent = new App.ViewModels.FolderModel(self.socket,self);						
-						self.oneWireList.push(self.parent);
-						//self.sort();
-						//self.Refresh();										
+						data = response.message;
+						var match = ko.utils.arrayFirst(self.oneWireList(), function(item) {
+								return item.name() === '..';
+							});
+						if (match==null)
+						{
+							self.parent = new App.ViewModels.FolderModel(self.socket,self);						
+							self.oneWireList.push(self.parent);
+							//self.sort();
+							//self.Refresh();										
+						}
+						else self.parent = match;
+						
+						if (self.parent!=null) {
+							self.parent.CopyDataFrom(data[0]);						
+							self.parent.name('..');
+							//self.parent.parentId(null);
+						}
+						if (callback!=null) callback();											
 					}
-					else self.parent = match;
-					
-					if (self.parent!=null) {
-						self.parent.CopyDataFrom(data[0]);						
-						self.parent.name('..');
-						//self.parent.parentId(null);
-					}
-					if (callback!=null) callback();											
 				});					
 			}
 			else if (callback!=null) callback();						
 		}
+		
+		self.LoadPage = function() {
+			// App.Helpers.LoadPage($("#demopage"),'onewirelist.html',App.Instance.GetOneWireList(),function(){
+				// App.Instance.GetOneWireList().Mode(App.Enums.OneWireListMode.Folders);
+				// App.Instance.GetOneWireList().Load();				 
+				// App.Instance.GetOneWireList().Refresh();						
+			// });
+			var activePage = $.mobile.pageContainer.pagecontainer( "getActivePage" );
+			if (activePage!=null && activePage[0].id=='onewirelistpage') return false;
+			
+			App.Instance.SetPageContainerBeforeShowFunc( function( event, ui ) {
+				var element = ui.toPage;							
+				ko.applyBindings(self,element[0]);
+				
+				self.Refresh();						
+			} );
+					
+			$.mobile.pageContainer.pagecontainer("change","onewirelist.html",{changeHash:false,reload:true});			
+			return true;
+		};
 		
 		self.myPostProcessingLogic = function(elements) {
 		// "elements" is an array of DOM nodes just rendered by the template
@@ -669,23 +437,27 @@
 			//$("div[id$='listinput']").trigger('create');
 		}
 		
+		self.Clear = function() {
+			self.oneWireList.removeAll();	
+		}
+		
 		//load function
 		self.Load = function(folderId,callback)
 		{
-			if (self.parentFolderId!=folderId || folderId==null) self.oneWireList.removeAll();				
+			//if (self.parentFolderId != folderId || (folderId == undefined && self.parentFolderId!=undefined)) 
+			//	self.oneWireList.removeAll();				
 			self.parentFolderId = folderId;
 			self.isLogged(App.Instance.GetLogInPage().logged());
 			self.parent = null;	
 			//nacte data pro adresar
 			if (self.Mode()==App.Enums.OneWireListMode.Folders)
-			{
-				
+			{				
 				self.LoadFolders(folderId,function() {
-					//self.Refresh();
+					self.Refresh();
 					self.LoadExpressions(folderId,function() {
-						//self.Refresh();
+						self.Refresh();
 						self.LoadDevicesInFolder(folderId,function() {
-							//self.Refresh();
+							self.Refresh();
 							self.LoadParentFolder(folderId,function() {
 								self.sort();
 								self.Refresh();
@@ -699,25 +471,41 @@
 			else if (self.Mode()==App.Enums.OneWireListMode.Devices||
 					 self.Mode()==App.Enums.OneWireListMode.DeviceSelect)
 			{
-				self.oneWireList.removeAll();
-				self.socket.read(self.path,null,function(data){			
-					data.forEach(function (x) {
-						//zjistim, jestli jiz neni v seznamu
-						var match = ko.utils.arrayFirst(self.oneWireList(), function(item) {
-							return item.id() === x.id;
+				//self.oneWireList.removeAll();
+				self.socket.read(self.path,null,function(response){			
+					if (response.success)
+					{
+						data = response.message;
+						data.forEach(function (x) {
+							x = x.Tags[0];
+							//zjistim, jestli jiz neni v seznamu
+							var match = ko.utils.arrayFirst(self.oneWireList(), function(item) {
+								return item.id() === x.id;
+							});
+							if (match==null) {						
+								match = new App.ViewModels.OneWireDevice(self.socket,self)						
+								match.CopyDataFrom(x);
+								self.oneWireList.push(match);						
+							} else
+							{
+								match.CopyDataFrom(x);
+							}																
+						});				
+						//odstranim ty co nejsou v doslych datech
+						self.oneWireList().forEach(function(x){							
+							var match = ko.utils.arrayFirst(data, function(item) {
+								item = item.Tags[0];
+								return item.id === x.id();
+							});
+							if (match==null) {				
+								self.oneWireList.remove(x);
+							}
 						});
-						if (match==null) {						
-							match = new App.ViewModels.OneWireDevice(self.socket,self)						
-							match.CopyDataFrom(x);
-							self.oneWireList.push(match);						
-						} else
-						{
-							match.CopyDataFrom(x);
-						}																
-					});				
-					self.sort();
-					self.Refresh();		
-					if (callback!=null) callback();
+						
+						self.sort();
+						self.Refresh();		
+						if (callback!=null) callback();
+					}
 				});
 			}								
 		}
@@ -727,13 +515,13 @@
 		{
 			self.oneWireList.sort(function(left,right){
 				if (left.name()=='..') return -1;
-				if (left instanceof App.ViewModels.ExpressionModel)
+				if (left instanceof App.ViewModels.ExpressionModel && !(right instanceof App.ViewModels.ExpressionModel))
 					return 1;
-				if (right instanceof App.ViewModels.ExpressionModel)
+				if (right instanceof App.ViewModels.ExpressionModel && !(left instanceof App.ViewModels.ExpressionModel))
 					return -1;
-				if (left instanceof App.ViewModels.FolderModel && right instanceof App.ViewModels.OneWireDevice)
+				if (left instanceof App.ViewModels.FolderModel && right instanceof App.ViewModels.TagModel)
 					return -1;
-				if (right instanceof App.ViewModels.FolderModel && left instanceof App.ViewModels.OneWireDevice)
+				if (right instanceof App.ViewModels.FolderModel && left instanceof App.ViewModels.TagModel)
 					return 1;
 				if (left.name()>right.name()) return 1;
 				if (left.name()<right.name()) return -1;

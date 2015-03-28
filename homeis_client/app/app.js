@@ -1,10 +1,4 @@
 
-  
-   
-	
-  
- 
-  
   /////////////////Page Live/////////////////////////////////////////////////////////
  
 	 LoadPanel = function (panelHolder,panelFile)
@@ -55,109 +49,51 @@
 		{
 			//$(headerHolder).load(headerFile, function () {			
 			$(header).load(headerFile, function () {			
-				$(pageid).trigger("pagecreate");
+				//$(pageid).trigger("pagecreate");				
 				ko.applyBindings(App.Instance.GetHeader(),this);
+				$( "#header" ).toolbar( "refresh" );
 			//$.mobile.loading("hide");			
 			});	
 		}		
 	 }
-	 
-	 // LoadPage = function (holderId,pageFile,model,callback)
-	 // {		
-		// var holder = $(holderId).find(":jqmData(role=content)");
-		// if (holder)
-		// {
-			// //$.mobile.loadPage(pageFile);			
-			// $(holder).load(pageFile, function () {											
-				// $(holderId).trigger("pagecreate");								
-				// ko.applyBindings(model,this);
-				// callback();				
-			// });	
-		// }		
-	 // }
-	 
+	 	
 	$("#demopage").on( "pageinit", function( event ) {				
-		LoadHeader(this,"header.html");
-		LoadPanelExt(this,'#panel_menu',"menu.html");
-		App.Helpers.LoadPage(this,'onewirelist.html',App.Instance.GetOneWireList(),function(){
+		if (event.target.id=="demopage")
+		{
 			App.Instance.GetOneWireList().Mode(App.Enums.OneWireListMode.Folders);
-			App.Instance.GetOneWireList().Load();				 
-			App.Instance.GetOneWireList().Refresh();		
-		});
-		//$.mobile.loadPage('#demopage', { showLoadMsg: false } );		
-		
+			App.Instance.GetOneWireList().Load();
+			App.Instance.GetOneWireList().LoadPage();
+			$.mobile.pageContainer.on( "pagecontainerbeforeshow", function( event, ui ) {
+				var func = App.Instance.GetPageContainerBeforeShowFunc();
+				if (func!=null)
+					func(event,ui);
+			});						
+		}
 	});	
 	
-	 $("#folderSelect").on( "pageinit", function( event ) {				
-		// alert('test');
-		 //LoadHeader(this,"header.html");
-		 //LoadPanelExt(this,"#panel_menu","menu.html");
-	 });	
-	
-	// $("#onewireDetail").on( "pageinit", function( event ) {				
-		// LoadHeader(this,"header.html");
-		// LoadPanelExt(this,"#panel_menu","menu.html");
-	// });	
-	
-	// $("#onewirelist").on( "pageinit", function( event ) {				
-		// LoadHeader(this,"header.html");
-		// LoadPanelExt(this,"#panel_menu","menu.html");		
-		// ko.applyBindings(App.Instance.GetOneWireList(), this);  		
-		// App.Instance.GetOneWireList().Load();				 
-		// App.Instance.GetOneWireList().Refresh();		
-	// });
-	// var interval;
-	// $("#onewirelist").on( "pageshow", function( event ) {			
-		// App.Instance.GetOneWireList().Refresh();		
-		// // interval = setInterval(function(){
-			// // App.Instance.GetOneWireList().Load();				 
-			// // App.Instance.GetOneWireList().Refresh();		
-		// // },5000);		
-	// });
-	// $("#onewirelist").on( "pagebeforehide", function( event ) {							
-			// clearInterval(interval);
-	// });
-	
-	
-	
-	// $("#LogInDialogPage").on( "pageinit", function( event ) {					
-		// //LoadPanel("#panelmenuLogin","menu.html");
-		// LoadPanelExt(this,"#panel_menu","menu.html");		
-		// LoadHeader(this,"header.html");
-	// });
-	// $("#tagdef").on( "pageinit", function( event ) {		
-		// //LoadPanel("#panelmenutagdef","menu.html");
-		// LoadPanelExt(this,"#panel_menu","menu.html");		
-		// LoadHeader(this,"header.html");		
-	// });
+	$(document).one('pagebeforecreate', function (e) {
 			
-	// $("#LogInDialogPage").on( "swiperight", function( event ) {				
-		// $("#panelmenuLogin").panel( "open" );
-	// });	
-	// $("#LogInDialogPage").on( "swipeleft", function( event ) {				
-		// $("#panelmenuLogin").panel( "close" );		
-	// });		
-   
-	//App.Instance = new App.ViewModels.AppModel();	  					
-						  
-	// $('#main').on('pageinit', function (event, ui) {
-		// //alternativa pro binding na urcite id	  			
-		// //ko.applyBindings(App.Instance.GetMainPage(), document.getElementById('main'));
-	// });
+			
+	});
 	
-	
-
-	// $('#onewireDetail').on('pageinit', function (event, ui) {	 							
-		// ko.applyBindings(App.Instance.GetOneWireList().SelectedItem,this);
-	// });			
-				
-	// $('#LogInDialogPage').on('pageinit', function (event, ui) {	 							
-		// ko.applyBindings(App.Instance.GetLogInPage(), this);
-	// });						
-  
-  $(document).ready(function () {
-	//App.Instance = new App.ViewModels.AppModel();	  					
-  });
+	$( document ).on( "pagecreate", function(e) {			
+		return true;
+	});
+		
+	$( document ).one( "pagebeforeshow", function(e) {				
+		
+	});
+		 
+	$(function () {
+		$("[data-role=header],[data-role=footer]").toolbar().enhanceWithin();
+		$("[data-role=panel]").panel().enhanceWithin();
+		App.Instance.GetMenu().Load();
+		App.Instance.GetHeader().Load();
+	});	 
+		  
+	$(document).ready(function () {
+							
+	});
   
   
     
