@@ -30,7 +30,6 @@ using namespace std;
 class HisDevBase : public HisBase
 {
 	bool enabled;
-	LOW_network *network;
 	uint32_t scanPeriodMs;
 	timeval lastScanTime;
 	timeval nextScanTime;

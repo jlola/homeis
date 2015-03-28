@@ -86,14 +86,12 @@ HisDevBase::HisDevBase()
 {
 	scanPeriodMs = 10000;
 	dataSource = EDataSource::Const;
-	network = NULL;
 	enabled = false;
 }
 
 HisDevBase::HisDevBase(xmlNodePtr node)
 	: HisBase::HisBase(node)
 {
-	network = NULL;
 	scanPeriodMs = 10000;
 	dataSource = EDataSource::Const;
 	enabled = false;
