@@ -22,13 +22,15 @@ class OneWireDevicesService : public http_resource<OneWireDevicesService>
 {
 	HisDevices & devices;
 	HisDevFolderRoot & rootFolder;
-	bool UpdateDevValue(string address, string strjson);
+	bool UpdateDevValue(CUUID devValueId, string strjson);
 	//bool SetForce(string address, string force);
+	HisDevValueBase* CreateVirtualDevValue(string strjson);
 	HisDevVirtual* CreateVirtualDevice(string strjson);
 	HisDevBase* UpdateDevice(string strjson,string strDevId);
 	bool AddValueIdToFolder(string strFolerId, string strJson);
 	bool DeleteValueId(string strValueId);
-	string DeleteDevice(string strDevValueRecordId);
+	string DeleteDevValue(string strDevValueRecordId);
+	string DeleteDev(string strDevValueRecordId);
 public:
 	OneWireDevicesService(HisDevices & dev,HisDevFolderRoot & folder);
 	~OneWireDevicesService(void);

@@ -55,7 +55,8 @@ std::string CUUID::ToString()
 
 CUUID CUUID::Parse(std::string struuid)
 {
-	CUUID uuido;
-	uuid_parse(struuid.c_str(),uuido.uuid);
-	return uuido;
+	CUUID result;
+	if (uuid_parse(struuid.c_str(),result.uuid)==-1)
+		throw "CUUID::Parse | Error parse id";
+	return result;
 }

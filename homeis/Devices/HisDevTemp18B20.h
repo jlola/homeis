@@ -55,6 +55,11 @@ class HisDevTemp18B20 : public HisDevDallas
 		Add(tempValue);
 	}
 
+	const xmlChar* GetNodeNameInternal()
+	{
+		return (const xmlChar*)"HisDevTemp18B20";
+	}
+
 	private: void WriteToDevice(ValueChangedEventArgs args)
 	{
 

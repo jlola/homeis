@@ -29,7 +29,7 @@ public:
 	size_t Size();
 	HisCollectionBase(std::string fileName);
 	HisBase *operator[](size_t i);
-	~HisCollectionBase();
+	virtual ~HisCollectionBase();
 };
 
 #endif /* HISCOLLECTIONBASE_H_ */

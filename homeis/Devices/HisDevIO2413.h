@@ -28,6 +28,8 @@ class HisDevIO2413 : public HisDevDallas
 
 	LOW_devDS2413 *dev;
 
+	const xmlChar* GetNodeNameInternal();
+
 	public:	HisDevIO2413(LOW_devDS2413* pdev);
 
 	public:	HisDevIO2413(xmlNodePtr node,LOW_devDS2413* pdev);

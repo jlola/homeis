@@ -20,18 +20,18 @@
 #include "homeis/Common/HisException.h"
 
 
+#include "homeis/Expressions/LuaExpression.h"
 
-
-#define luac_c
-#define LUA_CORE
+//#define luac_c
+//#define LUA_CORE
 //#define lua_c
-extern "C" {
-
-#include "lua.h"                                /* Always include this when calling Lua */
-#include "lauxlib.h"                            /* Always include this when calling Lua */
-#include "lualib.h"                             /* Always include this when calling Lua */
-
-}
+//extern "C" {
+//
+//#include "lua.h"                                /* Always include this when calling Lua */
+//#include "lauxlib.h"                            /* Always include this when calling Lua */
+//#include "lualib.h"                             /* Always include this when calling Lua */
+//
+//}
 
 #include "LuaExpression.h"
 

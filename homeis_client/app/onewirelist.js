@@ -167,19 +167,10 @@
 		}
 		
 		self.btnNewFolder = function() {
-			App.Helpers.LoadPage('#demopage','folderdetail.html', new App.ViewModels.FolderModel(self.socket,this), function(){									
-				var item = ko.dataFor($('#demopagecontent').get(0));
-				if (item == null)						
-				{				
-					item = new App.ViewModels.FolderModel(self.socket,this);
-					ko.applyBindings(item,$('#demopagecontent').get(0));
-				}
-				else
-				{
-					item.CopyDataFrom(item.CreateEmptyDto());
-				}
-				item.parentId(self.parentFolderId);
-			});
+			var foldersInstance = App.Instance.GetFolders();
+			var newfolder = new App.ViewModels.FolderModel(self.socket,null);
+			newfolder.data.parentId(foldersInstance.actual!=null?foldersInstance.actual.data.id():null);
+			newfolder.LoadPage();			
 			return true;
 		}
 		
@@ -270,145 +261,116 @@
 		};
 		
 		self.LoadFolders = function(folderId,callback) {			
-			//seznam adresaru v adresari
-			self.socket.read(App.ViewModels.FoldersModel.GetPath(),self.parentFolderId,function(response){			
-				if (response.success)
-					{
-						data = response.message;
-					data.forEach(function (x) {
-						//zjistim, jestli jiz neni v seznamu
-						var match = ko.utils.arrayFirst(self.oneWireList(), function(item) {
-							return item.id() == x.id;
-						});
-						if (match==null) {						
-							match = new App.ViewModels.FolderModel(self.socket,self);
-							match.CopyDataFrom(x);
-							self.oneWireList.push(match);						
-						} else
-						{
-							match.CopyDataFrom(x);
-						}
-					});				
-					//odstranim ty co nejsou v doslych datech
-						
-						self.oneWireList.remove(function(x){
-								var match = ko.utils.arrayFirst(data, function(item) {
-										 return item.id === x.id();
-									 });
-								return (match===null && x.name()!='..' && (x instanceof App.ViewModels.FolderModel || folderId==null))
-							});
-					//self.sort();
-					//self.Refresh();
-					if (callback!=null) callback();
-				}
-			});
+			var foldersInstance = App.Instance.GetFolders();
+			foldersInstance.Load();
+			self.oneWireList = foldersInstance.folders;
 		}
 		
 		self.LoadExpressions = function(folderId,callback) {
-			if (self.parentFolderId!=null) {				
-				self.socket.read('expression/folder',self.parentFolderId,function(response){			
-					if (response.success)
-					{
-						data = response.message;
-						data.forEach(function (x) {
-							//zjistim, jestli jiz neni v seznamu
-							var match = ko.utils.arrayFirst(self.oneWireList(), function(item) {
-								return item.id() == x.id;
-							});
-							if (match==null) {						
-								match = new App.ViewModels.ExpressionModel(self.socket,self);
-								//match.CopyDataFrom(x);
-								App.Helpers.CopyFromDto(x,match);
-								self.oneWireList.push(match);						
-							} else
-							{
-								match.CopyDataFrom(x);
-							}
-						});
-						//odstranim ty co nejsou v doslych datech
-						self.oneWireList().forEach(function(x){
-							var match = ko.utils.arrayFirst(data, function(item) {
-								return item.id === x.id();
-							});
-							if (match==null && x.name()!='..' && x instanceof App.ViewModels.ExpressionModel) {				
-								self.oneWireList.remove(x);
-							}
-						});						
-						//self.sort();
-						//self.Refresh();
-						if (callback!=null) callback();
-					}
-				});
-			} else if (callback!=null) callback();						;
+			// if (self.parentFolderId!=null) {				
+				// self.socket.read('expression/folder',self.parentFolderId,function(response){			
+					// if (response.success)
+					// {
+						// data = response.message;
+						// data.forEach(function (x) {
+							// //zjistim, jestli jiz neni v seznamu
+							// var match = ko.utils.arrayFirst(self.oneWireList(), function(item) {
+								// return item.id() == x.id;
+							// });
+							// if (match==null) {						
+								// match = new App.ViewModels.ExpressionModel(self.socket,self);
+								// //match.CopyDataFrom(x);
+								// App.Helpers.CopyFromDto(x,match);
+								// self.oneWireList.push(match);						
+							// } else
+							// {
+								// match.CopyDataFrom(x);
+							// }
+						// });
+						// //odstranim ty co nejsou v doslych datech
+						// self.oneWireList().forEach(function(x){
+							// var match = ko.utils.arrayFirst(data, function(item) {
+								// return item.id === x.id();
+							// });
+							// if (match==null && x.name()!='..' && x instanceof App.ViewModels.ExpressionModel) {				
+								// self.oneWireList.remove(x);
+							// }
+						// });						
+						// //self.sort();
+						// //self.Refresh();
+						// if (callback!=null) callback();
+					// }
+				// });
+			// } else if (callback!=null) callback();						;
 		}
 		
 		self.LoadDevicesInFolder = function(folderId,callback) {
-			if (self.parentFolderId!=null)
-			{
-				self.socket.read(self.folderDevicesPath,self.parentFolderId,function(response){			
-					if (response.success)
-					{
-						data = response.message;
-						data.forEach(function (x) {
-							//zjistim, jestli jiz neni v seznamu
-							var match = ko.utils.arrayFirst(self.oneWireList(), function(item) {
-								return item.data.id() === x.id;
-							});
-							if (match==null) {						
-								match = new App.ViewModels.TagModel(x);//new App.ViewModels.OneWireDevice(self.socket,self)						
-								//match.CopyDataFrom(x);
-								self.oneWireList.push(match);						
-							} else
-							{
-								match.CopyDataFrom(x);
-							}																
-						});	
-						//odstranim ty co nejsou v doslych datech
-						self.oneWireList().forEach(function(x){
-							var match = ko.utils.arrayFirst(data, function(item) {
-								return item.id === x.data.id();
-							});
-							if (match==null && x instanceof App.ViewModels.OneWireDevice) {				
-								self.oneWireList.remove(x);
-							}
-						});
-						//self.sort();
-						//self.Refresh();	
-						if (callback!=null) callback();					
-					}
-				});
-			} else if (callback!=null) callback();						
+			// if (self.parentFolderId!=null)
+			// {
+				// self.socket.read(self.folderDevicesPath,self.parentFolderId,function(response){			
+					// if (response.success)
+					// {
+						// data = response.message;
+						// data.forEach(function (x) {
+							// //zjistim, jestli jiz neni v seznamu
+							// var match = ko.utils.arrayFirst(self.oneWireList(), function(item) {
+								// return item.data.id() === x.id;
+							// });
+							// if (match==null) {						
+								// match = new App.ViewModels.TagModel(x);//new App.ViewModels.OneWireDevice(self.socket,self)						
+								// //match.CopyDataFrom(x);
+								// self.oneWireList.push(match);						
+							// } else
+							// {
+								// match.CopyDataFrom(x);
+							// }																
+						// });	
+						// //odstranim ty co nejsou v doslych datech
+						// self.oneWireList().forEach(function(x){
+							// var match = ko.utils.arrayFirst(data, function(item) {
+								// return item.id === x.data.id();
+							// });
+							// if (match==null && x instanceof App.ViewModels.OneWireDevice) {				
+								// self.oneWireList.remove(x);
+							// }
+						// });
+						// //self.sort();
+						// //self.Refresh();	
+						// if (callback!=null) callback();					
+					// }
+				// });
+			// } else if (callback!=null) callback();						
 		}
 		
 		self.LoadParentFolder = function(folderId,callback) {
-			if (self.parentFolderId!=null)
-			{					
-				self.socket.read(App.ViewModels.FolderModel.GetPath(),self.parentFolderId,function(response){			
-					if (response.success)
-					{
-						data = response.message;
-						var match = ko.utils.arrayFirst(self.oneWireList(), function(item) {
-								return item.name() === '..';
-							});
-						if (match==null)
-						{
-							self.parent = new App.ViewModels.FolderModel(self.socket,self);						
-							self.oneWireList.push(self.parent);
-							//self.sort();
-							//self.Refresh();										
-						}
-						else self.parent = match;
+			// if (self.parentFolderId!=null)
+			// {					
+				// self.socket.read(App.ViewModels.FolderModel.GetPath(),self.parentFolderId,function(response){			
+					// if (response.success)
+					// {
+						// data = response.message;
+						// var match = ko.utils.arrayFirst(self.oneWireList(), function(item) {
+								// return item.name() === '..';
+							// });
+						// if (match==null)
+						// {
+							// self.parent = new App.ViewModels.FolderModel(self.socket,self);						
+							// self.oneWireList.push(self.parent);
+							// //self.sort();
+							// //self.Refresh();										
+						// }
+						// else self.parent = match;
 						
-						if (self.parent!=null) {
-							self.parent.CopyDataFrom(data[0]);						
-							self.parent.name('..');
-							//self.parent.parentId(null);
-						}
-						if (callback!=null) callback();											
-					}
-				});					
-			}
-			else if (callback!=null) callback();						
+						// if (self.parent!=null) {
+							// self.parent.CopyDataFrom(data[0]);						
+							// self.parent.name('..');
+							// //self.parent.parentId(null);
+						// }
+						// if (callback!=null) callback();											
+					// }
+				// });					
+			// }
+			// else if (callback!=null) callback();						
 		}
 		
 		self.LoadPage = function() {

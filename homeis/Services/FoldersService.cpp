@@ -70,11 +70,14 @@ void FoldersService::FolderToJson(HisBase *pFolder, Document & respjsondoc)
 	jsonvalue.SetString(strvalue.c_str(),strvalue.length(),respjsondoc.GetAllocator());
 	d.AddMember("id",jsonvalue, respjsondoc.GetAllocator());
 
-	if (pFolder->GetParent()->GetRecordId()!=root->GetFolder()->GetRecordId())
+	if (pFolder->GetParent()!=NULL)
 	{
-		strvalue = pFolder->GetParent()->GetRecordId().ToString();
-		jsonvalue.SetString(strvalue.c_str(),strvalue.length(),respjsondoc.GetAllocator());
-		d.AddMember("parentId",jsonvalue, respjsondoc.GetAllocator());
+		if (pFolder->GetParent()->GetRecordId()!=root->GetFolder()->GetRecordId())
+		{
+			strvalue = pFolder->GetParent()->GetRecordId().ToString();
+			jsonvalue.SetString(strvalue.c_str(),strvalue.length(),respjsondoc.GetAllocator());
+			d.AddMember("parentId",jsonvalue, respjsondoc.GetAllocator());
+		}
 	}
 	respjsondoc.PushBack(d, respjsondoc.GetAllocator());
 }
@@ -173,10 +176,18 @@ bool FoldersService::CreateFolder(string strJson)
 	if (document.Parse<0>((char*)strJson.c_str()).HasParseError())
 		return false;
 
-	CUUID parentid;
+	CUUID parentid = CUUID::Empty();
 	if (document.HasMember("parentId"))
 	{
-		parentid = CUUID::Parse(document["parentId"].GetString());
+		try
+		{
+			if (document["parentId"].IsString())
+				parentid = CUUID::Parse(document["parentId"].GetString());
+		}
+		catch(...)
+		{
+			parentid = CUUID::Empty();
+		}
 	}
 
 	HisDevFolder* newFolder = NULL;

@@ -124,17 +124,18 @@ int HisBase::FindIndex(CUUID puuid)
 	return -1;
 }
 
-void HisBase::Remove(CUUID puuid)
+HisBase* HisBase::Remove(CUUID puuid)
 {
 	int index = FindIndex(puuid);
-	if (index>=0)
+	if ( index >= 0 )
 	{
 		HisBase *item = items[index];
 		xmlNodePtr child = item->GetNodePtr();
 		items.erase(items.begin()+index);
-		//delete(item);
 		xmlUnlinkNode(child);
+		return item;
 	}
+	return NULL;
 }
 
 void HisBase::DoInternalSave(xmlNodePtr & node)

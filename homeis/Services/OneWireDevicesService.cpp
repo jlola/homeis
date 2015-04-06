@@ -72,12 +72,27 @@ void OneWireDevicesService::render_GET(const http_request& req, http_response** 
 	}
 	else if (path.find("/api/onewiredevices")!=string::npos)
 	{
-		for(uint16_t i=0;i<devices.Size();i++)
+		string strDevId = req.get_arg("id");
+		if (strDevId.length()>0)
 		{
-			Value devjson(kObjectType);
-			FillDeviceToJson(devjson,devices[i],respjsondoc);
-			respjsondoc.PushBack(devjson, respjsondoc.GetAllocator());
+			CUUID devId = CUUID::Parse(strDevId);
+			int index = devices.Find(devId);
+			if (index>=0)
+			{
+				Value devjson(kObjectType);
+				FillDeviceToJson(devjson,devices[index],respjsondoc);
+				respjsondoc.PushBack(devjson, respjsondoc.GetAllocator());
+			}
+		}
+		else
+		{
+			for(uint16_t i=0;i<devices.Size();i++)
+			{
+				Value devjson(kObjectType);
+				FillDeviceToJson(devjson,devices[i],respjsondoc);
+				respjsondoc.PushBack(devjson, respjsondoc.GetAllocator());
 
+			}
 		}
 	}
 
@@ -117,6 +132,8 @@ void OneWireDevicesService::FillDeviceToJson(Value & devjson, HisDevBase* dev,Do
 		tagsjson.PushBack(d,respjsondoc.GetAllocator());
 	}
 	devjson.AddMember("Tags",tagsjson,respjsondoc.GetAllocator());
+
+
 }
 
 void OneWireDevicesService::DevValueToJson(Value & d, HisDevValueId* valueId,HisDevValueBase* devValue,Document & respjsondoc)
@@ -177,24 +194,37 @@ void OneWireDevicesService::render_POST(const http_request& req, http_response**
 
 	if (req.get_user()=="a" && req.get_pass()=="a")
 	{
-		if (path.find("/api/onewiredevices")!=string::npos)
+		if (path.find("/api/onewiredevices/devvalue")!=string::npos)
+		{
+			HisDevValueBase* devvalue = CreateVirtualDevValue(content);
+			if (devvalue!=NULL)
+			{
+				if (UpdateDevValue(devvalue->GetRecordId(),content))
+				{
+					*res = new http_string_response("", 200, "application/json");
+					return;
+				}
+			}
+		}
+		else if (path.find("/api/onewiredevices")!=string::npos)
 		{
 			HisDevVirtual* vritualdev = CreateVirtualDevice(content);
 			if (vritualdev!=NULL)
 			{
-				if (UpdateDevValue(vritualdev->GetValues()[0]->GetAddress(),content))
-				{
-					HisDevValueBase* value = vritualdev->GetValues()[0];
-					string id = vritualdev->GetValues()[0]->GetRecordId().ToString().c_str();
-					Value d(kObjectType);
-					DevValueToJson(d,NULL,value,respjsondoc);
-					respjsondoc.PushBack(d,respjsondoc.GetAllocator());
-					PrettyWriter<StringBuffer> wr(buffer);
-					respjsondoc.Accept(wr);
-					std::string json = buffer.GetString();
-					*res = new http_string_response(json, 200, "application/json");
-					return;
-				}
+				devices.Add(vritualdev);
+				devices.Save();
+				string id = vritualdev->GetRecordId().ToString();
+				Value d(kObjectType);
+				//DevValueToJson(d,NULL,value,respjsondoc);
+				Value jsonvalue;
+				jsonvalue.SetString(id.c_str(),id.length(),respjsondoc.GetAllocator());
+				d.AddMember( "id",jsonvalue, respjsondoc.GetAllocator());
+				respjsondoc.PushBack(d,respjsondoc.GetAllocator());
+				PrettyWriter<StringBuffer> wr(buffer);
+				respjsondoc.Accept(wr);
+				std::string json = buffer.GetString();
+				*res = new http_string_response(json, 200, "application/json");
+				return;
 			}
 		}
 	}
@@ -214,7 +244,17 @@ void OneWireDevicesService::render_PUT(const http_request& req, http_response** 
 
 	if (req.get_user()=="a" && req.get_pass()=="a")
 	{
-		if (path.find("/api/onewiredevices/folder")!=string::npos)
+		if (path.find("/api/onewiredevices/devvalue")!=string::npos)
+		{
+			string strDevValueId = req.get_arg("id");
+			CUUID devValueId = CUUID::Parse(strDevValueId);
+			if (UpdateDevValue(devValueId,content))
+			{
+				*res = new http_string_response("", 200, "application/json");
+				return;
+			}
+		}
+		else if (path.find("/api/onewiredevices/folder")!=string::npos)
 		{
 			string strFolderId = req.get_arg("id");
 			//vytvori id datoveho bodu ve slozce
@@ -261,10 +301,20 @@ void OneWireDevicesService::render_DELETE(const http_request& req, http_response
 				return;
 			}
 		}
-		if (path.find("/api/onewiredevices")!=string::npos)
+		else if (path.find("/api/onewiredevices/devvalue")!=string::npos)
 		{
 			string strRecordId = req.get_arg("id");
-			msg = DeleteDevice(strRecordId);
+			msg = DeleteDevValue(strRecordId);
+			if (msg=="")
+			{
+				*res = new http_string_response("OK", 200, "application/json");
+				return;
+			}
+		}
+		else if (path.find("/api/onewiredevices")!=string::npos)
+		{
+			string strRecordId = req.get_arg("id");
+			msg = DeleteDev(strRecordId);
 			if (msg=="")
 			{
 				*res = new http_string_response("OK", 200, "application/json");
@@ -295,10 +345,16 @@ void OneWireDevicesService::render_DELETE(const http_request& req, http_response
 	*res = new http_string_response(json, 403, "application/json");
 }
 
-string OneWireDevicesService::DeleteDevice(string strDevValueRecordId)
+string OneWireDevicesService::DeleteDevValue(string strDevValueRecordId)
 {
 	CUUID devValueId = CUUID::Parse(strDevValueRecordId);
 	HisDevValueBase* devValue = devices.FindValue(devValueId);
+	if (devValue==NULL)
+	{
+		string msg = StringBuilder::Format("OneWireDevicesService::DeleteDevValue | Doesn't exists");
+		CLogger::Error(msg.c_str());
+		return msg;
+	}
 	HisDevBase* device = dynamic_cast<HisDevBase*>(devValue->GetParent());
 
 	HisDevValueId* usedIn = this->rootFolder.FindValueId(devValueId);
@@ -307,21 +363,62 @@ string OneWireDevicesService::DeleteDevice(string strDevValueRecordId)
 		HisDevFolder* folder = dynamic_cast<HisDevFolder*>(usedIn->GetParent());
 		if (folder!=NULL)
 		{
-			string msg = StringBuilder::Format("OneWireDevicesService::DeleteDevice | Cant delete node %s used in folder %s",strDevValueRecordId.c_str(),folder->GetName().c_str());
+			string msg = StringBuilder::Format("OneWireDevicesService::DeleteDevValue | Cant delete node %s used in folder %s",strDevValueRecordId.c_str(),folder->GetName().c_str());
 			CLogger::Error(msg.c_str());
 			return msg;
 		}
 	}
 	else
 	{
-		int index = devices.Find(device->GetRecordId());
-		if (index>=0)
+		HisBase* devvalue = device->Remove(devValueId);
+		if (devvalue!=NULL)
 		{
-			devices.Delete(index);
-			devices.Save();
+			delete(devvalue);
+			devvalue = NULL;
+		}
+		else
+		{
+			string msg = StringBuilder::Format("OneWireDevicesService::DeleteDevValue | Error while delete.");
+			CLogger::Error(msg.c_str());
+			return msg;
 		}
 	}
 	return "";
+}
+
+string OneWireDevicesService::DeleteDev(string strDevValueRecordId)
+{
+	CUUID devValueId = CUUID::Parse(strDevValueRecordId);
+	 int index = devices.Find(devValueId);
+	 if (index>=0)
+	 {
+		HisDevBase* device = dynamic_cast<HisDevBase*>(devices[index]);
+
+		vector<HisDevValueBase*> values = device->GetItems<HisDevValueBase>();
+
+		for(size_t i=0;i<values.size();i++)
+		{
+			HisDevValueId* usedIn = this->rootFolder.FindValueId(values[i]->GetRecordId());
+			if (usedIn!=NULL)
+			{
+				HisDevFolder* folder = dynamic_cast<HisDevFolder*>(usedIn->GetParent());
+				if (folder!=NULL)
+				{
+					string msg = StringBuilder::Format("OneWireDevicesService::DeleteDevice | Cant delete node %s used in folder %s",strDevValueRecordId.c_str(),folder->GetName().c_str());
+					CLogger::Error(msg.c_str());
+					return msg;
+				}
+			}
+		}
+
+		devices.Delete(index);
+		devices.Save();
+		return "";
+	 }
+
+	string msg = StringBuilder::Format("OneWireDevicesService::DeleteDevice | Cant delete not existed dev");
+	CLogger::Error(msg.c_str());
+	return msg;
 }
 
 bool OneWireDevicesService::DeleteValueId(string strValueId)
@@ -374,19 +471,42 @@ HisDevVirtual* OneWireDevicesService::CreateVirtualDevice(string strjson)
 
 	if (document.Parse<0>((char*)strjson.c_str()).HasParseError())
 		return NULL;
-	HisDevVirtual* virtualdev = NULL;
-	if (document.HasMember("Type"))
-	{
-		virtualdev = new HisDevVirtual();
-		EDataType type = (EDataType)document["Type"].GetInt();
-		virtualdev->AddDevValue(type);
-		devices.Add(virtualdev);
-	}
+	HisDevVirtual* virtualdev = new HisDevVirtual();
 	if (document.HasMember("Name"))
 	{
 		virtualdev->SetName(document["Name"].GetString());
 	}
+
+
+
 	return virtualdev;
+}
+
+HisDevValueBase* OneWireDevicesService::CreateVirtualDevValue(string strjson)
+{
+	Document document;	// Default template parameter uses UTF8 and MemoryPoolAllocator.
+
+	if (document.Parse<0>((char*)strjson.c_str()).HasParseError())
+		return NULL;
+
+	if (document.HasMember("parentid"))
+	{
+		string strparentid = document["parentid"].GetString();
+		CUUID parentid = CUUID::Parse(strparentid);
+
+		int index = devices.Find(parentid);
+		if (index>=0)
+		{
+			HisDevVirtual* virtualdev = dynamic_cast<HisDevVirtual*>(devices[index]);
+			if (document.HasMember("type"))
+			{
+				EDataType type = (EDataType)document["type"].GetInt();
+				return virtualdev->AddDevValue(type);
+			}
+		 }
+	}
+
+	return NULL;
 }
 
 HisDevBase* OneWireDevicesService::UpdateDevice(string strDevId, string strjson)
@@ -437,14 +557,14 @@ HisDevBase* OneWireDevicesService::UpdateDevice(string strDevId, string strjson)
 	return dev;
 }
 
-bool OneWireDevicesService::UpdateDevValue(string address, string strjson)
+bool OneWireDevicesService::UpdateDevValue(CUUID devValueId, string strjson)
 {
 	Document document;	// Default template parameter uses UTF8 and MemoryPoolAllocator.
 
 	if (document.Parse<0>((char*)strjson.c_str()).HasParseError())
 		return false;
 	bool saveReq = false;
-	HisDevValueBase* devValue = devices.FindValue(address);
+	HisDevValueBase* devValue = devices.FindValue(devValueId);
 	if (devValue != NULL)
 	{
 		if (document.HasMember("name"))

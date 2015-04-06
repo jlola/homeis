@@ -66,7 +66,10 @@
 			$.mobile.pageContainer.on( "pagecontainerbeforeshow", function( event, ui ) {
 				var func = App.Instance.GetPageContainerBeforeShowFunc();
 				if (func!=null)
+				{
 					func(event,ui);
+					//App.Instance.SetPageContainerBeforeShowFunc(null);
+				}
 			});						
 		}
 	});	

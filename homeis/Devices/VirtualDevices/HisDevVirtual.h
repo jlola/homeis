@@ -26,7 +26,11 @@ public:
 
 	HisDevVirtual(xmlNodePtr node);
 
-	HisDevValueBase* CreateHisDevValue(string strid,EHisDevDirection direction,EDataType ptype,int pinNo);
+	const xmlChar* GetNodeNameInternal();
+
+	void DeleteDevValue(CUUID id);
+
+	HisDevValueBase* CreateHisDevValue(string addr,EHisDevDirection direction,EDataType ptype,int pinNo);
 
 	HisDevValueBase* AddDevValue(EDataType ptype);
 

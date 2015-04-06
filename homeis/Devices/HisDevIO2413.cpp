@@ -32,6 +32,15 @@ HisDevIO2413::HisDevIO2413(xmlNodePtr node, LOW_devDS2413* pdev) :
 	HisDevDallas::HisDevDallas(node, pdev)
 {
 	dev = pdev;
+	valueAInput = NULL;
+	valueBInput = NULL;
+	valueAOutput = NULL;
+	valueBOutput = NULL;
+}
+
+const xmlChar* HisDevIO2413::GetNodeNameInternal()
+{
+	return (const xmlChar*)"HisDevIO2413";
 }
 
 void HisDevIO2413::CreateDataPoints()

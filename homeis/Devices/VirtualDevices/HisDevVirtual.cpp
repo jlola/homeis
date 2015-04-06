@@ -18,6 +18,11 @@ HisDevVirtual::HisDevVirtual(xmlNodePtr node)
 {
 }
 
+const xmlChar* HisDevVirtual::GetNodeNameInternal()
+{
+	return (const xmlChar*)"HisDevVirtual";
+}
+
 void HisDevVirtual::WriteToDevice(ValueChangedEventArgs args)
 {
 	vector<HisDevValueBase*> values = GetItems<HisDevValueBase>();
@@ -27,25 +32,25 @@ void HisDevVirtual::WriteToDevice(ValueChangedEventArgs args)
 	}
 }
 
-HisDevValueBase* HisDevVirtual::CreateHisDevValue(string strid,EHisDevDirection direction,EDataType ptype,int pinNo)
+HisDevValueBase* HisDevVirtual::CreateHisDevValue(string address,EHisDevDirection direction,EDataType ptype,int pinNo)
 {
 	HisDevValueBase* result = NULL;
 	switch(ptype)
 	{
 		case EDataType::Bool:
-			result = new HisDevValue<bool>(strid, EHisDevDirection::ReadWrite, ptype, pinNo);
+			result = new HisDevValue<bool>(address, EHisDevDirection::ReadWrite, ptype, pinNo);
 			break;
 		case EDataType::Double:
-			result = new HisDevValue<double>(strid, EHisDevDirection::ReadWrite, ptype, pinNo);
+			result = new HisDevValue<double>(address, EHisDevDirection::ReadWrite, ptype, pinNo);
 			break;
 		case EDataType::Int:
-			result = new HisDevValue<int>(strid, EHisDevDirection::ReadWrite, ptype, pinNo);
+			result = new HisDevValue<int>(address, EHisDevDirection::ReadWrite, ptype, pinNo);
 			break;
 		case EDataType::String:
-			result = new HisDevValue<string>(strid, EHisDevDirection::ReadWrite, ptype, pinNo);
+			result = new HisDevValue<string>(address, EHisDevDirection::ReadWrite, ptype, pinNo);
 			break;
 		case EDataType::Uint:
-			result = new HisDevValue<unsigned int>(strid, EHisDevDirection::ReadWrite, ptype, pinNo);
+			result = new HisDevValue<unsigned int>(address, EHisDevDirection::ReadWrite, ptype, pinNo);
 			break;
 		case EDataType::Unknown:
 			return result;
@@ -63,6 +68,16 @@ HisDevValueBase* HisDevVirtual::AddDevValue(EDataType ptype)
 	value->Load();
 	Add(value);
 	return value;
+}
+
+void HisDevVirtual::DeleteDevValue(CUUID devValueId)
+{
+	HisBase* hisbase = Remove(devValueId);
+	HisDevValueBase* devValue = dynamic_cast<HisDevValueBase*>(hisbase);
+	if (devValue!=NULL)
+	{
+		delete(devValue);
+	}
 }
 
 void HisDevVirtual::DoInternalSave(xmlNodePtr & node)

@@ -23,63 +23,14 @@
 
 #include "HisDevBase.h"
 
-//xmlNodePtr HisDevBase::GetOrCreateNode(uint16_t pinNo,xmlNodePtr parentNode)
+//const xmlChar *HisDevBase::GetNodeNameInternal()
 //{
-//	xmlNodePtr node = NULL;
-//	if (parentNode!=NULL)
-//	{
-//		xmlNodePtr cur = parentNode->children;
-//		while (cur != NULL) {
-//			std::string nodename = (char*)cur->name;
-//			if (nodename==(char*)KEY_NODE_VALUE)
-//			{
-//
-//				if (xmlHasProp(cur,KEY_PAR_PINNAME))
-//				{
-//					xmlChar* prop = xmlGetProp(cur,KEY_PAR_PINNO);
-//					string strpinno = (char*)prop;
-//					xmlFree(prop);
-//					if (Converter::stoi(strpinno)==pinNo)
-//						return cur;
-//				}
-//			}
-//			cur = cur->next;
-//		}
-//		//node = xmlNewNode(NULL,KEY_NODE_VALUE);
-//		//xmlAddChild(parentNode,node);
-//	}
-//	return node;
+//	return KEY_DEVICENODE;
 //}
-
-//void HisDevBase::FreeValueNodes()
-//{
-//	xmlNodePtr cur = GetNodePtr()->children;
-//	xmlNodePtr next;
-//	while(cur)
-//	{
-//		next = cur->next;
-//		xmlUnlinkNode(cur);
-//		xmlFreeNode(cur);
-//		cur = next;
-//	}
-//}
-
-const xmlChar *HisDevBase::GetNodeNameInternal()
-{
-	return KEY_DEVICENODE;
-}
 
 HisDevBase::~HisDevBase()
 {
-//	FreeValueNodes();
 
-//	while(!values.empty())
-//	{
-//		HisDevValueBase* base = values[values.size()-1];
-//		//xmlNodePtr valuenode = GetOrCreateNode(base->GetPinNumber(),devnode);
-//		values.pop_back();
-//		delete(base);
-//	}
 }
 
 HisDevBase::HisDevBase()
@@ -101,10 +52,6 @@ void HisDevBase::DoInternalSave(xmlNodePtr & node)
 {
 	HisBase::DoInternalSave(node);
 
-//	for(uint16_t i=0;i<values.size();i++)
-//	{
-//		values[i]->Save();
-//	}
 }
 
 timeval HisDevBase::ComputeNextScanTime()
@@ -132,21 +79,7 @@ void HisDevBase::Refresh()
 void HisDevBase::DoInternalLoad(xmlNodePtr & node)
 {
 	HisBase::DoInternalLoad(node);
-
-//	if (node!=NULL)
-//	{
-//		for(uint16_t i=0;i<values.size();i++)
-//		{
-//			values[i]->Load();
-//		}
-//	}
 }
-
-//HisDevBase::HisDevBase()
-//{
-//  scanPeriodMs = 10000;
-//}
-
 
 uint32_t HisDevBase::GetScanPeriod()
 {

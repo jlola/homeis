@@ -33,7 +33,7 @@
 				<fieldset data-role="controlgroup">	
 					<legend  style='float: left' for="internal">Interní: </legend>
 					<label for="internal">Interní </label>
-					<input style='float: left' id="internal" type="checkbox" data-bind="checkbox: internal" disabled="false" name="internal">					
+					<input style='float: left' id="internal" type="checkbox" data-bind="checkbox: data.internal" disabled="false" name="internal">					
 				</fieldset>
 			
 			<div data-role="fieldcontain" id="divalue" data-bind="template: { name: valueTemplate, afterRender: myPostProcessingLogic }">				
@@ -53,7 +53,7 @@
 				
 				<!-- <input name="type" id="type" data-bind="value: typeFormated" disabled="false" placeholder="" value="" type="text"> -->
 				<!-- <select id="selection" name="selection" data-native-menu="false" data-bind="jqmOptions: types, optionsValue: 'id', optionsText: 'name', value: selectedValue"></select> -->
-				<select name="selectionType" id="selectionType" data-native-menu="false" data-mini="false" data-bind="							
+				<select name="selectionType" id="selectionType" data-native-menu="true" data-mini="false" data-bind="							
 						options: types,
 						optionsText: 'name',
 						optionsValue: 'id',

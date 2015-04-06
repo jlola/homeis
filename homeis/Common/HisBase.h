@@ -62,7 +62,7 @@ public:
 	 */
 	int FindIndex(CUUID id);
 	void Add(HisBase *pitem);
-	void Remove(CUUID puuid);
+	HisBase* Remove(CUUID puuid);
 	void Load();
 	void Save();
 	xmlNodePtr GetNodePtr();

@@ -29,7 +29,9 @@
 
 HisDevFactory::HisDevFactory()
 {
-
+	devices = NULL;
+	rootFolder = NULL;
+	expressionRuntime = NULL;
 }
 
 HisDevFactory::~HisDevFactory()

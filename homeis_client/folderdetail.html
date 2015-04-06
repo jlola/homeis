@@ -1,16 +1,11 @@
-<html>
-	<head>
-		<meta charset="UTF-8" />
-		<meta http-equiv="content-type" content="text/html;"></meta>
-	</head>
-	<body>
-		<div data-role="fieldcontain" ></div>		
+ï»¿<div data-role="page" id="folderdetail">
+	<div data-role="content">		
 		<div data-role="fieldcontain">
-			<label for="name">Název:</label>
-			<input name="name" id="name" data-bind="value: name, inputEnable: NameEditEnabled" placeholder="" value="" type="text">						
-		</div>		
-		<a data-role="button" href="#" data-bind="click:btnSave, ButtonEnable: SaveEnabled" data-inline="true">Uložit</a>
-		<a data-role="button" href="#" data-bind="click:btnDelete, ButtonEnable: DeleteEnabled" data-inline="true">Smazat</a>
-		<a data-role="button" href="#" data-bind="click:btnStorno" data-inline="true">Storno</a>
-	</body>
-</html>
+			<label for="name">NÃ¡zev:</label>
+			<input name="name" id="name" data-bind="value: data.name, inputEnable: NameEditEnabled" placeholder="" value="" type="text">
+		</div>
+		<input type="button" data-bind="click:btnSave, ButtonEnable: SaveEnabled" data-inline="true" value="UloÅ¾it" />
+		<input type="button" data-bind="click:btnDelete, ButtonEnable: DeleteEnabled" data-inline="true" value="Smazat" />
+		<input type="button" data-bind="click:btnStorno" data-inline="true" value="Storno" />
+	</div>
+</div>

@@ -1,13 +1,12 @@
 (function (App) {
 	
-App.ViewModels.TagModel = function(data,psocket)
+App.ViewModels.TagModel = function(psocket,data)
 {
 	var self = this;
 	self.socket = psocket;
 	self.data = {};	
-	self.data.Id = ko.observable();
-	self.data.parentid = ko.observable();
-	self.data.isnew = ko.observable(data==null)
+	self.data.id = ko.observable();
+	self.data.parentid = ko.observable();	
 	self.data.name = ko.observable();
 	self.data.type = ko.observable(App.Enums.EDataType.Unknown);
 	self.data.logged = ko.observable(true);
@@ -21,10 +20,10 @@ App.ViewModels.TagModel = function(data,psocket)
 	self.data.oldvalue = null;
 	self.data.setOutputState = ko.observable(0);			
 	self.data.error = ko.observable(true);	
-	self.IsNew = ko.observable(data==null ? false : true);
+	self.IsNew = ko.observable(data==null ? true : false);
 	self.types = ko.observableArray(App.Helpers.CreateArray(App.Enums.EDataType));				
 	self.selectedValue = ko.observable(3);		
-	self.SaveEnabled = ko.observable(self.data.logged()&&!self.data.isnew());
+	self.SaveEnabled = ko.observable(self.data.logged());
 	self.itemSelect = function() {
 		self.LoadPage();
 	};
@@ -32,9 +31,9 @@ App.ViewModels.TagModel = function(data,psocket)
 	self.myPostProcessingLogic = function(elements) {
 	// "elements" is an array of DOM nodes just rendered by the template
 	// You can add custom post-processing logic here
-		$("div[id$='divalue']").trigger('create');			
+		//$("div[id$='divalue']").trigger('create');			
 	}
-	
+		
 	self.name = ko.computed(function(){
 		return self.data.name();
 	},this);
@@ -48,11 +47,11 @@ App.ViewModels.TagModel = function(data,psocket)
 		return 'Čtení/Zápis';
 	}, this);		
 	self.isForceVisible = ko.computed(function() {
-		//if (((self.direction()==App.Enums.EDirection.Write || self.direction()==App.Enums.EDirection.ReadWrite) && !self.error())||
-		//	self.internal())
+		if (((self.data.direction()==App.Enums.EDirection.Write || self.data.direction()==App.Enums.EDirection.ReadWrite) && !self.data.error())||
+			self.data.internal())
 			return true;
-		//else
-		//	return false;
+		else
+			return false;
 		
 	}, this);
 	self.valueunit = ko.computed(function(){
@@ -150,10 +149,23 @@ App.ViewModels.TagModel = function(data,psocket)
 		return "";//.toFixed(2);		
 	 };
 	self.btnDelete = function() {						
-			return true;												
+		if (confirm('Opravdu si přejete smazat tag: ' + self.data.name() + '?'))
+		{
+			self.socket.destroy("onewiredevices/devvalue",self.data.id(),function(response){
+				if (response.success) 	
+				{					
+					self.prevPage.Load();
+					self.prevPage.LoadPage();
+				}
+				else 
+					alert('Chyba pri mazani');			
+			});
+		}
+		return true;												
 	}
 	
 	self.btnSave = function() {									
+		self.Save();
 		return true;
 	}
 	self.btnStorno = function() {						
@@ -166,12 +178,44 @@ App.ViewModels.TagModel = function(data,psocket)
 					var element = ui.toPage;	
 					var item = ko.dataFor(ui.prevPage[0]);					
 					self.prevPage = item;
-					ko.applyBindings(self,element[0]);					
+					if (ko.dataFor(element[0])==null)
+						ko.applyBindings(self,element[0]);					
 				} );
 		$.mobile.pageContainer.pagecontainer("change","onewiredetail.html",{changeHash:false,reload:true});
 	};
-	
-	
+	self.Save = function(callback)
+	{				
+		var dto = ko.toJS(self.data);	
+		
+		if (self.IsNew())
+		{
+			 self.socket.create("onewiredevices/devvalue",self.data,function(response){
+				if (response.success) 
+				{	
+					//var obj = JSON.parse(response.message);					
+					self.prevPage.Load();
+					self.prevPage.LoadPage();
+				}
+				else 
+					alert('Chyba pri ukaldani');
+				if (callback!=null) 
+					callback();
+			 });				 
+		}
+		else {
+			 self.socket.update("onewiredevices/devvalue",self.data.id(),dto,function(response){
+				 if (response.success) 
+				 {	
+					self.prevPage.LoadPage();
+					//App.Instance.GetDevicesController().LoadPage();
+				 }
+				 else 
+					 alert('Chyba pri ukaldani');
+				 if (callback!=null) callback();
+			 });
+			 
+		}		
+	};
 	ko.mapping.fromJS(data, {}, self.data);
 };
 
@@ -184,6 +228,7 @@ App.ViewModels.DeviceModel = function (psocket,data) {
 	self.data.Name = ko.observable();
 	self.data.Address = ko.observable();
 	self.data.Tags = ko.observableArray();
+	self.data.Internal = ko.observable(true);	
 	
 	self.isLogged = ko.computed(function(){
 		return true;
@@ -192,6 +237,7 @@ App.ViewModels.DeviceModel = function (psocket,data) {
 	self.notisnew = ko.computed(function(){
 		return !self.IsNew()
 	},this);
+	
 	self.SettingsClick = function(e,event) {
 		self = this;
 		event.stopPropagation();
@@ -221,7 +267,7 @@ App.ViewModels.DeviceModel = function (psocket,data) {
 	};
 	self.Save = function(callback)
 	{				
-		var dto = ko.mapping.toJS(self.data,null);	
+		var dto = self.data;	
 		dto.Tags = self.SerializeTags();
 		if (self.IsNew())
 		{
@@ -257,22 +303,67 @@ App.ViewModels.DeviceModel = function (psocket,data) {
 		return self.notisnew();
 	},this);
 	self.btnDeleteClick = function(e,event) {
+		if (confirm('Opravdu si přejete smazat zarizeni: ' + self.data.Name() + '?'))
+		{
+			self.socket.destroy("onewiredevices",self.data.Id(),function(response){
+				if (response.success) 			
+					App.Instance.GetDevicesController().LoadPage();			
+				else 
+					alert('Chyba pri mazani');			
+			 });
+		}
 	};
 	self.btnNewTagClick = function(e,event) {
-		new App.ViewModels.TagModel({parentId:self.data.Id()}).LoadPage();
+		var tag = new App.ViewModels.TagModel(self.socket,null);		
+		tag.data.parentid(self.data.Id());
+		tag.LoadPage();
 	};
 	self.OneWireTemplate = function() {
 		return "ds18b20Template2";
-	}	
-	var mappingOptions = {
-		'Tags': {
-			create: function(options) {
-				return new App.ViewModels.TagModel(options.data);
+	};
+
+	self.btnReloadClick = function(e,event) {
+		self.Load();
+	};
+	
+	self.Mapping = function(pdata) {
+		var mappingOptions = {
+			'Tags': {
+				create: function(options) {
+					return new App.ViewModels.TagModel(self.socket,options.data);
+				}
 			}
+		};
+		
+		if (pdata!=null) ko.mapping.fromJS(pdata, mappingOptions, self.data);
+		
+		$('ul[data-role="listview"]').listview().listview('refresh');								
+		$('div[data-role="collapsibleset"]').collapsibleset('refresh');								
+		$('input[type="button"]').button().button('refresh');
+		
+	};
+	
+	self.Load = function(pdata) {		
+		if (pdata==null)
+		{
+			this.socket.read("onewiredevices",self.data.Id(),function(response){			
+				if (response.success)
+				{							
+					self.Mapping(response.message[0]);					
+				}
+				else
+				{
+					alert('Chyba pri cteni dat');
+				}
+			});
+		}
+		else
+		{
+			self.Mapping(pdata);
 		}
 	};
 	
-	if (data!=null) ko.mapping.fromJS(data, mappingOptions, self.data);
+	self.Mapping(data);
 };
 
 App.ViewModels.DeviceModel.prototype.LoadPage = function() {		
@@ -280,25 +371,25 @@ App.ViewModels.DeviceModel.prototype.LoadPage = function() {
 	App.Instance.SetPageContainerBeforeShowFunc( function( event, ui ) {
 		var element = ui.toPage;			
 		ko.applyBindings(self,element[0]);
+		
 		$('ul[data-role="listview"]').listview().listview('refresh');								
 		$('div[data-role="collapsibleset"]').collapsibleset('refresh');								
-		$('input[type="button"]').button().button('refresh');
-	} );
-	
+		$('input[type="button"]').button().button('refresh');		
+	} );	
 	$.mobile.pageContainer.pagecontainer("change","deviceDetail.html",{changeHash:false,reload:true});				
-}	
+};
 
 App.ViewModels.DevicesModel = function (psocket) {
 	var self = this;	
-	self.socket = psocket;
+	self.socket = psocket;	
+	self.isLogged = ko.observable(true);
+	self.Devices = ko.observableArray();
 	/*vytvori nove virtualni zarizeni s tagem*/
 	self.newDeviceClick = function(e,event) {								
 			//App.Instance.GetDeviceController().LoadPage();					
 			new App.ViewModels.DeviceModel(self.socket,null).LoadPage();
 		return true;
 	};	
-	self.isLogged = ko.observable(true);
-	self.Devices = ko.observableArray();
 	self.LoadPage = function() {
 		self = this;
 		var activePage = $.mobile.pageContainer.pagecontainer( "getActivePage" );
@@ -334,9 +425,7 @@ App.ViewModels.DevicesModel.prototype.Load = function(callback) {
 			}
 			ko.mapping.fromJS(jsdata,mapping, self); 
 			
-			if (callback!=null) callback();
-			//self.sort();
-			//self.Refresh();								
+			if (callback!=null) callback();									
 		}
 	});
 };

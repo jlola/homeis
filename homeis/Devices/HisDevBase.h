@@ -25,7 +25,7 @@
 
 using namespace std;
 
-#define KEY_DEVICENODE (const xmlChar *)"device"
+//#define KEY_DEVICENODE (const xmlChar *)"device"
 
 class HisDevBase : public HisBase
 {
@@ -34,16 +34,13 @@ class HisDevBase : public HisBase
 	timeval lastScanTime;
 	timeval nextScanTime;
 	EDataSource dataSource;
-	//void FreeValueNodes();
 protected:
-	//vector<HisDevValueBase*> values;
 	HisDevBase(xmlNodePtr node,CUUID recordid);
 	HisDevBase(xmlNodePtr node);
 	virtual void DoInternalSave(xmlNodePtr & node);
 	virtual void DoInternalLoad(xmlNodePtr & node);
 	virtual void DoInternalRefresh()=0;
-	//xmlNodePtr GetOrCreateNode(uint16_t pinNo, xmlNodePtr parentNode);
-	const xmlChar* GetNodeNameInternal();
+	//const xmlChar* GetNodeNameInternal();
 public:
 	HisDevBase();
 	virtual ~HisDevBase();

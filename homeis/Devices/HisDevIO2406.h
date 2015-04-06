@@ -34,6 +34,7 @@ protected:
 	virtual void DoInternalRefresh();
 	//protected: virtual void DoInternalSave(xmlNodePtr & node);
 	virtual void DoInternalLoad(xmlNodePtr & node);
+	const xmlChar* GetNodeNameInternal();
 public:
 	HisDevIO2406(LOW_devDS2406* pdev);
 	HisDevIO2406(xmlNodePtr node, LOW_devDS2406* pdev);

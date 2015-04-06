@@ -82,6 +82,7 @@ void HomeIsServer::InitWebServer()
 
 	ws_i.register_resource(string("api/onewiredevices"), &owds, true);
 	ws_i.register_resource(string("api/onewiredevices/{id}"), &owds, true);
+	ws_i.register_resource(string("api/onewiredevices/devvalue/{id}"), &owds, true);
 	ws_i.register_resource(string("api/onewiredevices/folder/{id}"), &owds, true);
 
 	//run all expressions in folder

@@ -41,6 +41,11 @@ HisDevIO2406::HisDevIO2406(LOW_devDS2406* pdev) :
 	CreateDataPoints();
 }
 
+const xmlChar* HisDevIO2406::GetNodeNameInternal()
+{
+	return (const xmlChar *)"DS2406";
+}
+
 void HisDevIO2406::CreateDataPoints()
 {
 	std::string strid = dev->getID().getRomIDString();
