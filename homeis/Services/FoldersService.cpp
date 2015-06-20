@@ -10,10 +10,12 @@
 #include "EItemType.h"
 #include "homeis/Common/CUUID.h"
 #include "death_handler.h"
+#include "StringBuilder.h"
+#include "ExpressionsService.h"
 
-FoldersService::FoldersService(HisDevFolderRoot* proot)
+FoldersService::FoldersService(HisDevices & dev,HisDevFolderRoot* proot) :
+	root(proot),devices(dev)
 {
-	root = proot;
 }
 
 FoldersService::~FoldersService(void)
@@ -27,26 +29,40 @@ void FoldersService::render_GET(const http_request& req, http_response** res)
 	respjsondoc.SetArray();
 
 	string strid = req.get_arg("id");
-	HisDevFolder* folder = root->GetFolder();
+	HisDevFolder* folder = NULL;
 	string path = req.get_path();
 	if(!strid.empty())
 	{
-		CUUID id = CUUID::Parse(strid);
-		folder = dynamic_cast<HisDevFolder*>(folder->Find(id));
+		try
+		{
+			CUUID id = CUUID::Parse(strid);
+			folder = dynamic_cast<HisDevFolder*>(root->GetFolder()->Find(id));
+		}
+		catch(...)
+		{
+			folder = root->GetFolder();
+		}
 	}
-
-	if (path.find("/api/folders")!=string::npos)
+	//vrati vsechny polozky ve slozce
+	if (path.find("/api/folder/allitems")!=string::npos)
 	{
 		if (folder!=NULL)
 		{
-			FoldersToJson(folder,respjsondoc);
+			FoldersToJson(root,folder,respjsondoc,false);
+		}
+	}
+	else if (path.find("/api/folders")!=string::npos)
+	{
+		if (folder!=NULL)
+		{
+			FoldersToJson(root,folder,respjsondoc,true);
 		}
 	}
 	else if (path.find("/api/folder")!=string::npos)
 	{
 		if (folder!=NULL)
 		{
-			FolderToJson(folder,respjsondoc);
+			FolderToJson(root, folder,respjsondoc);
 		}
 	}
 
@@ -58,13 +74,17 @@ void FoldersService::render_GET(const http_request& req, http_response** res)
 	*res = new http_string_response(json, 200, "application/json");
 }
 
-void FoldersService::FolderToJson(HisBase *pFolder, Document & respjsondoc)
+void FoldersService::FolderToJson(HisDevFolderRoot* root, HisBase *pFolder, Document & respjsondoc)
 {
 	Value d(kObjectType);
 	string strvalue = pFolder->GetName();
 	Value jsonvalue;
 	jsonvalue.SetString(strvalue.c_str(),strvalue.length(),respjsondoc.GetAllocator());
 	d.AddMember("name",jsonvalue, respjsondoc.GetAllocator());
+
+	strvalue = (const char*)pFolder->GetNodeName();
+	jsonvalue.SetString(strvalue.c_str(),strvalue.length(),respjsondoc.GetAllocator());
+	d.AddMember("NodeName",jsonvalue, respjsondoc.GetAllocator());
 
 	strvalue = pFolder->GetRecordId().ToString();
 	jsonvalue.SetString(strvalue.c_str(),strvalue.length(),respjsondoc.GetAllocator());
@@ -82,15 +102,66 @@ void FoldersService::FolderToJson(HisBase *pFolder, Document & respjsondoc)
 	respjsondoc.PushBack(d, respjsondoc.GetAllocator());
 }
 
-void FoldersService::FoldersToJson(HisDevFolder *parentFolder, Document & respjsondoc)
+void FoldersService::FoldersToJson(HisDevFolderRoot* root,HisDevFolder *parentFolder, Document & respjsondoc,bool foldersOnly)
 {
-	vector<HisDevFolder*> folders;
-	folders = parentFolder->GetItems<HisDevFolder>();
+	vector<HisBase*> folders;
+	folders = parentFolder->GetItems<HisBase>();
+
 	for(size_t i=0;i<folders.size();i++)
 	{
-		HisBase* pFolder = folders[i];
-		FolderToJson(pFolder,respjsondoc);
+		HisDevFolder* pFolder = dynamic_cast<HisDevFolder*>(folders[i]);
+		HisDevValueId* pValueId = dynamic_cast<HisDevValueId*>(folders[i]);
+		LuaExpression* pExpression = dynamic_cast<LuaExpression*>(folders[i]);
+
+		if (pFolder!=NULL)
+			FolderToJson(root,pFolder,respjsondoc);
+		else if (!foldersOnly)
+		{
+			if (pValueId!=NULL)
+			{
+				Value d(kObjectType);
+				HisDevValueBase* devValue = devices.FindValue(pValueId->GetDeviceValueId());
+				if (devValue!=NULL)
+				{
+					OneWireDevicesService::DevValueToJson(d,pValueId,devValue,respjsondoc);
+					respjsondoc.PushBack(d, respjsondoc.GetAllocator());
+				}
+			}
+			else if (pExpression!=NULL)
+			{
+				ExpressionService::ExpressionToJson(pExpression, respjsondoc);
+			}
+		}
 	}
+}
+
+bool FoldersService::AddValueIdToFolder(string strFolderId, string strJson)
+{
+	Document document;	// Default template parameter uses UTF8 and MemoryPoolAllocator.
+
+	if (document.Parse<0>((char*)strJson.c_str()).HasParseError())
+		return NULL;
+
+	if (document.HasMember("DevValueId"))
+	{
+		string strDevValueId = document["DevValueId"].GetString();
+		CUUID devValueId = CUUID::Parse(strDevValueId);
+		HisDevValueBase* valueBase = devices.FindValue(devValueId);
+		if (valueBase!=NULL)
+		{
+			CUUID ValueId = valueBase->GetRecordId();
+			CUUID folderId = CUUID::Parse(strFolderId);
+			HisDevFolder* folder = dynamic_cast<HisDevFolder*>(root->GetFolder()->Find(folderId));
+			if (folder!=NULL)
+			{
+				HisDevValueId* valueId = new HisDevValueId(ValueId);
+				folder->Add(valueId);
+				root->Save();
+				return true;
+			}
+		}
+	}
+	return false;
 }
 
 void FoldersService::render_POST(const http_request& req, http_response** res)
@@ -207,14 +278,26 @@ bool FoldersService::CreateFolder(string strJson)
 	return true;
 }
 
+
 void FoldersService::render_PUT(const http_request& req, http_response** res)
 {
 	if (req.get_user()=="a" && req.get_pass()=="a")
 	{
 		string strid = req.get_arg("id");
 		string content = req.get_content();
+		string path = req.get_path();
 
-		if (UpdateFolder(strid,content))
+		if (path.find("/api/folder/valueid")!=string::npos)
+		{
+			string strfolderid = req.get_arg("folderid");
+			//vytvori id datoveho bodu ve slozce
+			if (AddValueIdToFolder(strfolderid,content))
+			{
+				*res = new http_string_response("", 200, "application/json");
+				return;
+			}
+		}
+		else if (UpdateFolder(strid,content))
 		{
 			*res = new http_string_response("", 200, "application/json");
 			return;
@@ -229,6 +312,47 @@ void FoldersService::render_PUT(const http_request& req, http_response** res)
 
 	*res = new http_string_response("", 403, "application/json");
 
+}
+
+string FoldersService::DeleteDevValue(string strDevValueRecordId)
+{
+	CUUID devValueId = CUUID::Parse(strDevValueRecordId);
+	HisDevValueBase* devValue = devices.FindValue(devValueId);
+	if (devValue==NULL)
+	{
+		string msg = StringBuilder::Format("OneWireDevicesService::DeleteDevValue | Doesn't exists");
+		CLogger::Error(msg.c_str());
+		return msg;
+	}
+	HisDevBase* device = dynamic_cast<HisDevBase*>(devValue->GetParent());
+
+	HisDevValueId* usedIn = root->FindValueId(devValueId);
+	if (usedIn!=NULL)
+	{
+		HisDevFolder* folder = dynamic_cast<HisDevFolder*>(usedIn->GetParent());
+		if (folder!=NULL)
+		{
+			string msg = StringBuilder::Format("OneWireDevicesService::DeleteDevValue | Cant delete node %s used in folder %s",strDevValueRecordId.c_str(),folder->GetName().c_str());
+			CLogger::Error(msg.c_str());
+			return msg;
+		}
+	}
+	else
+	{
+		HisBase* devvalue = device->Remove(devValueId);
+		if (devvalue!=NULL)
+		{
+			delete(devvalue);
+			devvalue = NULL;
+		}
+		else
+		{
+			string msg = StringBuilder::Format("OneWireDevicesService::DeleteDevValue | Error while delete.");
+			CLogger::Error(msg.c_str());
+			return msg;
+		}
+	}
+	return "";
 }
 
 void FoldersService::render_DELETE(const http_request& req, http_response** res)

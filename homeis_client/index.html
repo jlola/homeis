@@ -13,7 +13,11 @@
 	<script type="text/javascript" src="libs/jquery.rest.js"></script>    		
 	<script type="text/javascript" src="libs/knockout-3.3.0.debug.js"></script>
 	<script type="text/javascript" src="libs/knockout.mapping-latest.debug.js"></script>
-	<script type="text/javascript" src="libs/jquery-syntax/jquery.syntax.min.js"></script>	
+	<link rel="stylesheet" href="libs/codemirror/lib/codemirror.css">
+	<script src="libs/codemirror/lib/codemirror.js"></script>
+	<script src="libs/codemirror/mode/lua/lua.js"></script>
+	<script src="libs/codemirror/addon/hint/show-hint.js"></script>
+	 <link rel="stylesheet" href="libs/codemirror/addon/hint/show-hint.css">
 	<script>
 		  var App = window.App = {};
 		  App.ViewModels = {};
@@ -144,6 +148,7 @@
 			this.folders = new App.ViewModels.FoldersModel(this.socket);
 			this.menu = new App.ViewModels.MenuModel();
 			this.pageContainerBeforeShowFunc = null;
+			this.pageContainerShowFunc = null;
 						
 			EventWorker.addHandler('self.loginpage.onLoginChanged',function(login){self.header.Update(login);},this);
 						
@@ -164,6 +169,12 @@
 			App.ViewModels.AppModel.prototype.GetPageContainerBeforeShowFunc = function() { 
 				return this.pageContainerBeforeShowFunc;
 			};
+			App.ViewModels.AppModel.prototype.SetPageContainerShowFunc = function(f) { 
+				this.pageContainerShowFunc = f;
+			};
+			App.ViewModels.AppModel.prototype.GetPageContainerShowFunc = function() { 
+				return this.pageContainerShowFunc;
+			};
 			return this;
 		}    		
 		
@@ -179,6 +190,7 @@
 	<script type="text/javascript" src="app/menu.js"></script>  	
 	<script type="text/javascript" src="app/socket.js"></script>
 	<script type="text/javascript" src="app/jqmhelpers.js"></script>
+	<script type="text/javascript" src="app/tag.js"></script>
 	<script type="text/javascript" src="app/login.js"></script>        
     <script type="text/javascript" src="app/onewirelist.js"></script>  	
 	<script type="text/javascript" src="app/devicelist.js"></script>  	

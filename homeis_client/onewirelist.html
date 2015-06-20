@@ -4,7 +4,7 @@
             <li>
 				<a href="#" enabled="true" data-role="button" data-icon-pos='notext' data-bind="click: $parent.itemSelect" >
 					<img class="ui-li-icon ui-corner-none devices_ico" width="80" height"80" data-bind="attr: { src: image }" />
-					<h1 data-bind="text:name"></h1>										  			 
+					<h1 data-bind="text:data.name"></h1>										  			 
 					<p class="ui-li-aside">
 						<label style="font-size:large" data-bind="text:valueunit"></label>						
 					</p>
@@ -48,7 +48,7 @@
             <li>
 				<a enabled="true" data-role="button" data-icon-pos='notext' data-bind="click: $parent.expressionSelect" >
 					<img class="ui-li-icon ui-corner-none devices_ico" width="80" height"80" data-bind="attr: { src: image }" />					
-					<h1 data-bind="text:name"></h1>															
+					<h1 data-bind="text:nametext"></h1>															
 				</a>				
 				<a href="#" data-bind="click:expressionDelete">Odstranit</a>
 				

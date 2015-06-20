@@ -23,6 +23,7 @@
             <File name="app\expression.js" />
             <File name="app\devicelist.js" />
             <File name="app\header.js" />
+            <File name="app\tag.js" />
         </Folder>
         <Folder name="lib">
             <Folder name="images">

@@ -1,9 +1,9 @@
 ﻿
 <div data-role="page" id="onewiredetailpage">
-	<div data-role="content">
+	<div data-role="content" data-inset="true">
 		<script type="text/html" id="valueBooleanTemplate">
 			<label for="divalueselect">Hodnota:</label>
-            <select id="divalueselect" data-bind="sliderEnable:force, jqmFlip:data.value"  data-role="slider">
+            <select id="divalueselect" data-bind="sliderEnable:data.force, jqmFlip:data.value"  data-role="slider">
 					<option value="0">Vypnuto</option>
 					<option value="1">Zapnuto</option>
 			</select>			
@@ -41,7 +41,7 @@
 			</div>
 			<div data-role="fieldcontain">
 				<label for="unit">Jednotka:</label>
-				<input name="unit" id="unit" data-bind="value: data.unit">
+				<input name="unit" id="unit" data-bind="value: data.type">
 			</div>
 			
 			<div data-role="fieldcontain">
@@ -53,7 +53,7 @@
 				
 				<!-- <input name="type" id="type" data-bind="value: typeFormated" disabled="false" placeholder="" value="" type="text"> -->
 				<!-- <select id="selection" name="selection" data-native-menu="false" data-bind="jqmOptions: types, optionsValue: 'id', optionsText: 'name', value: selectedValue"></select> -->
-				<select name="selectionType" id="selectionType" data-native-menu="true" data-mini="false" data-bind="							
+				<select name="selectionType" id="selectionType" data-native-menu="true" data-mini="false" data-bind="
 						options: types,
 						optionsText: 'name',
 						optionsValue: 'id',

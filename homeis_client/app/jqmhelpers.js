@@ -39,6 +39,13 @@
 		}
 		dst.isLoading = false;
 	}
+	
+	ko.bindingHandlers.jqmOptions = { 
+	 update: function(element, valueAccessor, allBindingsAccessor, context) { 
+	   ko.bindingHandlers.options.update(element, valueAccessor, allBindingsAccessor, context); 
+	   $(element).selectmenu("refresh"); 
+	 } 
+	};
 				
 	ko.bindingHandlers.inputEnable = {		
 		update: function(element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
@@ -122,29 +129,32 @@
 		}		
 	};
 	
+	
+
+	
 	ko.bindingHandlers.jqmFlip = {
-    init: function (element, valueAccessor) {
-        var result = ko.bindingHandlers.value.init.apply(this, arguments);		       
-        try {
-            $(element).slider("refresh");
-        } catch (x) {
-			$(element).slider();
-			$(element).slider("refresh");
-			//console.log(x.message);
-		}		
-        return result;
-    },
-    update: function (element, valueAccessor) {
-        ko.bindingHandlers.value.update.apply(this, arguments);
-        var value = valueAccessor();
-        var valueUnwrapped = ko.utils.unwrapObservable(value);
-        try {
-            $(element).slider("refresh");
-        } catch (x) {
-			console.log(x.message);
-		}		
-    }
-};
+		init: function (element, valueAccessor) {
+			var result = ko.bindingHandlers.value.init.apply(this, arguments);		       
+			try {
+				$(element).slider("refresh");
+			} catch (x) {
+				$(element).slider();
+				$(element).slider("refresh");
+				//console.log(x.message);
+			}		
+			return result;
+		},
+		update: function (element, valueAccessor) {
+			ko.bindingHandlers.value.update.apply(this, arguments);
+			var value = valueAccessor();
+			var valueUnwrapped = ko.utils.unwrapObservable(value);
+			try {
+				$(element).slider("refresh");
+			} catch (x) {
+				console.log(x.message);
+			}		
+		}
+	};
 	
 	
 	// ko.bindingHandlers.jqmOptions = {

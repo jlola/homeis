@@ -9,15 +9,15 @@
 				// App.Instance.GetOneWireList().Refresh();						
 			// });
 			//$( "#panel_menu" ).panel( "close" );
-			var ret = App.Instance.GetOneWireList().LoadPage();			
+			var ret = App.Instance.GetOneWireList().LoadPage();									
 			if (ret==false)
 			{
 				$( "#panel_menu" ).panel( "close" );
-			}
+			}							
 		}
 		
 		self.btnonewirelist = function() {
-			//$( "#panel_menu" ).panel( "close" );	
+			//$( "#panel_menu" ).panel( "close" );				
 			var ret = App.Instance.GetDevicesController().LoadPage();
 			if (ret==false)
 			{

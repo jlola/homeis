@@ -76,7 +76,7 @@ void HomeIsServer::InitWebServer()
 {
 	FileController fc = FileController();
 	OneWireDevicesService owds = OneWireDevicesService(*devs,*rootFolder);
-	FoldersService foldersService= FoldersService(rootFolder);
+	FoldersService foldersService= FoldersService(*devs,rootFolder);
 	ExpressionService expressionService = ExpressionService(rootFolder,expressionRuntime, devs);
 	ws_i.register_resource(string("files/{path}"), &fc, true);
 
@@ -94,8 +94,9 @@ void HomeIsServer::InitWebServer()
 	ws_i.register_resource(string("api/folders"), &foldersService, true);
 	ws_i.register_resource(string("api/folder"), &foldersService, true);
 	ws_i.register_resource(string("api/folders/{id}"), &foldersService, true);
+	ws_i.register_resource(string("api/folder/allitems/{id}"), &foldersService, true);
 	ws_i.register_resource(string("api/folder/{id}"), &foldersService, true);
-	ws_i.register_resource(string("api/folder/valueid/{deviceid}"), &foldersService, true);
+	ws_i.register_resource(string("api/folder/valueid/{folderid}"), &foldersService, true);
 	ws_i.start(true);
 }
 

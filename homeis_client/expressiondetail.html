@@ -1,40 +1,33 @@
-<html>
-	<head>
-		<meta charset="UTF-8" />
-		<meta http-equiv="content-type" content="text/html;"></meta>
-	</head>
-	<body>		
+ï»¿<div data-role="page" id="experssionpage">
+	<div data-role="content">	
 		<div data-role="fieldcontain">
 			<label for="exprEnabledUI">Zapnuto: </label>
-			<select name="exprEnabledUI" id="exprEnabledUI" data-bind="jqmFlip:running" data-role="slider">
+			<select name="exprEnabledUI" id="exprEnabledUI" data-bind="jqmFlip:data.running" data-role="slider">
 				<option value="0">Vypnuto</option>
 				<option value="1">Zapnuto</option>
 			</select>
-		</div>
-						
+		</div>									
 		<div data-role="fieldcontain">
-			<label for="name">Název:</label>
-			<input name="name" id="name" data-bind="value: name, inputEnable: EditEnabled" placeholder="" value="" type="text">						
+			<label for="name">NÃ¡zev:</label>
+			<input name="name" id="name" data-bind="value: data.name, inputEnable: EditEnabled" placeholder="" value="" type="text">						
 		</div>
 		<div data-role="fieldcontain">
 			<label for="description">Popis:</label>
-			<input name="description" id="description" data-bind="value: description, inputEnable: EditEnabled" placeholder="" value="" type="text">						
+			<input name="description" id="description" data-bind="value: data.description, inputEnable: EditEnabled" placeholder="" value="" type="text">						
 		</div>
 		
 		<div data-role="fieldcontain">
-			<label for="expression">Výraz:</label>			
-			
-				<textarea  name="expression" id="expression" data-bind="value: expression, inputEnable: EditEnabled"></textarea>
-			
-		</div>
-		<div data-role="fieldcontain" data-bind="visible: errormessage()!=''">
-			<label for="expression">Chyba:</label>			
-			<textarea  name="expression" id="expression" data-bind="value: errormessage, inputEnable: disabled"></textarea>
+			<label for="expressionlbl">VÃ½raz:</label>						
+			<textarea name="expressionlbl" id="expression" data-bind="value: data.expression, inputEnable: EditEnabled"></textarea>
+		</div>						
+		<div data-role="fieldcontain" data-bind="visible: data.errormessage()!=''">
+			<label for="expressionerror">Chyba:</label>			
+			<textarea  name="expressionerror" id="expressionerror" data-bind="value: data.errormessage, inputEnable: disabled"></textarea>
 		</div>
 		
-		<a data-role="button" href="#" data-bind="click:btnRun, ButtonEnable: EditEnabled" data-inline="true">Spustit</a>		
-		<a data-role="button" href="#" data-bind="click:btnSave, ButtonEnable: EditEnabled" data-inline="true">Uložit</a>
-		<a data-role="button" href="#" data-bind="click:btnDelete, ButtonEnable: EditEnabled" data-inline="true">Smazat</a>
-		<a data-role="button" href="#" data-bind="click:btnStorno" data-inline="true">Storno</a>
-	</body>
-</html>
+		<input type="button" href="#" data-bind="click:btnRun, ButtonEnable: DeleteEnabled" data-inline="true" value="Spustit" />		
+		<input type="button" href="#" data-bind="click:btnSave, ButtonEnable: EditEnabled" data-inline="true" value="UloÅ¾it" />
+		<input type="button" href="#" data-bind="click:btnDelete, ButtonEnable: DeleteEnabled" data-inline="true" value="Smazat"/>
+		<input type="button" href="#" data-bind="click:btnStorno" data-inline="true"  value="Storno" />
+	</div>
+</div>

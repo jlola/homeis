@@ -32,7 +32,7 @@
 						if (self.data.parentId()!=null)
 						{
 							var parent = new App.ViewModels.FolderModel(self.socket,{});
-							parent.Load(self.data.parentId(),function(){
+							parent.Load(self.data.parentId(),function() {
 								App.Instance.GetFolders().Load(parent);	
 								App.Instance.GetOneWireList().LoadPage();
 							});
@@ -172,7 +172,7 @@
 		self.socket = psocket;				
         self.isLogged = ko.observable(false); 
 		self.SelectedItem = ko.observable();		
-		self.actual = null;
+		self.ActualFolder = null;
 		self.Refresh = function() {			
 			try
 			{
@@ -184,48 +184,110 @@
 			}	
 		}
 		
+		self.Reload = function()
+		{
+			self.Load(self.ActualFolder);
+		}
+		
 		//load function
-		self.Load = function(folder)
+		self.Load = function(folder,callback)
 		{	
 			var backDir = null;				
-			self.actual = folder;
-			self.folders.removeAll();
-			self.socket.read("folders",folder!=null?folder.data.id():null,function(data){			
-				data.message.forEach(function (x) {
+			if (self.ActualFolder!=folder)
+				self.folders.removeAll();
+			self.ActualFolder = folder;			
+			self.socket.read("folder/allitems",folder!=null?folder.data.id():null,function(data){			
+				//odstranim ty co nejsou v doslych datech
+				self.folders().forEach(function(x){
+					var match = ko.utils.arrayFirst(data.message, function(item) {
+						return item.id === x.data.id();
+					});
+					if (match==null && x.data.name()!='..') {				
+						self.folders.remove(x);
+					}
+				});	
+				data.message.forEach(function (x) {					
 					//zjistim, jestli jiz neni v seznamu
 					var match = ko.utils.arrayFirst(self.folders(), function(item) {
 						return item.data.id() == x.id;
 					});
+					//kdyz ne pridam
 					if (match==null) {
-						match = new App.ViewModels.FolderModel(self.socket,x);						
-						self.folders.push(match);						
-					} 
+						switch(x.NodeName)
+						{
+							case "folder":
+								match = new App.ViewModels.FolderModel(self.socket,x);						
+							break;
+							case "value":
+								match = new App.ViewModels.TagModel(self.socket,x);
+							break;
+							case "expression":
+								match = new App.ViewModels.ExpressionModel(self.socket,x);
+							break;
+						}
+						
+						match.parent = folder;
+						self.folders.push(match);
+					} //jinak provedu update
 					else					
 					{
+						match.parent = folder;
 						match.Mapping(x);
-					}
-					match.parent = folder;
+					}					
 				});
+									
+				var upfolder = ko.utils.arrayFirst(self.folders(), function(item) {
+						return item.data.name() === "..";
+				});					
 				
-				if (folder!=null) {
-					var upfolder = new App.ViewModels.FolderModel(self.socket,ko.toJS(folder.data));
-					upfolder.data.name('..');							
-					self.folders.push(upfolder);
+				//odstranim nebo pridam .. upfolder
+				if ( folder != null )					
+				{
+					if (upfolder==null)
+					{
+						var upfolder = new App.ViewModels.FolderModel(self.socket,ko.toJS(folder.data));
+						upfolder.data.name('..');							
+						self.folders.push(upfolder);
+					}
 				}
+				else
+				{
+					self.folders.remove(upfolder);
+				}
+				
 				self.sort();
 				self.Refresh();
+				if (callback!=null) callback();
 			});																				
 		}
 		
 		self.sort = function()
 		{
 			self.folders.sort(function(left,right){
-				if (left.data.name()=='...') return -1;				
+				if (left.data.name()=='..') return -1;
+				if (left instanceof App.ViewModels.ExpressionModel && !(right instanceof App.ViewModels.ExpressionModel))
+					return 1;
+				if (right instanceof App.ViewModels.ExpressionModel && !(left instanceof App.ViewModels.ExpressionModel))
+					return -1;
+				if (left instanceof App.ViewModels.FolderModel && right instanceof App.ViewModels.TagModel)
+					return -1;
+				if (right instanceof App.ViewModels.FolderModel && left instanceof App.ViewModels.TagModel)
+					return 1;
 				if (left.data.name()>right.data.name()) return 1;
 				if (left.data.name()<right.data.name()) return -1;
 				return 0;
 			});
 		}
+		
+		// self.sort = function()
+		// {
+			// self.folders.sort(function(left,right){
+				// if (left.data.name()=='...') return -1;				
+				// if (left.data.name()>right.data.name()) return 1;
+				// if (left.data.name()<right.data.name()) return -1;
+				// return 0;
+			// });
+		// }
 	}		
 
 })(App)

@@ -1,6 +1,11 @@
 		
 
-<div data-role="page" id="devicespage">
+<div data-role="page" id="devicespage">	
+	
+		<div data-role="header" id="headerid">			
+			<a href="#" data-bind="click:btnStornoClick" class="ui-btn-left ui-btn ui-btn-inline ui-mini ui-corner-all ui-btn-icon-left ui-icon-delete">Cancel</a>
+			<h1>Vyberte datový bod</h1>					
+		</div>
 	<div data-role="content">
 		<script type="text/html" id="ds18b20Template2">
             <li>
@@ -64,14 +69,14 @@
 						
 		</script>	
 	
-		<div data-bind="visible:isLogged">
+		<div data-bind="visible:isLogged && !selectMode">
 			<input type="button" href="#" data-bind="click:newDeviceClick" data-inline="true" value="Nový datový bod" />
 		</div>
 		<div data-role="collapsibleset" id="deviceListid" data-bind="foreach: Devices" data-filter="true" >											
 			<div data-role="collapsible" data-collapsed="false" data-inset="true">					
 				<h4 >
 					<span data-bind="text:data.Name"></span>
-					<span style="float:right;" data-bind="visible:isLogged" class="button-span">
+					<span style="float:right;" data-bind="visible:!$parent.selectMode()" class="button-span">
 						<input type="button" data-bind="click:SettingsClick" data-theme='b' data-inline='true' value='Nastavení' data-mini='true' data-icon='gear' data-icon-pos='top' id="show-content"/>						
 					</span>
 					<!-- <div id="button-set" style="float:right;position: absolute;right: 0;margin-top: -27px !important;">							
@@ -82,7 +87,7 @@
 			</div>							
 		</div>												
 	</div>
-<div>
+</div>
 
 
     

@@ -52,23 +52,25 @@ void ExpressionService::render_GET(const http_request& req, http_response** res)
 		}//load data for all expression in folder
 		else if (path.find("/api/expression/folder")!=string::npos)
 		{
-			HisDevFolder* folder = NULL;
-			vector<LuaExpression*> expressions;
-			HisDevFolder* rootFolder = root->GetFolder();
-			if(!strid.empty())
-			{
-				CUUID id = CUUID::Parse(strid);
-				folder = dynamic_cast<HisDevFolder*>(rootFolder->Find(id));
-			}
-
-			if (folder!=NULL)
-			{
-				expressions = folder->GetItems<LuaExpression>();
-				for (size_t i=0;i<expressions.size();i++)
-				{
-					ExpressionToJson(expressions[i],respjsondoc);
-				}
-			}
+//			HisDevFolder* folder = NULL;
+//			vector<LuaExpression*> expressions;
+//			HisDevFolder* rootFolder = root->GetFolder();
+//
+//			if(!strid.empty())
+//			{
+//				CUUID id = CUUID::Parse(strid);
+//				folder = dynamic_cast<HisDevFolder*>(rootFolder->Find(id));
+//			}
+//
+//			if (folder!=NULL)
+//			{
+//				expressions = folder->GetItems<LuaExpression>();
+//				for (size_t i=0;i<expressions.size();i++)
+//				{
+//					ExpressionToJson(expressions[i],respjsondoc);
+//				}
+//			}
+			ExpressionsToJson(strid , root, respjsondoc);
 		}
 	}
 	catch(HisException & ex)
@@ -96,6 +98,28 @@ void ExpressionService::render_GET(const http_request& req, http_response** res)
 	*res = new http_string_response(json, 200, "application/json");
 }
 
+void ExpressionService::ExpressionsToJson(string strid, HisDevFolderRoot* root, Document & respjsondoc)
+{
+	HisDevFolder* folder = NULL;
+	vector<LuaExpression*> expressions;
+	HisDevFolder* rootFolder = root->GetFolder();
+
+	if(!strid.empty())
+	{
+		CUUID id = CUUID::Parse(strid);
+		folder = dynamic_cast<HisDevFolder*>(rootFolder->Find(id));
+	}
+
+	if (folder!=NULL)
+	{
+		expressions = folder->GetItems<LuaExpression>();
+		for (size_t i=0;i<expressions.size();i++)
+		{
+			ExpressionToJson(expressions[i],respjsondoc);
+		}
+	}
+}
+
 void ExpressionService::ExpressionToJson(LuaExpression *pExpression, Document & respjsondoc)
 {
 	Value d(kObjectType);
@@ -103,6 +127,10 @@ void ExpressionService::ExpressionToJson(LuaExpression *pExpression, Document & 
 	Value jsonvalue;
 	jsonvalue.SetString(strvalue.c_str(),strvalue.length(),respjsondoc.GetAllocator());
 	d.AddMember("name",jsonvalue, respjsondoc.GetAllocator());
+
+	strvalue = (const char*)pExpression->GetNodeName();
+	jsonvalue.SetString(strvalue.c_str(),strvalue.length(),respjsondoc.GetAllocator());
+	d.AddMember("NodeName",jsonvalue, respjsondoc.GetAllocator());
 
 	strvalue = pExpression->GetExpression();
 	jsonvalue.SetString(strvalue.c_str(),strvalue.length(),respjsondoc.GetAllocator());

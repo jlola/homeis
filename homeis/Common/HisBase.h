@@ -45,11 +45,11 @@ protected:
 	virtual void DoInternalSave(xmlNodePtr & node);
 	virtual void DoInternalLoad(xmlNodePtr & node);
 	virtual const xmlChar* GetNodeNameInternal()=0;
-	const xmlChar* GetNodeName();
 	void ClearIsNew();
 	void FreeItems();
 	vector<HisBase*> GetAllItems();
 public:
+	const xmlChar* GetNodeName();
 	/*
 	 * najde id ve vsech potomcich i vnorenych
 	 */

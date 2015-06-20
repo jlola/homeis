@@ -39,6 +39,7 @@ using namespace std;
 #define FOLDERNAME "Expressions"
 #define PROP_DESCRIPTION "description"
 #define PROP_RUNNING "running"
+#define PROP_EXPRESSIONBODY "expressionbody"
 
 class LuaExpression : public HisBase, public IExpression
 {

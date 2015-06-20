@@ -57,18 +57,7 @@ void OneWireDevicesService::render_GET(const http_request& req, http_response** 
 			folder = rootFolder.GetFolder();
 		}
 		//ToJson(folder,respjsondoc);
-		vector<HisDevValueId*> valueIds = folder->GetItems<HisDevValueId>();
-		for(size_t i=0;i<valueIds.size();i++)
-		{
-			Value d(kObjectType);
-			CUUID valueId = valueIds[i]->GetDeviceValueId();
-			HisDevValueBase* val = devices.FindValue(valueId);
-			if (val!=NULL)
-			{
-				DevValueToJson(d,valueIds[i],val,respjsondoc);
-				respjsondoc.PushBack(d, respjsondoc.GetAllocator());
-			}
-		}
+		FillFolderDevicesToJson(folder,respjsondoc,devices);
 	}
 	else if (path.find("/api/onewiredevices")!=string::npos)
 	{
@@ -103,6 +92,22 @@ void OneWireDevicesService::render_GET(const http_request& req, http_response** 
 	*res = new http_string_response(json, 200, "application/json");
 }
 
+void OneWireDevicesService::FillFolderDevicesToJson(HisDevFolder* folder,Document & respjsondoc,HisDevices & devices)
+{
+	vector<HisDevValueId*> valueIds = folder->GetItems<HisDevValueId>();
+	for(size_t i=0;i<valueIds.size();i++)
+	{
+		Value d(kObjectType);
+		CUUID valueId = valueIds[i]->GetDeviceValueId();
+		HisDevValueBase* val = devices.FindValue(valueId);
+		if (val!=NULL)
+		{
+			DevValueToJson(d,valueIds[i],val,respjsondoc);
+			respjsondoc.PushBack(d, respjsondoc.GetAllocator());
+		}
+	}
+}
+
 void OneWireDevicesService::FillDeviceToJson(Value & devjson, HisDevBase* dev,Document & respjsondoc)
 {
 
@@ -122,6 +127,10 @@ void OneWireDevicesService::FillDeviceToJson(Value & devjson, HisDevBase* dev,Do
 		jsonvalue.SetString(strvalue.c_str(),strvalue.length(),respjsondoc.GetAllocator());
 		devjson.AddMember("Address",jsonvalue,respjsondoc.GetAllocator());
 	}
+
+	HisDevVirtual* devVirtual = dynamic_cast<HisDevVirtual*>(dev);
+	jsonvalue.SetBool(devVirtual!=NULL);
+	devjson.AddMember("Internal",jsonvalue,respjsondoc.GetAllocator());
 
 	Value tagsjson(kArrayType);
 	vector<HisDevValueBase*> tagvalues = dev->GetValues();
@@ -153,6 +162,10 @@ void OneWireDevicesService::DevValueToJson(Value & d, HisDevValueId* valueId,His
 	strvalue = devValue->GetRecordId().ToString();
 	jsonvalue.SetString(strvalue.c_str(),strvalue.length(),respjsondoc.GetAllocator());
 	d.AddMember( "id",jsonvalue, respjsondoc.GetAllocator());
+
+	strvalue = (const char*)devValue->GetNodeName();
+	jsonvalue.SetString(strvalue.c_str(),strvalue.length(),respjsondoc.GetAllocator());
+	d.AddMember("NodeName",jsonvalue, respjsondoc.GetAllocator());
 
 	strvalue = devValue->GetAddress();
 	jsonvalue.SetString(strvalue.c_str(),strvalue.length(),respjsondoc.GetAllocator());
@@ -249,16 +262,6 @@ void OneWireDevicesService::render_PUT(const http_request& req, http_response** 
 			string strDevValueId = req.get_arg("id");
 			CUUID devValueId = CUUID::Parse(strDevValueId);
 			if (UpdateDevValue(devValueId,content))
-			{
-				*res = new http_string_response("", 200, "application/json");
-				return;
-			}
-		}
-		else if (path.find("/api/onewiredevices/folder")!=string::npos)
-		{
-			string strFolderId = req.get_arg("id");
-			//vytvori id datoveho bodu ve slozce
-			if (AddValueIdToFolder(strFolderId,content))
 			{
 				*res = new http_string_response("", 200, "application/json");
 				return;
@@ -437,33 +440,6 @@ bool OneWireDevicesService::DeleteValueId(string strValueId)
 	return false;
 }
 
-bool OneWireDevicesService::AddValueIdToFolder(string strFolderId, string strJson)
-{
-	Document document;	// Default template parameter uses UTF8 and MemoryPoolAllocator.
-
-	if (document.Parse<0>((char*)strJson.c_str()).HasParseError())
-		return NULL;
-
-	if (document.HasMember("DevValueAddress"))
-	{
-		string strAddress = document["DevValueAddress"].GetString();
-		HisDevValueBase* valueBase = devices.FindValue(strAddress);
-		if (valueBase!=NULL)
-		{
-			CUUID ValueId = valueBase->GetRecordId();
-			CUUID folderId = CUUID::Parse(strFolderId);
-			HisDevFolder* folder = dynamic_cast<HisDevFolder*>(rootFolder.GetFolder()->Find(folderId));
-			if (folder!=NULL)
-			{
-				HisDevValueId* valueId = new HisDevValueId(ValueId);
-				folder->Add(valueId);
-				rootFolder.Save();
-				return true;
-			}
-		}
-	}
-	return false;
-}
 
 HisDevVirtual* OneWireDevicesService::CreateVirtualDevice(string strjson)
 {

@@ -24,7 +24,9 @@
 			<ul data-role="listview" data-collapsed="false" data-inset="false" data-bind="template: { name: OneWireTemplate, foreach: data.Tags }" data-split-theme="a" data-split-icon="gear" \>
 		</div>
 		<br/>
-		<input type="button" href="#" data-bind="click:btnNewTagClick, ButtonEnable: notisnew" data-inline="true" Value="Nový tag" />
+		<div data-bind="visible:data.Internal">
+			<input type="button" href="#" data-bind="click:btnNewTagClick, ButtonEnable: notisnew" data-inline="true" Value="Nový tag" />
+		</div>
 		<input type="button" href="#" data-bind="click:btnSaveClick, ButtonEnable: SaveEnabled" data-inline="true" Value="Uložit" />
 		<input type="button" href="#" data-bind="click:btnDeleteClick, ButtonEnable: DeleteEnabled" data-inline="true" Value="Smazat" />
 		<input type="button" href="#" data-bind="click:btnStornoClick" data-inline="true" value="Storno" />

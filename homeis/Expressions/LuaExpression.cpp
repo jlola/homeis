@@ -577,6 +577,7 @@ void LuaExpression::DoInternalSave(xmlNodePtr & node)
 	SaveExpressionToFile();
 	//pri loudovani si ulozim nazev
 	oldName = GetName();
+	xmlSetProp(node,BAD_CAST PROP_EXPRESSIONBODY, BAD_CAST luaContent.c_str());
 	xmlSetProp(node,BAD_CAST PROP_DESCRIPTION, BAD_CAST description.c_str());
 	xmlSetProp(node,BAD_CAST PROP_RUNNING, GetRunning() ? BAD_CAST "1" : BAD_CAST "0");
 }

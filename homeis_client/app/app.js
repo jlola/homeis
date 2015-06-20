@@ -60,17 +60,23 @@
 	$("#demopage").on( "pageinit", function( event ) {				
 		if (event.target.id=="demopage")
 		{
-			App.Instance.GetOneWireList().Mode(App.Enums.OneWireListMode.Folders);
-			App.Instance.GetOneWireList().Load();
-			App.Instance.GetOneWireList().LoadPage();
+						
 			$.mobile.pageContainer.on( "pagecontainerbeforeshow", function( event, ui ) {
 				var func = App.Instance.GetPageContainerBeforeShowFunc();
 				if (func!=null)
 				{
 					func(event,ui);
-					//App.Instance.SetPageContainerBeforeShowFunc(null);
+					App.Instance.SetPageContainerBeforeShowFunc(null);
 				}
-			});						
+			});
+			$.mobile.pageContainer.on( "pagecontainertransition", function( event, ui ) {
+				var func = App.Instance.GetPageContainerShowFunc();
+				if (func!=null)
+				{
+					func(event,ui);
+					App.Instance.SetPageContainerShowFunc(null);
+				}
+			});									
 		}
 	});	
 	
@@ -80,11 +86,11 @@
 	});
 	
 	$( document ).on( "pagecreate", function(e) {			
+		
 		return true;
 	});
 		
-	$( document ).one( "pagebeforeshow", function(e) {				
-		
+	$( document ).one( "pagebeforeshow", function(e) {						
 	});
 		 
 	$(function () {
@@ -92,6 +98,12 @@
 		$("[data-role=panel]").panel().enhanceWithin();
 		App.Instance.GetMenu().Load();
 		App.Instance.GetHeader().Load();
+		App.Instance.GetOneWireList().Mode(App.Enums.OneWireListMode.Folders);
+		App.Instance.GetOneWireList().Load(null,function(){
+			App.Instance.GetOneWireList().LoadPage();
+		});
+		
+		
 	});	 
 		  
 	$(document).ready(function () {

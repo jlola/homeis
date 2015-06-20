@@ -13,6 +13,7 @@
 #include "homeis/Devices/Folder/HisDevFolderRoot.h"
 #include "homeis/Devices/Folder/HisDevValueId.h"
 #include "VirtualDevices/HisDevVirtual.h"
+#include "HisDevices.h"
 
 using namespace std;
 using namespace httpserver;
@@ -27,19 +28,19 @@ class OneWireDevicesService : public http_resource<OneWireDevicesService>
 	HisDevValueBase* CreateVirtualDevValue(string strjson);
 	HisDevVirtual* CreateVirtualDevice(string strjson);
 	HisDevBase* UpdateDevice(string strjson,string strDevId);
-	bool AddValueIdToFolder(string strFolerId, string strJson);
 	bool DeleteValueId(string strValueId);
 	string DeleteDevValue(string strDevValueRecordId);
 	string DeleteDev(string strDevValueRecordId);
 public:
 	OneWireDevicesService(HisDevices & dev,HisDevFolderRoot & folder);
 	~OneWireDevicesService(void);
+	static void FillFolderDevicesToJson(HisDevFolder* folder,Document & respjsondoc, HisDevices & dev);
 	void render_GET(const http_request&, http_response**);
 	void render_POST(const http_request& r, http_response** res);
 	void render_PUT(const http_request& req, http_response** res);
 	void render_DELETE(const http_request& req, http_response** res);
-	void FillDeviceToJson(Value & d, HisDevBase* dev,Document & respjsondoc);
-	void DevValueToJson(Value & d, HisDevValueId* valueId,HisDevValueBase* devValue,Document & respjsondoc);
+	static void FillDeviceToJson(Value & d, HisDevBase* dev,Document & respjsondoc);
+	static void DevValueToJson(Value & d, HisDevValueId* valueId,HisDevValueBase* devValue,Document & respjsondoc);
 };
 
 #endif /* ONEWIREDEVICESSERVICE_H_ */
