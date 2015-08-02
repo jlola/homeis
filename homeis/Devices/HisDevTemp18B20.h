@@ -48,7 +48,7 @@ class HisDevTemp18B20 : public HisDevDallas
 		std::string strid = tempdev->getID().getRomIDString();
 		//create data points
 		//xmlNodePtr childNode = GetOrCreateNode(0,GetNodePtr());
-		tempValue = new HisDevValue<double>(strid,EHisDevDirection::Read,EDataType::Double,0);
+		tempValue = new HisDevValue<double>(strid,EHisDevDirection::Read,EDataType::Double,0,0);
 		WriteToDeviceRequestDelegate delegate = WriteToDeviceRequestDelegate::from_method<HisDevTemp18B20, &HisDevTemp18B20::WriteToDevice>(this);
 		tempValue->delegateWrite = delegate;
 		tempValue->Load();

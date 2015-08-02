@@ -53,7 +53,7 @@ class HisDevValueBase : public HisBase
 	map<void*,OnValueChangedDelegate> delegatesMap;
 protected:
 	std::string unit;
-	std::string pinname;
+	//std::string pinname;
 	std::string devaddr;
 	//xmlNodePtr node;
 	bool deviceError;
@@ -112,19 +112,16 @@ class HisDevValue : public HisDevValueBase
 private:
 	T value;
 	T oldValue;
-
 public:
-	HisDevValue(std::string addr, EHisDevDirection direct, EDataType pdatatype,int pPinNumber) :
-		HisDevValueBase::HisDevValueBase(addr, direct, pdatatype,pPinNumber)
+	HisDevValue(std::string addr, EHisDevDirection direct, EDataType pdatatype,int pPinNumber,T defaultValue) :
+		HisDevValueBase::HisDevValueBase(addr, direct, pdatatype,pPinNumber),value(defaultValue),oldValue(defaultValue)
 	{
 
-		value = T(0);
 	}
 
-	HisDevValue(xmlNodePtr pnode) :
-		HisDevValueBase::HisDevValueBase(pnode)
+	HisDevValue(xmlNodePtr pnode,T defaultValue) :
+		HisDevValueBase::HisDevValueBase(pnode),value(defaultValue),oldValue(defaultValue)
 	{
-		value = T(0);
 	}
 
 	/*
@@ -214,7 +211,7 @@ public:
 			value = pvalue;
 		if (perror && !deviceError)
 		{
-			std::string msg = "Error on dev " + devaddr + "Pin: " + this->pinname;
+			std::string msg = "Error on dev " + devaddr + "Pin: " + this->GetName();
 			CLogger::Error(msg.c_str());
 		}
 		else if (value!=pvalue)

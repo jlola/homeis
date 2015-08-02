@@ -23,6 +23,7 @@
 #include "LOW_linkFlexibleSpeed.h"
 #include "LOW_portUsb_Factory.h"
 
+#define BULK_READ_TIMEOUT 1000
 
 /** Link class for DS2490 USB to 1-Wire Bridge Chip.
 

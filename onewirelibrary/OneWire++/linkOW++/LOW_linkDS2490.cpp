@@ -87,7 +87,7 @@ bool LOW_linkDS2490::touchBit( const bool inSendBit, const strongPullup_t inPull
     throw comm_error( "Unexpected data amount in IN buffer", __FILE__, __LINE__);
 
   uint8_t      readByte;
-  unsigned int readSize = usbDevice->bulkRead( usbDataInEP, 1, &readByte, 1000);
+  unsigned int readSize = usbDevice->bulkRead( usbDataInEP, 1, &readByte, BULK_READ_TIMEOUT);
   if ( readSize != 1 )
     throw comm_error( "Short read from IN buffer", __FILE__, __LINE__);
   
@@ -125,7 +125,7 @@ uint8_t LOW_linkDS2490::touchByte( const uint8_t inSendByte, const strongPullup_
     throw comm_error( "Unexpected data amount in IN buffer", __FILE__, __LINE__);
 
   uint8_t      readByte;
-  unsigned int readSize = usbDevice->bulkRead( usbDataInEP, 1, &readByte, 1000);
+  unsigned int readSize = usbDevice->bulkRead( usbDataInEP, 1, &readByte, BULK_READ_TIMEOUT);
   if ( readSize != 1 )
     throw comm_error( "Short read from IN buffer", __FILE__, __LINE__);
 
@@ -267,7 +267,7 @@ LOW_deviceID::deviceIDVec_t LOW_linkDS2490::searchDevices( const bool inOnlyAlar
     LOW_deviceIDRaw::devRomID_t *readRawIDs = new LOW_deviceIDRaw::devRomID_t[rawDevCnt];
 
     try {
-      unsigned int readSize = usbDevice->bulkRead( usbDataInEP, deviceFeedback.dataInBufferUsage, reinterpret_cast<LOW_portUsbDevice::msgData_t>(readRawIDs), 1000);
+      unsigned int readSize = usbDevice->bulkRead( usbDataInEP, deviceFeedback.dataInBufferUsage, reinterpret_cast<LOW_portUsbDevice::msgData_t>(readRawIDs), BULK_READ_TIMEOUT);
       if ( readSize != deviceFeedback.dataInBufferUsage )
         throw comm_error( "Short read from IN buffer", __FILE__, __LINE__);
 
@@ -686,7 +686,7 @@ void LOW_linkDS2490::readDeviceStatus( deviceFeedback_t &outDevFeedback, resultC
   deviceFeedbackRaw_t  feedbackData;
 
   unsigned int readBytes = usbDevice->bulkRead( usbStatusInEP, sizeof( feedbackData),
-                                                reinterpret_cast<LOW_portUsbDevice::msgData_t>(&feedbackData), 1000);
+                                                reinterpret_cast<LOW_portUsbDevice::msgData_t>(&feedbackData), BULK_READ_TIMEOUT);
   if ( readBytes < 16 )
     throw comm_error( "Short read from status endpoint", __FILE__, __LINE__);
 

@@ -51,6 +51,7 @@
 #define _GNU_SOURCE
 #endif
 #include <dlfcn.h>
+#include "logger.h"
 
 #pragma GCC poison malloc realloc free backtrace_symbols \
   printf fprintf sprintf snprintf scanf sscanf  // NOLINT(runtime/printf)
@@ -116,6 +117,7 @@ namespace Safe {
 
   /// @brief Reentrant printing to stderr.
   INLINE void print2stderr(const char *msg, size_t len = 0) {
+	  CLogger::Info(msg);
     if (len > 0) {
       checked(write(STDERR_FILENO, msg, len));
     } else {

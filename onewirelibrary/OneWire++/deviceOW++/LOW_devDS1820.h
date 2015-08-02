@@ -90,7 +90,7 @@ public:
   typedef std::vector<LOW_devDS1820*> devDS1820PtrVec_t;  /**< Vector type of class device pointers. */
 
   /** DS1820 internal scratchpad as defined by Dallas. */
-  typedef struct scratchpadDS1820_t {
+  typedef struct  {
     uint8_t  tempLSB;
     uint8_t  tempMSB; 
     uint8_t  tH;

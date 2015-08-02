@@ -38,19 +38,19 @@ HisDevValueBase* HisDevVirtual::CreateHisDevValue(string address,EHisDevDirectio
 	switch(ptype)
 	{
 		case EDataType::Bool:
-			result = new HisDevValue<bool>(address, EHisDevDirection::ReadWrite, ptype, pinNo);
+			result = new HisDevValue<bool>(address, EHisDevDirection::ReadWrite, ptype, pinNo,false);
 			break;
 		case EDataType::Double:
-			result = new HisDevValue<double>(address, EHisDevDirection::ReadWrite, ptype, pinNo);
+			result = new HisDevValue<double>(address, EHisDevDirection::ReadWrite, ptype, pinNo,0);
 			break;
 		case EDataType::Int:
-			result = new HisDevValue<int>(address, EHisDevDirection::ReadWrite, ptype, pinNo);
+			result = new HisDevValue<int>(address, EHisDevDirection::ReadWrite, ptype, pinNo,0);
 			break;
 		case EDataType::String:
-			result = new HisDevValue<string>(address, EHisDevDirection::ReadWrite, ptype, pinNo);
+			result = new HisDevValue<string>(address, EHisDevDirection::ReadWrite, ptype, pinNo,string(""));
 			break;
 		case EDataType::Uint:
-			result = new HisDevValue<unsigned int>(address, EHisDevDirection::ReadWrite, ptype, pinNo);
+			result = new HisDevValue<unsigned int>(address, EHisDevDirection::ReadWrite, ptype, pinNo,0);
 			break;
 		case EDataType::Unknown:
 			return result;

@@ -24,7 +24,10 @@
 #include "homeis/Common/HisBase.h"
 #include "HisDevValue.h"
 #include "homeis/Expressions/LuaExpression.h"
+#include "LOWdevLCD.h"
+#include "HisDevLCD.h"
 #include "HisDevFactory.h"
+
 
 
 HisDevFactory::HisDevFactory()
@@ -89,6 +92,8 @@ HisDevBase * HisDevFactory::Create(xmlNodePtr notptr,LOW_device* dev)
 			case LOW_devDS2413::familyCode:
 				return (HisDevBase*)new HisDevIO2413(notptr,(LOW_devDS2413*)dynamic_cast<LOW_devDS2413*>(dev));
 			break;
+			case LOW_devLCD::familyCode:
+				return (HisDevBase*)new HisDevLCD(notptr,(LOW_devLCD*)dynamic_cast<LOW_devLCD*>(dev));
 		}
 	}
 	return NULL;
@@ -103,6 +108,9 @@ HisDevBase * HisDevFactory::Create(LOW_device* dev)
 		break;
 		case LOW_devDS2413::familyCode:
 			return (HisDevBase*)new HisDevIO2413((LOW_devDS2413*)dev);
+		break;
+		case LOW_devLCD::familyCode:
+			return (HisDevBase*)new HisDevLCD((LOW_devLCD*)dev);
 		break;
 	}
 	return NULL;

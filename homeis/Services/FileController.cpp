@@ -22,9 +22,13 @@ FileController::FileController()
 void FileController::render_GET(const http_request& r, http_response** res)
 {
 	std::string filepar = r.get_arg("path");
-    std::string file = File::getexepath();
-	file += "/";
-	file += r.get_path();
+	std::string file = File::getexepath();
+	file += "/files/";
+
+	if (r.get_path().length()==0)
+		file += "index.html";
+	else
+		file += r.get_path();
 	if (file.find(".css")!= std::string::npos)
 		*res = new http_file_response(file, 200, "text/css");
 	else

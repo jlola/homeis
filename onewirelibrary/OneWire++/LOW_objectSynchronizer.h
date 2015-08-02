@@ -221,8 +221,10 @@ public:
         wasObtainedWeakly = false;
         try {
           (*staticRwLock)->tryLockRead();
+#ifdef DEBUG_LOCKING
           LOW_helper_msglog::printDebug( LOW_helper_msglog::objSync_getLock_dl,
             "__synchronizeStaticReadWeak: obtained lock from file %s, line %d\n", inFile.c_str(), inLine);
+#endif
         }
         catch ( LOW_thread_rwlock::thread_rwlock_error & ex) {
           if ( LOW_platformMisc::getThreadID() == inWriteLockHolder )
@@ -282,8 +284,8 @@ public:
           //  - a foreign thread will block anyway waiting for a lock
           //  - our own thread cannot check as we are still here
           writeLockHolder = LOW_platformMisc::getThreadID();  // set write lock indicator
-          LOW_helper_msglog::printDebug( LOW_helper_msglog::objSync_getLock_dl,
-            "__synchronizeStaticWriteWeak: obtained lock from file %s, line %d\n", inFile.c_str(), inLine);
+//          LOW_helper_msglog::printDebug( LOW_helper_msglog::objSync_getLock_dl,
+//            "__synchronizeStaticWriteWeak: obtained lock from file %s, line %d\n", inFile.c_str(), inLine);
         }
         catch ( LOW_thread_rwlock::thread_rwlock_error & ex) {
           if ( LOW_platformMisc::getThreadID() == writeLockHolder )
@@ -457,8 +459,10 @@ protected:
         wasObtainedWeakly = false;
         try {
           objectSynchronizer.objectSyncRwlock->tryLockRead();
+#ifdef DEBUG_LOCKING
             LOW_helper_msglog::printDebug( LOW_helper_msglog::objSync_getLock_dl,
               "__synchronizeMethodReadWeak: obtain weak read lock from file %s, line %d\n", inFile.c_str(), inLine);
+#endif
         }
         catch ( LOW_thread_rwlock::thread_rwlock_error & ex) {
           if ( LOW_platformMisc::getThreadID() == objectSynchronizer.writeLockHolder )
@@ -511,8 +515,10 @@ protected:
         wasObtainedWeakly = false;
         try {
           objectSynchronizer.objectSyncRwlock->tryLockWrite();
+#ifdef DEBUG_LOCKING
           LOW_helper_msglog::printDebug( LOW_helper_msglog::objSync_getLock_dl,
             "__synchronizeMethodWriteWeak: obtained weak write lock from file %s, line %d\n", inFile.c_str(), inLine);
+#endif
           // no need to make that block exclusive:
           //  - a foreign thread will block anyway waiting for a lock
           //  - our own thread cannot check as we are still here

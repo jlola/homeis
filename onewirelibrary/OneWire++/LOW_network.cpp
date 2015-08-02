@@ -99,7 +99,7 @@ bool LOW_network::verifyDevice( const LOW_deviceID inDevID, const bool inOnlyAla
   try {
     theDev = getDevice<LOW_device>( inDevID);
   }
-  catch ( LOW_exception ex) {
+  catch ( LOW_exception & ex) {
     return false;
   }
 

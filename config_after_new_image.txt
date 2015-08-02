@@ -32,3 +32,7 @@ sudo modprobe -r ds2490
 Install libhttpserverd10
 ----------------------------------
 sudo apt-get install libmicrohttpd10
+
+Install gdb server
+---------------------------
+apt-get install gdb

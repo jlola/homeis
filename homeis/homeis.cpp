@@ -45,7 +45,26 @@ int main(int argc, char **argv)
 {
 	Debug::DeathHandler dh;
 
-	printf("Home information system v.1.0.7\n");
+	bool dodaemonize = true;
+
+	if (argc >= 2)
+	{
+		if ( strcmp( argv[1], "DEBUG") == 0 )
+		{
+			dodaemonize = false;
+		}
+	}
+
+
+	if (dodaemonize)
+	{
+		daemonize();
+	}
+	string logfile = File::getexepath() + "/stdout.txt";
+	//redirect_stdout(logfile.c_str());
+	fflush(stdout);
+	fflush(stderr);
+	printf("Home information system v.1.0.8\n");
 	printf("-------------------------------\n");
 
 	HomeIsServer server("",81);

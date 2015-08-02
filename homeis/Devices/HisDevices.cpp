@@ -122,12 +122,12 @@ void HisDevices::Load()
 				id = HisDevDallas::GetId(cur);
 				if (!network->ContainsDevice<LOW_device>(id))
 				{
-					cout << "test"+id.getRomIDString();
+					cout << "Offline device: "+id.getRomIDString() + "\n";
 					dev = LOW_deviceFactory::new_SpecificDevice(*(network->getSegments()[0]),id);
 				}
 				else
 				{
-					cout << id.getRomIDString() + "\n";
+					cout << "Online device:" << id.getRomIDString() + "\n";
 					dev = network->getDevice<LOW_device>(id);
 				}
 				newhisdev = HisDevFactory::Instance().Create(cur,dev);
@@ -182,6 +182,7 @@ void HisDevices::AddScanned()
 			int finded = Find(pdev->getID());
 			if (finded<0)
 			{
+				CLogger::Info("Found new device: %s",pdev->getID().getRomIDString().c_str());
 				HisDevDallas* hisdev = (HisDevDallas*)HisDevFactory::Instance().Create(pdev);
 				if (hisdev!=NULL)
 					Add(hisdev);
@@ -255,6 +256,7 @@ void HisDevices::Refresh()
 	{
 		devices[i]->Refresh();
 		usleep(1000);
+		//((string*)0x00)->size();
 	}
 }
 

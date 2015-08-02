@@ -315,7 +315,7 @@ void LuaExpression::GetGlobals(lua_State* L)
 					HisDevValue<int>* value = dynamic_cast<HisDevValue<int>*>(values[i]);
 
 					lua_getglobal(L,value->GetPinName().c_str());
-					const int number = lua_tointeger(L,-1);
+					int number = lua_tointeger(L,-1);
 					value->SetValue(number);
 					break;
 				}
@@ -330,9 +330,9 @@ void LuaExpression::GetGlobals(lua_State* L)
 				}
 				case EDataType::Uint:
 				{
-					HisDevValue<uint16_t>* value = dynamic_cast<HisDevValue<uint16_t>*>(values[i]);
+					HisDevValue<uint32_t>* value = dynamic_cast<HisDevValue<uint32_t>*>(values[i]);
 					lua_getglobal(L,value->GetPinName().c_str());
-					const unsigned int number = lua_tointeger(L,-1);
+					unsigned int number = lua_tointeger(L,-1);
 					value->SetValue(number);
 					break;
 				}
@@ -380,7 +380,7 @@ void LuaExpression::SetGlobals(lua_State* L)
 			}
 			case EDataType::Uint:
 			{
-				HisDevValue<uint16_t>* value = dynamic_cast<HisDevValue<uint16_t>*>(values[i]);
+				HisDevValue<uint32_t>* value = dynamic_cast<HisDevValue<uint32_t>*>(values[i]);
 				lua_pushinteger(L,value->GetValue());
 				lua_setglobal( L, value->GetPinName().c_str() );
 				break;

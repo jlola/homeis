@@ -29,6 +29,7 @@
 #include "Expressions/LuaExpression.h"
 #include "Services/ExpressionsService.h"
 #include "HisDevFactory.h"
+#include "LOWdevLCD.h"
 
 //#include "OneWireDevicesService.h"
 //#include "EchoService.h"
@@ -79,6 +80,7 @@ void HomeIsServer::InitWebServer()
 	FoldersService foldersService= FoldersService(*devs,rootFolder);
 	ExpressionService expressionService = ExpressionService(rootFolder,expressionRuntime, devs);
 	ws_i.register_resource(string("files/{path}"), &fc, true);
+	ws_i.register_resource(string(""), &fc, true);
 
 	ws_i.register_resource(string("api/onewiredevices"), &owds, true);
 	ws_i.register_resource(string("api/onewiredevices/{id}"), &owds, true);
@@ -128,28 +130,42 @@ bool HomeIsServer::InitOneWireLib(string port)
 	//LOW_linkDS2480B *ds2480Link = 0;
 	LOW_linkDS2490 *ds2490Link = 0;
 	try {
-
+		LOW_exception::setLogOnCreation( true );
 		//LOW_helper_msglog::printMessage( "Harald's predefined setup: Adding passive adapter to network.\n");
 		//"/dev/ttyAMA0"
 
 		//LOW_portSerialFactory::portSpecifier_t  ttyS1 = LOW_portSerialFactory::portSpecifier_t( serialPort );
 		//ds2480Link = new LOW_linkDS2480B(ttyS1,LOW_linkDS2480B::RXPOL_val_t::RXPOL_NORM,true);
+
+		std::vector<uint8_t> idbytes = Converter::stobytes("53000100000968ff");
+		LOW_deviceID devid(idbytes);
+
 		LOW_portUsb_Factory::usbDevSpecVec_t adapters = LOW_portUsb_Factory::getPortSpecifiers(LOW_linkDS2490::usbVendorID,LOW_linkDS2490::usbProductID);
 
 		if (adapters.size()>0)
 		{
-			printf("Found adapter DS2490 at: %s\n",adapters[0].c_str());
+			const char* adapterpath = adapters[0].c_str();
+			CLogger::Info("Found adapter DS2490 at: %s\n",adapterpath);
+			printf("Found adapter DS2490 at: %s\n",adapterpath);
 			LOW_portUsb_Factory::usbDeviceSpecifier_t usb = LOW_portUsb_Factory::usbDeviceSpecifier_t(adapters[0]);
 			ds2490Link = new LOW_linkDS2490(usb,false,false);
 			//passiveLink = new LOW_linkPassiveSerial( ttyS1);
 			//oneWireNet.addLink( passiveLink);
 			//oneWireNet.addLink( ds2480Link);
 			oneWireNet.addLink(ds2490Link);
+
+			LOW_devLCD* lcd = oneWireNet.getDevice<LOW_devLCD>(devid);
+			lcd->WriteToLCD("test1",0x00);
+			lcd->WriteToLCD("test2",0x40);
+
+
 			printf("Adapter DS2490 successfully initialized\n");
+			CLogger::Info("Adapter DS2490 successfully initialized\n");
 		}
 		else
 		{
 			printf("Error DS2490 not found.\n");
+			CLogger::Info("Error DS2490 not found.\n");
 			return false;
 		}
 

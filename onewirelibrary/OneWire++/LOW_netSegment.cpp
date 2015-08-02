@@ -17,7 +17,7 @@
 
 #include "LOW_netSegment.h"
 #include "LOW_deviceFactory.h"
-
+#include "logger.h"
 
 
 //=====================================================================================
@@ -41,7 +41,13 @@ LOW_netSegment::LOW_netSegment( LOW_link &inLink) :
 
   hasExternalPower = link.getHasExternalPower();
 
-  searchDevices<LOW_device>();  //find all devices on bus
+  try
+  {
+	  searchDevices<LOW_device>();  //find all devices on bus
+  }
+  catch(...)
+  {
+  }
 }
 
 

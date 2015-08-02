@@ -74,7 +74,7 @@ public:
   static const LOW_deviceIDRaw::devFamCode_t anyDev_famCode = 0x00;
 
   /** Pseudo family code for unknown device types. */
-  static const LOW_deviceIDRaw::devFamCode_t unknownDev_famCode = 0xff;
+  static const LOW_deviceIDRaw::devFamCode_t unknownDev_famCode = 0xFE;
 
   /** Family code of this base class equals the one for any device type.
       <B>Note:</B> Subclasses must override this constant to return their specific family code.

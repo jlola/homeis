@@ -88,11 +88,18 @@ void CLogger::Info(const char * text, ...)
 {
 	ScopedLock lock(CLogger::cs);
 
-	char buffer[BUFFER_SIZE];
 	va_list args;
 	va_start (args, text);
-	vsnprintf (buffer,sizeof(buffer),text,args);
+	Info(text,args);
 	va_end (args);
+}
+
+void CLogger::Info(const char * text, va_list args)
+{
+	//ScopedLock lock(CLogger::cs);
+
+	char buffer[BUFFER_SIZE];
+	vsnprintf (buffer,sizeof(buffer),text,args);
 
 	string line = getStrTime();
 	line += " | ";

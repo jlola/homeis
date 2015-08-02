@@ -50,7 +50,7 @@ void HisDevValueBase::SetForceOutput(bool force)
 
 HisDevValueBase::HisDevValueBase(HisDevValueBase & src)
 {
-	pinname = src.pinname;
+	//pinname = src.pinname;
 	devaddr = src.devaddr;
 	pinNumber = src.pinNumber;
 	direction = src.direction;
@@ -72,15 +72,15 @@ HisDevValueBase* HisDevValueBase::Create(xmlNodePtr pNode)
 		switch(datatype)
 		{
 			case EDataType::Bool:
-				return new HisDevValue<bool>(pNode);
+				return new HisDevValue<bool>(pNode,false);
 			case EDataType::Double:
-				return new HisDevValue<double>(pNode);
+				return new HisDevValue<double>(pNode,0);
 			case EDataType::Int:
-				return new HisDevValue<int>(pNode);
+				return new HisDevValue<int>(pNode,0);
 			case EDataType::String:
-				return new HisDevValue<string>(pNode);
+				return new HisDevValue<string>(pNode,string(""));
 			case EDataType::Uint:
-				return new HisDevValue<uint32_t>(pNode);
+				return new HisDevValue<uint32_t>(pNode,0);
 			case EDataType::Unknown:
 				return NULL;
 		}
@@ -94,7 +94,7 @@ void HisDevValueBase::DoInternalSave(xmlNodePtr & node)
 
 	if (node != NULL)
 	{
-		xmlSetProp(node,PAR_PINNAME,(xmlChar*)pinname.c_str());
+		//xmlSetProp(node,PAR_PINNAME,(xmlChar*)pinname.c_str());
 		xmlSetProp(node,PAR_PINNO,(xmlChar*)Converter::itos(pinNumber).c_str());
 		xmlSetProp(node,PAR_VALUE,(xmlChar*)GetStringValue().c_str());
 		xmlSetProp(node,PAR_DATATYPE,(xmlChar*)Converter::itos(datatype).c_str());
@@ -110,12 +110,12 @@ void HisDevValueBase::DoInternalLoad(xmlNodePtr & node)
 
 	xmlChar* prop;
 
-	if (xmlHasProp(node,PAR_PINNAME))
-	{
-		prop = xmlGetProp(node,PAR_PINNAME);
-		pinname = (char*)prop;
-		xmlFree(prop);
-	}
+	//if (xmlHasProp(node,PAR_PINNAME))
+	//{
+		//prop = xmlGetProp(node,PAR_PINNAME);
+		//pinname = (char*)prop;
+		//xmlFree(prop);
+	//}
 	if (xmlHasProp(node,PAR_UNIT))
 	{
 		prop = xmlGetProp(node,PAR_UNIT);
@@ -330,7 +330,7 @@ std::string HisDevValueBase::GetStringValue()
 
 std::string HisDevValueBase::GetPinName()
 {
-	return pinname;
+	return GetName();
 }
 
 void HisDevValueBase::SetUnit(string pUnit)
@@ -345,7 +345,7 @@ string HisDevValueBase::GetUnit()
 
 void HisDevValueBase::SetPinName(std::string pname)
 {
-	pinname = pname;
+	//pinname = pname;
 	SetName(pname);
 }
 

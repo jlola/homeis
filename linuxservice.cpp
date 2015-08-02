@@ -7,6 +7,7 @@
 
 #include <sys/types.h>
 #include <sys/stat.h>
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <fcntl.h>
@@ -17,7 +18,7 @@
 #include <signal.h>
 #include <unistd.h>
 
-void startservice()
+void daemonize()
 {
 	/* Our process ID and Session ID */
 	pid_t pid, sid;
@@ -53,7 +54,7 @@ void startservice()
 			exit(EXIT_FAILURE);
 	}
 
-//	/* Close out the standard file descriptors */
+	/* Close out the standard file descriptors */
 //	close(STDIN_FILENO);
 //	close(STDOUT_FILENO);
 //	close(STDERR_FILENO);
@@ -77,4 +78,5 @@ void redirect_stdout(const char* logfile_pathname)
 	if(freopen(logfile_pathname, "a+", stderr) == NULL) printf("freopen stderr fail");
 
 	//close(logfile_fileno);
+
 }

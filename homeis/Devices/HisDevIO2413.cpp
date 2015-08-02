@@ -49,25 +49,25 @@ void HisDevIO2413::CreateDataPoints()
 	WriteToDeviceRequestDelegate delegate = WriteToDeviceRequestDelegate::from_method<HisDevIO2413, &HisDevIO2413::WriteToDevice>(this);
 	//create data points
 	//xmlNodePtr valuenode = NULL;//GetOrCreateNode(PINNO_INPUTA,GetNodePtr());
-	valueAInput = new HisDevValue<bool>(strid, EHisDevDirection::Read, EDataType::Bool, PINNO_INPUTA);
+	valueAInput = new HisDevValue<bool>(strid, EHisDevDirection::Read, EDataType::Bool, PINNO_INPUTA,false);
 	valueAInput->delegateWrite = delegate;
 	valueAInput->Load();
 	Add(valueAInput);
 
 	//valuenode = GetOrCreateNode(PINNO_INPUTB,GetNodePtr());
-	valueBInput = new HisDevValue<bool>(strid, EHisDevDirection::Read, EDataType::Bool, PINNO_INPUTB);
+	valueBInput = new HisDevValue<bool>(strid, EHisDevDirection::Read, EDataType::Bool, PINNO_INPUTB,false);
 	valueBInput->delegateWrite = delegate;
 	valueBInput->Load();
 	Add(valueBInput);
 
 	//valuenode = GetOrCreateNode(PINNO_OUTPUTA,GetNodePtr());
-	valueAOutput = new HisDevValue<bool>(strid,EHisDevDirection::ReadWrite,EDataType::Bool,PINNO_OUTPUTA);
+	valueAOutput = new HisDevValue<bool>(strid,EHisDevDirection::ReadWrite,EDataType::Bool,PINNO_OUTPUTA,false);
 	valueAOutput->delegateWrite = delegate;
 	valueAOutput->Load();
 	Add(valueAOutput);
 
 	//valuenode = GetOrCreateNode(PINNO_OUTPUTB,GetNodePtr());
-	valueBOutput = new HisDevValue<bool>(strid,EHisDevDirection::ReadWrite,EDataType::Bool,PINNO_OUTPUTB);
+	valueBOutput = new HisDevValue<bool>(strid,EHisDevDirection::ReadWrite,EDataType::Bool,PINNO_OUTPUTB,false);
 	valueBOutput->delegateWrite = delegate;
 	valueBOutput->Load();
 	Add(valueBOutput);

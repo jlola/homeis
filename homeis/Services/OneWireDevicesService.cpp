@@ -141,8 +141,6 @@ void OneWireDevicesService::FillDeviceToJson(Value & devjson, HisDevBase* dev,Do
 		tagsjson.PushBack(d,respjsondoc.GetAllocator());
 	}
 	devjson.AddMember("Tags",tagsjson,respjsondoc.GetAllocator());
-
-
 }
 
 void OneWireDevicesService::DevValueToJson(Value & d, HisDevValueId* valueId,HisDevValueBase* devValue,Document & respjsondoc)

@@ -8,7 +8,7 @@
 #ifndef LINUXSERVICE_H_
 #define LINUXSERVICE_H_
 
-void startservice();
+void daemonize();
 void redirect_stdout(const char* logfile_pathname);
 
 #endif /* LINUXSERVICE_H_ */

@@ -23,6 +23,7 @@ public:
 	CLogger();
 	static void Info(const FILE * stream);
 	static void Info(const char * text, ...);
+	static void Info(const char * text, va_list args);
 	static void Fatal(const char * text, ...);
 	static void Error(const char * text, ...);
 };

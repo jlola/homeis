@@ -274,8 +274,10 @@ unsigned int LOW_helper_msglog::fprintLogHeader( FILE *inExtraStream, FILE *inSt
 
 void LOW_helper_msglog::fprintfMulti( FILE *inExtraStream, FILE *inStdStream, const char *inFormat, ...)
 {
+
   va_list inParamList;
   va_start( inParamList, inFormat);
+  CLogger::Info(inFormat,inParamList);
   vfprintfMulti( inExtraStream, inStdStream, inFormat, inParamList);
   va_end( inParamList);
 }
@@ -285,9 +287,6 @@ void LOW_helper_msglog::vfprintfMulti( FILE *inExtraStream, FILE *inStdStream, c
 {
   if ( inExtraStream )  vfprintf( inExtraStream, inFormat, inAp);
   if ( inStdStream )    vfprintf( inStdStream, inFormat, inAp);
-
-  CLogger::Info(inExtraStream);
-  CLogger::Info(inStdStream);
 }
 
 
