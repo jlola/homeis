@@ -25,7 +25,7 @@ on windows: gcc -g stack_traces.c -limagehlp
 
 #include "stack_trace.h"
 
-extern void * __libc_stack_end;
+//extern void * __libc_stack_end;
 
 struct backtrace_frame_t
 {

@@ -1,6 +1,6 @@
 #
 #     This file is part of libhttpserver
-#     Copyright (C) 2011 Sebastiano Merlino
+#     Copyright (C) 2011, 2012, 2013, 2014, 2015 Sebastiano Merlino
 #
 #     This library is free software; you can redistribute it and/or
 #     modify it under the terms of the GNU Lesser General Public
@@ -24,11 +24,11 @@ LIBTOOL_DEPS = @LIBTOOL_DEPS@
 AUTOMAKE_OPTIONS = foreign 1.4
 ACLOCAL_AMFLAGS = -I m4
 
-SUBDIRS = src test
-DIST_SUBDIRS = src test
+SUBDIRS = src test examples
+DIST_SUBDIRS = src test examples
 EXTRA_DIST = libhttpserver.pc.in debian/changelog.in debian/control.in debian/copyright.in debian/rules.in debian/libhttpserver-dev.install.in debian/libhttpserver.install.in redhat/libhttpserver.SPEC.in $(DX_CONFIG)
 
-MOSTLYCLEANFILES = $(DX_CLEANFILES) redhat/SOURCES/*
+MOSTLYCLEANFILES = $(DX_CLEANFILES) redhat/SOURCES/* *.gcda *.gcno *.gcov
 DISTCLEANFILES = redhat/SOURCES/* redhat/SPEC/* redhat/RPMS/* redhat/SRPMS/* redhat/* debian/* DIST_REVISION
 
 pkgconfigdir = $(libdir)/pkgconfig

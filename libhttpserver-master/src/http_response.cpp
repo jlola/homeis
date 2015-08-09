@@ -1,6 +1,6 @@
 /*
      This file is part of libhttpserver
-     Copyright (C) 2011 Sebastiano Merlino
+     Copyright (C) 2011, 2012, 2013, 2014, 2015 Sebastiano Merlino
 
      This library is free software; you can redistribute it and/or
      modify it under the terms of the GNU Lesser General Public
@@ -14,7 +14,7 @@
 
      You should have received a copy of the GNU Lesser General Public
      License along with this library; if not, write to the Free Software
-     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 
+     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301
      USA
 */
 
@@ -22,14 +22,49 @@
 #include <functional>
 #include <iostream>
 #include <sstream>
+#include <fcntl.h>
+#include <unistd.h>
 #include "http_utils.hpp"
+#include "details/http_resource_mirror.hpp"
+#include "details/event_tuple.hpp"
 #include "webserver.hpp"
 #include "http_response.hpp"
+#include "http_response_builder.hpp"
 
 using namespace std;
 
 namespace httpserver
 {
+
+http_response::http_response(const http_response_builder& builder):
+    content(builder._content_hook),
+    response_code(builder._response_code),
+    autodelete(builder._autodelete),
+    realm(builder._realm),
+    opaque(builder._opaque),
+    reload_nonce(builder._reload_nonce),
+    fp(-1),
+    filename(builder._content_hook),
+    headers(builder._headers),
+    footers(builder._footers),
+    cookies(builder._cookies),
+    topics(builder._topics),
+    keepalive_secs(builder._keepalive_secs),
+    keepalive_msg(builder._keepalive_msg),
+    send_topic(builder._send_topic),
+    underlying_connection(0x0),
+    ca(0x0),
+    closure_data(0x0),
+    ce(builder._ce),
+    cycle_callback(builder._cycle_callback),
+    get_raw_response(this, builder._get_raw_response),
+    decorate_response(this, builder._decorate_response),
+    enqueue_response(this, builder._enqueue_response),
+    completed(false),
+    ws(0x0),
+    connection_id(0x0)
+{
+}
 
 http_response::~http_response()
 {
@@ -37,46 +72,25 @@ http_response::~http_response()
         webserver::unlock_cache_entry(ce);
 }
 
-size_t http_response::get_headers(std::map<std::string, std::string, header_comparator>& result)
+size_t http_response::get_headers(std::map<std::string, std::string, header_comparator>& result) const
 {
     result = this->headers;
     return result.size();
 }
 
-size_t http_response::get_footers(std::map<std::string, std::string, header_comparator>& result)
+size_t http_response::get_footers(std::map<std::string, std::string, header_comparator>& result) const
 {
     result = this->footers;
     return result.size();
 }
 
-size_t http_response::get_cookies(std::map<std::string, std::string, header_comparator>& result)
+size_t http_response::get_cookies(std::map<std::string, std::string, header_comparator>& result) const
 {
     result = this->cookies;
     return result.size();
 }
 
 //RESPONSE
-shoutCAST_response::shoutCAST_response
-(
-    const std::string& content,
-    int response_code,
-    const std::string& content_type,
-    bool autodelete
-):
-    http_response(
-            this,
-            content,
-            response_code | http_utils::shoutcast_response,
-            content_type,autodelete
-    )
-{
-}
-
-ssize_t deferred_response::cycle_callback(const std::string& buf)
-{
-    return -1;
-}
-
 void http_response::get_raw_response_str(MHD_Response** response, webserver* ws)
 {
     size_t size = &(*content.end()) - &(*content.begin());
@@ -155,20 +169,20 @@ void http_response::get_raw_response_file(
         webserver* ws
 )
 {
-    char* page = NULL;
-    size_t size = http::load_file(filename.c_str(), &page);
+    int fd = open(filename.c_str(), O_RDONLY);
+    size_t size = lseek(fd, 0, SEEK_END);
     if(size)
-        *response = MHD_create_response_from_buffer(
-                size,
-                page,
-                MHD_RESPMEM_MUST_FREE
-        );
+    {
+        *response = MHD_create_response_from_fd(size, fd);
+    }
     else
+    {
         *response = MHD_create_response_from_buffer(
-                size,
+                0,
                 (void*) "",
                 MHD_RESPMEM_PERSISTENT
         );
+    }
 }
 
 void http_response::get_raw_response_cache(
@@ -184,7 +198,7 @@ void http_response::get_raw_response_cache(
         webserver::get_response(ce, &r);
     r->get_raw_response(response, ws);
     r->decorate_response(*response); //It is done here to avoid to search two times for the same element
-    
+
     //TODO: Check if element is not in cache and throw exception
 }
 
@@ -193,9 +207,9 @@ namespace details
 
 ssize_t cb(void* cls, uint64_t pos, char* buf, size_t max)
 {
-    int val = static_cast<deferred_response*>(cls)->cycle_callback(buf);
+    ssize_t val = static_cast<http_response*>(cls)->cycle_callback(buf, max);
     if(val == -1)
-        static_cast<deferred_response*>(cls)->completed = true;
+        static_cast<http_response*>(cls)->completed = true;
     return val;
 }
 
@@ -229,16 +243,14 @@ void http_response::get_raw_response_lp_receive(
         webserver* ws
 )
 {
-
-#ifdef USE_COMET
     this->ws = ws;
     this->connection_id = MHD_get_connection_info(
             this->underlying_connection,
-            MHD_CONNECTION_INFO_FD
-    )->socket_fd;
+            MHD_CONNECTION_INFO_CLIENT_ADDRESS
+    )->client_addr;
 
     *response = MHD_create_response_from_callback(MHD_SIZE_UNKNOWN, 80,
-        &long_polling_receive_response::data_generator, (void*) this, NULL);
+        &http_response::data_generator, (void*) this, NULL);
 
     ws->register_to_topics(
             topics,
@@ -246,38 +258,26 @@ void http_response::get_raw_response_lp_receive(
             keepalive_secs,
             keepalive_msg
     );
-
-#else //USE_COMET
-
-    http_response::get_raw_response(response, ws);
-
-#endif //USE_COMET
-
 }
 
-ssize_t long_polling_receive_response::data_generator(
+ssize_t http_response::data_generator(
         void* cls,
         uint64_t pos,
         char* buf,
         size_t max
 )
 {
-#ifdef USE_COMET
-    long_polling_receive_response* _this = 
-        static_cast<long_polling_receive_response*>(cls);
+    http_response* _this = static_cast<http_response*>(cls);
 
     if(_this->ws->pop_signaled(_this->connection_id))
     {
         string message;
-        int size = _this->ws->read_message(_this->connection_id, message);
+        size_t size = _this->ws->read_message(_this->connection_id, message);
         memcpy(buf, message.c_str(), size);
         return size;
     }
     else
         return 0;
-#else //USE_COMET
-    return 0;
-#endif //USE_COMET
 }
 
 void http_response::get_raw_response_lp_send(
@@ -285,10 +285,20 @@ void http_response::get_raw_response_lp_send(
         webserver* ws
 )
 {
-    http_response::get_raw_response(response, ws);
-#ifdef USE_COMET
+    http_response::get_raw_response_str(response, ws);
     ws->send_message_to_topic(send_topic, content);
-#endif //USE_COMET
 }
 
+std::ostream &operator<< (std::ostream &os, const http_response &r)
+{
+    os << "Response [response_code:" << r.response_code << "]" << std::endl;
+
+    http::dump_header_map(os,"Headers",r.headers);
+    http::dump_header_map(os,"Footers",r.footers);
+    http::dump_header_map(os,"Cookies",r.cookies);
+
+    return os;
+}
+
+    
 };

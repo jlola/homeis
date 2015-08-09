@@ -1,6 +1,6 @@
 /*
      This file is part of libhttpserver
-     Copyright (C) 2011 Sebastiano Merlino
+     Copyright (C) 2011, 2012, 2013, 2014, 2015 Sebastiano Merlino
 
      This library is free software; you can redistribute it and/or
      modify it under the terms of the GNU Lesser General Public
@@ -17,16 +17,20 @@
      Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
 */
+
+#include <stdlib.h>
+
 #include "http_resource.hpp"
 #include "http_utils.hpp"
 #include "http_request.hpp"
 #include "http_response.hpp"
+#include "details/event_tuple.hpp"
 #include "webserver.hpp"
 #include "string_utilities.hpp"
 
 using namespace std;
 
-namespace httpserver 
+namespace httpserver
 {
 //RESOURCE
 void resource_init(map<string, bool>& allowed_methods)

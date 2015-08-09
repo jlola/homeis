@@ -217,7 +217,7 @@ template<class devType> devType* LOW_network::getDevice( const LOW_deviceID inDe
     try {
       return segmentsList[segI]->getDevice<devType>( inDevID);
     }
-    catch( LOW_device::noDevice_error ex) {} // for now ignore exception
+    catch( LOW_device::noDevice_error & ex) {} // for now ignore exception
   }
   throw LOW_device::noDevice_error( "Device not found on whole network", __FILE__, __LINE__);
 }
@@ -231,7 +231,7 @@ template<class devType> bool LOW_network::ContainsDevice( const LOW_deviceID inD
         if (segmentsList[segI]->containsDevice<LOW_device>(inDevID))
         	return true;
       }
-      catch( LOW_device::noDevice_error ex) {} // for now ignore exception
+      catch( LOW_device::noDevice_error & ex) {} // for now ignore exception
     }
     return false;
 

@@ -56,7 +56,7 @@ void msgLoggingMenu()
         case 'q': keepLooping=false;                                                                             break;
       }
     }
-    catch( LOW_exception ex) {
+    catch( LOW_exception & ex) {
       ex.logException();
     }
   }

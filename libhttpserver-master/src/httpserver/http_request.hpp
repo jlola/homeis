@@ -1,6 +1,6 @@
 /*
      This file is part of libhttpserver
-     Copyright (C) 2011 Sebastiano Merlino
+     Copyright (C) 2011, 2012, 2013, 2014, 2015 Sebastiano Merlino
 
      This library is free software; you can redistribute it and/or
      modify it under the terms of the GNU Lesser General Public
@@ -14,7 +14,7 @@
 
      You should have received a copy of the GNU Lesser General Public
      License along with this library; if not, write to the Free Software
-     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 
+     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301
      USA
 */
 
@@ -29,10 +29,11 @@
 #include <vector>
 #include <string>
 #include <utility>
+#include <iosfwd>
 
 struct MHD_Connection;
 
-namespace httpserver 
+namespace httpserver
 {
 
 class webserver;
@@ -48,7 +49,7 @@ using namespace http;
 /**
  * Class representing an abstraction for an Http Request. It is used from classes using these apis to receive information through http protocol.
 **/
-class http_request 
+class http_request
 {
     public:
 
@@ -219,7 +220,7 @@ class http_request
         **/
         const std::string get_header(const std::string& key) const
         {
-            std::map<std::string, std::string>::const_iterator it = 
+            std::map<std::string, std::string>::const_iterator it =
                 this->headers.find(key);
             if(it != this->headers.end())
                 return it->second;
@@ -228,7 +229,7 @@ class http_request
         }
         void get_header(const std::string& key, std::string& result) const
         {
-            std::map<std::string, std::string>::const_iterator it = 
+            std::map<std::string, std::string>::const_iterator it =
                 this->headers.find(key);
             if(it != this->headers.end())
                 result = it->second;
@@ -355,12 +356,14 @@ class http_request
                 const std::string& password,
                 int nonce_timeout, bool& reload_nonce
         ) const;
+
+		friend std::ostream &operator<< (std::ostream &os, const http_request &r);
     private:
         /**
          * Default constructor of the class. It is a specific responsibility of apis to initialize this type of objects.
         **/
         http_request():
-            content("")
+            content(""), requestor_port(0),underlying_connection(NULL)
         {
         }
         /**
@@ -382,6 +385,7 @@ class http_request
             content(b.content),
             version(b.version),
             requestor(b.requestor),
+			requestor_port(0),
             underlying_connection(b.underlying_connection)
         {
         }
@@ -479,7 +483,7 @@ class http_request
             this->path = path;
             std::vector<std::string> complete_path;
             http_utils::tokenize_url(this->path, complete_path);
-            for(unsigned int i = 0; i < complete_path.size(); i++) 
+            for(unsigned int i = 0; i < complete_path.size(); i++)
             {
                 this->post_path.push_back(complete_path[i]);
             }
@@ -509,7 +513,7 @@ class http_request
          * Method used to set the requestor port
          * @param requestor The requestor port to set
         **/
-        void set_requestor_port(short requestor)
+        void set_requestor_port(short requestor_port)
         {
             this->requestor_port = requestor_port;
         }
@@ -569,7 +573,7 @@ class http_request
         {
             this->user = user;
         }
-        void set_digested_user(const std::string& user)
+        void set_digested_user(const std::string& digested_user)
         {
             this->digested_user = digested_user;
         }
@@ -584,6 +588,8 @@ class http_request
 
         friend class webserver;
 };
+
+std::ostream &operator<< (std::ostream &os, const http_request &r);
 
 };
 #endif

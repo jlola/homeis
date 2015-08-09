@@ -105,7 +105,7 @@ void lockMenu( LOW_network& /*inNet*/)
         case 'q': keepLooping=false;             break;
       }
     }
-    catch( LOW_exception ex) {
+    catch( LOW_exception & ex) {
       ex.logException();
     }
   }

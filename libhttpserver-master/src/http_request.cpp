@@ -1,6 +1,6 @@
 /*
      This file is part of libhttpserver
-     Copyright (C) 2011 Sebastiano Merlino
+     Copyright (C) 2011, 2012, 2013, 2014, 2015 Sebastiano Merlino
 
      This library is free software; you can redistribute it and/or
      modify it under the terms of the GNU Lesser General Public
@@ -14,18 +14,16 @@
 
      You should have received a copy of the GNU Lesser General Public
      License along with this library; if not, write to the Free Software
-     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 
+     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301
      USA
 
 */
 
-/**
- * Constant to indicate that the nonce of the provided
- * authentication code was wrong.
- */
+#include "microhttpd.h"
 #include "http_utils.hpp"
 #include "http_request.hpp"
 #include "string_utilities.hpp"
+#include <iostream>
 
 using namespace std;
 
@@ -89,4 +87,21 @@ size_t http_request::get_args(std::map<std::string, std::string, arg_comparator>
     return result.size();
 }
 
-};
+std::ostream &operator<< (std::ostream &os, const http_request &r)
+{
+    os << r.method << " Request [user:\"" << r.user << "\" pass:\"" << r.pass << "\"] path:\""
+       << r.path << "\"" << std::endl;
+
+    http::dump_header_map(os,"Headers",r.headers);
+    http::dump_header_map(os,"Footers",r.footers);
+    http::dump_header_map(os,"Cookies",r.cookies);
+    http::dump_arg_map(os,"Query Args",r.args);
+
+    os << "    Version [ " << r.version << " ] Requestor [ " << r.requestor
+       << " ] Port [ " << r.requestor_port << " ]" << std::endl;
+
+    return os;
+}
+    
+
+}

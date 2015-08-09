@@ -181,6 +181,7 @@ void LOW_link::writeData( const byteVec_t &inSendBytes, const strongPullup_t inP
 //
 // Higher level actions
 //
+bool firstend = false;
 
 LOW_deviceID::deviceIDVec_t LOW_link::searchDevices( const bool inOnlyAlarm, const LOW_deviceIDRaw inPreload,
                                                      const LOW_deviceIDRaw::devFamCode_t inFamCode, const bool inDoReset)
@@ -231,7 +232,10 @@ LOW_deviceID::deviceIDVec_t LOW_link::searchDevices( const bool inOnlyAlarm, con
     }
 
     if ( newDiscr==0xff /*|| newDiscr==lastDiscr*/ ) {  // search has ended
-      break;
+    	if (firstend)
+    		break;
+    	else
+    		firstend = true;
     }
 
     lastDiscr = newDiscr;

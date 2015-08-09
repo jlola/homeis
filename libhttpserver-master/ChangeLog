@@ -1,3 +1,29 @@
+Fri Jul 17 21:38:54 2015 +0000
+	Removed build dependency on pkg-config
+
+Wed Apr 15 01:40:11 2015 +0000
+	Support build on MacOsX
+	Improved support for CI on travis
+	Solved bug on event_supplier registering
+	Solved bug on standardize_url to avoid removing root
+	Change cycle_callback_ptr so that buffer can be modified
+	Moved to version 0.9.0
+
+Sun Jul 23 02:46:20 2014 +0100
+	Support for building on MinGW/Cygwin systems
+	min libmicrohttpd version moved to 0.9.37
+	Moved to version 0.8.0
+
+Sat Mar 23 15:22:40 2014 +0100
+	Continue the cleanup reducing webserver.cpp responsibilities
+	Deep work on documentation
+	Moved to version 0.7.2
+
+Sat Jan 25 16:31:03 2014 +0100
+	Cleaned-up webserver.cpp code to extract secondary classes
+	Enforced immutability of webserver class
+	Enabled library to compile on g++ 4.1.2
+
 Wed Oct 31 17:59:40 2012 +0100
 	Added parameter in http_response to specify if it needs to be deleted by
 	WS - Sebastiano Merlino

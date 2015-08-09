@@ -35,9 +35,6 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/libcrash-master}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/onewirelibrary}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/rapidjson}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/homeis/Devices}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/homeis/Helpers}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/linuxcs}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/libhttpserver-master/src/httpserver}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/libhttpserver-master/src}&quot;"/>
@@ -48,9 +45,12 @@
 									<listOptionValue builtIn="false" value="&quot;D:\Elektronika\homeis\homeisworkspace\libmicrohttpd\include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/libs/libsources/libmicrohttpd/include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/libs/libsources/libxml2-2.8.0/include/libxml2}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/Helpers}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/Devices}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src}&quot;"/>
 								</option>
 								<option id="gnu.c.compiler.option.preprocessor.def.symbols.304171922" name="Defined symbols (-D)" superClass="gnu.c.compiler.option.preprocessor.def.symbols" useByScannerDiscovery="false" valueType="definedSymbols">
-									<listOptionValue builtIn="false" value="_HTTPSERVER_HPP_INSIDE_"/>
 									<listOptionValue builtIn="false" value="HTTPSERVER_COMPILATION"/>
 									<listOptionValue builtIn="false" value="USE_THREADS"/>
 									<listOptionValue builtIn="false" value="LUA_USE_MKSTEMP"/>
@@ -75,25 +75,26 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/onewirelibrary/OneWire++/portOW++}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/libcrash-master}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/onewirelibrary}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/homeis/Devices}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/homeis/Helpers}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/linuxcs}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/libhttpserver-master/src/httpserver}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/libhttpserver-master/src}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/uuid}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/lua-5.2.1/src}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/libs/libusbcompat/include}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;D:\Elektronika\homeis\homeisworkspace\libxml2-2.8.0\include\libxml2&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;D:\Elektronika\homeis\homeisworkspace\libmicrohttpd\include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/libs/libsources/libmicrohttpd/include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/libs/libsources/libxml2-2.8.0/include/libxml2}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/Helpers}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/Devices}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src}&quot;"/>
 								</option>
 								<option id="gnu.cpp.compiler.option.preprocessor.def.100794621" name="Defined symbols (-D)" superClass="gnu.cpp.compiler.option.preprocessor.def" useByScannerDiscovery="false" valueType="definedSymbols">
-									<listOptionValue builtIn="false" value="_HTTPSERVER_HPP_INSIDE_"/>
 									<listOptionValue builtIn="false" value="HTTPSERVER_COMPILATION"/>
 									<listOptionValue builtIn="false" value="USE_THREADS"/>
 									<listOptionValue builtIn="false" value="LUA_USE_MKSTEMP"/>
+									<listOptionValue builtIn="false" value="MHD_socket=int"/>
 								</option>
 								<option id="gnu.cpp.compiler.option.optimization.level.947909698" name="Optimization Level" superClass="gnu.cpp.compiler.option.optimization.level" useByScannerDiscovery="false" value="gnu.cpp.compiler.optimization.level.none" valueType="enumerated"/>
 								<option id="gnu.cpp.compiler.option.debugging.level.1390750396" name="Debug Level" superClass="gnu.cpp.compiler.option.debugging.level" useByScannerDiscovery="false" value="gnu.cpp.compiler.debugging.level.max" valueType="enumerated"/>
@@ -130,8 +131,6 @@
 								<option id="gnu.both.asm.option.include.paths.1580647521" name="Include paths (-I)" superClass="gnu.both.asm.option.include.paths" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/onewirelibrary}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/homeis/Devices}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/homeis/Helpers}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/linuxcs}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/libhttpserver-master/src/httpserver}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/libhttpserver-master/src}&quot;"/>
@@ -142,6 +141,9 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/libcrash-master}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/libs/libsources/libmicrohttpd/include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/libs/libsources/libxml2-2.8.0/include/libxml2}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/src/Devices}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/src/Helpers}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src}&quot;"/>
 								</option>
 								<option id="gnu.both.asm.option.flags.779682679" name="Assembler flags" superClass="gnu.both.asm.option.flags" value="" valueType="string"/>
 								<inputType id="cdt.managedbuild.tool.gnu.assembler.input.1757918674" superClass="cdt.managedbuild.tool.gnu.assembler.input"/>
@@ -149,6 +151,25 @@
 						</toolChain>
 					</folderInfo>
 					<fileInfo id="cdt.managedbuild.config.gnu.exe.debug.1454666133.2137839783" name="littletest.hpp" rcbsApplicability="disable" resourcePath="libhttpserver-master/test/littletest.hpp" toolsToInvoke=""/>
+					<folderInfo id="cdt.managedbuild.config.gnu.exe.debug.1454666133.1351720670" name="/" resourcePath="libhttpserver-master/examples">
+						<toolChain id="cdt.managedbuild.toolchain.gnu.cross.base.1393036569" name="Cross GCC" superClass="cdt.managedbuild.toolchain.gnu.cross.base" unusedChildren="">
+							<option id="cdt.managedbuild.option.gnu.cross.prefix.1070758115.1771559234" name="Prefix" superClass="cdt.managedbuild.option.gnu.cross.prefix.1070758115"/>
+							<option id="cdt.managedbuild.option.gnu.cross.path.1033661255.1432045130" name="Path" superClass="cdt.managedbuild.option.gnu.cross.path.1033661255"/>
+							<targetPlatform archList="all" binaryParser="org.eclipse.cdt.core.ELF" id="cdt.managedbuild.targetPlatform.gnu.cross" isAbstract="false" osList="all" superClass="cdt.managedbuild.targetPlatform.gnu.cross"/>
+							<tool id="cdt.managedbuild.tool.gnu.cross.c.compiler.1211137336" name="Cross GCC Compiler" superClass="cdt.managedbuild.tool.gnu.cross.c.compiler.1320566611">
+								<inputType id="cdt.managedbuild.tool.gnu.c.compiler.input.1126947251" superClass="cdt.managedbuild.tool.gnu.c.compiler.input"/>
+							</tool>
+							<tool id="cdt.managedbuild.tool.gnu.cross.cpp.compiler.1784746339" name="Cross G++ Compiler" superClass="cdt.managedbuild.tool.gnu.cross.cpp.compiler.774094333">
+								<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.1900215682" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
+							</tool>
+							<tool id="cdt.managedbuild.tool.gnu.cross.c.linker.1201979335" name="Cross GCC Linker" superClass="cdt.managedbuild.tool.gnu.cross.c.linker.951548800"/>
+							<tool id="cdt.managedbuild.tool.gnu.cross.cpp.linker.431301897" name="Cross G++ Linker" superClass="cdt.managedbuild.tool.gnu.cross.cpp.linker.845265110"/>
+							<tool id="cdt.managedbuild.tool.gnu.cross.archiver.1846278686" name="Cross GCC Archiver" superClass="cdt.managedbuild.tool.gnu.cross.archiver.1446144075"/>
+							<tool id="cdt.managedbuild.tool.gnu.cross.assembler.427680934" name="Cross GCC Assembler" superClass="cdt.managedbuild.tool.gnu.cross.assembler.1202731631">
+								<inputType id="cdt.managedbuild.tool.gnu.assembler.input.267029717" superClass="cdt.managedbuild.tool.gnu.assembler.input"/>
+							</tool>
+						</toolChain>
+					</folderInfo>
 					<folderInfo id="cdt.managedbuild.config.gnu.exe.debug.1454666133.488292186" name="/" resourcePath="libs/libsources">
 						<toolChain id="cdt.managedbuild.toolchain.gnu.cross.base.662539691" name="Cross GCC" superClass="cdt.managedbuild.toolchain.gnu.cross.base" unusedChildren="">
 							<option id="cdt.managedbuild.option.gnu.cross.prefix.1070758115.1648464145" name="Prefix" superClass="cdt.managedbuild.option.gnu.cross.prefix.1070758115"/>
@@ -169,7 +190,7 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="libs/libsources|libcrash-master|uuid/gen_uuid_nt.c|libmicrohttpd-0.9.7/src/examples|libmicrohttpd-0.9.7/src/testcurl|libmicrohttpd-0.9.7/src/testzzuf|libhttpserver-master/test/littletest.hpp|libhttpserver-master/test/basic.cpp|PushFramework/private/Dispatcher_Win.cpp|PushFramework/private/SystemServiceImpl_Win.h|PushFramework/private/StopWatchImpl_Win.h|PushFramework/private/StopWatchImpl_Win.cpp|PushFramework/private/PhysicalConnection_Win.cpp|PushFramework/private/SystemServiceImpl_Win.cpp|PushFramework/private/IOQueue_Win.cpp|PushFramework/private/ChannelFactory_Win.cpp|PushFramework/private/Utilities_Win.cpp|PushFramework/private/ListenerImpl_Win.h|PushFramework/private/DemuxImpl_Win.h|PushFramework/private/ListenerImpl_Win.cpp|PushFramework/private/IOQueue_Win.h|PushFramework/private/DemuxImpl_Win.cpp" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="PushFramework/private/DemuxImpl_Win.h|PushFramework/private/SystemServiceImpl_Win.h|PushFramework/private/ListenerImpl_Win.cpp|PushFramework/private/Dispatcher_Win.cpp|PushFramework/private/StopWatchImpl_Win.h|libmicrohttpd-0.9.7/src/testzzuf|libmicrohttpd-0.9.7/src/examples|libmicrohttpd-0.9.7/src/testcurl|libhttpserver-master/test/littletest.hpp|PushFramework/private/IOQueue_Win.cpp|libhttpserver-master/examples|PushFramework/private/Utilities_Win.cpp|PushFramework/private/StopWatchImpl_Win.cpp|libs/libsources|PushFramework/private/PhysicalConnection_Win.cpp|uuid/gen_uuid_nt.c|PushFramework/private/ChannelFactory_Win.cpp|PushFramework/private/IOQueue_Win.h|libcrash-master|PushFramework/private/DemuxImpl_Win.cpp|PushFramework/private/SystemServiceImpl_Win.cpp|libhttpserver-master/test/basic.cpp|PushFramework/private/ListenerImpl_Win.h|libhttpserver-master/test" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
