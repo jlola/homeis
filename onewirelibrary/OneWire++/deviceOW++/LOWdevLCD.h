@@ -52,7 +52,7 @@ public:
 
 	virtual ~LOW_devLCD();
 
-
+	void LCDOn();
 	bool WriteToLCD(const char* text, uint8_t address);
 
 	void cmd_WriteScratchpad( const uint8_t inTL, const uint8_t inTH) const;

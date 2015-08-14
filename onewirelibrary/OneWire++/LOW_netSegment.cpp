@@ -43,7 +43,7 @@ LOW_netSegment::LOW_netSegment( LOW_link &inLink) :
 
   try
   {
-	  searchDevices<LOW_device>();  //find all devices on bus
+	  //searchDevices<LOW_device>();  //find all devices on bus
   }
   catch(...)
   {
@@ -178,8 +178,8 @@ void LOW_netSegment::cmd_MatchROM( const LOW_device *inDevice) const
   
   byteVec_t id = inDevice->getID().getRomIDVec();  
   outVec.insert( outVec.end(), id.begin(), id.end());
-    
-  link.writeData( outVec);
+
+  link.writeData( outVec,LOW_link::pullUp_262);
 }
 
 

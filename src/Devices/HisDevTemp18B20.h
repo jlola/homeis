@@ -134,10 +134,8 @@ class HisDevTemp18B20 : public HisDevDallas
 		vector<HisDevValue<double>*> values = GetItems<HisDevValue<double>>();
 		try
 		{
+			doConversion = true;
 			tempvalue = getTemperature(doConversion);
-
-			if (doConversion) doConversion = false;
-			else doConversion = true;
 
 			for (size_t i=0;i<values.size();i++)
 			{

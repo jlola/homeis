@@ -148,7 +148,7 @@ bool HomeIsServer::InitOneWireLib(string port)
 			CLogger::Info("Found adapter DS2490 at: %s\n",adapterpath);
 			printf("Found adapter DS2490 at: %s\n",adapterpath);
 			LOW_portUsb_Factory::usbDeviceSpecifier_t usb = LOW_portUsb_Factory::usbDeviceSpecifier_t(adapters[0]);
-			ds2490Link = new LOW_linkDS2490(usb,false,false);
+			ds2490Link = new LOW_linkDS2490(usb,true,false);
 			//passiveLink = new LOW_linkPassiveSerial( ttyS1);
 			//oneWireNet.addLink( passiveLink);
 			//oneWireNet.addLink( ds2480Link);

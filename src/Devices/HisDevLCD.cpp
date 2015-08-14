@@ -30,7 +30,7 @@ HisDevLCD::HisDevLCD(xmlNodePtr node, LOW_devLCD* pdev) :
 	HisDevDallas::HisDevDallas(node, pdev),
 	dev(NULL),lightEnabled(NULL),firstrefresh(false),needRefresh(false)
 	,rowaddr1(0x00),rowaddr2(0x00),rowaddr3(0x00),rowaddr4(0x00),
-	row1(0),row2(0),row3(0),row4(0)
+	row1(0),row2(0),row3(0),row4(0),lcdOn(false)
 {
 	dev = pdev;
 	//set zero period becaouse LCD refresh only if needs
@@ -38,8 +38,9 @@ HisDevLCD::HisDevLCD(xmlNodePtr node, LOW_devLCD* pdev) :
 }
 
 HisDevLCD::HisDevLCD(LOW_devLCD* pdev) :
-	HisDevDallas::HisDevDallas(pdev),dev(NULL),lightEnabled(NULL),firstrefresh(false),needRefresh(false)
-//,row1Addr(0x00),row2Addr(0x40),row3Addr(0x20),row4Addr(0x50)
+	HisDevDallas::HisDevDallas(pdev),dev(NULL),lightEnabled(NULL),
+	firstrefresh(false),needRefresh(false),lcdOn(false)
+
 {
 	dev = pdev;
 	CreateDataPoints();
@@ -185,32 +186,41 @@ void HisDevLCD::DoInternalSave(xmlNodePtr & node)
 
 void HisDevLCD::DoInternalRefresh()
 {
-	if (!firstrefresh)
+	if (!lcdOn)
 	{
-		firstrefresh = true;
-
-		lightEnabled->SetValueFromDevice(lightEnabled->GetValue(),false);
-
-		row1->SetValueFromDevice(row1->GetValue(),false);
-		row2->SetValueFromDevice(row2->GetValue(),false);
-		row3->SetValueFromDevice(row3->GetValue(),false);
-		row4->SetValueFromDevice(row4->GetValue(),false);
-
-		rowaddr1->SetValueFromDevice(rowaddr1->GetValue(),false);
-		rowaddr2->SetValueFromDevice(rowaddr2->GetValue(),false);
-		rowaddr3->SetValueFromDevice(rowaddr3->GetValue(),false);
-		rowaddr4->SetValueFromDevice(rowaddr4->GetValue(),false);
-
-		DevError = false;
+		lcdOn = true;
+		dev->LCDOn();
 	}
-	else if (needRefresh)
+	if (needRefresh)
 	{
 		needRefresh = false;
-		dev->WriteToLCD(row1->GetValue().c_str(),rowaddr1->GetValue());
-		dev->WriteToLCD(row2->GetValue().c_str(),rowaddr2->GetValue());
-		dev->WriteToLCD(row3->GetValue().c_str(),rowaddr3->GetValue());
-		dev->WriteToLCD(row4->GetValue().c_str(),rowaddr4->GetValue());
+		bool error = !dev->WriteToLCD(row1->GetValue().c_str(),rowaddr1->GetValue());
+		row1->SetValueFromDevice(row1->GetValue(),error);
+		error = !dev->WriteToLCD(row2->GetValue().c_str(),rowaddr2->GetValue());
+		row2->SetValueFromDevice(row2->GetValue(),error);
+		error = !dev->WriteToLCD(row3->GetValue().c_str(),rowaddr3->GetValue());
+		row3->SetValueFromDevice(row3->GetValue(),error);
+		error = !dev->WriteToLCD(row4->GetValue().c_str(),rowaddr4->GetValue());
+		row4->SetValueFromDevice(row4->GetValue(),error);
 	}
+//	else if (!firstrefresh)
+//	{
+//		firstrefresh = true;
+//
+//		lightEnabled->SetValueFromDevice(lightEnabled->GetValue(),false);
+//
+//		row1->SetValueFromDevice(row1->GetValue(),false);
+//		row2->SetValueFromDevice(row2->GetValue(),false);
+//		row3->SetValueFromDevice(row3->GetValue(),false);
+//		row4->SetValueFromDevice(row4->GetValue(),false);
+//
+//		rowaddr1->SetValueFromDevice(rowaddr1->GetValue(),false);
+//		rowaddr2->SetValueFromDevice(rowaddr2->GetValue(),false);
+//		rowaddr3->SetValueFromDevice(rowaddr3->GetValue(),false);
+//		rowaddr4->SetValueFromDevice(rowaddr4->GetValue(),false);
+//
+//		DevError = false;
+//	}
 }
 
 HisDevLCD::~HisDevLCD()

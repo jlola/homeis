@@ -29,6 +29,7 @@ class HisDevLCD: public HisDevDallas {
 	bool firstrefresh;
 	bool needRefresh;
 
+
 	HisDevValue<int>* rowaddr1;
 	HisDevValue<int>* rowaddr2;
 	HisDevValue<int>* rowaddr3;
@@ -38,6 +39,8 @@ class HisDevLCD: public HisDevDallas {
 	HisDevValue<string>* row2;
 	HisDevValue<string>* row3;
 	HisDevValue<string>* row4;
+
+	bool lcdOn;
 
 	HisDevValue<string>* CreateRow(string name,WriteToDeviceRequestDelegate & delegate,int pinno);
 	HisDevValue<int>* CreateRowAddr(string name,WriteToDeviceRequestDelegate & delegate,int pinno,int adr);

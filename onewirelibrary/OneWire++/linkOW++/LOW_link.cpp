@@ -18,7 +18,7 @@
  
 #include "LOW_link.h"
 #include "LOW_device.h"
-
+#include <unistd.h>
 
 //=====================================================================================
 //
@@ -98,7 +98,7 @@ byteVec_t LOW_link::touchBlock( const byteVec_t &inBytes, const strongPullup_t i
   byteVec_t retVal = byteVec_t( inBytes.size());
 
   for( unsigned int i=0; i<inBytes.size()-1; i++) {
-    retVal[i] = touchByte( inBytes[i], pullUp_NONE);
+    retVal[i] = touchByte( inBytes[i], pullUp_524);
   }
   retVal[inBytes.size()-1] = touchByte( inBytes[inBytes.size()-1], inPullup);
   

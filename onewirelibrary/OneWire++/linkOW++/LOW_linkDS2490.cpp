@@ -29,7 +29,7 @@
 LOW_linkDS2490::LOW_linkDS2490( const LOW_portUsb_Factory::usbDeviceSpecifier_t inUsbDevSpec,
                                 const bool inHasExternalPower, const bool inAllowProgPulse) :
   LOW_link( true, inHasExternalPower, inAllowProgPulse),
-  LOW_linkFlexibleSpeed( normal_speed, pdSlewRate_1_37, w1LowTime_11, soW0RecTime_10) // use normal speed, but preconfigure the recommeded optimal parameters as of app note #148
+  LOW_linkFlexibleSpeed( normal_speed, /*pdSlewRate_1_37*/pdSlewRate_0_55, /*w1LowTime_11*/w1LowTime_15, soW0RecTime_10) // use normal speed, but preconfigure the recommeded optimal parameters as of app note #148
 {
   usbDevice = LOW_portUsb_Factory::new_portUsbDevice( inUsbDevSpec);
 
