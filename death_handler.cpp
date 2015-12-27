@@ -52,6 +52,7 @@
 #endif
 #include <dlfcn.h>
 #include "logger.h"
+#include "PoppyDebugTools.h"
 
 #pragma GCC poison malloc realloc free backtrace_symbols \
   printf fprintf sprintf snprintf scanf sscanf  // NOLINT(runtime/printf)
@@ -327,7 +328,7 @@ void* DeathHandler::MallocHook(size_t size,
   return malloc_buffer;
 }
 
-#if __GNUC__ >= 4 && __GNUC_MINOR__ >= 6
+#if (__GNUC__ > 4) || (__GNUC__ == 4 && __GNUC_MINOR__ >= 6)
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
 #endif
@@ -337,6 +338,9 @@ void* DeathHandler::MallocHook(size_t size,
 #endif
 
 void DeathHandler::SignalHandler(int sig, void * /* info */, void *secret) {
+	std::string stackTrace = Stack::GetTraceString();
+	    //you can print or log the stack trace here
+	    CLogger::Error(stackTrace.c_str());
   // Stop all other running threads by forking
   pid_t forkedPid = fork();
   if (forkedPid != 0) {
@@ -597,7 +601,7 @@ void DeathHandler::SignalHandler(int sig, void * /* info */, void *secret) {
   _Exit(EXIT_SUCCESS);
 }
 
-#if __GNUC__ >= 4 && __GNUC_MINOR__ >= 6
+#if (__GNUC__ > 4) || (__GNUC__ == 4 && __GNUC_MINOR__ >= 6)
 #pragma GCC diagnostic pop
 #endif
 #ifdef __clang__

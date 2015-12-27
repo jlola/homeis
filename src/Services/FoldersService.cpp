@@ -11,6 +11,7 @@
 #include "Common/CUUID.h"
 #include "death_handler.h"
 #include "StringBuilder.h"
+#include "PoppyDebugTools.h"
 #include "ExpressionsService.h"
 
 FoldersService::FoldersService(HisDevices & dev,HisDevFolderRoot* proot) :
@@ -25,6 +26,7 @@ FoldersService::~FoldersService(void)
 
 void FoldersService::render_GET(const http_request& req, http_response** res)
 {
+	STACK
 	Document respjsondoc;
 	respjsondoc.SetArray();
 
@@ -48,6 +50,7 @@ void FoldersService::render_GET(const http_request& req, http_response** res)
 	{
 		if (folder!=NULL)
 		{
+			STACK_SECTION("/api/folder/allitems");
 			FoldersToJson(root,folder,respjsondoc,false);
 		}
 	}
@@ -55,11 +58,13 @@ void FoldersService::render_GET(const http_request& req, http_response** res)
 	{
 		if (folder!=NULL)
 		{
+			STACK_SECTION("/api/folders");
 			FoldersToJson(root,folder,respjsondoc,true);
 		}
 	}
 	else if (path.find("/api/folder")!=string::npos)
 	{
+		STACK_SECTION("/api/folder");
 		if (folder!=NULL)
 		{
 			FolderToJson(root, folder,respjsondoc);
@@ -77,6 +82,8 @@ void FoldersService::render_GET(const http_request& req, http_response** res)
 
 void FoldersService::FolderToJson(HisDevFolderRoot* root, HisBase *pFolder, Document & respjsondoc)
 {
+	STACK
+
 	Value d(kObjectType);
 	string strvalue = pFolder->GetName();
 	Value jsonvalue;
@@ -105,6 +112,7 @@ void FoldersService::FolderToJson(HisDevFolderRoot* root, HisBase *pFolder, Docu
 
 void FoldersService::FoldersToJson(HisDevFolderRoot* root,HisDevFolder *parentFolder, Document & respjsondoc,bool foldersOnly)
 {
+	STACK
 	vector<HisBase*> folders;
 	folders = parentFolder->GetItems<HisBase>();
 
@@ -138,6 +146,7 @@ void FoldersService::FoldersToJson(HisDevFolderRoot* root,HisDevFolder *parentFo
 
 bool FoldersService::AddValueIdToFolder(string strFolderId, string strJson)
 {
+	STACK
 	Document document;	// Default template parameter uses UTF8 and MemoryPoolAllocator.
 
 	if (document.Parse<0>((char*)strJson.c_str()).HasParseError())
@@ -167,6 +176,7 @@ bool FoldersService::AddValueIdToFolder(string strFolderId, string strJson)
 
 void FoldersService::render_POST(const http_request& req, http_response** res)
 {
+	STACK
 	std::string content = req.get_content();
 
 	if (req.get_user()=="a" && req.get_pass()=="a")
@@ -195,6 +205,7 @@ void FoldersService::render_POST(const http_request& req, http_response** res)
 
 bool FoldersService::UpdateFolder(string strid, string strJson)
 {
+	STACK
 	Document document;	// Default template parameter uses UTF8 and MemoryPoolAllocator.
 
 		if (document.Parse<0>((char*)strJson.c_str()).HasParseError())
@@ -246,6 +257,7 @@ bool FoldersService::UpdateFolder(string strid, string strJson)
 
 bool FoldersService::CreateFolder(string strJson)
 {
+	STACK
 	Document document;	// Default template parameter uses UTF8 and MemoryPoolAllocator.
 
 	if (document.Parse<0>((char*)strJson.c_str()).HasParseError())
@@ -285,6 +297,7 @@ bool FoldersService::CreateFolder(string strJson)
 
 void FoldersService::render_PUT(const http_request& req, http_response** res)
 {
+	STACK
 	if (req.get_user()=="a" && req.get_pass()=="a")
 	{
 		string strid = req.get_arg("id");
@@ -324,6 +337,7 @@ void FoldersService::render_PUT(const http_request& req, http_response** res)
 
 string FoldersService::DeleteDevValue(string strDevValueRecordId)
 {
+	STACK
 	CUUID devValueId = CUUID::Parse(strDevValueRecordId);
 	HisDevValueBase* devValue = devices.FindValue(devValueId);
 	if (devValue==NULL)
@@ -365,6 +379,7 @@ string FoldersService::DeleteDevValue(string strDevValueRecordId)
 
 void FoldersService::render_DELETE(const http_request& req, http_response** res)
 {
+	STACK
 	if (req.get_user()=="a" && req.get_pass()=="a")
 	{
 		string strid = req.get_arg("id");

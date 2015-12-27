@@ -48,7 +48,7 @@
       at up to 16.3 kbits/s
     - Supports Conditional Search with userselectable condition
     - Vcc bondout for optional external supply to the device (TSOC package only)
-    - 1-Wire communication operates over a wide voltage range of 2.8V to 6.0V from -40ï¿½C to +85ï¿½C
+    - 1-Wire communication operates over a wide voltage range of 2.8V to 6.0V from -40°C to +85°C
     - Low cost TO-92 or 6-pin TSOC surface mount package
 
     This class is thread-safe.

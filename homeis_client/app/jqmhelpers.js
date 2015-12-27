@@ -35,7 +35,13 @@
 	App.Helpers.CopyFromDto = function(src,dst) {
 		dst.isLoading = true;
 		for (var key in dst.data) {
-			dst[key](src[key]);
+			try
+			{
+				dst[key](src[key]);
+			}
+			catch(e)
+			{
+			}
 		}
 		dst.isLoading = false;
 	}
@@ -60,7 +66,7 @@
 				$(element).textinput('disable');								
 				//$(element).addClass('ui-disabled');
 			}				
-			$(element).height( $(element)[0].scrollHeight );				
+			//$(element).height( $(element)[0].scrollHeight );				
 		}
 	};
 	

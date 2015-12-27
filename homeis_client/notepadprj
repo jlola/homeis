@@ -51,6 +51,8 @@
             <File name="libs\knockout-2.1.0.debug.js" />
             <File name="libs\knockout-2.2.0.js" />
             <File name="libs\knockout-2.2.1.js" />
+            <File name="libs\pace.min.js" />
+            <File name="libs\pace-theme-center-circle.css" />
         </Folder>
         <File name="folderdetail.html" />
         <File name="folderselect.html" />

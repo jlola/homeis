@@ -14,6 +14,7 @@
 #include "EHisDevDirection.h"
 #include "HisDevBase.h"
 #include "ValueEventArgs.h"
+#include "PoppyDebugTools.h"
 #include "HisDevRunTime.h"
 
 HisDevRuntime::HisDevRuntime(HisDevices & pdevices) :
@@ -23,11 +24,12 @@ HisDevRuntime::HisDevRuntime(HisDevices & pdevices) :
 
 void* HisDevRuntime::ThreadFunction(void* obj)
 {
+	STACK
 	HisDevRuntime* runtime = (HisDevRuntime*)obj;
 
 	while(runtime->running)
 	{
-		usleep(10);
+		usleep(10000);
 		runtime->devices.Refresh();
 	}
 

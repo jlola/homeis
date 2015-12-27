@@ -61,6 +61,7 @@ HisDevValueBase::HisDevValueBase(HisDevValueBase & src)
 
 HisDevValueBase* HisDevValueBase::Create(xmlNodePtr pNode)
 {
+	STACK
 	EDataType datatype;
 	xmlChar* prop = NULL;
 	if (xmlHasProp(pNode,PAR_DATATYPE))
@@ -90,6 +91,7 @@ HisDevValueBase* HisDevValueBase::Create(xmlNodePtr pNode)
 
 void HisDevValueBase::DoInternalSave(xmlNodePtr & node)
 {
+	STACK
 	HisBase::DoInternalSave(node);
 
 	if (node != NULL)
@@ -100,22 +102,26 @@ void HisDevValueBase::DoInternalSave(xmlNodePtr & node)
 		xmlSetProp(node,PAR_DATATYPE,(xmlChar*)Converter::itos(datatype).c_str());
 		xmlSetProp(node,PAR_DEV_ADDR,(xmlChar*)devaddr.c_str());
 		xmlSetProp(node,PAR_UNIT,(xmlChar*)unit.c_str());
+		xmlSetProp(node,PAR_ADDRESSNAME,(xmlChar*)addressName.c_str());
 		xmlSetProp(node,PAR_DIRECTION,(xmlChar*)Converter::itos(direction).c_str());
 	}
 }
 
 void HisDevValueBase::DoInternalLoad(xmlNodePtr & node)
 {
+	STACK
 	HisBase::DoInternalLoad(node);
 
 	xmlChar* prop;
 
-	//if (xmlHasProp(node,PAR_PINNAME))
-	//{
-		//prop = xmlGetProp(node,PAR_PINNAME);
-		//pinname = (char*)prop;
-		//xmlFree(prop);
-	//}
+	if (xmlHasProp(node,PAR_ADDRESSNAME))
+	{
+		prop = xmlGetProp(node,PAR_ADDRESSNAME);
+		addressName = (char*)prop;
+		if (prop==NULL || addressName=="")
+			addressName = GetName();
+		xmlFree(prop);
+	}
 	if (xmlHasProp(node,PAR_UNIT))
 	{
 		prop = xmlGetProp(node,PAR_UNIT);
@@ -154,7 +160,7 @@ void HisDevValueBase::DoInternalLoad(xmlNodePtr & node)
 
 		bool oldallowforceOutput = allowForceOutput;
 		this->allowForceOutput = true;
-		this->ForceStringValue(strval);
+		this->ForceStringValue(strval,false);
 		allowForceOutput = oldallowforceOutput;
 	}
 }
@@ -166,6 +172,7 @@ const xmlChar* HisDevValueBase::GetNodeNameInternal()
 
 void HisDevValueBase::FireOnValueChanged(ValueChangedEventArgs args)
 {
+	STACK
 	size_t size = delegatesMap.size();
 	//CLogger::Info(StringBuilder::Format("HisDevValueBase::FireOnValueChanged | delegatesMap.size=%d",size).c_str());
 	if (size>0)
@@ -180,13 +187,14 @@ void HisDevValueBase::FireOnValueChanged(ValueChangedEventArgs args)
  */
 void HisDevValueBase::Register(OnValueChangedDelegate delegate, void* owner)
 {
+	STACK
 	std::pair<std::map<void*,OnValueChangedDelegate>::iterator,bool> ret;
 	ret = delegatesMap.insert(std::pair<void*,OnValueChangedDelegate>(owner,delegate));
 	if (ret.second==false)
 	{
 		CLogger::Error("Delegate already added HisDevBase");
 	}
-	size_t size = delegatesMap.size();
+	//size_t size = delegatesMap.size();
 }
 
 /*
@@ -194,11 +202,23 @@ void HisDevValueBase::Register(OnValueChangedDelegate delegate, void* owner)
  */
 void HisDevValueBase::UnRegister(void* owner)
 {
+	STACK
 	delegatesMap.erase(owner);
+}
+
+void HisDevValueBase::SetAddressName(string pAddressName)
+{
+	addressName = pAddressName;
+}
+
+std::string HisDevValueBase::GetAddressName()
+{
+	return addressName;
 }
 
 std::string HisDevValueBase::GetAddress()
 {
+	STACK
 	std::ostringstream address;
 	address << devaddr << "." << pinNumber;
 	return address.str();
@@ -224,27 +244,31 @@ HisDevValueBase::~HisDevValueBase()
 
 }
 
-bool HisDevValueBase::ForceStringValue(string strvalue)
+bool HisDevValueBase::ForceStringValue(string strvalue, bool checkChange)
 {
+	STACK
+	STACK_VAL("strvalue",strvalue)
 	try
 	{
 		switch(this->datatype)
 		{
 			case EDataType::Double:
 			{
+				STACK_SECTION("Double")
 				HisDevValue<double>* value = dynamic_cast<HisDevValue<double>*>(this);
 				double val = atof(strvalue.c_str());
-				if (val!=value->GetValue())
+				if (val!=value->GetValue() || !checkChange)
 					value->ForceValue(val);
 				return true;
 			}
 			case EDataType::Bool:
 			{
+				STACK_SECTION("Bool")
 				if (strvalue[0]=='1' || strvalue[0]=='0' || strvalue==string("true") || strvalue==string("false"))
 				{
 					bool newvalue = strvalue[0]=='1' || strvalue == "true" ? true : false;
 					HisDevValue<bool>* value = dynamic_cast<HisDevValue<bool>*>(this);
-					if (value->GetValue()!=newvalue)
+					if (value->GetValue()!=newvalue || !checkChange)
 						value->ForceValue(newvalue);
 					return true;
 				}
@@ -256,24 +280,28 @@ bool HisDevValueBase::ForceStringValue(string strvalue)
 			}
 			case EDataType::Int:
 			{
+				STACK_SECTION("Int")
 				HisDevValue<int>* value = dynamic_cast<HisDevValue<int>*>(this);
-				int val = Converter::stoi(strvalue,10);
-				if (val!=value->GetValue())
+				int val = Converter::stoi(strvalue);
+				if (val!=value->GetValue() || !checkChange)
 					value->ForceValue(val);
 				return true;
 			}
 			case EDataType::String:
 			{
+				STACK_SECTION("String")
 				HisDevValue<string>* value = dynamic_cast<HisDevValue<string>*>(this);
-				if (strvalue!=value->GetValue())
+				if (strvalue!=value->GetValue() || !checkChange)
 					value->ForceValue(strvalue);
 				return true;
 			}
 			case EDataType::Uint:
 			{
+				STACK_SECTION("Uint")
 				HisDevValue<uint32_t>* value = dynamic_cast<HisDevValue<uint32_t>*>(this);
-				int val = Converter::stoi(strvalue,10);
-				value->ForceValue(val);
+				uint32_t val = Converter::stoui(strvalue,10);
+				if (val!=value->GetValue() || !checkChange)
+					value->ForceValue(val);
 				return true;
 			}
 			case EDataType::Unknown:
@@ -290,10 +318,12 @@ bool HisDevValueBase::ForceStringValue(string strvalue)
 
 std::string HisDevValueBase::GetStringValue()
 {
+	STACK
 	switch(datatype)
 	{
 		case EDataType::Double:
 		{
+			STACK_SECTION("Double")
 			HisDevValue<double>* value = dynamic_cast<HisDevValue<double>*>(this);
 			//std::ostringstream s;
 			char strdouble[100];
@@ -302,6 +332,7 @@ std::string HisDevValueBase::GetStringValue()
 		}
 		case EDataType::Bool:
 		{
+			STACK_SECTION("Bool")
 			HisDevValue<bool>* value = dynamic_cast<HisDevValue<bool>*>(this);
 			std::ostringstream s;
 			s << value->GetValue();
@@ -309,6 +340,7 @@ std::string HisDevValueBase::GetStringValue()
 		}
 		case EDataType::Int:
 		{
+			STACK_SECTION("Int")
 			HisDevValue<int>* value = dynamic_cast<HisDevValue<int>*>(this);
 			std::ostringstream s;
 			s << value->GetValue();
@@ -316,11 +348,13 @@ std::string HisDevValueBase::GetStringValue()
 		}
 		case EDataType::String:
 		{
+			STACK_SECTION("String")
 			HisDevValue<string>* value = dynamic_cast<HisDevValue<string>*>(this);
 			return value->GetValue();
 		}
 		case EDataType::Uint:
 		{
+			STACK_SECTION("Uint")
 			HisDevValue<uint32_t>* value = dynamic_cast<HisDevValue<uint32_t>*>(this);
 			std::ostringstream s;
 			s << value->GetValue();

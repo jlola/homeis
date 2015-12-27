@@ -101,15 +101,15 @@ public:
 
   /** Get a specific device.
 
-	Devices are searched in the internal lists of all segments only.
-	No bus actions are performed.
+  	Devices are searched in the internal lists of all segments only.
+  	No bus actions are performed.
 
-	<B>Note:</B>:The device type to look for is selected by the template parameter.
+  	<B>Note:</B>:The device type to look for is selected by the template parameter.
 
-	@param  inDevID  ID of the device to get.
-	@return Requested device.
- */
-  template<class devType> bool ContainsDevice( const LOW_deviceID inDevID) const;
+  	@param  inDevID  ID of the device to get.
+  	@return Requested device.
+   */
+    template<class devType> bool ContainsDevice( const LOW_deviceID inDevID) const;
   
   /** Get a specific device.
 
@@ -217,9 +217,9 @@ template<class devType> devType* LOW_network::getDevice( const LOW_deviceID inDe
     try {
       return segmentsList[segI]->getDevice<devType>( inDevID);
     }
-    catch( LOW_device::noDevice_error & ex) {} // for now ignore exception
+    catch( LOW_netSegment::noDevice_error & ex) {} // for now ignore exception
   }
-  throw LOW_device::noDevice_error( "Device not found on whole network", __FILE__, __LINE__);
+  throw LOW_netSegment::noDevice_error( "Device not found on whole network", __FILE__, __LINE__);
 }
   
 template<class devType> bool LOW_network::ContainsDevice( const LOW_deviceID inDevID) const
@@ -236,9 +236,8 @@ template<class devType> bool LOW_network::ContainsDevice( const LOW_deviceID inD
     return false;
 
 }
-
-template<class devType>
-std::vector<devType*> LOW_network::getDevices() const
+  
+template<class devType> std::vector<devType*> LOW_network::getDevices() const
 {
   __LOW_SYNCHRONIZE_METHOD_READ__
 

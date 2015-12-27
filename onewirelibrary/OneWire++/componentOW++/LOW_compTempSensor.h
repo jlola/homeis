@@ -56,7 +56,6 @@ public:
   //
   // methods
   //
-  double GetDouble(uint16_t pValue);
   
   float getTemperature( const bool inDoConversion = true);
 

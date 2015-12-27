@@ -144,11 +144,12 @@
 			$.mobile.pageContainer.pagecontainer("change","folderdetail.html",{changeHash:false,reload:true});
 		};
 		self.Mapping = function(pdata)
-		{
+		{						
 			ko.mapping.fromJS(pdata, {}, self.data);
+			delete (self.data.__ko_mapping__);
 		};
 		self.Load = function(pid,feedback) {					
-			this.socket.read("folder",pid,function(response){			
+			self.socket.read("folder",pid,function(response){			
 				if (response.success)
 				{							
 					self.Mapping(response.message[0]);

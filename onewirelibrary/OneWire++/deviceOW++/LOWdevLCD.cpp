@@ -14,6 +14,8 @@
 #include "LOW_link.h"
 #include "LOWdevLCD.h"
 #include <unistd.h>
+#include "PoppyDebugTools.h"
+#include "logger.h"
 
 const std::string LOW_devLCD::familyName = "LCD";
 
@@ -67,19 +69,55 @@ LOW_devLCD::LOW_devLCD( LOW_netSegment &inSegment, const LOW_deviceID &inDevID) 
 
 void LOW_devLCD::LCDOn()
 {
+	STACK
+	cmd_MatchROM();
+	getLink().writeData((uint8_t)LcdOff_COMMAND);
+	sleep(1);
 	cmd_MatchROM();
 	getLink().writeData((uint8_t)LcdOn_COMMAND);
-	usleep(35000);
+	sleep(1);
+}
+
+void LOW_devLCD::LightOn(bool enable)
+{
+	STACK
+	cmd_MatchROM();
+	if (enable)
+		getLink().writeData((uint8_t)LightOn_COMMAND);
+	else
+		getLink().writeData((uint8_t)LightOff_COMMAND);
+}
+
+bool LOW_devLCD::IsConnected()
+{
+	STACK
+	byteVec_t readData1(3);
+	cmd_MatchROM();
+	getLink().writeData(static_cast<uint8_t>(ReadScratchpad_COMMAND));
+	getLink().readData(readData1, LOW_link::pullUp_NONE);
+	STACK_SECTION("for(size_t i=0;i<readData1.size()-1;i++)")
+	for(size_t i=0;i<readData1.size()-1;i++)
+	{
+		if (readData1[i]==0xFF)
+		{
+			STACK_SECTION("CLogger::Error")
+			CLogger::Error("Readed data from scratchpad are 0xFF");
+			STACK_SECTION("getLink().resetLinkAdapter();")
+			getLink().resetLinkAdapter();
+			return false;
+		}
+	}
+	return true;
 }
 
 bool LOW_devLCD::WriteToLCD(const char* text, uint8_t rowAddress)
 {
-	linkLock  lock( *this);
-
+	STACK
 	try
 	{
+		//CLogger::Info("Start write to LCD");
 		int length = strlen(text);
-		if (length>16) length = 15;
+		if (length>16) length = 16;
 		byteVec_t outData;
 
 		outData.push_back(static_cast<uint8_t>(WriteScratchpad_COMMAND));
@@ -89,28 +127,12 @@ bool LOW_devLCD::WriteToLCD(const char* text, uint8_t rowAddress)
 			outData.push_back(text[i]);
 		}
 		cmd_MatchROM();
-
-		getLink().writeData(outData);
-
-		byteVec_t readData(outData.size());
-		cmd_MatchROM();
-
-		getLink().writeData(static_cast<uint8_t>(ReadScratchpad_COMMAND));
-		getLink().readData(readData);
-
-
-		for(size_t i=0;i<readData.size()-1;i++)
-		{
-			if (readData[i]!=outData[i+1])
-				throw LOW_exception( "Response not equal to sent byte", __FILE__, __LINE__);
-		}
+		getLink().writeData(outData, LOW_link::pullUp_NONE);
 
 		cmd_MatchROM();
-		getLink().writeData(static_cast<uint8_t>(CopyScratchpadToLCD_COMMAND));
-		usleep(10000);
-		if ( getLink().resetBus() == false )
-				throw noDevice_error( "Reset indicated no devices", __FILE__, __LINE__);
+		getLink().writeData(static_cast<uint8_t>(CopyScratchpadToLCD_COMMAND),LOW_link::pullUp_NONE);
 
+		//CLogger::Info("Stop write to LCD");
 		return true;
 	}
 	catch(LOW_exception & ex)

@@ -27,7 +27,12 @@ class HisDevLCD: public HisDevDallas {
 	LOW_devLCD* dev;
 	HisDevValue<bool>* lightEnabled;
 	bool firstrefresh;
-	bool needRefresh;
+	bool refreshRow1;
+	bool refreshRow2;
+	bool refreshRow3;
+	bool refreshRow4;
+	bool refreshLihtEnabled;
+	bool error;
 
 
 	HisDevValue<int>* rowaddr1;

@@ -20,6 +20,7 @@
 #include "EHisDevDirection.h"
 #include "ValueEventArgs.h"
 #include "Common/HisBase.h"
+#include "PoppyDebugTools.h"
 
 #define NODE_VALUE BAD_CAST "value"
 #define PAR_PINNO BAD_CAST "pinno"
@@ -29,6 +30,7 @@
 #define PAR_DEV_ADDR BAD_CAST "devaddr"
 #define PAR_DIRECTION BAD_CAST "direction"
 #define PAR_UNIT BAD_CAST "unit"
+#define PAR_ADDRESSNAME BAD_CAST "addressname"
 
 #ifdef SRUTIL_DELEGATE_PREFERRED_SYNTAX
 typedef srutil::delegate<void (ValueChangedEventArgs)> OnEditDelegate;
@@ -46,6 +48,7 @@ typedef srutil::delegate<void (ValueChangedEventArgs)> OnEditDelegate;
 
 class HisDevValueBase : public HisBase
 {
+	string addressName;
 	uint16_t pinNumber;
 	EHisDevDirection direction;
 	EDataType datatype;
@@ -83,6 +86,10 @@ public:
 
 	uint16_t GetPinNumber();
 
+	std::string GetAddressName();
+
+	void SetAddressName(string pAddressName);
+
 	string GetUnit();
 
 	void SetUnit(string pUnit);
@@ -93,7 +100,7 @@ public:
 
 	std::string GetStringValue();
 
-	bool ForceStringValue(string strvalue);
+	bool ForceStringValue(string strvalue, bool checkChange);
 
 	void SetPinName(std::string pname);
 
@@ -110,7 +117,16 @@ template<class T>
 class HisDevValue : public HisDevValueBase
 {
 private:
+	/*actual value
+	 * if !allowforceValue - reprezents hw value
+	 *  else - reprezents internal value and can be set by user
+	 * */
 	T value;
+	/*
+	 * all time reprezents hw value
+	 * */
+	T extvalue;
+
 	T oldValue;
 public:
 	HisDevValue(std::string addr, EHisDevDirection direct, EDataType pdatatype,int pPinNumber,T defaultValue) :
@@ -133,43 +149,42 @@ public:
 		return value;
 	}
 
+	T GetExtValue()
+	{
+		return extvalue;
+	}
+
 
 
 	/*
-	 * set value from application to this object and should be written to device
+	 * set value from application to this object
+	 * and should be written to device if is not allowForceOutput set
+	 * else is value only saved
 	 */
-
 	void SetValue(T pValue)
 	{
-
-		if (allowForceOutput)
-		{
-			CLogger::Info("allowForce is enabled. New value will be ignored");
-			return;
-		}
+		STACK
 		if (value!=pValue)
 		{
 			oldValue = value;
 			value = pValue;
-			if (GetDirection()==EHisDevDirection::Write || GetDirection()==EHisDevDirection::ReadWrite)
+
+			if (!allowForceOutput && (GetDirection()==EHisDevDirection::Write || GetDirection()==EHisDevDirection::ReadWrite))
 			{
+				extvalue = pValue;
 				ValueChangedEventArgs args(this);
 				if (delegateWrite) delegateWrite(args);
-			}
-			else
-			{
-				CLogger::Error("Try to write to not writable tag");
 			}
 		}
 	}
 
 	/*
-	 * working only if allowForceOutput = true
 	 * forcing output and new value will not be historized
 	 */
 	void ForceValue(T pValue)
 	{
-		if (allowForceOutput)
+		STACK
+		//if (allowForceOutput)
 		{
 			value = pValue;
 			if (GetDirection()==EHisDevDirection::Write || GetDirection()==EHisDevDirection::ReadWrite)
@@ -177,25 +192,11 @@ public:
 				ValueChangedEventArgs args(this);
 				if (delegateWrite) delegateWrite(args);
 			}
-			else if (GetDirection()==EHisDevDirection::Read)
-			{
-				SetValueFromDevice(value,false);
-			}
 			else
 			{
-				CLogger::Error("Try to write to not writable tag");
+				//CLogger::Error("Try to write to not writable tag");
 			}
 		}
-	}
-
-	/*
-	 * reads from this object value and write it to device
-	 * this is called by device
-	 */
-
-	T GetValueFromDevice()
-	{
-		return value;
 	}
 
 	/*
@@ -203,21 +204,17 @@ public:
 	 * if is value changed there is fired event
 	 */
 
-	void SetValueFromDevice(T pvalue, bool perror)
+	void ReadedValueFromDevice(T pvalue, bool perror)
 	{
+		STACK
 		deviceError = perror;
-		if (allowForceOutput) return;
-		if (!perror)
-			value = pvalue;
-		if (perror && !deviceError)
+
+		if (!perror )
 		{
-			std::string msg = "Error on dev " + devaddr + "Pin: " + this->GetName();
-			CLogger::Error(msg.c_str());
-		}
-		else if (value!=pvalue)
-		{
-			ValueChangedEventArgs args(this);
-			FireOnValueChanged(args);
+			if (allowForceOutput)
+				extvalue = pvalue;
+			else
+				value = pvalue;
 		}
 	}
 };

@@ -281,7 +281,7 @@ public:
       Note that when imlementing such a method, special care
       about thread-safety must be taken.
    */
-  static void* threadRunner( void*);
+  static void* threadRunner( void*);  
 };
 
 #endif

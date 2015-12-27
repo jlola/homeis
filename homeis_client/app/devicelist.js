@@ -344,7 +344,10 @@ App.ViewModels.DeviceModel = function (psocket,data) {
 			}
 		};
 		
-		if (pdata!=null) ko.mapping.fromJS(pdata, mappingOptions, self.data);
+		if (pdata!=null) 
+			if (self.data==null) self.data =  ko.mapping.fromJS(pdata,mappingOptions);
+			else ko.mapping.fromJS(pdata, mappingOptions, self.data);
+			//ko.mapping.fromJS(pdata, mappingOptions, self.data);
 		
 		$('ul[data-role="listview"]').listview().listview('refresh');								
 		$('div[data-role="collapsibleset"]').collapsibleset('refresh');								

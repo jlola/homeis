@@ -6,6 +6,7 @@
  */
 
 #include "HisDevBase.h"
+#include "PoppyDebugTools.h"
 #include "HisDevVirtual.h"
 
 
@@ -25,6 +26,7 @@ const xmlChar* HisDevVirtual::GetNodeNameInternal()
 
 void HisDevVirtual::WriteToDevice(ValueChangedEventArgs args)
 {
+	STACK
 	vector<HisDevValueBase*> values = GetItems<HisDevValueBase>();
 	for(size_t i=0;i<values.size();i++)
 	{
@@ -34,6 +36,7 @@ void HisDevVirtual::WriteToDevice(ValueChangedEventArgs args)
 
 HisDevValueBase* HisDevVirtual::CreateHisDevValue(string address,EHisDevDirection direction,EDataType ptype,int pinNo)
 {
+	STACK
 	HisDevValueBase* result = NULL;
 	switch(ptype)
 	{
@@ -60,6 +63,7 @@ HisDevValueBase* HisDevVirtual::CreateHisDevValue(string address,EHisDevDirectio
 
 HisDevValueBase* HisDevVirtual::AddDevValue(EDataType ptype)
 {
+	STACK
 	std::string strid = this->GetRecordId().ToString();
 	vector<HisDevValueBase*> values = GetItems<HisDevValueBase>();
 	WriteToDeviceRequestDelegate delegate = WriteToDeviceRequestDelegate::from_method<HisDevVirtual, &HisDevVirtual::WriteToDevice>(this);
@@ -72,6 +76,7 @@ HisDevValueBase* HisDevVirtual::AddDevValue(EDataType ptype)
 
 void HisDevVirtual::DeleteDevValue(CUUID devValueId)
 {
+	STACK
 	HisBase* hisbase = Remove(devValueId);
 	HisDevValueBase* devValue = dynamic_cast<HisDevValueBase*>(hisbase);
 	if (devValue!=NULL)
@@ -82,6 +87,8 @@ void HisDevVirtual::DeleteDevValue(CUUID devValueId)
 
 void HisDevVirtual::DoInternalSave(xmlNodePtr & node)
 {
+	STACK
+
 	HisDevBase::DoInternalSave(node);
 
 	xmlSetProp(node, INTERNAL, BAD_CAST "1");
@@ -89,6 +96,7 @@ void HisDevVirtual::DoInternalSave(xmlNodePtr & node)
 
 void HisDevVirtual::DoInternalLoad(xmlNodePtr & node)
 {
+	STACK
 	HisDevBase::DoInternalLoad(node);
 
 	WriteToDeviceRequestDelegate delegate = WriteToDeviceRequestDelegate::from_method<HisDevVirtual, &HisDevVirtual::WriteToDevice>(this);
@@ -103,6 +111,7 @@ void HisDevVirtual::DoInternalLoad(xmlNodePtr & node)
 
 bool HisDevVirtual::IsInternal(xmlNodePtr pnode)
 {
+	STACK
 	if (xmlHasProp(pnode,INTERNAL))
 	{
 		return true;

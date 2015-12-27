@@ -108,11 +108,11 @@ void HisDevIO2413::DoInternalRefresh()
 	bool latchA = (status & LOW_devDS2413::PIOAOutLatchStateBit) != 0;
 	bool latchB = (status & LOW_devDS2413::PIOBOutLatchStateBit) != 0;
 
-	valueAInput->SetValueFromDevice(ioatemp,devError);
-	valueBInput->SetValueFromDevice(iobtemp,devError);
+	valueAInput->ReadedValueFromDevice(ioatemp,devError);
+	valueBInput->ReadedValueFromDevice(iobtemp,devError);
 
-	valueAOutput->SetValueFromDevice(latchA,devError);
-	valueBOutput->SetValueFromDevice(latchB,devError);
+	valueAOutput->ReadedValueFromDevice(latchA,devError);
+	valueBOutput->ReadedValueFromDevice(latchB,devError);
 
 	DevError = devError;
 }

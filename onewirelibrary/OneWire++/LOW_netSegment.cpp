@@ -17,7 +17,7 @@
 
 #include "LOW_netSegment.h"
 #include "LOW_deviceFactory.h"
-#include "logger.h"
+
 
 
 //=====================================================================================
@@ -41,13 +41,7 @@ LOW_netSegment::LOW_netSegment( LOW_link &inLink) :
 
   hasExternalPower = link.getHasExternalPower();
 
-  try
-  {
-	  //searchDevices<LOW_device>();  //find all devices on bus
-  }
-  catch(...)
-  {
-  }
+  searchDevices<LOW_device>();  //find all devices on bus
 }
 
 
@@ -133,7 +127,7 @@ bool LOW_netSegment::verifyDevice( const LOW_deviceID inDevID, const bool inOnly
         LOW_device *theDev = getDevice<LOW_device>( inDevID);
         revitalizeDevice( theDev);
       }
-      catch ( LOW_exception & ex) {
+      catch ( LOW_exception ex) {
         return false;
       }
     }
@@ -178,8 +172,8 @@ void LOW_netSegment::cmd_MatchROM( const LOW_device *inDevice) const
   
   byteVec_t id = inDevice->getID().getRomIDVec();  
   outVec.insert( outVec.end(), id.begin(), id.end());
-
-  link.writeData( outVec,LOW_link::pullUp_262);
+    
+  link.writeData( outVec );
 }
 
 
@@ -284,33 +278,24 @@ LOW_device* LOW_netSegment::addDevice( const LOW_deviceID inDevID)
 {
   __LOW_SYNCHRONIZE_METHOD_WRITE_WEAK__
 
-  try
-  {
-
-	  // look in alive map, if present simply return device
-	  LOW_device::deviceMap_t::iterator foundAlive = aliveDevMap.find( inDevID);
-	  if ( foundAlive != aliveDevMap.end() ) {
-		return foundAlive->second;
-	  }
-
-	  // look in graveyard, if present revitalize it and return it
-	  LOW_device::deviceMap_t::iterator foundGraveyard = graveyardMap.find( inDevID);
-	  if ( foundGraveyard != graveyardMap.end() ) {
-		LOW_device *theDev = foundGraveyard->second;
-		revitalizeDevice( theDev);
-		return theDev;
-	  }
-
-	  // now it must be really new, so create it, add it to alive map and return it
-	  LOW_device* newDev = LOW_deviceFactory::new_SpecificDevice( *this, inDevID);
-	  aliveDevMap[inDevID] = newDev;
-	  return newDev;
+  // look in alive map, if present simply return device
+  LOW_device::deviceMap_t::iterator foundAlive = aliveDevMap.find( inDevID);
+  if ( foundAlive != aliveDevMap.end() ) {
+    return foundAlive->second;
   }
-  catch( LOW_exception &ex) {
-	ex.logException();
-	return NULL;
+    
+  // look in graveyard, if present revitalize it and return it
+  LOW_device::deviceMap_t::iterator foundGraveyard = graveyardMap.find( inDevID);
+  if ( foundGraveyard != graveyardMap.end() ) {
+    LOW_device *theDev = foundGraveyard->second;
+    revitalizeDevice( theDev);
+    return theDev;
   }
 
+  // now it must be really new, so create it, add it to alive map and return it
+  LOW_device* newDev = LOW_deviceFactory::new_SpecificDevice( *this, inDevID);
+  aliveDevMap[inDevID] = newDev;
+  return newDev;
 }
 
 

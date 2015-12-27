@@ -150,8 +150,8 @@ void HisDevIO2406::DoInternalRefresh()
 	bool iobtemp = chanInfo.sensedLevel_pioB;
 
 
-	valueAInput->SetValueFromDevice(ioatemp,devError);
-	valueBInput->SetValueFromDevice(iobtemp,devError);
+	valueAInput->ReadedValueFromDevice(ioatemp,devError);
+	valueBInput->ReadedValueFromDevice(iobtemp,devError);
 
 	//valueAOutput->SetValueFromDevice(latchA,devError);
 	//valueBOutput->SetValueFromDevice(latchB,devError);

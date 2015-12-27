@@ -69,7 +69,7 @@
 						
 		</script>	
 	
-		<div data-bind="visible:isLogged && !selectMode">
+		<div data-bind="visible:isLogged && !selectMode()">
 			<input type="button" href="#" data-bind="click:newDeviceClick" data-inline="true" value="Nový datový bod" />
 		</div>
 		<div data-role="collapsibleset" id="deviceListid" data-bind="foreach: Devices" data-filter="true" >											

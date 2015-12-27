@@ -17,6 +17,7 @@
 
  
 #include "LOW_linkDS2480B.h"
+#include "PoppyDebugTools.h"
 
 
 LOW_linkDS2480B::LOW_linkDS2480B( const LOW_portSerialFactory::portSpecifier_t &inSerPortSpec, const RXPOL_val_t inRXPOL,
@@ -130,6 +131,7 @@ byteVec_t LOW_linkDS2480B::touchBlock( const byteVec_t &inBytes, const strongPul
   
 void LOW_linkDS2480B::resetLinkAdapter()
 {
+	STACK
   commLock lock( *this);
   
   internalMode = command_mode;

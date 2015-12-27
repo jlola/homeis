@@ -71,7 +71,7 @@
 			{				
 				 self.interval = setInterval(function(){
 					 App.Instance.GetFolders().Reload();
-				 },1000);	
+				 },200);	
 			}
 			else
 			{

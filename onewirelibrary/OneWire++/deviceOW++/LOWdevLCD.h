@@ -35,6 +35,7 @@ class LOW_devLCD :  public LOW_device
 	static const std::string familyName;
 public:
 
+	bool IsConnected();
 	/** Exception base class for all exceptions thrown by LOW_devDS1820. */
 	class_DERIVE_FROM_EXCEPTION( devLCD_error, LOW_exception);
 
@@ -55,6 +56,8 @@ public:
 	void LCDOn();
 	bool WriteToLCD(const char* text, uint8_t address);
 
+	void LightOn(bool enable);
+
 	void cmd_WriteScratchpad( const uint8_t inTL, const uint8_t inTH) const;
 
 	/** Get the device's family code.
@@ -65,7 +68,10 @@ public:
 
 	//=======================================================================================
 	private:
-
+		byteVec_t oldDataRow1;
+		byteVec_t oldDataRow2;
+		byteVec_t oldDataRow3;
+		byteVec_t oldDataRow4;
 	//=====================================================================================
 	//
 	// static initializer
@@ -80,6 +86,7 @@ public:
 	  @see initHelper
 	*/
 	static int initialize();
+
 };
 
 #endif /* ONEWIRELIBRARY_ONEWIRE___DEVICEOW___LOWDEVLCD_H_ */

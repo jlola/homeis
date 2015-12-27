@@ -36,24 +36,7 @@ LOW_compTempSensor::~LOW_compTempSensor()
 {
 }
 
-double LOW_compTempSensor::GetDouble(uint16_t pValue)
-{
-	uint8_t signedflag = pValue >> 12;
 
-	if (signedflag)
-		pValue = 0xFFFF - pValue + 1;
-
-	double result = pValue >>4;
-
-	if (pValue & 0x08) result += 0.5;
-	if (pValue & 0x04) result += 0.25;
-	if (pValue & 0x02) result += 0.125;
-	if (pValue & 0x01) result += 0.0625;
-
-	if (signedflag) result = result*-1;
-
-	return result;
-}
 
 //=====================================================================================
 //
@@ -75,12 +58,11 @@ float LOW_compTempSensor::getTemperature( const bool inDoConversion)
   if ( scratchpad.tempLSB==0xaa && scratchpad.tempMSB==0x00 )
     throw data_error( "Illeagal data in scratchpad", __FILE__, __LINE__);
 
-  //int16_t halfDegBit = scratchpad.tempLSB & 0x01;
-  int16_t intPart    = (scratchpad.tempMSB<<8) | scratchpad.tempLSB;//(scratchpad.tempMSB==0x00?0x00:0x80) | (scratchpad.tempLSB>>1);
-  //float   floatPart  = -0.25 + (static_cast<float>(scratchpad.cntPerCelsius-scratchpad.cntRemain))/(static_cast<float>(scratchpad.cntPerCelsius));
-
-  //return (static_cast<float>(intPart))+floatPart;
-  return GetDouble(intPart);
+  int16_t halfDegBit = scratchpad.tempLSB & 0x01;
+  int16_t intPart    = (scratchpad.tempMSB<<8) | (scratchpad.tempMSB==0x00?0x00:0x80) | (scratchpad.tempLSB>>1);
+  float   floatPart  = -0.25 + (static_cast<float>(scratchpad.cntPerCelsius-scratchpad.cntRemain))/(static_cast<float>(scratchpad.cntPerCelsius));
+    
+  return (static_cast<float>(intPart))+floatPart;
 }
 
 

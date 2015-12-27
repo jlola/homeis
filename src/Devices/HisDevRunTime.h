@@ -10,11 +10,11 @@
 
 #include <pthread.h>
 #include "HisDevices.h"
-#include <queue>          // std::queue
+
 
 class HisDevRuntime
 {
-	std::queue<HisDevBase*> queue;
+
 	HisDevices & devices;
 	pthread_t thread;
 	bool running;

@@ -61,19 +61,12 @@ LOW_device* LOW_devDS1820::new_Instance( LOW_netSegment &inNetSegment, const LOW
 LOW_devDS1820::LOW_devDS1820( LOW_netSegment &inSegment, const LOW_deviceID &inDevID) : 
   LOW_device( inSegment, inDevID, familyCode)
 {
-	try
-	{
-	  if ( inSegment.getHasExternalPower() )
-		isExternalPowered = cmd_ReadPowerSupply();
-	  else
-		isExternalPowered = false;
+  if ( inSegment.getHasExternalPower() )
+    isExternalPowered = cmd_ReadPowerSupply();
+  else
+    isExternalPowered = false;
 
-	  cmd_RecallE2();
-	}
-	catch(...)
-	{
-
-	}
+  cmd_RecallE2();
 }
 
 
@@ -104,7 +97,6 @@ void LOW_devDS1820::cmd_ConvertT() const
     
     // poll bits to detect conversion has finished
     while ( getLink().readDataBit() == false );
-
   }
   else {
     // pull up
@@ -120,7 +112,7 @@ void LOW_devDS1820::cmd_ReadScratchpad( scratchpadDS1820_t *outScratchpad) const
   cmd_MatchROM();  
   getLink().writeData( ReadScratchpad_COMMAND);
   
-  byteVec_t scratchpad = byteVec_t( sizeof(scratchpadDS1820_t));
+  byteVec_t scratchpad = byteVec_t( sizeof( scratchpadDS1820_t));
   getLink().readData( scratchpad);
   if ( LOW_helper_CRC::calcCRC8( scratchpad) != 0x00 )
     throw LOW_helper_CRC::crc_error( "CRC error in read scratchpad", __FILE__, __LINE__);

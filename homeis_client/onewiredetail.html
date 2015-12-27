@@ -3,7 +3,7 @@
 	<div data-role="content" data-inset="true">
 		<script type="text/html" id="valueBooleanTemplate">
 			<label for="divalueselect">Hodnota:</label>
-            <select id="divalueselect" data-bind="sliderEnable:data.force, jqmFlip:data.value"  data-role="slider">
+            <select id="divalueselect" data-bind="sliderEnable:ValueEnabled, jqmFlip:data.value"  data-role="slider">
 					<option value="0">Vypnuto</option>
 					<option value="1">Zapnuto</option>
 			</select>			
@@ -11,6 +11,19 @@
 		
 		<script type="text/html" id="valueTemplateText">
 			<label for="editvalue" style='float: left'>Hodnota:</label>
+			<input name="editvalue" style='float: left' id="editvalue" data-bind="value: data.value, inputEnable: ValueEnabled" type="text">
+		</script>
+		
+		<script type="text/html" id="hwvalueBooleanTemplate">
+			<label for="divalueselect">HW hodnota:</label>
+            <select id="divalueselect" data-bind="sliderEnable:data.force, jqmFlip:data.value"  data-role="slider">
+					<option value="0">Vypnuto</option>
+					<option value="1">Zapnuto</option>
+			</select>			
+        </script>
+		
+		<script type="text/html" id="hwvalueTemplateText">
+			<label for="editvalue" style='float: left'>HW hodnota:</label>
 			<input name="editvalue" style='float: left' id="editvalue" data-bind="value: data.value, inputEnable: ValueEnabled" disabled="false" type="text">
 		</script>
 		
@@ -36,12 +49,15 @@
 					<input style='float: left' id="internal" type="checkbox" data-bind="checkbox: data.internal" disabled="false" name="internal">					
 				</fieldset>
 			
-			<div data-role="fieldcontain" id="divalue" data-bind="template: { name: valueTemplate, afterRender: myPostProcessingLogic }">				
+			<div data-role="fieldcontain" id="divalue" data-bind="template: { name: valueTemplate, afterRender: myPostProcessingLogic }">
 				<!-- <input name="val" id="val" data-bind="value: formatedValue, inputEnable: ValueEnabled" disabled="false" placeholder="" value=""> -->				
 			</div>
+			<div data-role="fieldcontain" id="divhwalue" data-bind="visible:isHwValueVisible(),template: { name: hwvalueTemplate, afterRender: myPostProcessingLogic }">
+			</div>
+			
 			<div data-role="fieldcontain">
 				<label for="unit">Jednotka:</label>
-				<input name="unit" id="unit" data-bind="value: data.type">
+				<input name="unit" id="unit" data-bind="value: data.unit">
 			</div>
 			
 			<div data-role="fieldcontain">
@@ -61,17 +77,16 @@
 						SelectEnable: IsNew() && SaveEnabled() && data.internal()">
 				</select>
 			</div>
-			<form data-bind="visible:isForceVisible" >
-				
+			<form data-bind="visible:isForceVisible" >				
 					<fieldset data-role="controlgroup">
 						<legend>Simulační režim:</legend>
 						<input type="checkbox" data-bind="click: forceChanged, checkbox: data.force" name="allowForceOutput" id="allowForceOutput">
 						<label for="allowForceOutput">Povolit sumlační režim</label>
 					</fieldset>
 				
-				<!-- <div data-role="fieldcontain" data-bind="visible:force">					
+				<!-- <div data-role="fieldcontain" data-bind="visible:data.force">					
 					<label for="setOutput">Nastavit:</label>
-					<select name="setOutput" id="setOutput" data-bind="slider:setOutputState,value:setOutputState" data-role="slider">
+					<select name="setOutput" id="setOutput" data-bind="slider:data.setOutputState,value:data.setOutputState" data-role="slider">
 						<option value="0">Vypnuto</option>
 						<option value="1">Zapnuto</option>
 					</select>

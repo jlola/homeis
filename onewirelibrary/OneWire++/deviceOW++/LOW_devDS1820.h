@@ -33,8 +33,8 @@
     - Multidrop capability simplifies distributed temperature sensing applications
     - Requires no external components
     - Can be powered from data line. Power supply range is 3.0V to 5.5V
-    - Measures temperatures from  55ï¿½C to +125ï¿½C ( 67ï¿½F to +257ï¿½F)
-    - 0.5 C accuracy from  10ï¿½C to +85ï¿½C
+    - Measures temperatures from  55°C to +125°C ( 67°F to +257°F)
+    - 0.5 C accuracy from  10°C to +85°C
     - 9-bit thermometer resolution
     - Converts temperature in 750ms (max.)
     - User-definable nonvolatile (NV) alarm settings
@@ -90,7 +90,7 @@ public:
   typedef std::vector<LOW_devDS1820*> devDS1820PtrVec_t;  /**< Vector type of class device pointers. */
 
   /** DS1820 internal scratchpad as defined by Dallas. */
-  typedef struct  {
+  typedef struct scratchpadDS1820_t {
     uint8_t  tempLSB;
     uint8_t  tempMSB; 
     uint8_t  tH;

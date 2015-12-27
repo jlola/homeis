@@ -100,7 +100,7 @@ public:
   virtual unsigned int bulkRead( const usbEndpoint_t inEP, 
                                  byteVec_t &outData, const usbTimeout_t inTimeout);
                              
-  void reset();
+
                              
 //=======================================================================================
 protected:

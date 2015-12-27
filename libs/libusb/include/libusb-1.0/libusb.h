@@ -54,7 +54,7 @@ typedef unsigned __int32  uint32_t;
 #include <sys/types.h>
 #endif
 
-#if defined(__linux) || defined(__APPLE__) || defined(__CYGWIN__)
+#if defined(__linux) || defined(__APPLE__) || defined(__CYGWIN__) || defined(__HAIKU__)
 #include <sys/time.h>
 #endif
 
@@ -90,7 +90,7 @@ typedef unsigned __int32  uint32_t;
  * Under Windows, the selection of available compilers and configurations
  * means that, unlike other platforms, there is not <em>one true calling
  * convention</em> (calling convention: the manner in which parameters are
- * passed to funcions in the generated assembly code).
+ * passed to functions in the generated assembly code).
  *
  * Matching the Windows API itself, libusb uses the WINAPI convention (which
  * translates to the <tt>stdcall</tt> convention) and guarantees that the
@@ -138,13 +138,10 @@ typedef unsigned __int32  uint32_t;
  * #endif
  * \endcode
  *
- * Another feature of LIBUSB_API_VERSION is that it can be used to detect
- * whether you are compiling against the libusb or the libusb library.
- *
  * Internally, LIBUSB_API_VERSION is defined as follows:
  * (libusb major << 24) | (libusb minor << 16) | (16 bit incremental)
  */
-#define LIBUSB_API_VERSION 0x01000102
+#define LIBUSB_API_VERSION 0x01000104
 
 /* The following is kept for compatibility, but will be deprecated in the future */
 #define LIBUSBX_API_VERSION LIBUSB_API_VERSION
@@ -343,7 +340,10 @@ enum libusb_transfer_type {
 	LIBUSB_TRANSFER_TYPE_BULK = 2,
 
 	/** Interrupt endpoint */
-	LIBUSB_TRANSFER_TYPE_INTERRUPT = 3
+	LIBUSB_TRANSFER_TYPE_INTERRUPT = 3,
+
+	/** Stream endpoint */
+	LIBUSB_TRANSFER_TYPE_BULK_STREAM = 4,
 };
 
 /** \ingroup misc
@@ -665,8 +665,9 @@ struct libusb_config_descriptor {
 	uint8_t  bmAttributes;
 
 	/** Maximum power consumption of the USB device from this bus in this
-	 * configuration when the device is fully opreation. Expressed in units
-	 * of 2 mA. */
+	 * configuration when the device is fully operation. Expressed in units
+	 * of 2 mA when the device is operating in high-speed mode and in units
+	 * of 8 mA when the device is operating in super-speed mode. */
 	uint8_t  MaxPower;
 
 	/** Array of interfaces supported by this configuration. The length of
@@ -897,7 +898,6 @@ struct libusb_control_setup {
 struct libusb_context;
 struct libusb_device;
 struct libusb_device_handle;
-struct libusb_hotplug_callback;
 
 /** \ingroup lib
  * Structure providing the version of the libusb runtime
@@ -1387,6 +1387,11 @@ int LIBUSB_CALL libusb_clear_halt(libusb_device_handle *dev,
 	unsigned char endpoint);
 int LIBUSB_CALL libusb_reset_device(libusb_device_handle *dev);
 
+int LIBUSB_CALL libusb_alloc_streams(libusb_device_handle *dev,
+	uint32_t num_streams, unsigned char *endpoints, int num_endpoints);
+int LIBUSB_CALL libusb_free_streams(libusb_device_handle *dev,
+	unsigned char *endpoints, int num_endpoints);
+
 int LIBUSB_CALL libusb_kernel_driver_active(libusb_device_handle *dev,
 	int interface_number);
 int LIBUSB_CALL libusb_detach_kernel_driver(libusb_device_handle *dev,
@@ -1473,6 +1478,10 @@ struct libusb_transfer * LIBUSB_CALL libusb_alloc_transfer(int iso_packets);
 int LIBUSB_CALL libusb_submit_transfer(struct libusb_transfer *transfer);
 int LIBUSB_CALL libusb_cancel_transfer(struct libusb_transfer *transfer);
 void LIBUSB_CALL libusb_free_transfer(struct libusb_transfer *transfer);
+void LIBUSB_CALL libusb_transfer_set_stream_id(
+	struct libusb_transfer *transfer, uint32_t stream_id);
+uint32_t LIBUSB_CALL libusb_transfer_get_stream_id(
+	struct libusb_transfer *transfer);
 
 /** \ingroup asyncio
  * Helper function to populate the required \ref libusb_transfer fields
@@ -1546,6 +1555,34 @@ static inline void libusb_fill_bulk_transfer(struct libusb_transfer *transfer,
 	transfer->length = length;
 	transfer->user_data = user_data;
 	transfer->callback = callback;
+}
+
+/** \ingroup asyncio
+ * Helper function to populate the required \ref libusb_transfer fields
+ * for a bulk transfer using bulk streams.
+ *
+ * Since version 1.0.19, \ref LIBUSB_API_VERSION >= 0x01000103
+ *
+ * \param transfer the transfer to populate
+ * \param dev_handle handle of the device that will handle the transfer
+ * \param endpoint address of the endpoint where this transfer will be sent
+ * \param stream_id bulk stream id for this transfer
+ * \param buffer data buffer
+ * \param length length of data buffer
+ * \param callback callback function to be invoked on transfer completion
+ * \param user_data user data to pass to callback function
+ * \param timeout timeout for the transfer in milliseconds
+ */
+static inline void libusb_fill_bulk_stream_transfer(
+	struct libusb_transfer *transfer, libusb_device_handle *dev_handle,
+	unsigned char endpoint, uint32_t stream_id,
+	unsigned char *buffer, int length, libusb_transfer_cb_fn callback,
+	void *user_data, unsigned int timeout)
+{
+	libusb_fill_bulk_transfer(transfer, dev_handle, endpoint, buffer,
+				  length, callback, user_data, timeout);
+	transfer->type = LIBUSB_TRANSFER_TYPE_BULK_STREAM;
+	libusb_transfer_set_stream_id(transfer, stream_id);
 }
 
 /** \ingroup asyncio
@@ -1820,6 +1857,7 @@ typedef void (LIBUSB_CALL *libusb_pollfd_removed_cb)(int fd, void *user_data);
 
 const struct libusb_pollfd ** LIBUSB_CALL libusb_get_pollfds(
 	libusb_context *ctx);
+void LIBUSB_CALL libusb_free_pollfds(const struct libusb_pollfd **pollfds);
 void LIBUSB_CALL libusb_set_pollfd_notifiers(libusb_context *ctx,
 	libusb_pollfd_added_cb added_cb, libusb_pollfd_removed_cb removed_cb,
 	void *user_data);
@@ -1844,8 +1882,11 @@ typedef int libusb_hotplug_callback_handle;
  *
  * Flags for hotplug events */
 typedef enum {
+	/** Default value when not using any flags. */
+	LIBUSB_HOTPLUG_NO_FLAGS = 0,
+
 	/** Arm the callback and fire it for all matching currently attached devices. */
-	LIBUSB_HOTPLUG_ENUMERATE = 1,
+	LIBUSB_HOTPLUG_ENUMERATE = 1<<0,
 } libusb_hotplug_flag;
 
 /** \ingroup hotplug

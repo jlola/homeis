@@ -11,6 +11,7 @@
 #include "HisDevBase.h"
 #include "Common/CUUID.h"
 #include "Common/HisLock.h"
+#include <queue>          // std::queue
 
 using namespace std;
 
@@ -19,7 +20,10 @@ class HisDevices {
 	string devicesFileName;
 	LOW_network *network;
 	std::vector<HisDevBase*> devices;
-	LOW_thread_mutex  *__expressionMutex;  /**< Mutex for exclusive access. */
+	//LOW_thread_mutex  *__expressionMutex;  /**< Mutex for exclusive access. */
+	LOW_thread_mutex  *__devRefreshMutex;  /**< Mutex for exclusive access. */
+	vector<HisDevBase*> queue;
+	OnRefreshDelegate onRefreshdelegate;
 public:
 	HisDevices(string fileName,LOW_network *network);
 	int Find(CUUID RecordId);
@@ -36,6 +40,7 @@ public:
 	//void SortByNextScanTime();
 	//long GetNextDelay();
 	//long GetNextDelayTimeMS();
+	void AddToRefreshQueue(HisDevBase* hisDevBase);
 	void Save();
 	void Load();
 	void Delete(uint16_t index);

@@ -26,11 +26,6 @@
 
 const std::string LOW_device::familyName = "any";
 
-const owCommand_t LOW_device::MatchROM_COMMAND         = 0x55; /**< 1-Wire command byte constant */
-const owCommand_t  LOW_device::ReadROM_COMMAND          = 0x33; /**< 1-Wire command byte constant */
-const owCommand_t  LOW_device::SkipROM_COMMAND          = 0xcc; /**< 1-Wire command byte constant */
-const owCommand_t  LOW_device::SearchROM_COMMAND        = 0xf0; /**< 1-Wire command byte constant */
-const owCommand_t  LOW_device::SearchAlarmROM_COMMAND   = 0xec; /**< 1-Wire command byte constant */
 
 
 //=====================================================================================

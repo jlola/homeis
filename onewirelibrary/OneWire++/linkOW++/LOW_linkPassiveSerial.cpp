@@ -27,7 +27,7 @@
 
 LOW_linkPassiveSerial::LOW_linkPassiveSerial( const LOW_portSerialFactory::portSpecifier_t &inSerPortSpec,
                                               const bool inAllowProgPulse) :
-  LOW_link( false, true, inAllowProgPulse)
+  LOW_link( false, false, inAllowProgPulse)
 {
   serialPort   = LOW_portSerialFactory::new_portSerial( inSerPortSpec);
 
@@ -67,7 +67,7 @@ bool LOW_linkPassiveSerial::touchBit( const bool inSendBit, const strongPullup_t
   serialPort->tty_write( serSendByte);
 
   uint8_t tmpByte = serialPort->tty_readByte();        
-  if ( tmpByte == 0xFF )
+  if ( tmpByte & 0x01 )
     retVal = true;
   else
     retVal = false;
@@ -126,7 +126,7 @@ bool LOW_linkPassiveSerial::resetBus()
     serialPort->tty_flush();
     
     serialPort->tty_configure( LOW_portSerial::none_flowControl, LOW_portSerial::bit8_size, 
-                               LOW_portSerial::no_parity, LOW_portSerial::bit1_stopBit, LOW_portSerial::B9600_speed);
+                               LOW_portSerial::no_parity, LOW_portSerial::bit1_stopBit, LOW_portSerial::B10472_speed);
     
     // Send the reset pulse
     serialPort->tty_write( resetSendByte);
@@ -146,7 +146,7 @@ bool LOW_linkPassiveSerial::resetBus()
   catch( ... ) {
     
     try { 
-      serialPort->tty_configure( LOW_portSerial::none_flowControl, LOW_portSerial::bit8_size,
+      serialPort->tty_configure( LOW_portSerial::none_flowControl, LOW_portSerial::bit6_size, 
                                  LOW_portSerial::no_parity, LOW_portSerial::bit1_stopBit, LOW_portSerial::B115200_speed);
     }
     catch( ... ) {}
@@ -154,7 +154,7 @@ bool LOW_linkPassiveSerial::resetBus()
     throw;
   }  
   
-  serialPort->tty_configure( LOW_portSerial::none_flowControl, LOW_portSerial::bit8_size,
+  serialPort->tty_configure( LOW_portSerial::none_flowControl, LOW_portSerial::bit6_size, 
                              LOW_portSerial::no_parity, LOW_portSerial::bit1_stopBit, LOW_portSerial::B115200_speed);
 
   return devFound;
@@ -164,6 +164,7 @@ bool LOW_linkPassiveSerial::resetBus()
 void LOW_linkPassiveSerial::strongPullup( const unsigned long /*inMilliSecs*/)
 {
   commLock lock( *this);
+
   LOW_platformMisc::secSleep( strongPullupEmuTime);
 }
 
@@ -171,8 +172,8 @@ void LOW_linkPassiveSerial::strongPullup( const unsigned long /*inMilliSecs*/)
 void LOW_linkPassiveSerial::strongPullup( const strongPullup_t /*inPullupTimes*/)
 {
   commLock lock( *this);
-  //LOW_platformMisc::secSleep( strongPullupEmuTime);
-  //LOW_platformMisc::milliSleep(50);
+
+  LOW_platformMisc::secSleep( strongPullupEmuTime);
 }
 
 

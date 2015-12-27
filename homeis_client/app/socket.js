@@ -14,10 +14,12 @@
 			self.IsConnected = IsConnected;
 		}
 /////////////////Socket/////////////////////////////////////////////////////////							
-		App.Sockets.Socket = function(host) {
-			var host = "http://192.168.88.250:81";
-			//var host = "http://teplomer.juricekpavel.net:81";
-			//var host = location.host+":81";
+		App.Sockets.Socket = function(host) {					
+			var host = "http://" + location.host;
+			if (host=="http://")
+			{
+				host = host + "192.168.88.226:81";
+			}
 			var self = this;						
 			//internal storage of socket
 			self.socket = null;					

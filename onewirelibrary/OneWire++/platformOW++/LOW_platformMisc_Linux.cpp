@@ -48,11 +48,6 @@ LOW_platformMisc_Linux::~LOW_platformMisc_Linux()
 // time methods
 //
 
-//void mysleep(unsigned long nsec) {
-//    timespec delay = { nsec / 1000000000, nsec % 1000000000 };
-//    pselect(0, NULL, NULL, NULL, &delay, NULL);
-//}
-
 const void LOW_platformMisc_Linux::p_secSleep( const unsigned int inSeconds) const
 {
   p_nanoSleep( inSeconds, 0);
@@ -83,20 +78,15 @@ const void LOW_platformMisc_Linux::p_nanoSleep( const unsigned long inNanoSecond
 
 const void LOW_platformMisc_Linux::p_nanoSleep( const unsigned int inSeconds, const unsigned long inNanoSeconds) const
 {
-  struct timespec  sleepTime;//, remainTime;
+  struct timespec  sleepTime, remainTime;
   
   sleepTime.tv_sec  = inSeconds + inNanoSeconds/1000000000;
   sleepTime.tv_nsec = inNanoSeconds % 1000000000;
   
-  //mysleep(sleepTime.tv_sec);
-  pselect(0, NULL, NULL, NULL, &sleepTime, NULL);
-
-//  while( ::nanosleep( &sleepTime, &remainTime) != 0 ) {
-//    sleepTime.tv_sec  = remainTime.tv_sec + remainTime.tv_nsec/1000000000;
-//    sleepTime.tv_nsec = remainTime.tv_nsec % 1000000000;
-//  }
-  //::sleep(inSeconds);
-
+  while( ::nanosleep( &sleepTime, &remainTime) != 0 ) {
+    sleepTime.tv_sec  = remainTime.tv_sec + remainTime.tv_nsec/1000000000;
+    sleepTime.tv_nsec = remainTime.tv_nsec % 1000000000;
+  }
 }
 
 

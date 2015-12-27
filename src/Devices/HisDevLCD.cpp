@@ -22,16 +22,18 @@
 #include "HisDevBase.h"
 #include "HisDallas.h"
 #include "LOWdevLCD.h"
+#include "PoppyDebugTools.h"
 #include "HisDevLCD.h"
 
 using namespace std;
 
 HisDevLCD::HisDevLCD(xmlNodePtr node, LOW_devLCD* pdev) :
 	HisDevDallas::HisDevDallas(node, pdev),
-	dev(NULL),lightEnabled(NULL),firstrefresh(false),needRefresh(false)
+	dev(NULL),lightEnabled(NULL),firstrefresh(false),refreshRow1(false),refreshRow2(false),refreshRow3(false),refreshRow4(false),refreshLihtEnabled(false),error(false)
 	,rowaddr1(0x00),rowaddr2(0x00),rowaddr3(0x00),rowaddr4(0x00),
 	row1(0),row2(0),row3(0),row4(0),lcdOn(false)
 {
+	STACK
 	dev = pdev;
 	//set zero period becaouse LCD refresh only if needs
 	SetScanPeriod(0);
@@ -39,9 +41,10 @@ HisDevLCD::HisDevLCD(xmlNodePtr node, LOW_devLCD* pdev) :
 
 HisDevLCD::HisDevLCD(LOW_devLCD* pdev) :
 	HisDevDallas::HisDevDallas(pdev),dev(NULL),lightEnabled(NULL),
-	firstrefresh(false),needRefresh(false),lcdOn(false)
+	firstrefresh(false),refreshRow1(false),refreshRow2(false),refreshRow3(false),refreshRow4(false),refreshLihtEnabled(false),lcdOn(false)
 
 {
+	STACK
 	dev = pdev;
 	CreateDataPoints();
 	//set zero period becaouse LCD refresh only if needs
@@ -55,6 +58,7 @@ const xmlChar* HisDevLCD::GetNodeNameInternal()
 
 bool FindFunction(HisBase* hisbase,void* args)
 {
+	STACK
 	int* pint = static_cast<int*>(args);
 	HisDevValueBase* tag = dynamic_cast<HisDevValueBase*>(hisbase);
 	if (tag->GetPinNumber()==*pint)
@@ -64,6 +68,7 @@ bool FindFunction(HisBase* hisbase,void* args)
 
 HisDevValue<string>* HisDevLCD::CreateRow(string name,WriteToDeviceRequestDelegate & delegate,int pinno)
 {
+	STACK
 	std::string strid = dev->getID().getRomIDString();
 	HisDevValue<string>* row = new HisDevValue<string>(strid,EHisDevDirection::Write, EDataType::String,pinno,string(""));
 	row->delegateWrite = delegate;
@@ -73,6 +78,7 @@ HisDevValue<string>* HisDevLCD::CreateRow(string name,WriteToDeviceRequestDelega
 
 HisDevValue<int>* HisDevLCD::CreateRowAddr(string name,WriteToDeviceRequestDelegate & delegate,int pinno,int adr)
 {
+	STACK
 	std::string strid = dev->getID().getRomIDString();
 	HisDevValue<int>* rowaddr = new HisDevValue<int>(strid,EHisDevDirection::ReadWrite, EDataType::Int,pinno,adr);
 	rowaddr->delegateWrite = delegate;
@@ -82,6 +88,7 @@ HisDevValue<int>* HisDevLCD::CreateRowAddr(string name,WriteToDeviceRequestDeleg
 
 void HisDevLCD::CreateDataPoints()
 {
+	STACK
 	std::string strid = dev->getID().getRomIDString();
 
 	WriteToDeviceRequestDelegate delegate = WriteToDeviceRequestDelegate::from_method<HisDevLCD, &HisDevLCD::WriteToDevice>(this);
@@ -113,31 +120,33 @@ void HisDevLCD::CreateDataPoints()
 
 void HisDevLCD::WriteToDevice(ValueChangedEventArgs args)
 {
-	needRefresh = true;
-//	string text;
-//	switch(args.GetValue()->GetPinNumber())
-//	{
-//	case LIGHTENABLED:
-//		break;
-//	case ID_ROW1:
-//		//dev->WriteToLCD(row1->GetValue().c_str(),rowaddr1->GetValue());
-//		break;
-//	case ID_ROW2:
-//		//dev->WriteToLCD(row2->GetValue().c_str(),rowaddr2->GetValue());
-//		break;
-//	case ID_ROW3:
-//		//dev->WriteToLCD(row3->GetValue().c_str(),rowaddr3->GetValue());
-//		break;
-//	case ID_ROW4:
-//		//dev->WriteToLCD(row4->GetValue().c_str(),rowaddr4->GetValue());
-//		break;
-//		DevError = false;
-//	break;
-//	}
+	STACK
+	switch(args.GetValue()->GetPinNumber())
+	{
+	case LIGHTENABLED:
+		refreshLihtEnabled = true;
+		break;
+	case ID_ROW1:
+		refreshRow1 = true;
+		break;
+	case ID_ROW2:
+		refreshRow2 = true;
+		break;
+	case ID_ROW3:
+		refreshRow3 = true;
+		break;
+	case ID_ROW4:
+		refreshRow4 = true;
+		break;
+		DevError = false;
+	break;
+	}
+	NeedRefresh();
 }
 
 void HisDevLCD::DoInternalLoad(xmlNodePtr & node)
 {
+	STACK
 	HisDevDallas::DoInternalLoad(node);
 
 	WriteToDeviceRequestDelegate delegate = WriteToDeviceRequestDelegate::from_method<HisDevLCD, &HisDevLCD::WriteToDevice>(this);
@@ -181,46 +190,61 @@ void HisDevLCD::DoInternalLoad(xmlNodePtr & node)
 
 void HisDevLCD::DoInternalSave(xmlNodePtr & node)
 {
+	STACK
 	HisDevDallas::DoInternalSave(node);
 }
 
 void HisDevLCD::DoInternalRefresh()
 {
+	STACK
 	if (!lcdOn)
 	{
-		lcdOn = true;
 		dev->LCDOn();
 	}
-	if (needRefresh)
+
+	error = !dev->IsConnected();
+
+	if (refreshRow1)
 	{
-		needRefresh = false;
-		bool error = !dev->WriteToLCD(row1->GetValue().c_str(),rowaddr1->GetValue());
-		row1->SetValueFromDevice(row1->GetValue(),error);
-		error = !dev->WriteToLCD(row2->GetValue().c_str(),rowaddr2->GetValue());
-		row2->SetValueFromDevice(row2->GetValue(),error);
-		error = !dev->WriteToLCD(row3->GetValue().c_str(),rowaddr3->GetValue());
-		row3->SetValueFromDevice(row3->GetValue(),error);
-		error = !dev->WriteToLCD(row4->GetValue().c_str(),rowaddr4->GetValue());
-		row4->SetValueFromDevice(row4->GetValue(),error);
+		STACK_SECTION("refreshRow1")
+		refreshRow1 = false;
+		if (!error) dev->WriteToLCD(row1->GetValue().c_str(),rowaddr1->GetValue());
+		row1->ReadedValueFromDevice(row1->GetValue(),error);
+		rowaddr1->ReadedValueFromDevice(rowaddr1->GetValue(),error);
 	}
-//	else if (!firstrefresh)
-//	{
-//		firstrefresh = true;
-//
-//		lightEnabled->SetValueFromDevice(lightEnabled->GetValue(),false);
-//
-//		row1->SetValueFromDevice(row1->GetValue(),false);
-//		row2->SetValueFromDevice(row2->GetValue(),false);
-//		row3->SetValueFromDevice(row3->GetValue(),false);
-//		row4->SetValueFromDevice(row4->GetValue(),false);
-//
-//		rowaddr1->SetValueFromDevice(rowaddr1->GetValue(),false);
-//		rowaddr2->SetValueFromDevice(rowaddr2->GetValue(),false);
-//		rowaddr3->SetValueFromDevice(rowaddr3->GetValue(),false);
-//		rowaddr4->SetValueFromDevice(rowaddr4->GetValue(),false);
-//
-//		DevError = false;
-//	}
+	if (refreshRow2)
+	{
+		STACK_SECTION("refreshRow2")
+		refreshRow2 = false;
+		if (!error) dev->WriteToLCD(row2->GetValue().c_str(),rowaddr2->GetValue());
+		row2->ReadedValueFromDevice(row2->GetValue(),error);
+		rowaddr2->ReadedValueFromDevice(rowaddr2->GetValue(),error);
+	}
+	if (refreshRow3)
+	{
+		STACK_SECTION("refreshRow3")
+		refreshRow3 = false;
+		if (!error) dev->WriteToLCD(row3->GetValue().c_str(),rowaddr3->GetValue());
+		row3->ReadedValueFromDevice(row3->GetValue(),error);
+		rowaddr3->ReadedValueFromDevice(rowaddr3->GetValue(),error);
+	}
+	if (refreshRow4)
+	{
+		STACK_SECTION("refreshRow4")
+		refreshRow4 = false;
+		if (!error) dev->WriteToLCD(row4->GetValue().c_str(),rowaddr4->GetValue());
+		row4->ReadedValueFromDevice(row4->GetValue(),error);
+		rowaddr4->ReadedValueFromDevice(rowaddr4->GetValue(),error);
+	}
+	if (!error && (refreshLihtEnabled || !lcdOn))
+	{
+		STACK_SECTION("refreshLight")
+		refreshLihtEnabled = false;
+		dev->LightOn(lightEnabled->GetValue());
+		lightEnabled->ReadedValueFromDevice(lightEnabled->GetValue(),error);
+	}
+
+	lcdOn = true;
 }
 
 HisDevLCD::~HisDevLCD()

@@ -19,7 +19,7 @@
 #define LOW_PLATFORMMISC_H
 
 
-#include "OneWire++/LOW_exception.h"
+#include "LOW_exception.h"
 #include "LOW_platformMiscFactory.h"
 
 

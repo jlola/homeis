@@ -16,6 +16,7 @@
 #include "HisDevBase.h"
 #include "HisDallas.h"
 #include "HisDevValue.h"
+#include "PoppyDebugTools.h"
 #include "Common/CUUID.h"
 
 
@@ -30,6 +31,7 @@ class HisDevTemp18B20 : public HisDevDallas
 	public:	HisDevTemp18B20(LOW_devDS1820* pdev) :
 		HisDevDallas::HisDevDallas(pdev)
 	{
+		STACK
 		doConversion = true;
 		tempdev = pdev;
 		CreateDataPoints();
@@ -38,6 +40,7 @@ class HisDevTemp18B20 : public HisDevDallas
 	public:	HisDevTemp18B20(xmlNodePtr node,LOW_devDS1820* pdev) :
 			HisDevDallas::HisDevDallas(node,pdev)
 	{
+		STACK
 		tempdev = pdev;
 		doConversion = true;
 		tempValue = NULL;
@@ -45,6 +48,7 @@ class HisDevTemp18B20 : public HisDevDallas
 
 	private: void CreateDataPoints()
 	{
+		STACK
 		std::string strid = tempdev->getID().getRomIDString();
 		//create data points
 		//xmlNodePtr childNode = GetOrCreateNode(0,GetNodePtr());
@@ -67,6 +71,7 @@ class HisDevTemp18B20 : public HisDevDallas
 
 	double GetDouble(uint16_t pValue)
 	{
+		STACK
 		uint8_t signedflag = pValue >> 12;
 
 		if (signedflag)
@@ -91,6 +96,7 @@ class HisDevTemp18B20 : public HisDevDallas
 
 	double getTemperature( const bool inDoConversion)
 	{
+		STACK
 	  LOW_devDS1820::scratchpadDS1820_t  scratchpad;
 
 
@@ -103,7 +109,11 @@ class HisDevTemp18B20 : public HisDevDallas
 
 
 	  if ( scratchpad.tempLSB==0xaa && scratchpad.tempMSB==0x00 )
-	    throw data_error( "Illeagal data in scratchpad", __FILE__, __LINE__);
+	  {
+		  std::string message = "Illeagal data in scratchpad ";
+		  message += tempdev->getID().getRomIDString();
+		  throw data_error(message.c_str() , __FILE__, __LINE__);
+	  }
 
 	  //int16_t halfDegBit = scratchpad.tempLSB & 0x01;
 	  int16_t intPart    = (scratchpad.tempMSB<<8) | scratchpad.tempLSB;//(scratchpad.tempMSB==0x00?0x00:0x80) | (scratchpad.tempLSB>>1);
@@ -115,6 +125,7 @@ class HisDevTemp18B20 : public HisDevDallas
 
 	void DoInternalLoad(xmlNodePtr & node)
 	{
+		STACK
 		HisDevDallas::DoInternalLoad(node);
 		WriteToDeviceRequestDelegate delegate = WriteToDeviceRequestDelegate::from_method<HisDevTemp18B20, &HisDevTemp18B20::WriteToDevice>(this);
 
@@ -130,6 +141,7 @@ class HisDevTemp18B20 : public HisDevDallas
 
 	protected: virtual void DoInternalRefresh()
 	{
+		STACK
 		double tempvalue = 0;
 		vector<HisDevValue<double>*> values = GetItems<HisDevValue<double>>();
 		try
@@ -140,7 +152,7 @@ class HisDevTemp18B20 : public HisDevDallas
 			for (size_t i=0;i<values.size();i++)
 			{
 				HisDevValue<double>* val = dynamic_cast<HisDevValue<double>*>(values[i]);
-				val->SetValueFromDevice(tempvalue,false);
+				val->ReadedValueFromDevice(tempvalue,false);
 			}
 		}
 		catch(...)
@@ -148,7 +160,7 @@ class HisDevTemp18B20 : public HisDevDallas
 			for (uint16_t i=0;i<values.size();i++)
 			{
 				HisDevValue<double>* val = dynamic_cast<HisDevValue<double>*>(values[i]);
-				val->SetValueFromDevice(tempvalue,true);
+				val->ReadedValueFromDevice(tempvalue,true);
 			}
 		}
 	}

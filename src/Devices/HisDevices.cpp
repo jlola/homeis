@@ -23,10 +23,13 @@
 #include "HisDallas.h"
 #include "HisDevFactory.h"
 #include "VirtualDevices/HisDevVirtual.h"
+#include "PoppyDebugTools.h"
 #include "HisDevices.h"
+
 
 void HisDevices::Scan()
 {
+	STACK
 	network->searchDevices<LOW_device>(false);
 	AddScanned();
 }
@@ -36,11 +39,30 @@ HisDevices::HisDevices(string fileName,LOW_network* pnetwork)
 	devicesFileName = fileName;
 	doc = NULL;
 	network=pnetwork;
-	this->__expressionMutex = HisLock::CreateMutex();
+	//this->__expressionMutex = HisLock::CreateMutex();
+	this->__devRefreshMutex = HisLock::CreateMutex();
+	onRefreshdelegate = OnRefreshDelegate::from_method<HisDevices, &HisDevices::AddToRefreshQueue>(this);
+}
+
+void HisDevices::AddToRefreshQueue(HisDevBase* hisDevBase)
+{
+	STACK
+	__devRefreshMutex->lock();
+	for(size_t i=0;i<queue.size();i++)
+	{
+		if (queue[i]==hisDevBase)
+		{
+			__devRefreshMutex->unlock();
+			return;
+		}
+	}
+	queue.push_back(hisDevBase);
+	__devRefreshMutex->unlock();
 }
 
 HisDevBase *HisDevices::operator[](unsigned int i)
 {
+	STACK
 	if (devices.size()>i)
 	{
 		return devices[i];
@@ -50,6 +72,7 @@ HisDevBase *HisDevices::operator[](unsigned int i)
 
 HisDevices::~HisDevices()
 {
+	STACK
 	for(uint32_t i=0;i<devices.size();i++)
 		delete(devices[i]);
 	devices.clear();
@@ -66,6 +89,7 @@ HisDevices::~HisDevices()
 
 void HisDevices::Load()
 {
+	STACK
 	xmlNodePtr root_node = NULL;/* node pointers */
 	//xmlDtdPtr dtd = NULL;       /* DTD pointer */
 
@@ -112,6 +136,7 @@ void HisDevices::Load()
 	LOW_deviceID id;
 	xmlNodePtr cur = root_node->children;
 	HisDevBase* newhisdev = NULL;
+
 	while (cur != NULL) {
 		LOW_device* dev = NULL;
 
@@ -123,10 +148,12 @@ void HisDevices::Load()
 				if (!network->ContainsDevice<LOW_device>(id))
 				{
 					cout << "Offline device: "+id.getRomIDString() + "\n";
+					CLogger::Info("Offline device: %s",id.getRomIDString().c_str());
 					dev = LOW_deviceFactory::new_SpecificDevice(*(network->getSegments()[0]),id);
 				}
 				else
 				{
+					CLogger::Info("Online device: %s",id.getRomIDString().c_str());
 					cout << "Online device:" << id.getRomIDString() + "\n";
 					dev = network->getDevice<LOW_device>(id);
 				}
@@ -136,8 +163,12 @@ void HisDevices::Load()
 			{
 				newhisdev = (HisDevBase*)new HisDevVirtual(cur);
 			}
-			newhisdev->Load();
-			devices.push_back(newhisdev);
+			if (newhisdev!=NULL)
+			{
+				newhisdev->Load();
+				newhisdev->OnRefresh = onRefreshdelegate;
+				devices.push_back(newhisdev);
+			}
 		}
 		catch(LOW_netSegment::noDevice_error & ex)
 		{
@@ -156,6 +187,8 @@ void HisDevices::Load()
 
 void HisDevices::Add(HisDevBase *hisdev)
 {
+
+	STACK
 	xmlNodePtr root_node = xmlDocGetRootElement(doc);
 	//xmlNodePtr cur = NULL;
 	if (root_node==NULL)
@@ -165,12 +198,13 @@ void HisDevices::Add(HisDevBase *hisdev)
 	}
 
 	xmlAddChild(root_node,hisdev->GetNodePtr());
+	hisdev->OnRefresh = onRefreshdelegate;
 	devices.push_back(hisdev);
 }
 
 void HisDevices::AddScanned()
 {
-
+	STACK
 	std::vector<LOW_device*> lowdevices = network->getDevices<LOW_device>();
 	size_t found = lowdevices.size();
 	//create new devices
@@ -183,6 +217,7 @@ void HisDevices::AddScanned()
 			if (finded<0)
 			{
 				CLogger::Info("Found new device: %s",pdev->getID().getRomIDString().c_str());
+				cout << "Found new device:" << pdev->getID().getRomIDString() + "\n";
 				HisDevDallas* hisdev = (HisDevDallas*)HisDevFactory::Instance().Create(pdev);
 				if (hisdev!=NULL)
 					Add(hisdev);
@@ -200,12 +235,14 @@ void HisDevices::AddScanned()
 
 size_t HisDevices::Size()
 {
+
 	return devices.size();
 }
 
 void HisDevices::Delete(uint16_t index)
 {
-
+	STACK
+	queue.clear();
 	uint16_t size = devices.size();
 	if (size>index)
 	{
@@ -218,6 +255,7 @@ void HisDevices::Delete(uint16_t index)
 
 HisDevValueBase* HisDevices::FindValue(string address)
 {
+	STACK
 	for(uint16_t i=0;i<devices.size();i++)
 	{
 		vector<HisDevValueBase*> tagvalues = devices[i]->GetValues();
@@ -235,6 +273,7 @@ HisDevValueBase* HisDevices::FindValue(string address)
 
 HisDevValueBase* HisDevices::FindValue(CUUID valueId)
 {
+	STACK
 	for(uint16_t i=0;i<devices.size();i++)
 	{
 		vector<HisDevValueBase*> tagvalues = devices[i]->GetValues();
@@ -252,11 +291,26 @@ HisDevValueBase* HisDevices::FindValue(CUUID valueId)
 
 void HisDevices::Refresh()
 {
+	STACK
 	for(uint i=0;i<devices.size();i++)
 	{
-		int64_t curTimeUs = HisDateTime::timeval_to_usec(HisDateTime::Now());
+		//int64_t curTimeUs = HisDateTime::timeval_to_usec(HisDateTime::Now());
 
 		devices[i]->Refresh();
+
+		if (queue.size()>0)
+		{
+			__devRefreshMutex->lock();
+			vector<HisDevBase*> queueCopy(queue);
+			queue.clear();
+			__devRefreshMutex->unlock();
+			for(size_t d=0;d<queueCopy.size();d++)
+			{
+				queueCopy[d]->Refresh();
+				usleep(1000);
+			}
+		}
+
 		usleep(1000);
 		//((string*)0x00)->size();
 	}
@@ -264,6 +318,7 @@ void HisDevices::Refresh()
 
 int HisDevices::Find(LOW_deviceID pid)
 {
+	STACK
 	for(uint i=0;i<devices.size();i++)
 	{
 		HisDevDallas* dallas = dynamic_cast<HisDevDallas*>(devices[i]);
@@ -279,6 +334,7 @@ int HisDevices::Find(LOW_deviceID pid)
 
 int HisDevices::Find(CUUID recordId)
 {
+	STACK
 	for(uint i=0;i<devices.size();i++)
 	{
 		if (devices[i]->GetRecordId()==recordId) return i;
@@ -310,6 +366,7 @@ int HisDevices::Find(CUUID recordId)
 
 void HisDevices::Save()
 {
+	STACK
 	for(uint i=0;i<devices.size();i++)
 	{
 		devices[i]->Save();

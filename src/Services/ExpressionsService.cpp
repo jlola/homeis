@@ -6,10 +6,12 @@
  */
 
 #include "ExpressionsService.h"
+#include "PoppyDebugTools.h"
 #include "Common/HisException.h"
 
 ExpressionService::ExpressionService(HisDevFolderRoot* folder,ExpressionRuntime *pexpressionRuntime, HisDevices* pdevices)
 {
+	STACK
 	devices = pdevices;
 	expressionRuntime = pexpressionRuntime;
 	root = folder;
@@ -22,6 +24,7 @@ ExpressionService::~ExpressionService(void)
 
 void ExpressionService::render_GET(const http_request& req, http_response** res)
 {
+	STACK
 	Document respjsondoc;
 	respjsondoc.SetArray();
 
@@ -33,6 +36,8 @@ void ExpressionService::render_GET(const http_request& req, http_response** res)
 		//run all expressions in folder
 		if (path.find("/api/expression/run")!=string::npos)
 		{
+
+
 			LuaExpression* expression = NULL;
 
 			if(!strid.empty())
@@ -102,6 +107,7 @@ void ExpressionService::render_GET(const http_request& req, http_response** res)
 
 void ExpressionService::ExpressionsToJson(string strid, HisDevFolderRoot* root, Document & respjsondoc)
 {
+	STACK
 	HisDevFolder* folder = NULL;
 	vector<LuaExpression*> expressions;
 	HisDevFolder* rootFolder = root->GetFolder();
@@ -124,6 +130,7 @@ void ExpressionService::ExpressionsToJson(string strid, HisDevFolderRoot* root, 
 
 void ExpressionService::ExpressionToJson(LuaExpression *pExpression, Document & respjsondoc)
 {
+	STACK
 	Value d(kObjectType);
 	string strvalue = pExpression->GetName();
 	Value jsonvalue;
@@ -164,6 +171,7 @@ void ExpressionService::ExpressionToJson(LuaExpression *pExpression, Document & 
 
 bool ExpressionService::DeleteExpression(string strid,string & message)
 {
+	STACK
 	if (strid.empty()) {
 		message = "DeleteExpression | Id is empty. Can not be deleted";
 		return false;
@@ -207,6 +215,7 @@ bool ExpressionService::DeleteExpression(string strid,string & message)
 
 LuaExpression* ExpressionService::CreateOrUpdateExpression(string strJson,string & message)
 {
+	STACK
 	try
 	{
 		Document document;	// Default template parameter uses UTF8 and MemoryPoolAllocator.
@@ -294,6 +303,7 @@ LuaExpression* ExpressionService::CreateOrUpdateExpression(string strJson,string
 
 void ExpressionService::render_POST(const http_request& req, http_response** res)
 {
+	STACK
 	std::string content = req.get_content();
 	string message = "";
 
@@ -332,6 +342,7 @@ void ExpressionService::render_POST(const http_request& req, http_response** res
 
 void ExpressionService::render_PUT(const http_request& req, http_response** res)
 {
+	STACK
 	std::string content = req.get_content();
 	string message = "";
 	if (req.get_user()=="a" && req.get_pass()=="a")
@@ -357,6 +368,7 @@ void ExpressionService::render_PUT(const http_request& req, http_response** res)
 
 void ExpressionService::render_DELETE(const http_request& req, http_response** res)
 {
+	STACK
 	string message = "";
 	if (req.get_user()=="a" && req.get_pass()=="a")
 	{

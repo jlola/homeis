@@ -476,7 +476,7 @@ static int pmain (lua_State *L) {
 }
 
 
-int mainy (int argc, char **argv) {
+int mainw (int argc, char **argv) {
   int status, result;
   lua_State *L = luaL_newstate();  /* create state */
   if (L == NULL) {

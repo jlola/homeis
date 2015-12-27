@@ -12,6 +12,7 @@
 #include <fstream>
 #include <stdio.h>
 #include "File.h"
+#include "PoppyDebugTools.h"
 #include "FileController.h"
 
 FileController::FileController()
@@ -21,6 +22,7 @@ FileController::FileController()
 
 void FileController::render_GET(const http_request& r, http_response** res)
 {
+	STACK
 	std::string filepar = r.get_arg("path");
 	std::string file = File::getexepath();
 	file += "/files/";

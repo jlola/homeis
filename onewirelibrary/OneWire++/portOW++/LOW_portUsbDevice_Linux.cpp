@@ -47,7 +47,6 @@ int LOW_portUsbDevice_Linux::initialize()
 
 LOW_portUsbDevice_Linux::LOW_portUsbDevice_Linux( const LOW_portUsb_Factory::usbDeviceSpecifier_t inUsbDevSpec)
 {
-
   rescanBusses();
 
   usbLibDevice = 0;
@@ -69,7 +68,6 @@ LOW_portUsbDevice_Linux::LOW_portUsbDevice_Linux( const LOW_portUsb_Factory::usb
   usbLibDevHdl = usb_open( usbLibDevice);
   if ( usbLibDevHdl == 0 )
     throw portUsbDevice_error( "error calling usb_open(): "+libUsbErrMsg(), __FILE__, __LINE__);
-
     
 }
 
@@ -110,15 +108,16 @@ LOW_portUsbDevice_Linux::usbProductID_t LOW_portUsbDevice_Linux::getProductID()
 //      Resets the specified device by sending a RESET down the port it is connected to.
 //
 //   */
-void LOW_portUsbDevice_Linux::reset()
-{
-  // Causes re-enumeration: After calling usb_reset, the device will need to
-  // re-enumerate and thusly, requires you to find the new device and open a
-  // new handle. The handle used to call usb_reset will no longer work.
-  int errVal = usb_reset( usbLibDevHdl);
-  if ( errVal != 0 )
-    throw portUsbDevice_error( errVal, "error calling usb_reset()", __FILE__, __LINE__);
-}
+//LOW_portUsbDevice_Linux::reset()
+//{
+//  // Causes re-enumeration: After calling usb_reset, the device will need to
+//  // re-enumerate and thusly, requires you to find the new device and open a
+//  // new handle. The handle used to call usb_reset will no longer work.
+//  int errVal = usb_reset( usbLibDevHdl);
+//  if ( errVal != 0 )
+//    throw portUsbDevice_error( errVal, "error calling usb_reset()", __FILE__, __LINE__);
+//  XXXXXXXXXXXXX
+//}
 
 
 void LOW_portUsbDevice_Linux::setConfiguration( const usbConfig_t inConfig)
@@ -223,7 +222,7 @@ unsigned int LOW_portUsbDevice_Linux::bulkWrite( const usbEndpoint_t inEP, const
                                                  const msgData_t inData, const usbTimeout_t inTimeout)
 {
   __LOW_SYNCHRONIZE_METHOD_WRITE_WEAK__
-
+  
   int transferBytes = usb_bulk_write( usbLibDevHdl, inEP, reinterpret_cast<char*>(inData), inLength, inTimeout);
   if ( transferBytes <= 0 )
     throw portUsbDevice_error( "error calling usb_bulk_write(): "+libUsbErrMsg(), __FILE__, __LINE__);
@@ -338,7 +337,7 @@ void LOW_portUsbDevice_Linux::rescanBusses()
 
 std::string LOW_portUsbDevice_Linux::libUsbErrMsg()
 {
-  std::string tmpStr = "";//std::string( usb_strerror());
+  std::string tmpStr = std::string( usb_strerror());
   return tmpStr;
 }
 

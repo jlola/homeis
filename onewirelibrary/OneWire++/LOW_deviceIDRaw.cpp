@@ -17,11 +17,10 @@
 
  
 #include <stdio.h> // needed for snprintf()
-#include <string>
 
 #include "LOW_deviceIDRaw.h"
-#include "converter.h"
-using namespace std;
+
+
 
 //=====================================================================================
 //

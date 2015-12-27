@@ -22,7 +22,7 @@
 #include "LOW_exception.h"
 #include "LOW_objectSynchronizer.h"
 #include "LOW_helper_msglog.h"
-
+#include "PoppyDebugTools.h"
 
 //=====================================================================================
 //
@@ -42,7 +42,7 @@ bool LOW_exception::logOnCreation = false;
 LOW_exception::LOW_exception() :
   errNum( 0),
   message( ""),
-  line(0)
+  line(-1)
 {
 }
 
@@ -102,6 +102,7 @@ const bool LOW_exception::getLogOnCreation()
 
 void LOW_exception::logException( const std::string inPrefix)
 {
+	STACK
   if ( errNum == 0 )
     LOW_helper_msglog::printError( "%s%s {file: %s, line: %d}", inPrefix.c_str(), message.c_str(), file.c_str(), line);
   else

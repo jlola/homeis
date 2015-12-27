@@ -10,6 +10,7 @@
 
 #include <stdint.h>
 #include <vector>
+#include <stdlib.h>
 #include <string>
 #include <string.h>
 #include <cctype>
@@ -33,13 +34,18 @@ public:
 			strbyte.clear();
 			strbyte.push_back(s[i]);
 			strbyte.push_back(s[i+1]);
-			uint8_t byte = stoi(strbyte,16);
+			uint8_t byte = stoui(strbyte,16);
 			result.insert(result.begin(),byte);
 		}
 		return result;
 	}
 
-	static unsigned long stoi(std::string s, base b = 10)
+	static long stoi(std::string s)
+	{
+		return std::atol( s.c_str() );
+	}
+
+	static unsigned long stoui(std::string s, base b = 10)
 	{
 		std::string Mask = "0123456789ABCDEF";
 		b = b > 1 && b <= 16 ? b : 10;

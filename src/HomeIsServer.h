@@ -28,10 +28,10 @@ class HomeIsServer
 {
 	string serialPort;
 	LOW_network  oneWireNet;
-	HisDevRuntime* runtime;
+	HisDevRuntime* devruntime;
 	HisDevFolderRoot* rootFolder;
 	ExpressionRuntime* expressionRuntime;
-	webserver ws_i;
+	create_webserver cw;
 	HisDevices* devs;
 	bool InitOneWireLib(string port);
 	bool Init();

@@ -25,7 +25,6 @@
 #include "LOW_deviceIDRaw.h"
 #include "LOW_deviceID.h"
 #include "LOW_exception.h"
-#include "LOW_types.h"
 
 class LOW_netSegment;  // forward declaration needed to resolve circular definitions.
 
@@ -74,7 +73,7 @@ public:
   static const LOW_deviceIDRaw::devFamCode_t anyDev_famCode = 0x00;
 
   /** Pseudo family code for unknown device types. */
-  static const LOW_deviceIDRaw::devFamCode_t unknownDev_famCode = 0xFE;
+  static const LOW_deviceIDRaw::devFamCode_t unknownDev_famCode = 0xfe;
 
   /** Family code of this base class equals the one for any device type.
       <B>Note:</B> Subclasses must override this constant to return their specific family code.
@@ -86,11 +85,11 @@ public:
    */
   static const std::string familyName;
 
-  static const owCommand_t  MatchROM_COMMAND; /**< 1-Wire command byte constant */
-  static const owCommand_t  ReadROM_COMMAND; /**< 1-Wire command byte constant */
-  static const owCommand_t  SkipROM_COMMAND; /**< 1-Wire command byte constant */
-  static const owCommand_t  SearchROM_COMMAND; /**< 1-Wire command byte constant */
-  static const owCommand_t  SearchAlarmROM_COMMAND; /**< 1-Wire command byte constant */
+  static const owCommand_t  MatchROM_COMMAND         = 0x55; /**< 1-Wire command byte constant */
+  static const owCommand_t  ReadROM_COMMAND          = 0x33; /**< 1-Wire command byte constant */
+  static const owCommand_t  SkipROM_COMMAND          = 0xcc; /**< 1-Wire command byte constant */
+  static const owCommand_t  SearchROM_COMMAND        = 0xf0; /**< 1-Wire command byte constant */
+  static const owCommand_t  SearchAlarmROM_COMMAND   = 0xec; /**< 1-Wire command byte constant */
   
   
   //=====================================================================================
@@ -249,7 +248,6 @@ protected:
   virtual void cmd_MatchROM() const;
 
 };
-
 
 
 #endif

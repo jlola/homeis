@@ -91,7 +91,7 @@ private:
   //
 
   /** Time to wait for emulation of strong pullup in seconds. */
-  static const int strongPullupEmuTime = 1;
+  static const int strongPullupEmuTime = 3;
 
     
   //=====================================================================================

@@ -15,7 +15,7 @@
  *                                                                         *
  ***************************************************************************/
 
-
+ 
 #include <stdio.h>
 #include <errno.h>
 #include <unistd.h>
@@ -27,7 +27,6 @@
 #include <sys/stat.h>
 #include <sys/time.h>
 #include <sys/ioctl.h>
-#include <sys/select.h>
 
 #include <memory>
 #include <new>
@@ -48,11 +47,11 @@ LOW_portSerial_Linux::LOW_portSerial_Linux( const LOW_portSerialFactory::portSpe
   serialPortPath( inSerialPort)
 {
   // Open the serial port, turning on devices
-  if ( (serialFD=open( serialPortPath.c_str(), O_RDWR | O_NOCTTY | O_SYNC)) == -1 ) {
+  if ( (serialFD=open( serialPortPath.c_str(), O_RDWR)) == -1 ) {
     throw portSerial_error( errno, "Error opening tty " + serialPortPath, __FILE__, __LINE__);
   }
 }
-
+  
 
 LOW_portSerial_Linux::~LOW_portSerial_Linux()
 {
@@ -73,10 +72,10 @@ void LOW_portSerial_Linux::tty_configure( const flowControl_t inFlowCtl, const d
 
   struct serial_struct   serial;
   struct termios         term;
-
+  
   if ( ioctl( serialFD, TIOCGSERIAL, &serial) < 0 )
     throw portSerial_error( errno, "TIOCGSERIAL failed", __FILE__, __LINE__);
-
+    
   // Get the current device settings
   if( tcgetattr( serialFD, &term) < 0 )
     throw portSerial_error( errno, "Error with tcgetattr", __FILE__, __LINE__);
@@ -88,85 +87,85 @@ void LOW_portSerial_Linux::tty_configure( const flowControl_t inFlowCtl, const d
   term.c_lflag = 0;
 
   // set the config values
-
+            
   switch ( inFlowCtl ) {
-
+    
     case none_flowControl:
       term.c_cflag |= CLOCAL;
       break;
-
+    
     case xonxoff_flowControl:
       term.c_iflag |= IXON | IXOFF;
       term.c_cflag |= CLOCAL;
       break;
-
+    
     case rtscts_flowControl:
       term.c_cflag |= CRTSCTS;
       break;
-
+      
     default:
       throw portSerial_error( "Unknown control parameter value", __FILE__, __LINE__);
       break;
   }
-
+  
   switch ( inParity ) {
-
+    
     case no_parity:
       term.c_iflag |= IGNPAR;
       break;
-
+    
     case odd_parity:
       term.c_iflag |= INPCK;
       term.c_cflag |= PARENB | PARODD;
       break;
-
+    
     case even_parity:
       term.c_iflag |= INPCK;
       term.c_cflag |= PARENB;
       break;
-
+      
     default:
       throw portSerial_error( "Unknown control parameter value", __FILE__, __LINE__);
       break;
   }
-
+  
   switch ( inDataBits ) {
-
+    
     case bit5_size:
       term.c_cflag |= CS5;
       break;
-
+  
     case bit6_size:
       term.c_cflag |= CS6;
       break;
-
+  
     case bit7_size:
       term.c_cflag |= CS7;
       break;
-
+  
     case bit8_size:
       term.c_cflag |= CS8;
       break;
-
+      
     default:
       throw portSerial_error( "Unknown control parameter value", __FILE__, __LINE__);
       break;
   }
-
+  
   switch ( inStopBits ) {
-
+    
     case bit1_stopBit:
       break;
-
+  
     case bit2_stopBit:
       term.c_cflag |= CSTOPB;
       break;
-
+      
     default:
       throw portSerial_error( "Unknown control parameter value", __FILE__, __LINE__);
       break;
   }
-
+  
   int speed = 0;
   switch ( inSpeed ) {
     case B50_speed:     speed = B50;      break;
@@ -186,16 +185,16 @@ void LOW_portSerial_Linux::tty_configure( const flowControl_t inFlowCtl, const d
     case B38400_speed:  speed = B38400;   break;
     case B57600_speed:  speed = B57600;   break;
     case B115200_speed: speed = B115200;  break;
-
+    
     case B10472_speed:  speed = B38400;   break;
-
+    
     default:
       throw portSerial_error( "Unknown control parameter value", __FILE__, __LINE__);
       break;
   }
   cfsetospeed( &term, speed);
   cfsetispeed( &term, speed);
-
+  
   if ( inSpeed == B10472_speed ) {
     serial.flags = (serial.flags & ~ASYNC_SPD_MASK) | ASYNC_SPD_CUST;
     serial.custom_divisor = 11;   // 10472bps
@@ -203,14 +202,14 @@ void LOW_portSerial_Linux::tty_configure( const flowControl_t inFlowCtl, const d
   else {
     serial.flags = (serial.flags & ~ASYNC_SPD_MASK);  // make 38400 really 38400
   }
-
+  
   // read one byte without timeout. timeouts will be done by select
   term.c_cc[VMIN]  = 1;
-  term.c_cc[VTIME] = 5;
-
+  term.c_cc[VTIME] = 0;
+    
   if ( ioctl( serialFD, TIOCSSERIAL, &serial) < 0 )
     throw portSerial_error( errno, "TIOCSSERIAL failed", __FILE__, __LINE__);
-
+  
   if( tcsetattr( serialFD, TCSAFLUSH, &term ) < 0 )
     throw portSerial_error( errno, "Error with tcsetattr", __FILE__, __LINE__);
 }
@@ -239,7 +238,7 @@ void LOW_portSerial_Linux::tty_break()
   tcsendbreak( serialFD, 20);
 }
 
-
+  
 uint8_t LOW_portSerial_Linux::tty_readByte( const bool inTrashExtraReply, const unsigned int inSecTimeout)
 {
   __LOW_SYNCHRONIZE_METHOD_WRITE_WEAK__
@@ -248,41 +247,36 @@ uint8_t LOW_portSerial_Linux::tty_readByte( const bool inTrashExtraReply, const 
   struct timeval wait_tm;
   int            selRet;
   uint8_t        retVal = 0;
-  uint8_t readByte;
 
- // for( int a=0; a<((inTrashExtraReply==true)?2:1); a++) {
-
-   // while ( true ) {
-//    	if ( read( serialFD, &readByte, 1) != 1 )
-//    	      throw portSerial_error( "Unexpected short read", __FILE__, __LINE__);
-//    	return readByte;
-
+  for( int a=0; a<((inTrashExtraReply==true)?2:1); a++) {
+    
+    while ( true ) {
+      
       // Setup for wait for a response or timeout
-
       wait_tm.tv_usec = 0;
       wait_tm.tv_sec  = inSecTimeout;
-      //FD_ZERO( &readset);
+      FD_ZERO( &readset);
       FD_SET( serialFD, &readset);
-
+        
       // Read byte if it doesn't timeout first
       selRet = select( serialFD+1, &readset, NULL, NULL, &wait_tm);
       if( selRet > 0 ) {
-
-        if( FD_ISSET( serialFD, &readset) )
+        
+        if( FD_ISSET( serialFD, &readset) ) 
         {
           uint8_t readByte;
-
+  
           if ( read( serialFD, &readByte, 1) != 1 )
             throw portSerial_error( "Unexpected short read", __FILE__, __LINE__);
-
-          //if ( a == 0 )
+          
+          if ( a == 0 )
             retVal = readByte;
-
-          //LOW_helper_msglog::printDebug( LOW_helper_msglog::portSerial_dl, "LOW_linkDS2480B: TTY READ: %02x read cycle: %d\n", readByte, a);
-
-          //break;
+      
+          LOW_helper_msglog::printDebug( LOW_helper_msglog::portSerial_dl, "LOW_linkDS2480B: TTY READ: %02x read cycle: %d\n", readByte, a);
+          
+          break;
         }
-
+       
       }
       else if ( selRet == 0 ) {
         throw portSerial_error( "TTY operation timed out", __FILE__, __LINE__);
@@ -290,8 +284,10 @@ uint8_t LOW_portSerial_Linux::tty_readByte( const bool inTrashExtraReply, const 
       else {
         throw portSerial_error( errno, "Unexpected error in select call", __FILE__, __LINE__);
       }
-
-
+    
+    }
+  }
+  
   return retVal;
 }
 
@@ -311,16 +307,15 @@ void LOW_portSerial_Linux::tty_write( const uint8_t inWriteByte)
   __LOW_SYNCHRONIZE_METHOD_WRITE__
 
   int written;
-
+  
   LOW_helper_msglog::printDebug( LOW_helper_msglog::portSerial_dl, "LOW_linkDS2480B: TTY WRITE: %02x\n", inWriteByte);
-  //do {
+  do {
     written = write( serialFD, &inWriteByte, 1);
     if ( written == -1 )
       throw portSerial_error( errno, "Error writing single byte to TTY", __FILE__, __LINE__);
-    //usleep(100);
-    //tcdrain( serialFD);
-  //}
-  //while ( written != 1 );
+    tcdrain( serialFD);
+  }
+  while ( written != 1 );
 }
 
 
@@ -330,10 +325,10 @@ void LOW_portSerial_Linux::tty_write( const byteVec_t &inWriteBytes)
 
   unsigned int  total   = inWriteBytes.size();
   uint8_t       *buffer = new uint8_t[total];
-
+    
   try {
     std::copy( inWriteBytes.begin(), inWriteBytes.end(), buffer);
-
+    
     int           written   = 0;
     unsigned int  remaining = total;
     uint8_t       *writePtr = buffer;
@@ -352,7 +347,7 @@ void LOW_portSerial_Linux::tty_write( const byteVec_t &inWriteBytes)
     delete[] buffer;
     throw;
   }
-
+  
   delete[] buffer;
 }
 

@@ -98,6 +98,8 @@ void CLogger::WriteToFile(string subDir,string file,string line)
 	 return;
 	}
 
+	fprintf(stderr,line.c_str());
+	fflush(stderr);
 	fprintf(fp,line.c_str());
 
 	fflush(fp);
@@ -143,7 +145,7 @@ void CLogger::Error(const char * text, ...)
 	line += " | ";
 	line += buffer;
 	line += "\n";
-	WriteToFile("Log","info.txt",line);
+	WriteToFile("Log","info"+  getStrDate() + ".txt",line);
 }
 
 void CLogger::Fatal(const char * text, ...)

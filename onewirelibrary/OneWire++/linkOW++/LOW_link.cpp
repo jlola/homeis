@@ -18,7 +18,7 @@
  
 #include "LOW_link.h"
 #include "LOW_device.h"
-#include <unistd.h>
+#include "PoppyDebugTools.h"
 
 //=====================================================================================
 //
@@ -91,6 +91,7 @@ bool LOW_link::getAllowProgPulse() const
 
 byteVec_t LOW_link::touchBlock( const byteVec_t &inBytes, const strongPullup_t inPullup)
 {
+	STACK
   if ( inBytes.size() == 0 ) return byteVec_t( 0);
 
   commLock lock( *this);
@@ -98,7 +99,7 @@ byteVec_t LOW_link::touchBlock( const byteVec_t &inBytes, const strongPullup_t i
   byteVec_t retVal = byteVec_t( inBytes.size());
 
   for( unsigned int i=0; i<inBytes.size()-1; i++) {
-    retVal[i] = touchByte( inBytes[i], pullUp_524);
+    retVal[i] = touchByte( inBytes[i], pullUp_NONE);
   }
   retVal[inBytes.size()-1] = touchByte( inBytes[inBytes.size()-1], inPullup);
   
@@ -113,6 +114,7 @@ byteVec_t LOW_link::touchBlock( const byteVec_t &inBytes, const strongPullup_t i
 
 bool LOW_link::readDataBit( const strongPullup_t inPullup)
 {
+	STACK
   commLock lock( *this);
 
   return touchBit( true, inPullup);
@@ -121,6 +123,7 @@ bool LOW_link::readDataBit( const strongPullup_t inPullup)
 
 uint8_t LOW_link::readDataByte( const strongPullup_t inPullup)
 {
+	STACK
   commLock lock( *this);
 
   return touchByte( 0xff, inPullup);
@@ -129,6 +132,7 @@ uint8_t LOW_link::readDataByte( const strongPullup_t inPullup)
 
 void LOW_link::readData( byteVec_t &outBytes, const strongPullup_t inPullup)
 {
+	STACK
   commLock lock( *this);
 
   byteVec_t  sendBytes = byteVec_t( outBytes.size(), 0xff);
@@ -147,6 +151,7 @@ void LOW_link::readData( byteVec_t &outBytes, const strongPullup_t inPullup)
 
 void LOW_link::writeData( const bool inSendBit, const strongPullup_t inPullup)
 {
+	STACK
   commLock lock( *this);
 
   if ( touchBit( inSendBit, inPullup) != inSendBit )
@@ -156,6 +161,7 @@ void LOW_link::writeData( const bool inSendBit, const strongPullup_t inPullup)
 
 void LOW_link::writeData( const uint8_t inSendByte, const strongPullup_t inPullup)
 {
+	STACK
   commLock lock( *this);
 
   if ( touchByte( inSendByte, inPullup) != inSendByte )
@@ -165,6 +171,7 @@ void LOW_link::writeData( const uint8_t inSendByte, const strongPullup_t inPullu
 
 void LOW_link::writeData( const byteVec_t &inSendBytes, const strongPullup_t inPullup)
 {
+	STACK
   commLock lock( *this);
 
   byteVec_t readVec = touchBlock( inSendBytes, inPullup);
@@ -181,11 +188,11 @@ void LOW_link::writeData( const byteVec_t &inSendBytes, const strongPullup_t inP
 //
 // Higher level actions
 //
-bool firstend = false;
 
 LOW_deviceID::deviceIDVec_t LOW_link::searchDevices( const bool inOnlyAlarm, const LOW_deviceIDRaw inPreload,
                                                      const LOW_deviceIDRaw::devFamCode_t inFamCode, const bool inDoReset)
 {
+	STACK
   commLock lock( *this);
 
   LOW_deviceIDRaw                searchVec = LOW_deviceIDRaw( inPreload);
@@ -232,10 +239,7 @@ LOW_deviceID::deviceIDVec_t LOW_link::searchDevices( const bool inOnlyAlarm, con
     }
 
     if ( newDiscr==0xff /*|| newDiscr==lastDiscr*/ ) {  // search has ended
-    	if (firstend)
-    		break;
-    	else
-    		firstend = true;
+      break;
     }
 
     lastDiscr = newDiscr;
@@ -271,6 +275,7 @@ LOW_deviceID::deviceIDVec_t LOW_link::searchDevices( const bool inOnlyAlarm, con
 void LOW_link::doSearchSequence( const LOW_deviceIDRaw &inBranchVector, 
                                  LOW_deviceIDRaw &outFoundID, LOW_deviceIDRaw &outDiscrVec)
 {
+	STACK
   commLock lock( *this);
   
   for( int a=0; a<64; a++) {

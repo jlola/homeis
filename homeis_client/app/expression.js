@@ -133,8 +133,9 @@
 		};
 		
 		self.Mapping = function(pdata)
-		{
-			ko.mapping.fromJS(pdata, {}, self.data);
+		{			
+			ko.mapping.fromJS(pdata, {} , self.data);
+			delete (self.data.__ko_mapping__);	
 		};
 		
 		self.Mapping(data);	

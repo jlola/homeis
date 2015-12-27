@@ -43,17 +43,25 @@ App.ViewModels.TagModel = function(psocket,data)
 		if (self.data.type()==4)	return "valueBooleanTemplate";
 		return "valueTemplateText";
 	}
+	self.hwvalueTemplate = function() {
+		if (self.data.type()==4)	return "hwvalueBooleanTemplate";
+		return "hwvalueTemplateText";
+	}
 	self.directionLabel = ko.computed(function() {
 		if (self.data.direction()==App.Enums.EDirection.Read)
 			return 'Čtení';
 		return 'Čtení/Zápis';
-	}, this);		
-	self.isForceVisible = ko.computed(function() {
-		if (((self.data.direction()==App.Enums.EDirection.Write || self.data.direction()==App.Enums.EDirection.ReadWrite) && !self.data.error())||
-			self.data.internal())
+	}, this);	
+	self.isHwValueVisible = ko.computed(function(){
+		if (self.data.force() && !self.data.internal() && self.data.direction()!=App.Enums.EDirection.Read)
 			return true;
-		else
-			return false;
+		return false;
+	});
+	self.isForceVisible = ko.computed(function() {
+		if (/*!self.data.error() ||*/ !self.data.internal())
+			return true;
+		//else
+		return false;
 		
 	}, this);
 	self.valueunit = ko.computed(function(){
@@ -66,7 +74,7 @@ App.ViewModels.TagModel = function(psocket,data)
 	},this);
 		
 	self.ValueEnabled = ko.computed(function(){
-		return self.data.internal() || self.data.force()//|| self.direction()==App.Enums.EDirection.Write || self.direction()==App.Enums.EDirection.ReadWrite;
+		return self.data.internal() || self.data.direction()==App.Enums.EDirection.Write || self.data.direction()==App.Enums.EDirection.ReadWrite || self.data.force();
 	},this);
 	// self.image = ko.computed(function(){
 		
@@ -86,7 +94,7 @@ App.ViewModels.TagModel = function(psocket,data)
 	{
 		self.data.force(!self.data.force())
 		
-		self.Save(function(){});
+		self.Save(function(){},true);
 		
 	};		
 	self.typeFormated = ko.computed(function() {
@@ -202,7 +210,7 @@ App.ViewModels.TagModel = function(psocket,data)
 				} );
 		$.mobile.pageContainer.pagecontainer("change","onewiredetail.html",{changeHash:false,reload:true});
 	};
-	self.Save = function(callback)
+	self.Save = function(callback,dontclose)
 	{				
 		var dto = ko.toJS(self.data);	
 		
@@ -212,8 +220,11 @@ App.ViewModels.TagModel = function(psocket,data)
 				if (response.success) 
 				{	
 					//var obj = JSON.parse(response.message);					
-					self.prevPage.Load();
-					self.prevPage.LoadPage();
+					if (!dontclose)
+					{
+						self.prevPage.Load();
+						self.prevPage.LoadPage();
+					}
 				}
 				else 
 					alert('Chyba pri ukaldani');
@@ -225,7 +236,10 @@ App.ViewModels.TagModel = function(psocket,data)
 			 self.socket.update("onewiredevices/devvalue",self.data.id(),dto,function(response){
 				 if (response.success) 
 				 {	
-					self.prevPage.LoadPage();
+					if (!dontclose)
+					{
+						self.prevPage.LoadPage();
+					}
 					//App.Instance.GetDevicesController().LoadPage();
 				 }
 				 else 

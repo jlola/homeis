@@ -186,7 +186,7 @@ static int pmain(lua_State* L)
  return 0;
 }
 
-int mainx(int argc, char* argv[])
+int mainy(int argc, char* argv[])
 {
  lua_State* L;
  int i=doargs(argc,argv);

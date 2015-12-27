@@ -14,6 +14,8 @@
 #include <libxml/tree.h>
 #include "Common/CUUID.h"
 #include "document.h"		// rapidjson's DOM-style API
+#include "converter.h"
+#include "PoppyDebugTools.h"
 
 using namespace rapidjson;
 using namespace std;
@@ -44,7 +46,7 @@ public:
 protected:
 	virtual void DoInternalSave(xmlNodePtr & node);
 	virtual void DoInternalLoad(xmlNodePtr & node);
-	virtual const xmlChar* GetNodeNameInternal()=0;
+	virtual const xmlChar* GetNodeNameInternal() = 0;
 	void ClearIsNew();
 	void FreeItems();
 	vector<HisBase*> GetAllItems();
@@ -77,9 +79,11 @@ public:
 	template<class T>
 	vector<T*> GetItems()
 	{
+		STACK
 		vector<T*> result;
 		for(size_t i=0;i<items.size();i++)
 		{
+			STACK_VAL("i",Converter::itos(i))
 			T* it = dynamic_cast<T*>(items[i]);
 			if (it!=NULL) result.push_back(it);
 		}

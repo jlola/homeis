@@ -30,7 +30,7 @@
 #include "Services/ExpressionsService.h"
 #include "HisDevFactory.h"
 #include "LOWdevLCD.h"
-
+#include "LOW_devDS2408.h"
 //#include "OneWireDevicesService.h"
 //#include "EchoService.h"
 //#include "LogInService.h"
@@ -58,8 +58,8 @@ bool HomeIsServer::Init()
 
 void HomeIsServer::Stop()
 {
-	ws_i.stop();
-	runtime->Stop();
+	//ws_i.stop();
+	devruntime->Stop();
 }
 
 void HomeIsServer::Start()
@@ -68,17 +68,22 @@ void HomeIsServer::Start()
 }
 
 HomeIsServer::HomeIsServer(string address,int TcpPort) :
-		serialPort(address),runtime(NULL),rootFolder(NULL),
-		expressionRuntime(NULL),ws_i(create_webserver(TcpPort).max_threads(5)),devs(NULL)
+		serialPort(address),devruntime(NULL),rootFolder(NULL),
+		expressionRuntime(NULL),cw(create_webserver(TcpPort).max_threads(5)),devs(NULL)
 {
+	const char *key="key.pem";
+	const char *cert="cert.pem";
+	//cw.use_ssl().https_mem_key(key).https_mem_cert(cert);
 }
 
 void HomeIsServer::InitWebServer()
 {
 	FileController fc = FileController();
 	OneWireDevicesService owds = OneWireDevicesService(*devs,*rootFolder);
+
 	FoldersService foldersService= FoldersService(*devs,rootFolder);
 	ExpressionService expressionService = ExpressionService(rootFolder,expressionRuntime, devs);
+	webserver ws_i = cw;
 	ws_i.register_resource(string("files/{path}"), &fc, true);
 	ws_i.register_resource(string(""), &fc, true);
 
@@ -116,10 +121,10 @@ bool HomeIsServer::InitHisDevices()
 	rootFolder->Load();
 	HisDevFactory::Instance().SetRooFolder(rootFolder);
 
-	runtime = new HisDevRuntime(*devs);
+	devruntime = new HisDevRuntime(*devs);
 
 	expressionRuntime->Start();
-	runtime->Start();
+	devruntime->Start();
 	return true;
 }
 
@@ -127,17 +132,19 @@ bool HomeIsServer::InitOneWireLib(string port)
 {
 	// stuff for the passive adapter
 	//LOW_linkPassiveSerial  *passiveLink = 0;
-	//LOW_linkDS2480B *ds2480Link = 0;
+	LOW_linkDS2480B *ds2480Link = 0;
 	LOW_linkDS2490 *ds2490Link = 0;
 	try {
-		LOW_exception::setLogOnCreation( true );
+		LOW_exception::setLogOnCreation( false );
 		//LOW_helper_msglog::printMessage( "Harald's predefined setup: Adding passive adapter to network.\n");
 		//"/dev/ttyAMA0"
 
-		//LOW_portSerialFactory::portSpecifier_t  ttyS1 = LOW_portSerialFactory::portSpecifier_t( serialPort );
-		//ds2480Link = new LOW_linkDS2480B(ttyS1,LOW_linkDS2480B::RXPOL_val_t::RXPOL_NORM,true);
+		LOW_portSerialFactory::portSpecifier_t  ttyS = LOW_portSerialFactory::portSpecifier_t( serialPort );
+		ds2480Link = new LOW_linkDS2480B(ttyS,LOW_linkDS2480B::RXPOL_val_t::RXPOL_NORM,false,false);
 
-		//std::vector<uint8_t> idbytes = Converter::stobytes("53000100000968ff");
+		oneWireNet.addLink(ds2480Link);
+
+		//std::vector<uint8_t> idbytes = Converter::stobytes("6500000016368729");
 		//LOW_deviceID devid(idbytes);
 
 		LOW_portUsb_Factory::usbDevSpecVec_t adapters = LOW_portUsb_Factory::getPortSpecifiers(LOW_linkDS2490::usbVendorID,LOW_linkDS2490::usbProductID);
@@ -150,11 +157,14 @@ bool HomeIsServer::InitOneWireLib(string port)
 			LOW_portUsb_Factory::usbDeviceSpecifier_t usb = LOW_portUsb_Factory::usbDeviceSpecifier_t(adapters[0]);
 			ds2490Link = new LOW_linkDS2490(usb,true,false);
 			//passiveLink = new LOW_linkPassiveSerial( ttyS1);
-			//oneWireNet.addLink( passiveLink);
-			//oneWireNet.addLink( ds2480Link);
+			//oneWireNet.addLink( passiveLink );
+			//oneWireNet.addLink( ds2480Link );
 			oneWireNet.addLink(ds2490Link);
 
 			//LOW_devLCD* lcd = oneWireNet.getDevice<LOW_devLCD>(devid);
+			//LOW_devDS2408* pio = oneWireNet.getDevice<LOW_devDS2408>(devid);
+			//pio->WritePIO(0x00);
+			//pio->WritePIO(0,true);
 			//lcd->WriteToLCD("test1",0x00);
 			//lcd->WriteToLCD("test2",0x40);
 

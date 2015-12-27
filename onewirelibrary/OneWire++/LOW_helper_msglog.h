@@ -24,7 +24,7 @@
 #include <stdio.h>
 
 
-#include "threadOW++/LOW_thread_mutex.h"
+#include "LOW_thread_mutex.h"
 
 
 /** Static class for message logging.

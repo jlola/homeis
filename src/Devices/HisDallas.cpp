@@ -22,10 +22,12 @@
 #include "HisDevBase.h"
 #include "Common/HisException.h"
 #include "Common/CUUID.h"
+#include "PoppyDebugTools.h"
 #include "HisDallas.h"
 
 HisDevDallas::HisDevDallas(LOW_device* pdev)
 {
+	STACK
 	device = pdev;
 	DevError = false;
 }
@@ -33,12 +35,14 @@ HisDevDallas::HisDevDallas(LOW_device* pdev)
 HisDevDallas::HisDevDallas(xmlNodePtr node,LOW_device* pdev) :
 	HisDevBase::HisDevBase(node)
 {
+	STACK
 	device = pdev;
 	DevError = false;
 }
 
 LOW_deviceID HisDevDallas::GetId(xmlNodePtr node)
 {
+	STACK
 	std::string strid;
 	std::vector<uint8_t> idbytes;
 	if (xmlHasProp(node,PROP_ID))
@@ -58,6 +62,7 @@ LOW_deviceID HisDevDallas::GetId(xmlNodePtr node)
 
 LOW_deviceID HisDevDallas::GetId()
 {
+	STACK
 	if (device!=NULL) return device->getID();
 	if (GetNodePtr()!=NULL) return HisDevDallas::GetId(GetNodePtr());
 	throw "HisDevDallas::GetId empty device and devnode";
@@ -65,6 +70,7 @@ LOW_deviceID HisDevDallas::GetId()
 
 void HisDevDallas::DoInternalSave(xmlNodePtr & node)
 {
+	STACK
 	HisDevBase::DoInternalSave(node);
 
 	if (device==NULL) throw "HisDevDallas::DoInternalSave - device is NULL";
@@ -73,6 +79,7 @@ void HisDevDallas::DoInternalSave(xmlNodePtr & node)
 
 void HisDevDallas::DoInternalLoad(xmlNodePtr & node)
 {
+	STACK
 	HisDevBase::DoInternalLoad(node);
 	if (device==NULL) throw HisException("HisDevDallas::DoInternalLoad - device is NULL");
 

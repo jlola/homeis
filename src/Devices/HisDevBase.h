@@ -21,15 +21,28 @@
 #include "EDataSource.h"
 #include "HisDevValue.h"
 #include "Common/CUUID.h"
+#include "srutil/event/event.hpp"
+#include "srutil/delegate/delegate.hpp"
+
 #include "Common/HisBase.h"
 
 using namespace std;
+
+class HisDevBase;
+
+#ifdef SRUTIL_DELEGATE_PREFERRED_SYNTAX
+typedef srutil::delegate<void ()> OnRefreshDelegate;
+#else
+ typedef srutil::delegate1<void,HisDevBase*> OnRefreshDelegate;
+#endif
+
 
 #define PROP_SCANPERIOD (const xmlChar *)"ScanPeriod"
 //#define KEY_DEVICENODE (const xmlChar *)"device"
 
 class HisDevBase : public HisBase
 {
+	bool needRefresh;
 	bool enabled;
 	uint64_t scanPeriodMs;
 	uint64_t nextScanTime;
@@ -52,16 +65,16 @@ public:
 	 *
 	 */
 	vector<HisDevValueBase*> GetValues();
-
+	OnRefreshDelegate OnRefresh;
 	timeval ComputeNextScanTime(timeval pLastScanTime);
 	void FireOnValueChanged(ValueChangedEventArgs args);
 	void Register(OnValueChangedDelegate delegate,void* owner);
 	void UnRegister(void* owner);
 	bool IsEnabled();
 	void Enable(bool enabled);
-
 	uint32_t GetScanPeriod();
 	void SetScanPeriod(uint32_t period);
+	void NeedRefresh();
 };
 
 #endif /* HISDEVBASE_H_ */

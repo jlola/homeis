@@ -28,7 +28,8 @@
 #include "LOW_helper_msglog.h"
 #include "LOW_platformMisc.h"
 #include "LOW_thread_Factory.h"
-#include "logger.h"
+#include "PoppyDebugTools.h"
+
 
 //=====================================================================================
 //
@@ -102,6 +103,7 @@ bool LOW_helper_msglog::getDebugLevelEnabled( const debugLevel_t inLevel)
  */
 void LOW_helper_msglog::printPerror( const int inErrno, const char *inFormat, ...)
 {
+	STACK
   va_list inParamList;
   int     length = 0;
   char    dummy;
@@ -138,6 +140,7 @@ void LOW_helper_msglog::printPerror( const int inErrno, const char *inFormat, ..
  */
 void LOW_helper_msglog::printError( const char *inFormat, ...)
 {
+	STACK
   va_list inParamList;
 
   va_start( inParamList, inFormat);
@@ -151,6 +154,7 @@ void LOW_helper_msglog::printError( const char *inFormat, ...)
  */
 void LOW_helper_msglog::printWarning( const char *inFormat, ...)
 {
+	STACK
   va_list inParamList;
 
   va_start( inParamList, inFormat);
@@ -164,6 +168,7 @@ void LOW_helper_msglog::printWarning( const char *inFormat, ...)
  */
 void LOW_helper_msglog::printMessage( const char *inFormat, ...)
 {
+	STACK
   va_list inParamList;
 
   va_start( inParamList, inFormat);
@@ -177,6 +182,7 @@ void LOW_helper_msglog::printMessage( const char *inFormat, ...)
  */
 void LOW_helper_msglog::printDebug( const debugLevel_t inLevel, const char *inFormat, ...)
 {
+	STACK
   va_list inParamList;
 
   if ( debugLevels[inLevel] || debugLevels[all_dl] ) {
@@ -204,6 +210,7 @@ LOW_thread_mutex*  LOW_helper_msglog::msgLock::msgMutex = LOW_thread_Factory::ne
 
 void LOW_helper_msglog::va_printToLog( const logType_t inLogType, const char *inFormat, va_list inParamList)
 {
+	STACK
   FILE    *extraStream = 0, *stdStream = 0;
   char    dummy, *buffer, *indentStr, *tmpPtr;
   int     headLen, length;
@@ -260,6 +267,7 @@ void LOW_helper_msglog::va_printToLog( const logType_t inLogType, const char *in
 
 unsigned int LOW_helper_msglog::fprintLogHeader( FILE *inExtraStream, FILE *inStdStream)
 {
+	STACK
   char      tmpStr[200];
   time_t    curtime;
   struct tm *loctime;
@@ -274,10 +282,9 @@ unsigned int LOW_helper_msglog::fprintLogHeader( FILE *inExtraStream, FILE *inSt
 
 void LOW_helper_msglog::fprintfMulti( FILE *inExtraStream, FILE *inStdStream, const char *inFormat, ...)
 {
-
+	STACK
   va_list inParamList;
   va_start( inParamList, inFormat);
-  CLogger::Info(inFormat,inParamList);
   vfprintfMulti( inExtraStream, inStdStream, inFormat, inParamList);
   va_end( inParamList);
 }

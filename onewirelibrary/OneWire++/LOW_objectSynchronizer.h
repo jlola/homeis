@@ -19,11 +19,11 @@
 #define LOW_OBJECTSYNCHRONIZER_H
 
 
-#include "platformOW++/LOW_platformMisc.h"
-#include "platformOW++/LOW_platformMiscFactory.h"
+#include "LOW_platformMisc.h"
+#include "LOW_platformMiscFactory.h"
 #include "LOW_helper_msglog.h"
-#include "threadOW++/LOW_thread_Factory.h"
-#include "threadOW++/LOW_thread_rwlock.h"
+#include "LOW_thread_Factory.h"
+#include "LOW_thread_rwlock.h"
 
 
 
@@ -112,7 +112,7 @@ public:
           LOW_helper_msglog::printDebug( LOW_helper_msglog::objSync_getLock_dl,
             "__synchronizeStaticRead: obtained lock from file %s, line %d\n", inFile.c_str(), inLine);
         }
-        catch ( LOW_thread_rwlock::thread_rwlock_error & ex) {
+        catch ( LOW_thread_rwlock::thread_rwlock_error ex) {
           LOW_helper_msglog::printDebug( LOW_helper_msglog::objSync_lockFailed_dl,
             "__synchronizeStaticRead: failed to obtain lock from file %s, line %d\n", inFile.c_str(), inLine);
           (*staticRwLock)->lockRead();  // now really block in the lock
@@ -164,7 +164,7 @@ public:
           LOW_helper_msglog::printDebug( LOW_helper_msglog::objSync_getLock_dl,
             "__synchronizeStaticWrite: obtained lock from file %s, line %d\n", inFile.c_str(), inLine);
         }
-        catch ( LOW_thread_rwlock::thread_rwlock_error & ex) {
+        catch ( LOW_thread_rwlock::thread_rwlock_error ex) {
           LOW_helper_msglog::printDebug( LOW_helper_msglog::objSync_lockFailed_dl,
             "__synchronizeStaticWrite: failed to obtain lock from file %s, line %d\n", inFile.c_str(), inLine);
           (*staticRwLock)->lockWrite();  // now really block in the lock
@@ -221,10 +221,8 @@ public:
         wasObtainedWeakly = false;
         try {
           (*staticRwLock)->tryLockRead();
-#ifdef DEBUG_LOCKING
-          LOW_helper_msglog::printDebug( LOW_helper_msglog::objSync_getLock_dl,
-            "__synchronizeStaticReadWeak: obtained lock from file %s, line %d\n", inFile.c_str(), inLine);
-#endif
+          //LOW_helper_msglog::printDebug( LOW_helper_msglog::objSync_getLock_dl,
+          //  "__synchronizeStaticReadWeak: obtained lock from file %s, line %d\n", inFile.c_str(), inLine);
         }
         catch ( LOW_thread_rwlock::thread_rwlock_error & ex) {
           if ( LOW_platformMisc::getThreadID() == inWriteLockHolder )
@@ -284,8 +282,8 @@ public:
           //  - a foreign thread will block anyway waiting for a lock
           //  - our own thread cannot check as we are still here
           writeLockHolder = LOW_platformMisc::getThreadID();  // set write lock indicator
-//          LOW_helper_msglog::printDebug( LOW_helper_msglog::objSync_getLock_dl,
-//            "__synchronizeStaticWriteWeak: obtained lock from file %s, line %d\n", inFile.c_str(), inLine);
+          //LOW_helper_msglog::printDebug( LOW_helper_msglog::objSync_getLock_dl,
+          //  "__synchronizeStaticWriteWeak: obtained lock from file %s, line %d\n", inFile.c_str(), inLine);
         }
         catch ( LOW_thread_rwlock::thread_rwlock_error & ex) {
           if ( LOW_platformMisc::getThreadID() == writeLockHolder )
@@ -356,7 +354,7 @@ protected:
           LOW_helper_msglog::printDebug( LOW_helper_msglog::objSync_getLock_dl,
             "__synchronizeMethodRead: obtained read lock from file %s, line %d\n", inFile.c_str(), inLine);
         }
-        catch ( LOW_thread_rwlock::thread_rwlock_error & ex) {
+        catch ( LOW_thread_rwlock::thread_rwlock_error ex) {
           LOW_helper_msglog::printDebug( LOW_helper_msglog::objSync_lockFailed_dl,
             "__synchronizeMethodRead: failed to obtain read lock from file %s, line %d\n", inFile.c_str(), inLine);
           objectSynchronizer.objectSyncRwlock->lockRead();  // now really block in the lock
@@ -405,7 +403,7 @@ protected:
           LOW_helper_msglog::printDebug( LOW_helper_msglog::objSync_getLock_dl,
             "__synchronizeMethodWrite: obtained write lock from file %s, line %d\n", inFile.c_str(), inLine);
         }
-        catch ( LOW_thread_rwlock::thread_rwlock_error & ex) {
+        catch ( LOW_thread_rwlock::thread_rwlock_error ex) {
           LOW_helper_msglog::printDebug( LOW_helper_msglog::objSync_lockFailed_dl,
             "__synchronizeMethodWrite: failed to obtain write lock from file %s, line %d\n", inFile.c_str(), inLine);
           objectSynchronizer.objectSyncRwlock->lockWrite();  // now really block in the lock
@@ -459,10 +457,8 @@ protected:
         wasObtainedWeakly = false;
         try {
           objectSynchronizer.objectSyncRwlock->tryLockRead();
-#ifdef DEBUG_LOCKING
-            LOW_helper_msglog::printDebug( LOW_helper_msglog::objSync_getLock_dl,
-              "__synchronizeMethodReadWeak: obtain weak read lock from file %s, line %d\n", inFile.c_str(), inLine);
-#endif
+            //LOW_helper_msglog::printDebug( LOW_helper_msglog::objSync_getLock_dl,
+            //  "__synchronizeMethodReadWeak: obtain weak read lock from file %s, line %d\n", inFile.c_str(), inLine);
         }
         catch ( LOW_thread_rwlock::thread_rwlock_error & ex) {
           if ( LOW_platformMisc::getThreadID() == objectSynchronizer.writeLockHolder )
@@ -515,10 +511,8 @@ protected:
         wasObtainedWeakly = false;
         try {
           objectSynchronizer.objectSyncRwlock->tryLockWrite();
-#ifdef DEBUG_LOCKING
-          LOW_helper_msglog::printDebug( LOW_helper_msglog::objSync_getLock_dl,
-            "__synchronizeMethodWriteWeak: obtained weak write lock from file %s, line %d\n", inFile.c_str(), inLine);
-#endif
+          //LOW_helper_msglog::printDebug( LOW_helper_msglog::objSync_getLock_dl,
+        //		  "__synchronizeMethodWriteWeak: obtained weak write lock from file %s, line %d\n", inFile.c_str(), inLine);
           // no need to make that block exclusive:
           //  - a foreign thread will block anyway waiting for a lock
           //  - our own thread cannot check as we are still here

@@ -20,7 +20,7 @@
 
 #include "EDataType.h"
 #include "EHisDevDirection.h"
-
+#include "PoppyDebugTools.h"
 #include "HisDevBase.h"
 
 //const xmlChar *HisDevBase::GetNodeNameInternal()
@@ -33,17 +33,19 @@ HisDevBase::~HisDevBase()
 
 }
 
-HisDevBase::HisDevBase() : scanPeriodMs(10000)
+HisDevBase::HisDevBase() :
+		needRefresh(false),enabled(true),scanPeriodMs(10000)
 {
+	STACK
 	dataSource = EDataSource::Const;
-	enabled = false;
 	uint64_t curTimeUs = HisDateTime::timeval_to_usec(HisDateTime::Now());
 	nextScanTime = curTimeUs + (rand() % scanPeriodMs)*1000;
 }
 
 HisDevBase::HisDevBase(xmlNodePtr node)
-	: HisBase::HisBase(node),scanPeriodMs(10000)
+	: HisBase::HisBase(node),needRefresh(false),scanPeriodMs(10000)
 {
+	STACK
 	dataSource = EDataSource::Const;
 	enabled = false;
 	uint64_t curTimeUs = HisDateTime::timeval_to_usec(HisDateTime::Now());
@@ -52,6 +54,7 @@ HisDevBase::HisDevBase(xmlNodePtr node)
 
 void HisDevBase::DoInternalSave(xmlNodePtr & node)
 {
+	STACK
 	HisBase::DoInternalSave(node);
 
 	xmlSetProp(node,PROP_SCANPERIOD,(const xmlChar*)Converter::itos(scanPeriodMs,10).c_str());
@@ -64,12 +67,25 @@ timeval HisDevBase::ComputeNextScanTime(timeval pLastScanTime)
 	return HisDateTime::usec_to_timeval(useconds);
 }
 
+void HisDevBase::NeedRefresh()
+{
+	STACK
+	if (IsEnabled())
+	{
+		needRefresh = true;
+		if (OnRefresh!=0)
+			OnRefresh(this);
+	}
+}
+
 void HisDevBase::Refresh()
 {
+	STACK
 	uint64_t curTimeUs = HisDateTime::timeval_to_usec(HisDateTime::Now());
 
-	if (curTimeUs >= nextScanTime)
+	if (curTimeUs >= nextScanTime || needRefresh)
 	{
+		needRefresh = false;
 		nextScanTime =curTimeUs + scanPeriodMs*1000;
 		DoInternalRefresh();
 	}
@@ -77,6 +93,7 @@ void HisDevBase::Refresh()
 
 void HisDevBase::DoInternalLoad(xmlNodePtr & node)
 {
+	STACK
 	HisBase::DoInternalLoad(node);
 
 	xmlChar* prop = NULL;
@@ -84,7 +101,7 @@ void HisDevBase::DoInternalLoad(xmlNodePtr & node)
 	{
 		prop = xmlGetProp(node,PROP_SCANPERIOD);
 		string strScanPeriod = (const char*)prop;
-		scanPeriodMs = Converter::stoi(strScanPeriod,10);
+		scanPeriodMs = Converter::stoui(strScanPeriod,10);
 		xmlFree(prop);
 	}
 }
@@ -107,7 +124,7 @@ vector<HisDevValueBase*> HisDevBase::GetValues()
 
 bool HisDevBase::IsEnabled()
 {
-	return enabled;
+	return true;
 }
 
 void HisDevBase::Enable(bool penabled)

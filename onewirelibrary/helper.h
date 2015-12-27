@@ -94,7 +94,7 @@ template<class devType> std::vector<devType*> hlp_selectDevices( std::vector<dev
   acceptChars[inDevs.size()] = 0;
   strcat( acceptChars, "\r ");
   
-  bool keepLooping = true;
+  //bool keepLooping = true;
 //  while ( keepLooping ) {
 //    hlp_printDashline();
 //    for ( unsigned int a=0; a<inDevs.size(); ++a) {

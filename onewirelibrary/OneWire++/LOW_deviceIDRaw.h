@@ -80,7 +80,6 @@ public:
   /** Copy constructor. */
   LOW_deviceIDRaw( const LOW_deviceIDRaw &inDeviceIDRaw);
 
-
   /** Constructor from ROM ID as our own data type.
       <B>Note:</B> No CRC validation is done.
       @param  inRomID  Reference to ROM ID.

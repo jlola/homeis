@@ -18,7 +18,7 @@
 
 #include "LOW_linkDS2490.h"
 #include "LOW_device.h"
-
+#include "PoppyDebugTools.h"
 
 
 //=====================================================================================
@@ -29,7 +29,7 @@
 LOW_linkDS2490::LOW_linkDS2490( const LOW_portUsb_Factory::usbDeviceSpecifier_t inUsbDevSpec,
                                 const bool inHasExternalPower, const bool inAllowProgPulse) :
   LOW_link( true, inHasExternalPower, inAllowProgPulse),
-  LOW_linkFlexibleSpeed( normal_speed, /*pdSlewRate_1_37*/pdSlewRate_0_55, /*w1LowTime_11*/w1LowTime_15, soW0RecTime_10) // use normal speed, but preconfigure the recommeded optimal parameters as of app note #148
+  LOW_linkFlexibleSpeed( normal_speed, pdSlewRate_1_37, w1LowTime_11, soW0RecTime_10) // use normal speed, but preconfigure the recommeded optimal parameters as of app note #148
 {
   usbDevice = LOW_portUsb_Factory::new_portUsbDevice( inUsbDevSpec);
 
@@ -60,6 +60,7 @@ LOW_linkDS2490::~LOW_linkDS2490()
 
 bool LOW_linkDS2490::touchBit( const bool inSendBit, const strongPullup_t inPullup)
 {
+	STACK
   LOW_helper_msglog::printDebug( LOW_helper_msglog::linkDS2490_dl, "touchBit() called\n");
 
   commLock lock( *this);
@@ -87,7 +88,7 @@ bool LOW_linkDS2490::touchBit( const bool inSendBit, const strongPullup_t inPull
     throw comm_error( "Unexpected data amount in IN buffer", __FILE__, __LINE__);
 
   uint8_t      readByte;
-  unsigned int readSize = usbDevice->bulkRead( usbDataInEP, 1, &readByte, BULK_READ_TIMEOUT);
+  unsigned int readSize = usbDevice->bulkRead( usbDataInEP, 1, &readByte, 1000);
   if ( readSize != 1 )
     throw comm_error( "Short read from IN buffer", __FILE__, __LINE__);
   
@@ -99,6 +100,7 @@ bool LOW_linkDS2490::touchBit( const bool inSendBit, const strongPullup_t inPull
 
 uint8_t LOW_linkDS2490::touchByte( const uint8_t inSendByte, const strongPullup_t inPullup)
 {
+	STACK
   LOW_helper_msglog::printDebug( LOW_helper_msglog::linkDS2490_dl, "touchByte() called (inSendByte: %d, inPullup: %d)\n", inSendByte, inPullup);
 
   commLock lock( *this);
@@ -125,7 +127,7 @@ uint8_t LOW_linkDS2490::touchByte( const uint8_t inSendByte, const strongPullup_
     throw comm_error( "Unexpected data amount in IN buffer", __FILE__, __LINE__);
 
   uint8_t      readByte;
-  unsigned int readSize = usbDevice->bulkRead( usbDataInEP, 1, &readByte, BULK_READ_TIMEOUT);
+  unsigned int readSize = usbDevice->bulkRead( usbDataInEP, 1, &readByte, 1000);
   if ( readSize != 1 )
     throw comm_error( "Short read from IN buffer", __FILE__, __LINE__);
 
@@ -137,6 +139,7 @@ uint8_t LOW_linkDS2490::touchByte( const uint8_t inSendByte, const strongPullup_
 
 byteVec_t LOW_linkDS2490::touchBlock( const byteVec_t &inBytes, const strongPullup_t inPullup)
 {
+	STACK
   LOW_helper_msglog::printDebug( LOW_helper_msglog::linkDS2490_dl, "touchBlock() called\n");
 
   commLock lock( *this);
@@ -171,7 +174,7 @@ byteVec_t LOW_linkDS2490::touchBlock( const byteVec_t &inBytes, const strongPull
     
       comCmd_blockIO( written,                                 // inWriteSize
                       false,                                   // inBusResetBefore
-                      (remaining==0) ? (inPullup==pullUp_NONE?false:true) : false, // inDoStrongPullup
+                      (remaining==0) ? (inPullup==pullUp_NONE ? false : true) : false, // inDoStrongPullup
                       resultOnError_rsltHdl,                   // inResultHandling,
                       false);                                  // inImmediateExec
    
@@ -180,8 +183,9 @@ byteVec_t LOW_linkDS2490::touchBlock( const byteVec_t &inBytes, const strongPull
       deviceFeedback_t  deviceFeedback;
       resultCodeVec_t   resultCodeVec;
       waitUntilIdle( deviceFeedback, resultCodeVec, 1000);
-   
+
       read = usbDevice->bulkRead( usbDataInEP, written, readBuffer, 1000);
+
       if ( read != written )
         throw comm_error( "Short read from IN buffer", __FILE__, __LINE__);
       std::copy( readBuffer, readBuffer+read, retVec.begin()+totalRead);
@@ -243,10 +247,8 @@ LOW_deviceID::deviceIDVec_t LOW_linkDS2490::searchDevices( const bool inOnlyAlar
     if ( writeSize != preloadVec.getRomIDVec().size() )
       throw comm_error( "Short write to OUT buffer", __FILE__, __LINE__);
 
-    uint8_t alarm = inOnlyAlarm ? LOW_device::SearchAlarmROM_COMMAND : LOW_device::SearchROM_COMMAND;
-
     comCmd_searchAccess( maxDevs,              // inMaxDevNum
-    					alarm	, // inSearchCommand
+                         inOnlyAlarm ? LOW_device::SearchAlarmROM_COMMAND : LOW_device::SearchROM_COMMAND, // inSearchCommand
                          true,                 // inSearchWithoutFullAccess
                          true,                 // inReturnDiscrepancyInfo
                          true,                 // inBusResetBefore
@@ -267,7 +269,7 @@ LOW_deviceID::deviceIDVec_t LOW_linkDS2490::searchDevices( const bool inOnlyAlar
     LOW_deviceIDRaw::devRomID_t *readRawIDs = new LOW_deviceIDRaw::devRomID_t[rawDevCnt];
 
     try {
-      unsigned int readSize = usbDevice->bulkRead( usbDataInEP, deviceFeedback.dataInBufferUsage, reinterpret_cast<LOW_portUsbDevice::msgData_t>(readRawIDs), BULK_READ_TIMEOUT);
+      unsigned int readSize = usbDevice->bulkRead( usbDataInEP, deviceFeedback.dataInBufferUsage, reinterpret_cast<LOW_portUsbDevice::msgData_t>(readRawIDs), 1000);
       if ( readSize != deviceFeedback.dataInBufferUsage )
         throw comm_error( "Short read from IN buffer", __FILE__, __LINE__);
 
@@ -311,7 +313,9 @@ LOW_deviceID::deviceIDVec_t LOW_linkDS2490::searchDevices( const bool inOnlyAlar
 
 void LOW_linkDS2490::resetLinkAdapter()
 {
+	STACK
   LOW_helper_msglog::printDebug( LOW_helper_msglog::linkDS2490_dl, "resetLinkAdapter() called\n");
+
 
   commLock lock( *this);
 
@@ -340,6 +344,7 @@ void LOW_linkDS2490::resetLinkAdapter()
 
 bool LOW_linkDS2490::resetBus()
 {
+	STACK
   LOW_helper_msglog::printDebug( LOW_helper_msglog::linkDS2490_dl, "resetBus() called\n");
 
   commLock lock( *this);
@@ -395,6 +400,7 @@ bool LOW_linkDS2490::resetBus()
 
 void LOW_linkDS2490::strongPullup( const unsigned long inMilliSecs)
 {
+	STACK
   LOW_helper_msglog::printDebug( LOW_helper_msglog::linkDS2490_dl, "strongPullup(const unsigned long) called\n");
 
   commLock lock( *this);
@@ -523,6 +529,7 @@ void LOW_linkDS2490::doSearchSequence( const LOW_deviceIDRaw& /*inBranchVector*/
 
 void LOW_linkDS2490::setWireSpeed( const wireSpeed_t inWireSpeed)
 {
+	STACK
   LOW_helper_msglog::printDebug( LOW_helper_msglog::linkDS2490_dl, "setWireSpeed() called\n");
 
   commLock lock( *this);
@@ -559,6 +566,7 @@ LOW_linkDS2490::wireSpeed_t LOW_linkDS2490::getWireSpeed()
 
 void LOW_linkDS2490::setPullDownSlewRate( const pdSlewRate_t inPDSR)
 {
+	STACK
   LOW_helper_msglog::printDebug( LOW_helper_msglog::linkDS2490_dl, "setPullDownSlewRate() called\n");
 
   commLock lock( *this);
@@ -590,6 +598,7 @@ LOW_linkDS2490::pdSlewRate_t LOW_linkDS2490::getPullDownSlewRate()
 
 void LOW_linkDS2490::setWrite1LowTime( const w1LowTime_t inW1LT)
 {
+	STACK
   LOW_helper_msglog::printDebug( LOW_helper_msglog::linkDS2490_dl, "setWrite1LowTime() called\n");
 
   commLock lock( *this);
@@ -621,6 +630,7 @@ LOW_linkDS2490::w1LowTime_t LOW_linkDS2490::getWrite1LowTime()
 
 void LOW_linkDS2490::setSampleOffsetWrite0Rec( const soW0RecTime_t inSOW0RT)
 {
+	STACK
   LOW_helper_msglog::printDebug( LOW_helper_msglog::linkDS2490_dl, "setSampleOffsetWrite0Rec() called\n");
 
   commLock lock( *this);
@@ -679,6 +689,7 @@ void LOW_linkDS2490::commonConstructorActions()
 
 void LOW_linkDS2490::readDeviceStatus( deviceFeedback_t &outDevFeedback, resultCodeVec_t &outResultCodeVec)
 {
+	STACK
   LOW_helper_msglog::printDebug( LOW_helper_msglog::linkDS2490_dl, "readDeviceStatus() called\n");
 
   // locking done in publicly accessible methods
@@ -686,7 +697,7 @@ void LOW_linkDS2490::readDeviceStatus( deviceFeedback_t &outDevFeedback, resultC
   deviceFeedbackRaw_t  feedbackData;
 
   unsigned int readBytes = usbDevice->bulkRead( usbStatusInEP, sizeof( feedbackData),
-                                                reinterpret_cast<LOW_portUsbDevice::msgData_t>(&feedbackData), BULK_READ_TIMEOUT);
+                                                reinterpret_cast<LOW_portUsbDevice::msgData_t>(&feedbackData), 500);
   if ( readBytes < 16 )
     throw comm_error( "Short read from status endpoint", __FILE__, __LINE__);
 
@@ -889,6 +900,7 @@ void LOW_linkDS2490::progPulseInternal( const unsigned int inPulseFactor)
 
 void LOW_linkDS2490::ctlCmd_resetDevice()
 {
+	STACK
   LOW_helper_msglog::printDebug( LOW_helper_msglog::linkDS2490_dl, "ctlCmd_resetDevice() called\n");
 
   // locking done in publicly accessible methods
@@ -994,6 +1006,7 @@ void LOW_linkDS2490::ctlCmd_getCommCmds( byteVec_t &outBytes)
   
 void LOW_linkDS2490::modCmd_setEnablePulse( const bool inEnableStrongPullup, const bool inEnableProgPulse)
 {
+	STACK
   LOW_helper_msglog::printDebug( LOW_helper_msglog::linkDS2490_dl, "modCmd_setEnablePulse() called\n");
 
   // locking done in publicly accessible methods
@@ -1010,6 +1023,7 @@ void LOW_linkDS2490::modCmd_setEnablePulse( const bool inEnableStrongPullup, con
   
 void LOW_linkDS2490::modCmd_setEnableSpeedChange( const bool inEnableSpeedChange)
 {
+	STACK
   LOW_helper_msglog::printDebug( LOW_helper_msglog::linkDS2490_dl, "modCmd_setEnableSpeedChange() called\n");
 
   // locking done in publicly accessible methods

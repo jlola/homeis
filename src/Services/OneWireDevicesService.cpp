@@ -14,7 +14,7 @@
 #include "EItemType.h"
 #include "Helpers/StringBuilder.h"
 #include "HisDallas.h"
-
+#include "PoppyDebugTools.h"
 #include "OneWireDevicesService.h"
 
 using namespace rapidjson;
@@ -37,6 +37,7 @@ OneWireDevicesService::~OneWireDevicesService(void)
 
 void OneWireDevicesService::render_GET(const http_request& req, http_response** res)
 {
+	STACK
 	Document respjsondoc;
 	respjsondoc.SetArray();
 	string path = req.get_path();
@@ -95,6 +96,7 @@ void OneWireDevicesService::render_GET(const http_request& req, http_response** 
 
 void OneWireDevicesService::FillFolderDevicesToJson(HisDevFolder* folder,Document & respjsondoc,HisDevices & devices)
 {
+	STACK
 	vector<HisDevValueId*> valueIds = folder->GetItems<HisDevValueId>();
 	for(size_t i=0;i<valueIds.size();i++)
 	{
@@ -184,6 +186,10 @@ void OneWireDevicesService::DevValueToJson(Value & d, HisDevValueId* valueId,His
 	strvalue = devValue->GetUnit();
 	jsonvalue.SetString(strvalue.c_str(),strvalue.length(),respjsondoc.GetAllocator());
 	d.AddMember( "unit",jsonvalue, respjsondoc.GetAllocator());
+
+	strvalue = devValue->GetAddressName();
+	jsonvalue.SetString(strvalue.c_str(),strvalue.length(),respjsondoc.GetAllocator());
+	d.AddMember( "addressname",jsonvalue, respjsondoc.GetAllocator());
 
 	HisDevVirtual* virtdev = dynamic_cast<HisDevVirtual*>(devValue->GetParent());
 	if (virtdev!=NULL)
@@ -565,6 +571,16 @@ bool OneWireDevicesService::UpdateDevValue(CUUID devValueId, string strjson)
 			}
 		}
 
+		if (document.HasMember("addressname"))
+		{
+			string addressname = document["addressname"].GetString();
+			if (addressname!=devValue->GetAddressName())
+			{
+				devValue->SetAddressName(addressname);
+				saveReq = true;
+			}
+		}
+
 		if (document.HasMember("unit"))
 		{
 			string strunit = document["unit"].GetString();
@@ -585,9 +601,10 @@ bool OneWireDevicesService::UpdateDevValue(CUUID devValueId, string strjson)
 			string strvalue = document["value"].GetString();
 
 			if (devValue->GetDirection()==EHisDevDirection::ReadWrite ||
-				devValue->GetDirection()==EHisDevDirection::Write)
+				devValue->GetDirection()==EHisDevDirection::Write ||
+				devValue->GetForceOutput())
 			{
-				devValue->ForceStringValue(strvalue);
+				devValue->ForceStringValue(strvalue,false);
 				saveReq = true;
 			}
 			else

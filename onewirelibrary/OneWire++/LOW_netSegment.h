@@ -395,7 +395,6 @@ private:
   virtual void removeDevice( const LOW_device *inDev);
 
   template<class devType> bool containsDevice( const LOW_deviceID inDevID);
-
 };
 
 
@@ -439,7 +438,7 @@ template<class devType> devType* LOW_netSegment::getDevice( const LOW_deviceID i
   // look in the map of alive devices
   LOW_device::deviceMap_t::iterator found = aliveDevMap.find( inDevID);
   if ( found == aliveDevMap.end() )
-    throw noDevice_error( "Device not present on segment", __FILE__, __LINE__);
+    throw LOW_netSegment::noDevice_error( "Device not present on segment", __FILE__, __LINE__);
   
   return devicePtr_cast<devType>(found->second);
 }
@@ -480,8 +479,7 @@ template<class devType> std::vector<devType*> LOW_netSegment::searchDevices( con
   
   for( unsigned int a=0; a<idList.size(); a++) {
     LOW_device *newDev = addDevice( idList[a]);
-    if (newDev!=NULL)
-    	retVal[a] = devicePtr_cast<devType>(newDev);
+    retVal[a] = devicePtr_cast<devType>(newDev);
       
     // in case it was already present, remove the device from the formerly active devices
     if ( !inOnlyAlarm ) {

@@ -6,10 +6,12 @@
  */
 
 #include <unistd.h>
+#include <iostream>
 
 #include "Common/HisLock.h"
 #include "ExpressionRuntime.h"
 #include "Helpers/logger.h"
+#include "PoppyDebugTools.h"
 
 extern "C" {
 
@@ -19,6 +21,7 @@ extern "C" {
 
 ExpressionRuntime::ExpressionRuntime() : thread(0)
 {
+	STACK
 	this->__expressionMutex = HisLock::CreateMutex();
 	running = false;
 }
@@ -27,15 +30,21 @@ ExpressionRuntime::ExpressionRuntime() : thread(0)
 
 void ExpressionRuntime::Evaluate()
 {
+	STACK
+
 	HisLock lock(this->__expressionMutex);
 	for(size_t i=0;i<expressions.size();i++)
 	{
+
+		//int* test = 0x00;
+		//*test = 10;
 		expressions[i]->Evaluate();
 	}
 }
 
 void* ExpressionRuntime::ThreadFunction(void* obj)
 {
+	STACK
 	//set_signal_handler("/home/linaro/homeis/dis");
 	ExpressionRuntime* runtime = (ExpressionRuntime*)obj;
 
@@ -50,6 +59,7 @@ void* ExpressionRuntime::ThreadFunction(void* obj)
 
 void ExpressionRuntime::Add(IExpression* pExpression)
 {
+	STACK
 	HisLock lock(this->__expressionMutex);
 	int index = Find(pExpression);
 	if (index<0)
@@ -60,6 +70,7 @@ void ExpressionRuntime::Add(IExpression* pExpression)
 
 void ExpressionRuntime::Remove(IExpression* pExpression)
 {
+	STACK
 	HisLock lock(this->__expressionMutex);
 
 	int index = Find(pExpression);
@@ -71,6 +82,8 @@ void ExpressionRuntime::Remove(IExpression* pExpression)
 
 int ExpressionRuntime::Find(IExpression* expression)
 {
+	STACK
+
 	for(size_t i=0;i<expressions.size();i++)
 	{
 		if (expressions[i]->GetRecordId()==expression->GetRecordId())
@@ -81,6 +94,7 @@ int ExpressionRuntime::Find(IExpression* expression)
 
 void ExpressionRuntime::Start()
 {
+	STACK
 	/* Initialize thread creation attributes */
 
 	int s = pthread_attr_init(&attr);
