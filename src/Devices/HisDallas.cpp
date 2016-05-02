@@ -29,7 +29,6 @@ HisDevDallas::HisDevDallas(LOW_device* pdev)
 {
 	STACK
 	device = pdev;
-	DevError = false;
 }
 
 HisDevDallas::HisDevDallas(xmlNodePtr node,LOW_device* pdev) :
@@ -37,7 +36,6 @@ HisDevDallas::HisDevDallas(xmlNodePtr node,LOW_device* pdev) :
 {
 	STACK
 	device = pdev;
-	DevError = false;
 }
 
 LOW_deviceID HisDevDallas::GetId(xmlNodePtr node)
@@ -58,14 +56,18 @@ LOW_deviceID HisDevDallas::GetId(xmlNodePtr node)
 	return id;
 }
 
-
-
 LOW_deviceID HisDevDallas::GetId()
 {
 	STACK
 	if (device!=NULL) return device->getID();
 	if (GetNodePtr()!=NULL) return HisDevDallas::GetId(GetNodePtr());
 	throw "HisDevDallas::GetId empty device and devnode";
+}
+
+void HisDevDallas::OnError()
+{
+	CLogger::Info("%s: OnError: Reset link adapter",GetName().c_str());
+	device->getNetSegment().getLink().resetLinkAdapter();
 }
 
 void HisDevDallas::DoInternalSave(xmlNodePtr & node)

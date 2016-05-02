@@ -15,8 +15,6 @@
 
 class HisDevDallas : public HisDevBase
 {
-
-protected: bool DevError;
 private: LOW_device* device;
 
 protected: virtual ~HisDevDallas();
@@ -30,6 +28,8 @@ public: HisDevDallas(xmlNodePtr node,LOW_device* pdev);
 protected: virtual void DoInternalSave(xmlNodePtr & node);
 
 protected: virtual void DoInternalLoad(xmlNodePtr & node);
+
+protected: virtual void OnError();
 
 public: static LOW_deviceID GetId(xmlNodePtr node);
 

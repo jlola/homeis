@@ -38,7 +38,7 @@ class HisDevIO2413 : public HisDevDallas
 
 	private : void WriteToDevice(ValueChangedEventArgs args);
 
-	protected: virtual void DoInternalRefresh();
+	protected: virtual void DoInternalRefresh(bool alarm);
 
 	//protected: virtual void DoInternalSave(xmlNodePtr & node);
 

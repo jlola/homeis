@@ -18,9 +18,9 @@ class CLogger
 private:
 	static CRITICAL_SECTION cs;
 	static void WriteToFile(string subDir,string file,string line);
-	static std::string getStrTime();
 	static std::string getStrDate();
 public:
+	static std::string getStrTime();
 	CLogger();
 	static void Info(const FILE * stream);
 	static void Info(const char * text, ...);

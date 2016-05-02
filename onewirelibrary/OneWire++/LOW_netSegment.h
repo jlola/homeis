@@ -26,7 +26,7 @@
 #include "LOW_device.h"
 #include "LOW_link.h"
 #include "LOW_objectSynchronizer.h"
-  
+#include "PoppyDebugTools.h"
 
 class LOW_device; // Forward declaration to avoid loops.
 
@@ -464,11 +464,14 @@ template<class devType> std::vector<devType*> LOW_netSegment::getDevices() const
   
 template<class devType> std::vector<devType*> LOW_netSegment::searchDevices( const bool inOnlyAlarm)
 {
-  __LOW_SYNCHRONIZE_METHOD_WRITE_WEAK__
+  //__LOW_SYNCHRONIZE_METHOD_WRITE_WEAK__
   
+  STACK
+
   LOW_deviceID::deviceIDVec_t idList = cmd_SearchROM( inOnlyAlarm, devType::familyCode);
   std::vector<devType*>       retVal = std::vector<devType*>( idList.size());
 
+  STACK_SECTION("1")
   // in case of NOT alarm search, remember the active devices
   LOW_device::devPtrVec_t   formerlyActiveDevs;
   if ( !inOnlyAlarm ) {
@@ -477,6 +480,7 @@ template<class devType> std::vector<devType*> LOW_netSegment::searchDevices( con
       formerlyActiveDevs.push_back( tmpVec[a]);
   }
   
+  STACK_SECTION("2")
   for( unsigned int a=0; a<idList.size(); a++) {
     LOW_device *newDev = addDevice( idList[a]);
     retVal[a] = devicePtr_cast<devType>(newDev);
@@ -489,6 +493,7 @@ template<class devType> std::vector<devType*> LOW_netSegment::searchDevices( con
     }
   }
   
+  STACK_SECTION("3")
   // what is now remaining is not present any more and therefore is sent to the graveyard
   if ( !inOnlyAlarm ) {
     for( unsigned int a=0; a<formerlyActiveDevs.size(); a++)

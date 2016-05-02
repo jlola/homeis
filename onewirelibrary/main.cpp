@@ -19,6 +19,7 @@
 #include <config.h>
 #endif
 
+#include <stdlib.h>
 #include "LOW_network.h"
 #include "LOW_linkPassiveSerial.h"
 #include "LOW_linkDS2480B.h"
@@ -171,13 +172,13 @@ int main3( int /*argc*/, char** /*argv*/)
       switch( key ) {
         case 'l': linkMenu( oneWireLinks, oneWireNet); break;
         case 'n': netMenu( oneWireNet);                break;
-        case 't': tempMenu( oneWireNet);               break;
+        //case 't': tempMenu( oneWireNet);               break;
         case '1': ds2413Menu( oneWireNet);				break;
         case '5': ds2405Menu( oneWireNet);             break;
         case '6': ds2406Menu( oneWireNet);             break;
         case '9': ds2890Menu( oneWireNet);             break;
-        case 's': switchMenu( oneWireNet);             break;
-        case 'j': jalousieMenu( oneWireNet);           break;
+        //case 's': switchMenu( oneWireNet);             break;
+        //case 'j': jalousieMenu( oneWireNet);           break;
         case 'm': msgLoggingMenu();                    break;
         case 'o': lockMenu( oneWireNet);               break;
         case 'h': threadMenu( oneWireNet);             break;
@@ -185,7 +186,7 @@ int main3( int /*argc*/, char** /*argv*/)
       }
     }
   }
-  catch( LOW_exception ex) {
+  catch( LOW_exception & ex) {
     ex.logException();
     exitStatus = EXIT_FAILURE;
   }

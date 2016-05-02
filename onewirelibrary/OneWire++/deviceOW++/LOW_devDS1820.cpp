@@ -61,12 +61,13 @@ LOW_device* LOW_devDS1820::new_Instance( LOW_netSegment &inNetSegment, const LOW
 LOW_devDS1820::LOW_devDS1820( LOW_netSegment &inSegment, const LOW_deviceID &inDevID) : 
   LOW_device( inSegment, inDevID, familyCode)
 {
-  if ( inSegment.getHasExternalPower() )
-    isExternalPowered = cmd_ReadPowerSupply();
-  else
-    isExternalPowered = false;
+	isExternalPowered = true;
+//  if ( inSegment.getHasExternalPower() )
+//    isExternalPowered = cmd_ReadPowerSupply();
+//  else
+//    isExternalPowered = false;
 
-  cmd_RecallE2();
+  //cmd_RecallE2();
 }
 
 
@@ -176,9 +177,17 @@ bool LOW_devDS1820::cmd_ReadPowerSupply() const
 {
   linkLock  lock( *this);
 
+  try
+  {
+
   cmd_MatchROM();  
   getLink().writeData( ReadPowerSupply_COMMAND);
   
   return getLink().readDataBit();
+  }
+  catch(noDevice_error & ex)
+  {
+	  return false;
+  }
 }
 

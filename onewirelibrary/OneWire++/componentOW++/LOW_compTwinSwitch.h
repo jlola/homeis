@@ -118,9 +118,9 @@ private:
 
   void setAlarmCondition();
 
-  void readStatus(LOW_devDS2406::cmd_ChannelAccess::channelInfo_t &outChannelInfo);
+  //void readStatus(LOW_devDS2406::cmd_ChannelAccess::channelInfo_t &outChannelInfo);
 
-  void resetLatches( LOW_devDS2406::cmd_ChannelAccess::channelInfo_t &outChannelInfo);
+  //void resetLatches( LOW_devDS2406::cmd_ChannelAccess::channelInfo_t &outChannelInfo);
 
   void doSwitchAction( const unsigned int inSwitchNum, const bool inSensedLevel);
 };

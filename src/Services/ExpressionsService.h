@@ -37,6 +37,7 @@ public:
 	bool DeleteExpression(string strid,string & message);
 	static void ExpressionToJson(LuaExpression *pExpression, Document & respjsondoc);
 	static void ExpressionsToJson(string strid, HisDevFolderRoot* root, Document & respjsondoc);
+	static void ExpressionDebugLogToJson(LuaExpression *pExpression, Document & respjsondoc);
 	void render_GET(const http_request&, http_response**);
 	void render_POST(const http_request& r, http_response** res);
 	void render_PUT(const http_request& req, http_response** res);

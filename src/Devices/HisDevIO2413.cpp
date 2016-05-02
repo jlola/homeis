@@ -89,7 +89,7 @@ void HisDevIO2413::WriteToDevice(ValueChangedEventArgs args)
 	}
 }
 
-void HisDevIO2413::DoInternalRefresh()
+void HisDevIO2413::DoInternalRefresh(bool alarm)
 {
 	uint8_t status;
 	bool devError = false;
@@ -114,7 +114,7 @@ void HisDevIO2413::DoInternalRefresh()
 	valueAOutput->ReadedValueFromDevice(latchA,devError);
 	valueBOutput->ReadedValueFromDevice(latchB,devError);
 
-	DevError = devError;
+	SetError(devError);
 }
 
 //void HisDevIO2413::DoInternalSave(xmlNodePtr & node)

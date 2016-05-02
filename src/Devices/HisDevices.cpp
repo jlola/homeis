@@ -34,8 +34,9 @@ void HisDevices::Scan()
 	AddScanned();
 }
 
-HisDevices::HisDevices(string fileName,LOW_network* pnetwork)
+HisDevices::HisDevices(string fileName,LOW_network* pnetwork,ExpressionRuntime* pExpressionRuntime)
 {
+	expressionRuntime = pExpressionRuntime;
 	devicesFileName = fileName;
 	doc = NULL;
 	network=pnetwork;
@@ -48,14 +49,7 @@ void HisDevices::AddToRefreshQueue(HisDevBase* hisDevBase)
 {
 	STACK
 	__devRefreshMutex->lock();
-	for(size_t i=0;i<queue.size();i++)
-	{
-		if (queue[i]==hisDevBase)
-		{
-			__devRefreshMutex->unlock();
-			return;
-		}
-	}
+	CLogger::Info("Force refresh: %s" ,hisDevBase->GetName().c_str());
 	queue.push_back(hisDevBase);
 	__devRefreshMutex->unlock();
 }
@@ -296,7 +290,23 @@ void HisDevices::Refresh()
 	{
 		//int64_t curTimeUs = HisDateTime::timeval_to_usec(HisDateTime::Now());
 
-		devices[i]->Refresh();
+		devices[i]->Refresh(false);
+
+		vector<LOW_device*> alarmDevs = network->getSegments()[0]->searchDevices<LOW_device>(true);
+		if (alarmDevs.size()>0)
+			CLogger::Info("Detected %d alarms",alarmDevs.size());
+		for(size_t d=0;d<alarmDevs.size();d++)
+		{
+			size_t index = this->Find(alarmDevs[d]->getID());
+			if (index>=0)
+			{
+				CLogger::Info("Detected alarm from device: %s",devices[index]->GetName().c_str());
+				//refresh
+				devices[index]->Refresh(true);
+				//zaradim k okamzitemu vykonani
+				expressionRuntime->AddToEvaluateQueue(devices[index]);
+			}
+		}
 
 		if (queue.size()>0)
 		{
@@ -306,12 +316,10 @@ void HisDevices::Refresh()
 			__devRefreshMutex->unlock();
 			for(size_t d=0;d<queueCopy.size();d++)
 			{
-				queueCopy[d]->Refresh();
-				usleep(1000);
+				CLogger::Info("Force refresh: %s" ,devices[d]->GetName().c_str());
+				queueCopy[d]->Refresh(false);
 			}
 		}
-
-		usleep(1000);
 		//((string*)0x00)->size();
 	}
 }

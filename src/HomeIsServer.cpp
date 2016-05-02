@@ -40,7 +40,7 @@
 
 bool HomeIsServer::Init()
 {
-	if (!InitOneWireLib(serialPort)) {
+	if (!InitOneWireLib(serports)) {
 		CLogger::Error("Error init HomeIsServer");
 		return false;
 	}
@@ -67,13 +67,16 @@ void HomeIsServer::Start()
 	Init();
 }
 
-HomeIsServer::HomeIsServer(string address,int TcpPort) :
-		serialPort(address),devruntime(NULL),rootFolder(NULL),
+HomeIsServer::HomeIsServer(vector<SSerPortConfig> pserports,int TcpPort) :
+		serports(pserports),devruntime(NULL),rootFolder(NULL),
 		expressionRuntime(NULL),cw(create_webserver(TcpPort).max_threads(5)),devs(NULL)
 {
-	const char *key="key.pem";
-	const char *cert="cert.pem";
-	//cw.use_ssl().https_mem_key(key).https_mem_cert(cert);
+	string strkey = File::getexepath()+"/key.pem";
+	string strcert = File::getexepath()+"/cert.pem";
+	cout << strkey << ", " << strcert << endl;
+	const char *key=strkey.c_str();
+	const char *cert=strcert.c_str();
+	cw.use_ssl().https_mem_key(key).https_mem_cert(cert);
 }
 
 void HomeIsServer::InitWebServer()
@@ -95,6 +98,7 @@ void HomeIsServer::InitWebServer()
 	//run all expressions in folder
 	ws_i.register_resource(string("api/expression/run/{id}"), &expressionService, true);
 	ws_i.register_resource(string("api/expression/folder/{id}"), &expressionService, true);
+	ws_i.register_resource(string("api/expression/debuglog/{id}"), &expressionService, true);
 	ws_i.register_resource(string("api/expression/{id}"), &expressionService, true);
 	ws_i.register_resource(string("api/expression"), &expressionService, true);
 
@@ -109,12 +113,12 @@ void HomeIsServer::InitWebServer()
 
 bool HomeIsServer::InitHisDevices()
 {
-	devs = new HisDevices(File::getexepath() + "/devices.xml",&oneWireNet);
+	expressionRuntime = new ExpressionRuntime();
+	devs = new HisDevices(File::getexepath() + "/devices.xml",&oneWireNet,expressionRuntime);
 	devs->Load();
 	devs->AddScanned();
 	HisDevFactory::Instance().SetDevices(devs);
 
-	expressionRuntime = new ExpressionRuntime();
 	HisDevFactory::Instance().SetExpressionRuntime(expressionRuntime);
 
 	rootFolder = new HisDevFolderRoot(File::getexepath() + "/folders.xml");
@@ -128,7 +132,7 @@ bool HomeIsServer::InitHisDevices()
 	return true;
 }
 
-bool HomeIsServer::InitOneWireLib(string port)
+bool HomeIsServer::InitOneWireLib(vector<SSerPortConfig> pserports)
 {
 	// stuff for the passive adapter
 	//LOW_linkPassiveSerial  *passiveLink = 0;
@@ -136,50 +140,26 @@ bool HomeIsServer::InitOneWireLib(string port)
 	LOW_linkDS2490 *ds2490Link = 0;
 	try {
 		LOW_exception::setLogOnCreation( false );
-		//LOW_helper_msglog::printMessage( "Harald's predefined setup: Adding passive adapter to network.\n");
-		//"/dev/ttyAMA0"
 
-		LOW_portSerialFactory::portSpecifier_t  ttyS = LOW_portSerialFactory::portSpecifier_t( serialPort );
-		ds2480Link = new LOW_linkDS2480B(ttyS,LOW_linkDS2480B::RXPOL_val_t::RXPOL_NORM,false,false);
-
-		oneWireNet.addLink(ds2480Link);
-
-		//std::vector<uint8_t> idbytes = Converter::stobytes("6500000016368729");
-		//LOW_deviceID devid(idbytes);
+		for(size_t s=0;s<pserports.size();s++)
+		{
+			LOW_portSerialFactory::portSpecifier_t  ttyS = LOW_portSerialFactory::portSpecifier_t( pserports[s].Name );
+			ds2480Link = new LOW_linkDS2480B(ttyS,LOW_linkDS2480B::RXPOL_val_t::RXPOL_NORM,true,false);
+			oneWireNet.addLink(ds2480Link);
+		}
 
 		LOW_portUsb_Factory::usbDevSpecVec_t adapters = LOW_portUsb_Factory::getPortSpecifiers(LOW_linkDS2490::usbVendorID,LOW_linkDS2490::usbProductID);
-
-		if (adapters.size()>0)
+		for(size_t i=0;i<adapters.size();i++)
 		{
-			const char* adapterpath = adapters[0].c_str();
+			const char* adapterpath = adapters[i].c_str();
 			CLogger::Info("Found adapter DS2490 at: %s\n",adapterpath);
 			printf("Found adapter DS2490 at: %s\n",adapterpath);
 			LOW_portUsb_Factory::usbDeviceSpecifier_t usb = LOW_portUsb_Factory::usbDeviceSpecifier_t(adapters[0]);
 			ds2490Link = new LOW_linkDS2490(usb,true,false);
-			//passiveLink = new LOW_linkPassiveSerial( ttyS1);
-			//oneWireNet.addLink( passiveLink );
-			//oneWireNet.addLink( ds2480Link );
 			oneWireNet.addLink(ds2490Link);
-
-			//LOW_devLCD* lcd = oneWireNet.getDevice<LOW_devLCD>(devid);
-			//LOW_devDS2408* pio = oneWireNet.getDevice<LOW_devDS2408>(devid);
-			//pio->WritePIO(0x00);
-			//pio->WritePIO(0,true);
-			//lcd->WriteToLCD("test1",0x00);
-			//lcd->WriteToLCD("test2",0x40);
-
-
 			printf("Adapter DS2490 successfully initialized\n");
 			CLogger::Info("Adapter DS2490 successfully initialized\n");
 		}
-		else
-		{
-			printf("Error DS2490 not found.\n");
-			CLogger::Info("Error DS2490 not found.\n");
-			return false;
-		}
-
-
 		//oneWireLinks.push_back( passiveLink);
 	}
 	catch( LOW_exception & ex) {

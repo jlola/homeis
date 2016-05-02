@@ -34,6 +34,11 @@ void HisDevVirtual::WriteToDevice(ValueChangedEventArgs args)
 	}
 }
 
+void HisDevVirtual::OnError()
+{
+
+}
+
 HisDevValueBase* HisDevVirtual::CreateHisDevValue(string address,EHisDevDirection direction,EDataType ptype,int pinNo)
 {
 	STACK
@@ -119,7 +124,7 @@ bool HisDevVirtual::IsInternal(xmlNodePtr pnode)
 	return false;
 }
 
-void HisDevVirtual::DoInternalRefresh()
+void HisDevVirtual::DoInternalRefresh(bool alarm)
 {
 
 }

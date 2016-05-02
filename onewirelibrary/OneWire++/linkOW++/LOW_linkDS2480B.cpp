@@ -1,5 +1,5 @@
 /***************************************************************************
-                          LOW_linkDS2480B.cpp  -  description
+t                          LOW_linkDS2480B.cpp  -  description
                              -------------------
     begin                : Sat Jul 13 2002
     copyright            : (C) 2002 by Harald Roelle
@@ -59,13 +59,14 @@ bool LOW_linkDS2480B::touchBit( const bool inSendBit, const strongPullup_t inPul
  
 uint8_t LOW_linkDS2480B::touchByte( const uint8_t inSendByte, const strongPullup_t inPullup)
 {
+	STACK
   commLock lock( *this);
   
   if ( inPullup != pullUp_NONE ) {
     setStrongPullupDuration_cmd( strongPullup_2_SPUD_val( inPullup));
     pulse_cmd( true, false, true); // dummy pulse for arming
   }
-  
+  STACK_SECTION("setMode( data_mode);")
   setMode( data_mode);
   
   serialPort->tty_write( inSendByte);
@@ -84,29 +85,32 @@ uint8_t LOW_linkDS2480B::touchByte( const uint8_t inSendByte, const strongPullup
   
 byteVec_t LOW_linkDS2480B::touchBlock( const byteVec_t &inBytes, const strongPullup_t inPullup)
 {
+	STACK
   if ( inBytes.size() == 0 ) return byteVec_t( 0);
 
   commLock lock( *this);
 
-  byteVec_t   retValue = byteVec_t( inBytes.size()-1);  // create it smaller, last byte will be pushed
-  byteVec_t   writeBytes;
+  //byteVec_t   retValue = byteVec_t( inBytes.size()-1);  // create it smaller, last byte will be pushed
+  byteVec_t   retValue = byteVec_t( inBytes.size());
+  //byteVec_t   writeBytes;
     
-  /* // This breaks on RedHat 7.2:
-   * byteVec_t            writeBytes = byteVec_t( inBytes);
-   * byteVec_t::iterator  iter = writeBytes.begin();
-   * while( iter != writeBytes.end() ) {
-   *  if ( *iter == SwitchToCommandMode_Cmd )
-   *    writeBytes.insert( iter, SwitchToCommandMode_Cmd);
-   *   iter++;
-   * }
-   */
+  uint8_t commandMode = SwitchToCommandMode_Cmd;
+   // This breaks on RedHat 7.2:
+   byteVec_t            writeBytes = byteVec_t( inBytes);
+   byteVec_t::iterator  iter = writeBytes.begin();
+   while( iter != writeBytes.end() ) {
+    if ( *iter == SwitchToCommandMode_Cmd )
+      writeBytes.insert( iter, commandMode);
+     iter++;
+   }
 
-  // don't send last byte, we'll handle it seperately
-  for( unsigned int a=0; a<inBytes.size()-1; a++) {
-    writeBytes.push_back( inBytes[a]);
-    if ( inBytes[a] == SwitchToCommandMode_Cmd )
-      writeBytes.push_back( inBytes[a]);
-  }
+
+//  // don't send last byte, we'll handle it seperately
+//  for( unsigned int a=0; a<inBytes.size(); a++) {
+//    writeBytes.push_back( inBytes[a]);
+//    if ( inBytes[a] == SwitchToCommandMode_Cmd )
+//    writeBytes.push_back( inBytes[a]);
+//  }
   
   setMode( data_mode);
 
@@ -116,8 +120,8 @@ byteVec_t LOW_linkDS2480B::touchBlock( const byteVec_t &inBytes, const strongPul
   }
   
   // now the last byte with the optional pullup
-  uint8_t lastByte = touchByte( inBytes[inBytes.size()-1], inPullup);
-  retValue.push_back( lastByte);
+  //uint8_t lastByte = touchByte( inBytes[inBytes.size()-1], inPullup);
+  //retValue.push_back( lastByte);
   
   return retValue;
 }
@@ -215,6 +219,7 @@ bool LOW_linkDS2480B::resetBus()
 {
   commLock lock( *this);
   
+
   resetAnswer_t  answer;
   
   reset_cmd( &answer);

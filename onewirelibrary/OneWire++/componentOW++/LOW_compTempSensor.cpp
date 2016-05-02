@@ -58,7 +58,7 @@ float LOW_compTempSensor::getTemperature( const bool inDoConversion)
   if ( scratchpad.tempLSB==0xaa && scratchpad.tempMSB==0x00 )
     throw data_error( "Illeagal data in scratchpad", __FILE__, __LINE__);
 
-  int16_t halfDegBit = scratchpad.tempLSB & 0x01;
+  //int16_t halfDegBit = scratchpad.tempLSB & 0x01;
   int16_t intPart    = (scratchpad.tempMSB<<8) | (scratchpad.tempMSB==0x00?0x00:0x80) | (scratchpad.tempLSB>>1);
   float   floatPart  = -0.25 + (static_cast<float>(scratchpad.cntPerCelsius-scratchpad.cntRemain))/(static_cast<float>(scratchpad.cntPerCelsius));
     

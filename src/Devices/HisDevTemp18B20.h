@@ -139,7 +139,7 @@ class HisDevTemp18B20 : public HisDevDallas
 		}
 	}
 
-	protected: virtual void DoInternalRefresh()
+	protected: virtual void DoInternalRefresh(bool alarm)
 	{
 		STACK
 		double tempvalue = 0;
@@ -154,9 +154,11 @@ class HisDevTemp18B20 : public HisDevDallas
 				HisDevValue<double>* val = dynamic_cast<HisDevValue<double>*>(values[i]);
 				val->ReadedValueFromDevice(tempvalue,false);
 			}
+			SetError(false);
 		}
 		catch(...)
 		{
+			SetError(true);
 			for (uint16_t i=0;i<values.size();i++)
 			{
 				HisDevValue<double>* val = dynamic_cast<HisDevValue<double>*>(values[i]);

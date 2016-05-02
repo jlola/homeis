@@ -36,8 +36,6 @@ void ExpressionService::render_GET(const http_request& req, http_response** res)
 		//run all expressions in folder
 		if (path.find("/api/expression/run")!=string::npos)
 		{
-
-
 			LuaExpression* expression = NULL;
 
 			if(!strid.empty())
@@ -55,32 +53,30 @@ void ExpressionService::render_GET(const http_request& req, http_response** res)
 			}
 
 		}//load data for all expression in folder
+		else if (path.find("/api/expression/debuglog")!=string::npos)
+		{
+			LuaExpression* expression = NULL;
+
+			if(!strid.empty())
+			{
+				CUUID id = CUUID::Parse(strid);
+				expression = dynamic_cast<LuaExpression*>(root->FindExpression(id));
+
+				if (expression!=NULL)
+				{
+					ExpressionDebugLogToJson(expression,respjsondoc);
+				}
+				else
+					throw HisException("Not found");
+			}
+		}
 		else if (path.find("/api/expression/folder")!=string::npos)
 		{
-//			HisDevFolder* folder = NULL;
-//			vector<LuaExpression*> expressions;
-//			HisDevFolder* rootFolder = root->GetFolder();
-//
-//			if(!strid.empty())
-//			{
-//				CUUID id = CUUID::Parse(strid);
-//				folder = dynamic_cast<HisDevFolder*>(rootFolder->Find(id));
-//			}
-//
-//			if (folder!=NULL)
-//			{
-//				expressions = folder->GetItems<LuaExpression>();
-//				for (size_t i=0;i<expressions.size();i++)
-//				{
-//					ExpressionToJson(expressions[i],respjsondoc);
-//				}
-//			}
 			ExpressionsToJson(strid , root, respjsondoc);
 		}
 	}
 	catch(HisException & ex)
 	{
-
 			//respjsondoc.SetArray();
 		respjsondoc.SetObject();
 		StringBuffer buffer;
@@ -125,6 +121,21 @@ void ExpressionService::ExpressionsToJson(string strid, HisDevFolderRoot* root, 
 		{
 			ExpressionToJson(expressions[i],respjsondoc);
 		}
+	}
+}
+
+void ExpressionService::ExpressionDebugLogToJson(LuaExpression *pExpression, Document & respjsondoc)
+{
+	STACK
+	Value d(kObjectType);
+	Value jsonvalue;
+	vector<string> logs = pExpression->GetLogs();
+	for(size_t i=0;i<logs.size();i++)
+	{
+		string strvalue = logs[i];
+		jsonvalue.SetString(strvalue.c_str(),strvalue.length(),respjsondoc.GetAllocator());
+		//d.AddMember("log",jsonvalue, respjsondoc.GetAllocator());
+		respjsondoc.PushBack(jsonvalue, respjsondoc.GetAllocator());
 	}
 }
 
@@ -274,7 +285,16 @@ LuaExpression* ExpressionService::CreateOrUpdateExpression(string strJson,string
 				string strexpression = document["expression"].GetString();
 				if (strexpression!=expressionObj->GetExpression())
 				{
-					expressionObj->SetExpression(strexpression);
+					if (expressionObj->GetRunning())
+					{
+						expressionObj->SetRunning(false);
+						expressionObj->SetExpression(strexpression);
+						expressionObj->SetRunning(true);
+					}
+					else
+					{
+						expressionObj->SetExpression(strexpression);
+					}
 					saveReq = true;
 				}
 			}

@@ -32,7 +32,7 @@ void getSearchCondition( const LOW_devDS2406::devDS2406PtrVec_t &inDevs)
     LOW_helper_msglog::printMessage( "  ROM ID:            %s\n", idStr.c_str());
 
     LOW_devDS2406::statusRegister_t statReg;
-    inDevs[a]->getSearchCondition( &statReg);
+    //inDevs[a]->getSearchCondition( &statReg);
 
     LOW_helper_msglog::printMessage( "  activePolarity:    %s\n", 
       statReg.activePolarity==LOW_devDS2406::activeLow  ? "active low" :
@@ -135,7 +135,7 @@ void setSearchCondition( const LOW_devDS2406::devDS2406PtrVec_t &inDevs)
   }
 
   for ( unsigned int a=0; a<inDevs.size(); ++a) {
-    inDevs[a]->setSearchCondition( chanSelect, sourceSelect, polaritySelect, pioATrans, pioBTrans);
+    //inDevs[a]->setSearchCondition( chanSelect, sourceSelect, polaritySelect, pioATrans, pioBTrans);
   }
 }
 
@@ -150,26 +150,26 @@ void getChannelInfo( const LOW_devDS2406::devDS2406PtrVec_t &inDevs, bool inDoLo
       LOW_helper_msglog::printMessage( "PIO search conditions of DS2406 device: #%d:\n", a);
       LOW_helper_msglog::printMessage( "  ROM ID:                %s\n", idStr.c_str());
 
-      LOW_devDS2406::cmd_ChannelAccess *chAccess = new LOW_devDS2406::cmd_ChannelAccess(
-                                                        *inDevs[a],
-                                                        LOW_devDS2406::cmd_ChannelAccess::CRC_disable,
-                                                        LOW_devDS2406::chanBothSelect,
-                                                        LOW_devDS2406::cmd_ChannelAccess::asyncInterleaveMode,
-                                                        LOW_devDS2406::cmd_ChannelAccess::noToggleMode,
-                                                        LOW_devDS2406::cmd_ChannelAccess::readMode,
-                                                        LOW_devDS2406::cmd_ChannelAccess::noResetLatches);
-      LOW_devDS2406::cmd_ChannelAccess::channelInfo_t chanInfo = chAccess->getChannelInfo();
-      delete chAccess;
+//      LOW_devDS2406::cmd_ChannelAccess *chAccess = new LOW_devDS2406::cmd_ChannelAccess(
+//                                                        *inDevs[a],
+//                                                        LOW_devDS2406::cmd_ChannelAccess::CRC_disable,
+//                                                        LOW_devDS2406::chanBothSelect,
+//                                                        LOW_devDS2406::cmd_ChannelAccess::asyncInterleaveMode,
+//                                                        LOW_devDS2406::cmd_ChannelAccess::noToggleMode,
+//                                                        LOW_devDS2406::cmd_ChannelAccess::readMode,
+//                                                        LOW_devDS2406::cmd_ChannelAccess::noResetLatches);
+//      LOW_devDS2406::cmd_ChannelAccess::channelInfo_t chanInfo = chAccess->getChannelInfo();
+//      delete chAccess;
 
-      LOW_helper_msglog::printMessage( "  PIO A output FlipFlop: %d\n", chanInfo.channelFFQ_pioA);
-      LOW_helper_msglog::printMessage( "  PIO B output FlipFlop: %d\n", chanInfo.channelFFQ_pioB);
-      LOW_helper_msglog::printMessage( "  PIO A current level:   %d\n", chanInfo.sensedLevel_pioA);
-      LOW_helper_msglog::printMessage( "  PIO B current level:   %d\n", chanInfo.sensedLevel_pioB);
-      LOW_helper_msglog::printMessage( "  PIO A latch level:     %d\n", chanInfo.activityLatch_pioA);
-      LOW_helper_msglog::printMessage( "  PIO B latch level:     %d\n", chanInfo.activityLatch_pioB);
-      LOW_helper_msglog::printMessage( "  Has PIO B:             %d\n", chanInfo.hasPioB);
-      LOW_helper_msglog::printMessage( "  Has external power:    %d\n", chanInfo.isExternalPowered);
-      LOW_helper_msglog::printMessage( "  \n");
+//      LOW_helper_msglog::printMessage( "  PIO A output FlipFlop: %d\n", chanInfo.channelFFQ_pioA);
+//      LOW_helper_msglog::printMessage( "  PIO B output FlipFlop: %d\n", chanInfo.channelFFQ_pioB);
+//      LOW_helper_msglog::printMessage( "  PIO A current level:   %d\n", chanInfo.sensedLevel_pioA);
+//      LOW_helper_msglog::printMessage( "  PIO B current level:   %d\n", chanInfo.sensedLevel_pioB);
+//      LOW_helper_msglog::printMessage( "  PIO A latch level:     %d\n", chanInfo.activityLatch_pioA);
+//      LOW_helper_msglog::printMessage( "  PIO B latch level:     %d\n", chanInfo.activityLatch_pioB);
+//      LOW_helper_msglog::printMessage( "  Has PIO B:             %d\n", chanInfo.hasPioB);
+//      LOW_helper_msglog::printMessage( "  Has external power:    %d\n", chanInfo.isExternalPowered);
+//      LOW_helper_msglog::printMessage( "  \n");
 
       if ( keepLooping && hlp_kbhit() ) {
         keepLooping=false;
@@ -182,17 +182,17 @@ void getChannelInfo( const LOW_devDS2406::devDS2406PtrVec_t &inDevs, bool inDoLo
 
 void resetLatches( const LOW_devDS2406::devDS2406PtrVec_t &inDevs)
 {
-  for ( unsigned int a=0; a<inDevs.size(); ++a) {
-    LOW_devDS2406::cmd_ChannelAccess *clearLatchAccess = new LOW_devDS2406::cmd_ChannelAccess(
-                                                      *inDevs[a],
-                                                      LOW_devDS2406::cmd_ChannelAccess::CRC_disable,
-                                                      LOW_devDS2406::chanBothSelect,
-                                                      LOW_devDS2406::cmd_ChannelAccess::asyncInterleaveMode,
-                                                      LOW_devDS2406::cmd_ChannelAccess::noToggleMode,
-                                                      LOW_devDS2406::cmd_ChannelAccess::readMode,
-                                                      LOW_devDS2406::cmd_ChannelAccess::resetLatches);
-    delete clearLatchAccess;
-  }
+//  for ( unsigned int a=0; a<inDevs.size(); ++a) {
+//    LOW_devDS2406::cmd_ChannelAccess *clearLatchAccess = new LOW_devDS2406::cmd_ChannelAccess(
+//                                                      *inDevs[a],
+//                                                      LOW_devDS2406::cmd_ChannelAccess::CRC_disable,
+//                                                      LOW_devDS2406::chanBothSelect,
+//                                                      LOW_devDS2406::cmd_ChannelAccess::asyncInterleaveMode,
+//                                                      LOW_devDS2406::cmd_ChannelAccess::noToggleMode,
+//                                                      LOW_devDS2406::cmd_ChannelAccess::readMode,
+//                                                      LOW_devDS2406::cmd_ChannelAccess::resetLatches);
+//    delete clearLatchAccess;
+//  }
 }
 
 

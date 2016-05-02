@@ -12,6 +12,8 @@
 #include "Common/CUUID.h"
 #include "Common/HisLock.h"
 #include <queue>          // std::queue
+#include "Devices/HisDevBase.h"
+#include "Expressions/ExpressionRuntime.h"
 
 using namespace std;
 
@@ -24,8 +26,9 @@ class HisDevices {
 	LOW_thread_mutex  *__devRefreshMutex;  /**< Mutex for exclusive access. */
 	vector<HisDevBase*> queue;
 	OnRefreshDelegate onRefreshdelegate;
+	ExpressionRuntime* expressionRuntime;
 public:
-	HisDevices(string fileName,LOW_network *network);
+	HisDevices(string fileName,LOW_network *network,ExpressionRuntime* pExpressionRuntime);
 	int Find(CUUID RecordId);
 	size_t Size();
 	void AddScanned();

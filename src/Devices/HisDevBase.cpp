@@ -22,6 +22,7 @@
 #include "EHisDevDirection.h"
 #include "PoppyDebugTools.h"
 #include "HisDevBase.h"
+#include "LOW_portSerial.h"
 
 //const xmlChar *HisDevBase::GetNodeNameInternal()
 //{
@@ -34,22 +35,29 @@ HisDevBase::~HisDevBase()
 }
 
 HisDevBase::HisDevBase() :
-		needRefresh(false),enabled(true),scanPeriodMs(10000)
+		enabled(true),scanPeriodMs(10000),error(true),changed(false),needRefresh(false)
 {
 	STACK
+	refreshmutex = HisLock::CreateMutex();
 	dataSource = EDataSource::Const;
 	uint64_t curTimeUs = HisDateTime::timeval_to_usec(HisDateTime::Now());
 	nextScanTime = curTimeUs + (rand() % scanPeriodMs)*1000;
 }
 
 HisDevBase::HisDevBase(xmlNodePtr node)
-	: HisBase::HisBase(node),needRefresh(false),scanPeriodMs(10000)
+	: HisBase::HisBase(node),scanPeriodMs(10000),error(true),changed(false),needRefresh(false)
 {
 	STACK
+	refreshmutex = HisLock::CreateMutex();
 	dataSource = EDataSource::Const;
 	enabled = false;
 	uint64_t curTimeUs = HisDateTime::timeval_to_usec(HisDateTime::Now());
 	nextScanTime = curTimeUs + (rand() % scanPeriodMs)*1000;
+}
+
+void HisDevBase::SetChanged()
+{
+	changed = true;
 }
 
 void HisDevBase::DoInternalSave(xmlNodePtr & node)
@@ -67,27 +75,73 @@ timeval HisDevBase::ComputeNextScanTime(timeval pLastScanTime)
 	return HisDateTime::usec_to_timeval(useconds);
 }
 
+bool HisDevBase::GetError()
+{
+	return error;
+}
+void HisDevBase::SetError(bool perror)
+{
+	error = perror;
+}
+
 void HisDevBase::NeedRefresh()
 {
-	STACK
-	if (IsEnabled())
+	//STACK
+	if (changed==true)
 	{
-		needRefresh = true;
-		if (OnRefresh!=0)
-			OnRefresh(this);
+		changed = false;
+		if (!error)
+		{
+			needRefresh = true;
+			if (OnRefresh!=0)
+				OnRefresh(this);
+		}
 	}
 }
 
-void HisDevBase::Refresh()
+vector<IExpression*> HisDevBase::GetExpressions()
+{
+	return expressions;
+}
+
+void HisDevBase::AddExpression(IExpression* pExpression)
+{
+	expressions.push_back(pExpression);
+}
+
+void HisDevBase::RemoveExpression(IExpression* pExpression)
+{
+	std::vector<IExpression*>::iterator position = std::find(expressions.begin(), expressions.end(),pExpression);
+	if (position != expressions.end()) // == myVector.end() means the element was not found
+		expressions.erase(position);
+}
+
+void HisDevBase::Refresh(bool alarm)
 {
 	STACK
+
+	//HisLock lock(refreshmutex);
+
 	uint64_t curTimeUs = HisDateTime::timeval_to_usec(HisDateTime::Now());
 
-	if (curTimeUs >= nextScanTime || needRefresh)
+	if (curTimeUs >= nextScanTime || needRefresh || alarm)
 	{
 		needRefresh = false;
 		nextScanTime =curTimeUs + scanPeriodMs*1000;
-		DoInternalRefresh();
+		try
+		{
+			DoInternalRefresh(alarm);
+		}
+		catch(LOW_portSerial::portSerial_error & ex)
+		{
+			OnError();
+		}
+		catch(LOW_exception & ex)
+		{
+			string msg = "Error in %s name: %s | error: %s\nStack trace: " + Stack::GetTraceString();
+			CLogger::Error( msg.c_str(), GetNodeName(), GetName().c_str(), ex.message.c_str());
+			OnError();
+		}
 	}
 }
 
@@ -111,6 +165,7 @@ uint32_t HisDevBase::GetScanPeriod()
 	return scanPeriodMs;
 }
 
+//period ms
 void HisDevBase::SetScanPeriod(uint32_t period)
 {
 	this->scanPeriodMs = period;

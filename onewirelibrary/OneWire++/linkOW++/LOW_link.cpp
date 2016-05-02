@@ -138,8 +138,8 @@ void LOW_link::readData( byteVec_t &outBytes, const strongPullup_t inPullup)
   byteVec_t  sendBytes = byteVec_t( outBytes.size(), 0xff);
   byteVec_t  recBytes;
 
-  recBytes = touchBlock( sendBytes, inPullup);
-  std::copy( recBytes.begin(), recBytes.end(), outBytes.begin());
+  outBytes = touchBlock( sendBytes, inPullup);
+  //std::copy( recBytes.begin(), recBytes.end(), outBytes.begin());
 }
 
 
@@ -165,7 +165,10 @@ void LOW_link::writeData( const uint8_t inSendByte, const strongPullup_t inPullu
   commLock lock( *this);
 
   if ( touchByte( inSendByte, inPullup) != inSendByte )
-    throw comm_error( "Response not equal to sent byte", __FILE__, __LINE__);
+  {
+	  STACK_SECTION("throw comm_error")
+	  throw comm_error( "Response not equal to sent byte", __FILE__, __LINE__);
+  }
 }
 
 
@@ -176,8 +179,9 @@ void LOW_link::writeData( const byteVec_t &inSendBytes, const strongPullup_t inP
 
   byteVec_t readVec = touchBlock( inSendBytes, inPullup);
 
-  for( unsigned int i=0; i<inSendBytes.size(); i++)
+  for( unsigned int i=inSendBytes.size()-1; i<inSendBytes.size(); i++)
     if ( readVec[i] != inSendBytes[i] ) {
+    	STACK_SECTION("Iside if ( readVec[i] != inSendBytes[i] ) {")
       throw comm_error( "Response not equal to sent byte", __FILE__, __LINE__);
     }
 }

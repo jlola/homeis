@@ -91,23 +91,68 @@ void LOW_devLCD::LightOn(bool enable)
 bool LOW_devLCD::IsConnected()
 {
 	STACK
-	byteVec_t readData1(3);
-	cmd_MatchROM();
-	getLink().writeData(static_cast<uint8_t>(ReadScratchpad_COMMAND));
-	getLink().readData(readData1, LOW_link::pullUp_NONE);
-	STACK_SECTION("for(size_t i=0;i<readData1.size()-1;i++)")
-	for(size_t i=0;i<readData1.size()-1;i++)
+	try
 	{
-		if (readData1[i]==0xFF)
+		byteVec_t readData1(3);
+		cmd_MatchROM();
+		STACK_SECTION("getLink().writeData(static_cast<uint8_t>(ReadScratchpad_COMMAND));")
+		getLink().writeData(static_cast<uint8_t>(ReadScratchpad_COMMAND));
+		STACK_SECTION("getLink().readData(readData1, LOW_link::pullUp_NONE);")
+		getLink().readData(readData1, LOW_link::pullUp_NONE);
+		STACK_SECTION("for(size_t i=0;i<readData1.size()-1;i++)")
+		for(size_t i=0;i<readData1.size()-1;i++)
 		{
-			STACK_SECTION("CLogger::Error")
-			CLogger::Error("Readed data from scratchpad are 0xFF");
-			STACK_SECTION("getLink().resetLinkAdapter();")
-			getLink().resetLinkAdapter();
-			return false;
+			if (readData1[i]==0xFF)
+			{
+				return false;
+			}
 		}
+		return true;
 	}
-	return true;
+	catch(LOW_exception & ex)
+	{
+		string msg = "LOW_devLCD::IsConnected()" + ex.message;
+		CLogger::Error(msg.c_str());
+		getLink().resetLinkAdapter();
+		return false;
+	}
+
+}
+
+bool LOW_devLCD::ReadCounters(byteVec_t & counters)
+{
+	try
+	{
+		cmd_MatchROM();
+		getLink().writeData(static_cast<uint8_t>(CopyGPIOcountersToScratchpad),LOW_link::pullUp_NONE);
+		cmd_MatchROM();
+		getLink().writeData(static_cast<uint8_t>(ReadScratchpad_COMMAND),LOW_link::pullUp_NONE);
+		getLink().readData(counters);
+		return true;
+	}
+	catch(LOW_exception & ex)
+	{
+		CLogger::Error(ex.message.c_str());
+		return false;
+	}
+}
+
+bool LOW_devLCD::ReadInputs(uint8_t & inputs)
+{
+	try
+	{
+		cmd_MatchROM();
+		getLink().writeData(static_cast<uint8_t>(CopyGPIOInputStatesToScratchpad),LOW_link::pullUp_NONE);
+		cmd_MatchROM();
+		getLink().writeData(static_cast<uint8_t>(ReadScratchpad_COMMAND),LOW_link::pullUp_NONE);
+		inputs = getLink().readDataByte();
+		return true;
+	}
+	catch(LOW_exception & ex)
+	{
+		CLogger::Error(ex.message.c_str());
+		return false;
+	}
 }
 
 bool LOW_devLCD::WriteToLCD(const char* text, uint8_t rowAddress)

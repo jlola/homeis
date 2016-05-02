@@ -116,6 +116,8 @@ void FoldersService::FoldersToJson(HisDevFolderRoot* root,HisDevFolder *parentFo
 	vector<HisBase*> folders;
 	folders = parentFolder->GetItems<HisBase>();
 
+	//FolderToJson(root,parentFolder,respjsondoc);
+
 	for(size_t i=0;i<folders.size();i++)
 	{
 		HisDevFolder* pFolder = dynamic_cast<HisDevFolder*>(folders[i]);

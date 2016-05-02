@@ -28,6 +28,7 @@
 #include "HisDevLCD.h"
 #include "LOW_devDS2408.h"
 #include "HisDevIO2408.h"
+#include "HisDevIO2406.h"
 #include "HisDevFactory.h"
 
 
@@ -90,14 +91,14 @@ HisDevBase * HisDevFactory::Create(xmlNodePtr notptr,LOW_device* dev)
 		{
 			case LOW_devDS1820::familyCode:
 				return (HisDevBase*)new HisDevTemp18B20(notptr,(LOW_devDS1820*)dynamic_cast<LOW_devDS1820*>(dev));
-			break;
 			case LOW_devDS2413::familyCode:
 				return (HisDevBase*)new HisDevIO2413(notptr,(LOW_devDS2413*)dynamic_cast<LOW_devDS2413*>(dev));
-			break;
 			case LOW_devLCD::familyCode:
 				return (HisDevBase*)new HisDevLCD(notptr,(LOW_devLCD*)dynamic_cast<LOW_devLCD*>(dev));
 			case LOW_devDS2408::familyCode:
 				return (HisDevBase*)new HisDevIO2408(notptr,(LOW_devDS2408*)dynamic_cast<LOW_devDS2408*>(dev));
+			case LOW_devDS2406::familyCode:
+				return (HisDevBase*)new HisDevIO2406(notptr,(LOW_devDS2406*)dynamic_cast<LOW_devDS2406*>(dev));
 		}
 	}
 	return NULL;
@@ -115,6 +116,8 @@ HisDevBase * HisDevFactory::Create(LOW_device* dev)
 			return (HisDevBase*)new HisDevLCD((LOW_devLCD*)dev);
 		case LOW_devDS2408::familyCode:
 			return (HisDevBase*)new HisDevIO2408((LOW_devDS2408*)dynamic_cast<LOW_devDS2408*>(dev));
+		case LOW_devDS2406::familyCode:
+			return (HisDevBase*)new HisDevIO2406((LOW_devDS2406*)dynamic_cast<LOW_devDS2406*>(dev));
 	}
 	return NULL;
 }

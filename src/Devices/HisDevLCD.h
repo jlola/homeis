@@ -21,6 +21,14 @@
 #define ID_ROW3ADDR 6
 #define ID_ROW4 7
 #define ID_ROW4ADDR 8
+#define ID_INPUT1 		9
+#define ID_INPUT2 		10
+#define ID_INPUT3 		11
+#define ID_INPUT4 		12
+#define ID_INPUTCNT1 	13
+#define ID_INPUTCNT2 	14
+#define ID_INPUTCNT3 	15
+#define ID_INPUTCNT4 	16
 
 
 class HisDevLCD: public HisDevDallas {
@@ -31,8 +39,11 @@ class HisDevLCD: public HisDevDallas {
 	bool refreshRow2;
 	bool refreshRow3;
 	bool refreshRow4;
+	bool refreshbuttoncnt1;
+	bool refreshbuttoncnt2;
+	bool refreshbuttoncnt3;
+	bool refreshbuttoncnt4;
 	bool refreshLihtEnabled;
-	bool error;
 
 
 	HisDevValue<int>* rowaddr1;
@@ -47,11 +58,25 @@ class HisDevLCD: public HisDevDallas {
 
 	bool lcdOn;
 
-	HisDevValue<string>* CreateRow(string name,WriteToDeviceRequestDelegate & delegate,int pinno);
-	HisDevValue<int>* CreateRowAddr(string name,WriteToDeviceRequestDelegate & delegate,int pinno,int adr);
+	HisDevValue<bool>* input1;
+	HisDevValue<bool>* input2;
+	HisDevValue<bool>* input3;
+	HisDevValue<bool>* input4;
+
+	HisDevValue<uint32_t>* inputcnt1;
+	HisDevValue<uint32_t>* inputcnt2;
+	HisDevValue<uint32_t>* inputcnt3;
+	HisDevValue<uint32_t>* inputcnt4;
+
+	void CreateRow(HisDevValue<string>* & row, string name,WriteToDeviceRequestDelegate & delegate,int pinno);
+	void CreateRowAddr(HisDevValue<int>* rowaddr,string name,WriteToDeviceRequestDelegate & delegate,int pinno,int adr);
 	void CreateDataPoints();
+	void CreateInput(HisDevValue<bool>* & input,string name,int pinno);
+	void CreateInputCounter(HisDevValue<uint32_t>* & inputcnt, string name,int pinno);
+	void CreateInputs();
+	bool GetValue(byteVec_t counters, size_t index);
 protected:
-	virtual void DoInternalRefresh();
+	virtual void DoInternalRefresh(bool alarm);
 	//protected: virtual void DoInternalSave(xmlNodePtr & node);
 	virtual void DoInternalLoad(xmlNodePtr & node);
 	virtual void DoInternalSave(xmlNodePtr & node);

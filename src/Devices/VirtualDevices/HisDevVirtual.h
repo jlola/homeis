@@ -34,7 +34,9 @@ public:
 
 	HisDevValueBase* AddDevValue(EDataType ptype);
 
-	virtual void DoInternalRefresh();
+	virtual void DoInternalRefresh(bool alarm);
+
+	void OnError();
 
 	void WriteToDevice(ValueChangedEventArgs args);
 

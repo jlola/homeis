@@ -40,22 +40,31 @@ using namespace std;
 #define PROP_DESCRIPTION "description"
 #define PROP_RUNNING "running"
 #define PROP_EXPRESSIONBODY "expressionbody"
+#define MAX_LOGS 20
 
 class LuaExpression : public HisBase, public IExpression
 {
+public:
+	static LuaExpression* ActualExpression;
 private:
+	vector<string> logs;
 	LOW_thread_mutex* mutex;
+	LOW_thread_mutex* evaluateMutex;
 	ExpressionRuntime *expressionRuntime;
 	bool inEvalFunc;
 	uint64_t nextTime;
 	bool runningAllowed;
+	//priznak ze se prave vykonava
 	bool running;
+	//priznak ze byla funkce nastartovana, start je treba udelat az po loadu
+	bool started;
 	lua_State* L;
 	lua_State* cL;
 	string lastEvaluateError;
 	HisDevFolder* folder;
 	HisDevices* devices;
 	vector<HisDevValueBase*> values;
+	vector<HisDevBase*> expressionDevices;
 	string luaContent;
 	string oldName;
 	string description;
@@ -69,12 +78,18 @@ private:
 	string GetLuaCodeInFuncion(string funcName, string luaCodeFilePath);
 	void StartListening();
 	void StopListening();
+	int setLuaPath( lua_State* L, const char* path );
+	bool IsInExpressionDevices(HisDevBase* pdev);
 public:
+	void Start();
+	string GetName();
+	string GetLuaFilesPath();
 	CUUID GetRecordId();
 	static int delays;
 	string GetLastEvaluateError();
 	LuaExpression(HisDevFolder* folder,HisDevices* hisDevices, string expressionName,ExpressionRuntime *pExpressionRuntime);
 	LuaExpression(xmlNodePtr pnode,HisDevices* hisDevices,ExpressionRuntime *pExpressionRuntime);
+	void DebugLog(string ln);
 	void ReloadValues();
 	string GetFileName(string pFileName);
 	void SetName(string name);
@@ -83,7 +98,7 @@ public:
 	string GetDescription();
 	void SetDescription(string pDescription);
 	bool ExistsName(string pFileName);
-	xmlChar* GetNodeNameInternal();
+	const xmlChar* GetNodeNameInternal();
 	void DoInternalLoad(xmlNodePtr & node);
 	void DoInternalSave(xmlNodePtr & node);
 	bool Evaluate();
@@ -92,6 +107,7 @@ public:
 	size_t GetCountOutputs();
 	void SetRunning(bool running);
 	bool GetRunning();
+	vector<string> GetLogs();
 	~LuaExpression();
 };
 

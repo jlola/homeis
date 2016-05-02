@@ -19,7 +19,6 @@
 #include "Helpers/HisDateTime.h"
 #include "Common/HisException.h"
 
-
 #include "Expressions/LuaExpression.h"
 
 //#define luac_c
@@ -35,13 +34,14 @@
 #include "PoppyDebugTools.h"
 #include "LuaExpression.h"
 
-
+LuaExpression* LuaExpression::ActualExpression=NULL;
 
 LuaExpression::LuaExpression(xmlNodePtr pnode,HisDevices* hisDevices,ExpressionRuntime *pExpressionRuntime) :
-	HisBase(pnode)
+	HisBase(pnode),started(false)
 {
 	STACK
 	mutex = HisLock::CreateMutex();
+	evaluateMutex = HisLock::CreateMutex();
 	expressionRuntime = pExpressionRuntime;
 	devices = hisDevices;
 	nextTime = 0;
@@ -55,10 +55,11 @@ LuaExpression::LuaExpression(xmlNodePtr pnode,HisDevices* hisDevices,ExpressionR
 }
 
 LuaExpression::LuaExpression(HisDevFolder* pfolder,HisDevices* hisDevices, string expressionName,ExpressionRuntime *pExpressionRuntime) :
-	HisBase()
+	HisBase(),started(false)
 {
 	STACK
 	mutex = HisLock::CreateMutex();
+	evaluateMutex = HisLock::CreateMutex();
 	expressionRuntime = pExpressionRuntime;
 	inEvalFunc = false;
 	nextTime = 0;
@@ -98,24 +99,33 @@ string LuaExpression::GetLastEvaluateError()
 	return lastEvaluateError;
 }
 
+vector<string> LuaExpression::GetLogs()
+{
+	return this->logs;
+}
+
 void LuaExpression::SetRunning(bool blRunning)
 {
 	STACK
 	HisLock lock(mutex);
 
-	if (runningAllowed!=blRunning)
+	if (runningAllowed!=blRunning || !started)
 	{
 		runningAllowed = blRunning;
 		if (blRunning) {
 			ReloadValues();
 			//StartListening();
 			expressionRuntime->Add(this);
+			for(size_t i=0;i<expressionDevices.size();i++)
+				expressionDevices[i]->AddExpression(this);
 		}
 		else
 		{
 			//ukoncim vlakno
-			expressionRuntime->Evaluate();
+			this->Evaluate();
 			expressionRuntime->Remove(this);
+			for(size_t i=0;i<expressionDevices.size();i++)
+				expressionDevices[i]->RemoveExpression(this);
 		}
 	}
 }
@@ -193,7 +203,12 @@ void LuaExpression::LoadExpressionFromFile()
 string LuaExpression::GetFileName(string pFileName)
 {
 	STACK
-	return File::getexepath() + "/"+ EXPRESSION_FOLDER + "/" + pFileName + ".lua";
+	return GetLuaFilesPath() + "/" + pFileName + ".lua";
+}
+
+string LuaExpression::GetLuaFilesPath()
+{
+	return File::getexepath() + "/"+ EXPRESSION_FOLDER;
 }
 
 bool LuaExpression::ExistsName(string pName)
@@ -204,7 +219,17 @@ bool LuaExpression::ExistsName(string pName)
 	return File::Exists(path);
 }
 
-
+bool LuaExpression::IsInExpressionDevices(HisDevBase* pdev)
+{
+	for(size_t i=0;i<expressionDevices.size();i++)
+	{
+		if (expressionDevices[i]==pdev)
+		{
+			return true;
+		}
+	}
+	return false;
+}
 
 void LuaExpression::ReloadValues()
 {
@@ -218,7 +243,19 @@ void LuaExpression::ReloadValues()
 		if (valueId!=NULL)
 		{
 			HisDevValueBase* value = devices->FindValue(valueId->GetDeviceValueId());
-			if (value!=NULL) values.push_back(value);
+			if (value!=NULL)
+			{
+				values.push_back(value);
+				HisDevBase* dev = dynamic_cast<HisDevBase*>(value->GetParent());
+				if (dev!=NULL)
+				{
+					//vlozim do seznamu ktery provede refresh v metode GetGlobals
+					if (!IsInExpressionDevices(dev))
+					{
+						expressionDevices.push_back(dev);
+					}
+				}
+			}
 		}
 	}
 }
@@ -263,6 +300,8 @@ void LuaExpression::GetGlobals(lua_State* L)
 		{
 			switch(values[i]->GetDataType())
 			{
+				case EDataType::Enum:
+					break;
 				case EDataType::Int:
 				{
 					STACK_BLOCK("Int")
@@ -318,6 +357,10 @@ void LuaExpression::GetGlobals(lua_State* L)
 			}
 		}
 	}
+	for(size_t i=0;i<expressionDevices.size();i++)
+	{
+		expressionDevices[i]->NeedRefresh();
+	}
 }
 
 void LuaExpression::SetGlobals(lua_State* L)
@@ -327,6 +370,8 @@ void LuaExpression::SetGlobals(lua_State* L)
 	{
 		switch(values[i]->GetDataType())
 		{
+			case EDataType::Enum:
+				break;
 			case EDataType::Int:
 			{
 				STACK_SECTION("Int")
@@ -393,6 +438,20 @@ void LuaExpression::SetGlobals(lua_State* L)
 	}
 }
 
+int LuaExpression::setLuaPath( lua_State* L, const char* path )
+{
+    lua_getglobal( L, "package" );
+    lua_getfield( L, -1, "path" ); // get field "path" from table at top of stack (-1)
+    std::string cur_path = lua_tostring( L, -1 ); // grab path string from top of stack
+    cur_path.append( ";" ); // do your path magic here
+    cur_path.append( path );
+    lua_pop( L, 1 ); // get rid of the string on the stack we just pushed on line 5
+    lua_pushstring( L, cur_path.c_str() ); // push the new one
+    lua_setfield( L, -2, "path" ); // set the field "path" in table at -2 with value at top of stack
+    lua_pop( L, 1 ); // get rid of package table from top of stack
+    return 0; // all done!
+}
+
 void LuaExpression::open_libs(lua_State *L)
 {
 	STACK
@@ -422,6 +481,44 @@ int lua_sleep(lua_State *L) {
     return lua_yield(L,0);
 }
 
+int l_debuglog(lua_State* L) {
+	int nargs = lua_gettop(L);
+
+	for (int i=1; i <= nargs; i++) {
+	        if (lua_isstring(L, i)) {
+	            /* Pop the next arg using lua_tostring(L, i) and do your print */
+	        	if (LuaExpression::ActualExpression!=NULL)
+	        	{
+	        		string arg = lua_tostring(L, i);
+	        		LuaExpression::ActualExpression->DebugLog(arg);
+	        	}
+
+	        }
+	        else {
+	        /* Do something with non-strings if you like */
+	        }
+	    }
+	return 0;
+}
+
+int l_log(lua_State* L) {
+    int nargs = lua_gettop(L);
+
+    for (int i=1; i <= nargs; i++) {
+        if (lua_isstring(L, i)) {
+            /* Pop the next arg using lua_tostring(L, i) and do your print */
+        	//printf(lua_tostring(L,i));
+        	CLogger::Info(lua_tostring(L,i));
+        }
+        else {
+        /* Do something with non-strings if you like */
+        }
+    }
+
+    return 0;
+}
+
+
 bool LuaExpression::ForceEvaluate()
 {
 	STACK
@@ -436,8 +533,14 @@ bool LuaExpression::ForceEvaluate()
 bool LuaExpression::Evaluate()
 {
 	STACK
+
+	HisLock lock(evaluateMutex);
+
 	if (inEvalFunc) return false;
 	inEvalFunc = true;
+
+	LuaExpression::ActualExpression = this;
+
 	this->ReloadValues();
 	//STACK_VAL("ExpressionName", GetName().c_str())
 	if (!ExistsName(GetName()))
@@ -459,7 +562,12 @@ bool LuaExpression::Evaluate()
 		STACK_SECTION("lua_register")
 		lua_register(L, "sleep", lua_sleep);
 		lua_register(L, "delay", lua_sleep);
+		lua_register(L, "log", l_log);
+		lua_register(L, "debuglog", l_debuglog);
 		STACK_SECTION("GetLuaCodeInFuncion")
+
+		string path = GetLuaFilesPath()+"/?.lua";
+		this->setLuaPath(L,path.c_str());
 		/* add code to function */
 		string code = GetLuaCodeInFuncion("runExpression",GetFileName(GetName()));
 
@@ -530,7 +638,26 @@ bool LuaExpression::Evaluate()
 		}
 	}
 	inEvalFunc = false;
+	LuaExpression::ActualExpression = NULL;
 	return true;
+}
+
+string LuaExpression::GetName()
+{
+	return HisBase::GetName();
+}
+
+void LuaExpression::DebugLog(string ln)
+{
+	STACK
+
+	string msg = CLogger::getStrTime();
+	msg += " | ";
+	msg += ln;
+	logs.push_back(msg);
+
+	if (logs.size() > MAX_LOGS)
+		logs.erase(logs.begin());
 }
 
 void LuaExpression::OnValueChaned(ValueChangedEventArgs args)
@@ -580,6 +707,15 @@ void LuaExpression::DoInternalSave(xmlNodePtr & node)
 	xmlSetProp(node,BAD_CAST PROP_RUNNING, GetRunning() ? BAD_CAST "1" : BAD_CAST "0");
 }
 
+void LuaExpression::Start()
+{
+	if (runningAllowed)
+		SetRunning(true);
+	else
+		SetRunning(false);
+	started = true;
+}
+
 void LuaExpression::DoInternalLoad(xmlNodePtr & node)
 {
 	STACK
@@ -588,21 +724,24 @@ void LuaExpression::DoInternalLoad(xmlNodePtr & node)
 	xmlChar* prop;
 	prop = xmlGetProp(node,BAD_CAST PROP_DESCRIPTION);
 	if (prop!=NULL)
+	{
 		description = (const char*)prop;
-	xmlFree(prop);
+		xmlFree(prop);
+	}
 	prop = xmlGetProp(node,BAD_CAST PROP_RUNNING);
 	if (prop!=NULL)
 	{
 		string strrunning = (const char*)prop;
-		if (strrunning=="1") SetRunning(true);
-		else SetRunning(false);
+		if (strrunning=="1") runningAllowed = true;
+		else runningAllowed = false;
+		xmlFree(prop);
 	}
-	xmlFree(prop);
+	expressionRuntime->Add(this);
 	//pri loudovani si ulozim nazev
 	oldName = GetName();
 }
 
-xmlChar* LuaExpression::GetNodeNameInternal()
+const xmlChar* LuaExpression::GetNodeNameInternal()
 {
 	return /*BAD_CAST*/ NODE_EXPRESSION;
 }

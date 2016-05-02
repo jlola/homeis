@@ -23,8 +23,10 @@
 #include "Common/CUUID.h"
 #include "srutil/event/event.hpp"
 #include "srutil/delegate/delegate.hpp"
+#include "Common/HisLock.h"
 
 #include "Common/HisBase.h"
+#include "Expressions/IExpression.h"
 
 using namespace std;
 
@@ -42,28 +44,41 @@ typedef srutil::delegate<void ()> OnRefreshDelegate;
 
 class HisDevBase : public HisBase
 {
-	bool needRefresh;
 	bool enabled;
 	uint64_t scanPeriodMs;
 	uint64_t nextScanTime;
 	EDataSource dataSource;
+	bool error;
+	bool changed;
+	LOW_thread_mutex* refreshmutex;
+	vector<IExpression*> expressions;
 protected:
+	bool needRefresh;
 	HisDevBase(xmlNodePtr node,CUUID recordid);
 	HisDevBase(xmlNodePtr node);
 	virtual void DoInternalSave(xmlNodePtr & node);
 	virtual void DoInternalLoad(xmlNodePtr & node);
-	virtual void DoInternalRefresh()=0;
+	virtual void DoInternalRefresh(bool alarm)=0;
+	virtual void OnError()=0;
 	//const xmlChar* GetNodeNameInternal();
+	bool GetError();
+	void SetError(bool perror);
+	void SetChanged();
+
+
 public:
 	HisDevBase();
 	virtual ~HisDevBase();
 	/*
 	 * read device and if change any value fire event ValueChanged
 	 */
-	void Refresh();
+	void Refresh(bool alarm);
 	/*
 	 *
 	 */
+	void AddExpression(IExpression* pExpression);
+	void RemoveExpression(IExpression* pExpression);
+	vector<IExpression*> GetExpressions();
 	vector<HisDevValueBase*> GetValues();
 	OnRefreshDelegate OnRefresh;
 	timeval ComputeNextScanTime(timeval pLastScanTime);

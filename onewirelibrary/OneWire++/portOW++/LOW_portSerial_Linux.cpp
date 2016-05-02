@@ -34,7 +34,7 @@
 
 #include "LOW_portSerial_Linux.h"
 #include "LOW_helper_msglog.h"
-
+#include "Helpers/logger.h"
 
 
 //=====================================================================================
@@ -279,7 +279,7 @@ uint8_t LOW_portSerial_Linux::tty_readByte( const bool inTrashExtraReply, const 
        
       }
       else if ( selRet == 0 ) {
-        throw portSerial_error( "TTY operation timed out", __FILE__, __LINE__);
+        throw portSerial_error( "TTY readByte operation timed out", __FILE__, __LINE__);
       }
       else {
         throw portSerial_error( errno, "Unexpected error in select call", __FILE__, __LINE__);
@@ -294,28 +294,70 @@ uint8_t LOW_portSerial_Linux::tty_readByte( const bool inTrashExtraReply, const 
 
 void LOW_portSerial_Linux::tty_read( byteVec_t &outReadBytes, const bool inTrashExtraReply, const unsigned int inSecTimeout)
 {
-  __LOW_SYNCHRONIZE_METHOD_WRITE__
+  //__LOW_SYNCHRONIZE_METHOD_WRITE__
 
-  for( unsigned int a=0; a<outReadBytes.size(); a++) {
-    outReadBytes[a] = tty_readByte( inTrashExtraReply, inSecTimeout);
-  }
+//  for( unsigned int a=0; a<outReadBytes.size(); a++) {
+//    outReadBytes[a] = tty_readByte( inTrashExtraReply, inSecTimeout);
+//  }
+
+  fd_set         readset;
+    struct timeval wait_tm;
+    int            selRet;
+    uint8_t        buffer[256];
+
+    ssize_t readedBytes = 0;
+      while ( true ) {
+
+        // Setup for wait for a response or timeout
+        wait_tm.tv_usec = 0;
+        wait_tm.tv_sec  = inSecTimeout;
+        FD_ZERO( &readset);
+        FD_SET( serialFD, &readset);
+
+        // Read byte if it doesn't timeout first
+        selRet = select( serialFD+1, &readset, NULL, NULL, &wait_tm);
+        if( selRet > 0 ) {
+
+          if( FD_ISSET( serialFD, &readset) )
+          {
+            ssize_t readed = read( serialFD, buffer, sizeof(buffer));
+            if ( readed < 1 )
+              throw portSerial_error( "Unexpected short read", __FILE__, __LINE__);
+
+            for(int i=0;i<readed;i++)
+            	outReadBytes[readedBytes+i] = buffer[i];
+
+            readedBytes += readed;
+            //LOW_helper_msglog::printDebug( LOW_helper_msglog::portSerial_dl, "LOW_linkDS2480B: TTY READ: %02x read cycle: %d\n", readByte, a);
+            if (readedBytes<outReadBytes.size())
+            	continue;
+            break;
+          }
+        }
+        else if ( selRet == 0 ) {
+          throw portSerial_error( "TTY read bytes operation timed out", __FILE__, __LINE__);
+        }
+        else {
+          throw portSerial_error( errno, "Unexpected error in select call", __FILE__, __LINE__);
+        }
+    }
+
 }
 
 
 void LOW_portSerial_Linux::tty_write( const uint8_t inWriteByte)
 {
-  __LOW_SYNCHRONIZE_METHOD_WRITE__
-
+  //__LOW_SYNCHRONIZE_METHOD_WRITE__
   int written;
   
   LOW_helper_msglog::printDebug( LOW_helper_msglog::portSerial_dl, "LOW_linkDS2480B: TTY WRITE: %02x\n", inWriteByte);
-  do {
+  //do {
     written = write( serialFD, &inWriteByte, 1);
     if ( written == -1 )
       throw portSerial_error( errno, "Error writing single byte to TTY", __FILE__, __LINE__);
     tcdrain( serialFD);
-  }
-  while ( written != 1 );
+  //}
+  //while ( written != 1 );
 }
 
 
@@ -334,7 +376,7 @@ void LOW_portSerial_Linux::tty_write( const byteVec_t &inWriteBytes)
     uint8_t       *writePtr = buffer;
     do {
       // I had troubles with writing to fast, so block the stuff a bit
-      written = write( serialFD, writePtr, (remaining<4)?remaining:4);
+      written = write( serialFD, writePtr, remaining/*(remaining<4)?remaining:4*/);
       if ( written == -1 )
         throw portSerial_error( errno, "Error writing byte block to TTY", __FILE__, __LINE__);
       tcdrain( serialFD);

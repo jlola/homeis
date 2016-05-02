@@ -96,160 +96,56 @@ public:
   // type definitions
   //
   
-  typedef std::vector<LOW_devDS2406*> devDS2406PtrVec_t;    /**< Vector type of class device pointers. */
+	typedef std::vector<LOW_devDS2406*> devDS2406PtrVec_t;    /**< Vector type of class device pointers. */
 
-  /** Type for PIO channel selection. */
-  typedef enum { noneSelect=0, chanASelect=1, chanBSelect=2, chanBothSelect=3}  chanSelect_t;
+	/** Type for PIO channel selection. */
+	typedef enum { noneSelect=0, chanASelect=1, chanBSelect=2, chanBothSelect=3}  chanSelect_t;
 
-  /** Type for search source selection. */
-  typedef enum { latchSelect=1, flipFlopSelect=2, curStatusSelect=3}            sourceSelect_t;
+	/** Type for search source selection. */
+	typedef enum { latchSelect=1, flipFlopSelect=2, curStatusSelect=3}            sourceSelect_t;
 
-  /** Type for PIO transistor states. */
-  typedef enum { pioTransistorOn=0, pioTransistorOff=1}                         pioTransistor_t;
+	/** Type for PIO transistor states. */
+	typedef enum { pioTransistorOn=0, pioTransistorOff=1}                         pioTransistor_t;
 
-  /** Type for activity polarity selection. */
-  typedef enum { activeLow=0, activeHigh=1}                                     activePolarity_t;
+	/** Type for activity polarity selection. */
+	typedef enum { activeLow=0, activeHigh=1}                                     activePolarity_t;
 
-  /** DS2406 internal status register as defined by Dallas. */
-  typedef struct statusRegister_t {
-    activePolarity_t   activePolarity;
-    sourceSelect_t     sourceSelect;
-    chanSelect_t       channelSelect;
-    pioTransistor_t    channelFFQ_pioA;
-    pioTransistor_t    channelFFQ_pioB;
-    bool               isExternalPowered;   // bit 7
-  } statusRegister_t;
+	/** DS2406 internal status register as defined by Dallas. */
+	typedef struct statusRegister_t {
+		activePolarity_t   activePolarity;
+		sourceSelect_t     sourceSelect;
+		chanSelect_t       channelSelect;
+		pioTransistor_t    channelFFQ_pioA;
+		pioTransistor_t    channelFFQ_pioB;
+		bool               isExternalPowered;   // bit 7
+	} statusRegister_t;
 
-    
-  //=====================================================================================
-  //
-  // classes
-  //
+	/** Type for CRC cycle selection. */
+	typedef enum { CRC_disable=0, CRC_after1Byte=1, CRC_after8Byte=2, CRC_after32Byte=3} CRCtype_t;
 
+	/** Type for interleave mode selection. */
+	typedef enum { asyncInterleaveMode=0, syncInterleaveMode=1 }                         interleaveMode_t;
 
-  /** Class for accessing the PIO channels.
-  
-      The Channel Access command is used to access the PIO channels to sense the logical status
-      of the output node and the output transistor and to change the status of the output transistor.
+	/** Type for toggle mode selection. */
+	typedef enum { noToggleMode=0, toggleMode=1}                                         toggleMode_t;
 
-      As there are many combinations of reading/writing the command is implemented as a class.
-      The programmer himself is responsible to match read/write cycles according to prior selected
-      options on instance creation.
+	/** Type for inition I/O mode selection. */
+	typedef enum { writeMode=0, readMode=1}                                              initialMode_t;
 
-      For details see the original Dallas documentation.
+	/** Type for latch reset selection. */
+	typedef enum { noResetLatches=0, resetLatches=1}                                     activityLatchReset_t;
 
-      <B>Note:</B> As any other command creating an instance of this class locks the device.
-                   Remember to destroy the object to release the device.
-   */
-  class cmd_ChannelAccess : public linkLock {
-
-  //-------------------------------------------------------------------------------------
-  public:
-    
-    //-------------------------------------------------------------------------------------
-    // type definitions
-    //
-
-    /** Type for CRC cycle selection. */
-    typedef enum { CRC_disable=0, CRC_after1Byte=1, CRC_after8Byte=2, CRC_after32Byte=3} CRCtype_t;
-
-    /** Type for interleave mode selection. */
-    typedef enum { asyncInterleaveMode=0, syncInterleaveMode=1 }                         interleaveMode_t;
-
-    /** Type for toggle mode selection. */
-    typedef enum { noToggleMode=0, toggleMode=1}                                         toggleMode_t;
-
-    /** Type for inition I/O mode selection. */
-    typedef enum { writeMode=0, readMode=1}                                              initialMode_t;
-
-    /** Type for latch reset selection. */
-    typedef enum { noResetLatches=0, resetLatches=1}                                     activityLatchReset_t;
-
-    /** DS2406 channel info as defined by Dallas. */
-    typedef struct channelInfo_t {
-      bool channelFFQ_pioA;     // bit 0
-      bool channelFFQ_pioB;
-      bool sensedLevel_pioA;
-      bool sensedLevel_pioB;
-      bool activityLatch_pioA;
-      bool activityLatch_pioB;
-      bool hasPioB;
-      bool isExternalPowered;   // bit 7
-    } channelInfo_t;
-  
-    //-------------------------------------------------------------------------------------
-    // constructors
-    //
-
-    /** Constructor with specification of command options.
-        Obtains a lock on the device.
-        
-        @param  inDevice           Reference to the device the command operates on.
-        @param  inCRCtype          CRC cycle selection.
-        @param  inChanSelect       PIO channel selection.
-        @param  inInterleaveMode   Interleave mode selection.
-        @param  inToggleMode       Toggle mode selection.
-        @param  inInitialMode      Initial I/O mode selection.
-        @param  inALR              Latch reset selection.
-
-        @throw devDS2406_error  Thrown when illegal combination of modes is selected.
-     */
-    cmd_ChannelAccess( const LOW_devDS2406 &inDevice,
-                       const CRCtype_t inCRCtype, const chanSelect_t inChanSelect, 
-                       const interleaveMode_t inInterleaveMode, const toggleMode_t inToggleMode, 
-                       const initialMode_t inInitialMode, const activityLatchReset_t inALR);
-
-    /** Destructor.
-        Releases the lock on the device.
-     */
-    virtual ~cmd_ChannelAccess();
-    
-    //-------------------------------------------------------------------------------------
-    // methods
-    //
-
-    /** Get the channel info read after sending command.
-     */
-    virtual channelInfo_t& getChannelInfo();
-
-    /** Receive 1 bit from the device.
-        @return  Bit that was reveived.
-     */
-    virtual bool readDataBit() const;
-
-    /** Receive 1 byte from the device.
-        @return  Byte that was reveived.
-     */
-    virtual uint8_t readDataByte() const;
-
-    /** Receive a block of bytes from the device.
-        @param  outBytes   Values that were reveived. Read length is determined
-                           by the preset length of the vector.
-     */
-    virtual void readData( byteVec_t &outBytes) const;
-
-    /** Send 1 bit to the device.
-        @param   inSendBit   Bit to send.
-     */
-    virtual void writeData( const bool inSendBit) const;
-
-    /** Send 1 byte to the device.
-        @param   inSendByte  Byte to send.
-     */
-    virtual void writeData( const uint8_t inSendByte) const;
-
-    /** Send block of bytes to the device.
-        @param  inSendBytes  Block of bytes to send.
-     */
-    virtual void writeData( const byteVec_t &inSendBytes) const;
-  
-  //-------------------------------------------------------------------------------------
-  private:
-    const LOW_devDS2406  &device;      /**< Device the command is operating on */
-    channelInfo_t        channelInfo;  /**< Channel info received after issuing the command */
-    
-  };
-  
+	/** DS2406 channel info as defined by Dallas. */
+	typedef struct channelInfo_t {
+		bool channelFFQ_pioA;     // bit 0
+		bool channelFFQ_pioB;
+		bool sensedLevel_pioA;
+		bool sensedLevel_pioB;
+		bool activityLatch_pioA;
+		bool activityLatch_pioB;
+		bool hasPioB;
+		bool isExternalPowered;   // bit 7
+	} channelInfo_t;
   
   //=====================================================================================
   //
@@ -296,6 +192,10 @@ public:
    */
   virtual bool getHasPioB() const;
 
+  LOW_devDS2406::channelInfo_t getChannel(const CRCtype_t inCRCtype, const chanSelect_t inChanSelect,
+  	    const interleaveMode_t inInterleaveMode, const toggleMode_t inToggleMode,
+  	    const initialMode_t inInitialMode, const activityLatchReset_t inALR);
+
   
   /** Get the current search condition.
       See also setSearchCondition().
@@ -303,7 +203,7 @@ public:
       @param  outStatusRegister  Pointer to status register struture. Results
                                  are filled in there.
    */
-  virtual void getSearchCondition( LOW_devDS2406::statusRegister_t *outStatusRegister) const;
+  virtual void cmd_ReadStatus( LOW_devDS2406::statusRegister_t *outStatusRegister) const;
 
     
   /** Set the search condition and status of the PIO transistors.
@@ -381,7 +281,7 @@ public:
 
       @throw devDS2406_error  Thrown when channel B is selected without being present.
    */
-  virtual void setSearchCondition( const chanSelect_t inChanSelect, const sourceSelect_t inSourceSelect,
+  virtual void cmd_WriteStatus( const chanSelect_t inChanSelect, const sourceSelect_t inSourceSelect,
                                    const activePolarity_t inPolaritySelect,
                                    const pioTransistor_t inPioATrans, const pioTransistor_t inPioBTrans) const;
 
@@ -461,7 +361,6 @@ public:
    */  
   virtual void cmd_ReadStatus( const uint8_t inStartAddr, byteVec_t &outBytes) const;
 
-   
   /** Write to status memory.
   
       The Write Status command is used to program the Status Memory, which includes the
@@ -497,7 +396,7 @@ protected:
   // friends
   //
   
-  friend class cmd_ChannelAccess;  /**< required for accessing the device's lock */
+  //friend class cmd_ChannelAccess;  /**< required for accessing the device's lock */
   
   
   //=====================================================================================

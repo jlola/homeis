@@ -17,8 +17,9 @@
 
 #include "LOW_netSegment.h"
 #include "LOW_deviceFactory.h"
-
-
+#include "PoppyDebugTools.h"
+#include "Helpers/logger.h"
+#include "LOW_thread_rwlock.h"
 
 //=====================================================================================
 //
@@ -127,7 +128,7 @@ bool LOW_netSegment::verifyDevice( const LOW_deviceID inDevID, const bool inOnly
         LOW_device *theDev = getDevice<LOW_device>( inDevID);
         revitalizeDevice( theDev);
       }
-      catch ( LOW_exception ex) {
+      catch ( LOW_exception & ex) {
         return false;
       }
     }
@@ -159,6 +160,7 @@ void LOW_netSegment::unregisterDevice( const LOW_device *inDev)
 
 void LOW_netSegment::cmd_MatchROM( const LOW_device *inDevice) const
 {
+	STACK
   __LOW_SYNCHRONIZE_METHOD_READ_WEAK__
 
   LOW_link::commLock lock( link);
@@ -172,7 +174,7 @@ void LOW_netSegment::cmd_MatchROM( const LOW_device *inDevice) const
   
   byteVec_t id = inDevice->getID().getRomIDVec();  
   outVec.insert( outVec.end(), id.begin(), id.end());
-    
+    STACK_SECTION("link.writeData( outVec )")
   link.writeData( outVec );
 }
 
@@ -212,9 +214,26 @@ void LOW_netSegment::cmd_SkipROM() const
 LOW_deviceID::deviceIDVec_t LOW_netSegment::cmd_SearchROM( const bool inOnlyAlarm,
                                                            const LOW_deviceIDRaw::devFamCode_t inFamCode) const
 {
-  __LOW_SYNCHRONIZE_METHOD_READ_WEAK__
+	STACK
+	try
+	{
+		//__LOW_SYNCHRONIZE_METHOD_READ_WEAK__
 
-  return link.searchDevices( inOnlyAlarm, LOW_deviceIDRaw() /* init with 0 */, inFamCode, true);
+		STACK_SECTION("searchDevices")
+		return link.searchDevices( inOnlyAlarm, LOW_deviceIDRaw() /* init with 0 */, inFamCode, true);
+	}
+	catch(std::exception & ex)
+	{
+		CLogger::Error(ex.what());
+		LOW_deviceID::deviceIDVec_t result;
+		return result;
+	}
+	catch(LOW_exception & ex)
+	{
+		CLogger::Error(ex.message.c_str());
+		LOW_deviceID::deviceIDVec_t result;
+		return result;
+	}
 }
     
 

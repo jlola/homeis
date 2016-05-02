@@ -111,32 +111,32 @@ void LOW_compTwinSwitch::setAlarmCondition()
 }
 
 
-void LOW_compTwinSwitch::readStatus( LOW_devDS2406::cmd_ChannelAccess::channelInfo_t &outChannelInfo)
-{
-  LOW_devDS2406::cmd_ChannelAccess readAccess =
-    LOW_devDS2406::cmd_ChannelAccess( pioDevice,
-                                      LOW_devDS2406::cmd_ChannelAccess::CRC_disable,
-                                      LOW_devDS2406::chanBothSelect,
-                                      LOW_devDS2406::cmd_ChannelAccess::asyncInterleaveMode,
-                                      LOW_devDS2406::cmd_ChannelAccess::noToggleMode,
-                                      LOW_devDS2406::cmd_ChannelAccess::readMode,
-                                      LOW_devDS2406::cmd_ChannelAccess::noResetLatches);
-  outChannelInfo = readAccess.getChannelInfo();
-}
+//void LOW_compTwinSwitch::readStatus( LOW_devDS2406::cmd_ChannelAccess::channelInfo_t &outChannelInfo)
+//{
+//  LOW_devDS2406::cmd_ChannelAccess readAccess =
+//    LOW_devDS2406::cmd_ChannelAccess( pioDevice,
+//                                      LOW_devDS2406::cmd_ChannelAccess::CRC_disable,
+//                                      LOW_devDS2406::chanBothSelect,
+//                                      LOW_devDS2406::cmd_ChannelAccess::asyncInterleaveMode,
+//                                      LOW_devDS2406::cmd_ChannelAccess::noToggleMode,
+//                                      LOW_devDS2406::cmd_ChannelAccess::readMode,
+//                                      LOW_devDS2406::cmd_ChannelAccess::noResetLatches);
+//  outChannelInfo = readAccess.getChannelInfo();
+//}
 
 
-void LOW_compTwinSwitch::resetLatches( LOW_devDS2406::cmd_ChannelAccess::channelInfo_t &outChannelInfo)
-{
-  LOW_devDS2406::cmd_ChannelAccess clearLatchAccess  =
-    LOW_devDS2406::cmd_ChannelAccess( pioDevice,
-                                      LOW_devDS2406::cmd_ChannelAccess::CRC_disable,
-                                      LOW_devDS2406::chanBothSelect,
-                                      LOW_devDS2406::cmd_ChannelAccess::asyncInterleaveMode,
-                                      LOW_devDS2406::cmd_ChannelAccess::noToggleMode,
-                                      LOW_devDS2406::cmd_ChannelAccess::readMode,
-                                      LOW_devDS2406::cmd_ChannelAccess::resetLatches);
-  outChannelInfo = clearLatchAccess.getChannelInfo();
-}
+//void LOW_compTwinSwitch::resetLatches( LOW_devDS2406::cmd_ChannelAccess::channelInfo_t &outChannelInfo)
+//{
+//  LOW_devDS2406::cmd_ChannelAccess clearLatchAccess  =
+//    LOW_devDS2406::cmd_ChannelAccess( pioDevice,
+//                                      LOW_devDS2406::cmd_ChannelAccess::CRC_disable,
+//                                      LOW_devDS2406::chanBothSelect,
+//                                      LOW_devDS2406::cmd_ChannelAccess::asyncInterleaveMode,
+//                                      LOW_devDS2406::cmd_ChannelAccess::noToggleMode,
+//                                      LOW_devDS2406::cmd_ChannelAccess::readMode,
+//                                      LOW_devDS2406::cmd_ChannelAccess::resetLatches);
+//  outChannelInfo = clearLatchAccess.getChannelInfo();
+//}
 
 
 /*

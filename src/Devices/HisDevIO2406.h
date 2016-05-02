@@ -18,20 +18,27 @@
 #define PINNO_INPUTB	1
 #define PINNO_OUTPUTA	2
 #define PINNO_OUTPUTB 	3
+#define PINNO_LATCHA 	4
+#define PINNO_LATCHB 	5
 
 class HisDevIO2406: public HisDevDallas {
+
+	bool outputchanged;
 	HisDevValue<bool>* valueAInput;
 	HisDevValue<bool>* valueAOutput;
+	HisDevValue<bool>* valueALatch;
 
 	HisDevValue<bool>* valueBInput;
 	HisDevValue<bool>* valueBOutput;
+	HisDevValue<bool>* valueBLatch;
 
 	LOW_devDS2406 *dev;
 
 	void CreateDataPoints();
 	void WriteToDevice(ValueChangedEventArgs args);
+	void Init();
 protected:
-	virtual void DoInternalRefresh();
+	virtual void DoInternalRefresh(bool alarm);
 	//protected: virtual void DoInternalSave(xmlNodePtr & node);
 	virtual void DoInternalLoad(xmlNodePtr & node);
 	const xmlChar* GetNodeNameInternal();

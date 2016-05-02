@@ -21,6 +21,7 @@
 #include "ScopedLock.h"
 #include "File.h"
 #include "Directory.h"
+#include "PoppyDebugTools.h"
 #include "logger.h"
 
 using namespace std;
@@ -133,6 +134,7 @@ void CLogger::Info(const char * text, va_list args)
 
 void CLogger::Error(const char * text, ...)
 {
+	STACK
 	ScopedLock lock(CLogger::cs);
 
 	char buffer[BUFFER_SIZE];

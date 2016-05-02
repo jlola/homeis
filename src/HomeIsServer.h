@@ -20,25 +20,26 @@
 #include <httpserver.hpp>
 #include "Devices/Folder/HisDevFolderRoot.h"
 #include "Expressions/ExpressionRuntime.h"
+#include "HomeIsConfig.h"
 
 using namespace httpserver;
 using namespace std;
 
 class HomeIsServer
 {
-	string serialPort;
+	vector<SSerPortConfig> serports;
 	LOW_network  oneWireNet;
 	HisDevRuntime* devruntime;
 	HisDevFolderRoot* rootFolder;
 	ExpressionRuntime* expressionRuntime;
 	create_webserver cw;
 	HisDevices* devs;
-	bool InitOneWireLib(string port);
+	bool InitOneWireLib(vector<SSerPortConfig> pserports);
 	bool Init();
 	bool InitHisDevices();
 	void InitWebServer();
 public:
-	HomeIsServer(string SerialPort,int tcpPort);
+	HomeIsServer(vector<SSerPortConfig> pserports,int tcpPort);
 	void Start();
 	void Stop();
 };

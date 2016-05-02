@@ -29,11 +29,18 @@ class LOW_devLCD :  public LOW_device
 	static const owCommand_t  CopyScratchpadToLCD_COMMAND = 0x48; /**< 1-Wire command byte constant */
 	static const owCommand_t  ClearLCD_COMMAND   		  = 0x49; /**< 1-Wire command byte constant */
 	static const owCommand_t  ReadPowerSupply_COMMAND  = 0xb4; /**< 1-Wire command byte constant */
+	static const owCommand_t CopyGPIOInputStatesToScratchpad = 0x22;
+	static const owCommand_t CopyGPIOcountersToScratchpad = 0x23;
+
 
 	bool isExternalPowered;
 	 /** Family name of this specific device. */
 	static const std::string familyName;
 public:
+
+	bool ReadInputs(uint8_t & inputs);
+
+	bool ReadCounters(byteVec_t & counters);
 
 	bool IsConnected();
 	/** Exception base class for all exceptions thrown by LOW_devDS1820. */

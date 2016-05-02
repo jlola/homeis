@@ -23,24 +23,47 @@ ExpressionRuntime::ExpressionRuntime() : thread(0)
 {
 	STACK
 	this->__expressionMutex = HisLock::CreateMutex();
+	__expressionEvaluateMutex = HisLock::CreateMutex();
 	running = false;
 }
 
-
+void ExpressionRuntime::AddToEvaluateQueue(HisDevBase* hisDevBase)
+{
+	__expressionEvaluateMutex->lock();
+	vector<IExpression*> expressionsToEval = hisDevBase->GetExpressions();
+	for (size_t i=0;i<expressionsToEval.size();i++)
+	{
+		queue.push_back(expressionsToEval[i]);
+		CLogger::Info("Added to evaluate %s to expresseionqueue",expressionsToEval[i]->GetName().c_str());
+	}
+	__expressionEvaluateMutex->unlock();
+}
 
 void ExpressionRuntime::Evaluate()
 {
 	STACK
-
-	HisLock lock(this->__expressionMutex);
 	for(size_t i=0;i<expressions.size();i++)
 	{
 
+		if (queue.size()>0)
+		{
+			__expressionEvaluateMutex->lock();
+			vector<IExpression*> queueCopy(queue);
+			queue.clear();
+			__expressionEvaluateMutex->unlock();
+			for(size_t d=0;d<queueCopy.size();d++)
+			{
+				queueCopy[d]->Evaluate();
+				CLogger::Info("Evaluated %s",queueCopy[d]->GetName().c_str());
+			}
+			queueCopy.clear();
+		}
 		//int* test = 0x00;
 		//*test = 10;
 		expressions[i]->Evaluate();
 	}
 }
+
 
 void* ExpressionRuntime::ThreadFunction(void* obj)
 {
@@ -50,8 +73,15 @@ void* ExpressionRuntime::ThreadFunction(void* obj)
 
 	while(runtime->running)
 	{
-		usleep(10000);
-		runtime->Evaluate();
+		try
+		{
+			usleep(1000);
+			runtime->Evaluate();
+		}
+		catch(...)
+		{
+			CLogger::Error("ExpressionRuntime::ThreadFunction unexpected error");
+		}
 	}
 
 	return NULL;
@@ -96,6 +126,11 @@ void ExpressionRuntime::Start()
 {
 	STACK
 	/* Initialize thread creation attributes */
+	vector<IExpression*> expressionscopy(expressions);
+	for(size_t i=0;i<expressionscopy.size();i++)
+	{
+		expressionscopy[i]->Start();
+	}
 
 	int s = pthread_attr_init(&attr);
    if (s != 0)

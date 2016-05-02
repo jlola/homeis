@@ -18,7 +18,7 @@
  
 #include "LOW_device.h"
 #include "LOW_netSegment.h"
-
+#include "PoppyDebugTools.h"
 //=====================================================================================
 //
 // static constant init
@@ -101,5 +101,6 @@ LOW_link& LOW_device::getLink() const
 
 void LOW_device::cmd_MatchROM() const
 {
+	STACK
   netSegment.cmd_MatchROM( this);
 }
