@@ -139,7 +139,7 @@ void HisDevIO2406::DoInternalLoad(xmlNodePtr & node)
 				break;
 		}
 	}
-	SetScanPeriod(20000);
+	SetScanPeriod(30000);
 	Init();
 }
 
@@ -173,7 +173,7 @@ void HisDevIO2406::Init()
 				LOW_devDS2406::asyncInterleaveMode,
 				LOW_devDS2406::noToggleMode,
 				LOW_devDS2406::readMode,
-				LOW_devDS2406::noResetLatches);
+				LOW_devDS2406::resetLatches);
 
 		dev->cmd_WriteStatus(LOW_devDS2406::chanSelect_t::chanASelect,
 				LOW_devDS2406::sourceSelect_t::curStatusSelect,
@@ -204,57 +204,52 @@ void HisDevIO2406::DoInternalRefresh(bool alarm)
 
 	try
 	{
-		if (!alarm)
-		{
-			CLogger::Info("DS2406 - Before getChannel");
-			chInfo = dev->getChannel(LOW_devDS2406::CRCtype_t::CRC_disable,
+		//nactu channel
+		//CLogger::Info("DS2406 - Before getChannel");
+		chInfo = dev->getChannel(LOW_devDS2406::CRCtype_t::CRC_disable,
 				LOW_devDS2406::chanSelect_t::chanASelect,
 				LOW_devDS2406::asyncInterleaveMode,
 				LOW_devDS2406::noToggleMode,
 				LOW_devDS2406::readMode,
 				LOW_devDS2406::noResetLatches);
-			CLogger::Info("DS2406 - After getChannel");
-
-			CLogger::Info("DS2406 - Before read status");
-			dev->cmd_ReadStatus(&status);
-			CLogger::Info("DS2406 - After read status");
-		}
+		//CLogger::Info("DS2406 - After getChannel");
+		//nactu status
+		//CLogger::Info("DS2406 - Before read status");
+		dev->cmd_ReadStatus(&status);
+		//CLogger::Info("DS2406 - After read status");
+		//aktualizuju latch
+		if (chInfo.activityLatch_pioA || newError != GetError())
+				valueALatch->ReadedValueFromDevice(chInfo.activityLatch_pioA,newError);
+		if (chInfo.activityLatch_pioB || newError != GetError())
+			valueBLatch->ReadedValueFromDevice(chInfo.activityLatch_pioB,newError);
 
 		newError = false;
 
-		//musim nastavit invertovane vyhledavani
-		if (newError==false && alarm)
+		//change polarity
+		LOW_devDS2406::activePolarity_t newPolarity = chInfo.sensedLevel_pioA ? LOW_devDS2406::activePolarity_t::activeLow : LOW_devDS2406::activePolarity_t::activeHigh;
+		if (newPolarity != status.activePolarity)
 		{
-			CLogger::Info("DS2406 - before cmd_WriteStatus");
-			dev->cmd_WriteStatus(boolnewAValue ? LOW_devDS2406::chanSelect_t::chanASelect : LOW_devDS2406::chanSelect_t::noneSelect,
+			CLogger::Info("DS2406 - cmd_WriteStatus change polarity");
+			dev->cmd_WriteStatus(LOW_devDS2406::chanSelect_t::chanASelect,
 				LOW_devDS2406::sourceSelect_t::curStatusSelect,
 				chInfo.sensedLevel_pioA ? LOW_devDS2406::activePolarity_t::activeLow : LOW_devDS2406::activePolarity_t::activeHigh,
 				boolnewAValue,
 				boolnewBValue);
-			CLogger::Info("DS2406 - After cmd_WriteStatus");
+			//CLogger::Info("DS2406 - After cmd_WriteStatus change polarity");
+		}
 
-			CLogger::Info("DS2406 - before getChannel");
-			if (chInfo.activityLatch_pioA || chInfo.activityLatch_pioB)
+		//musim resetovat latch pokud byl nastaveny
+		if (chInfo.activityLatch_pioA || chInfo.activityLatch_pioB)
+		{
+			CLogger::Info("DS2406 - getChannel Reset latch");
 			chInfo = dev->getChannel(LOW_devDS2406::CRC_disable,
 				LOW_devDS2406::chanSelect_t::chanASelect,
 				LOW_devDS2406::interleaveMode_t::asyncInterleaveMode,
 				LOW_devDS2406::noToggleMode,
 				LOW_devDS2406::readMode,
 				LOW_devDS2406::resetLatches);
-			CLogger::Info("DS2406 - after getChannel");
+			//CLogger::Info("DS2406 - after getChannel Reset latch");
 		}
-
-		valueAInput->ReadedValueFromDevice(chInfo.sensedLevel_pioA,newError);
-		valueBInput->ReadedValueFromDevice(chInfo.sensedLevel_pioB,newError);
-
-		valueAOutput->ReadedValueFromDevice(chInfo.channelFFQ_pioA,newError);
-		valueBOutput->ReadedValueFromDevice(chInfo.channelFFQ_pioB,newError);
-
-		if (chInfo.activityLatch_pioA)
-			valueALatch->ReadedValueFromDevice(chInfo.activityLatch_pioA,newError);
-		if (chInfo.activityLatch_pioB)
-			valueBLatch->ReadedValueFromDevice(chInfo.activityLatch_pioB,newError);
-
 	}
 	catch(LOW_exception & ex)
 	{
@@ -262,6 +257,17 @@ void HisDevIO2406::DoInternalRefresh(bool alarm)
 		CLogger::Info(msg);
 		newError = true;
 	}
+
+	valueAInput->ReadedValueFromDevice(chInfo.sensedLevel_pioA,newError);
+	valueBInput->ReadedValueFromDevice(chInfo.sensedLevel_pioB,newError);
+
+	valueAOutput->ReadedValueFromDevice(chInfo.channelFFQ_pioA,newError);
+	valueBOutput->ReadedValueFromDevice(chInfo.channelFFQ_pioB,newError);
+
+	if (newError != GetError())
+		valueALatch->ReadedValueFromDevice(chInfo.activityLatch_pioA,newError);
+	if (newError != GetError())
+		valueBLatch->ReadedValueFromDevice(chInfo.activityLatch_pioB,newError);
 
 	SetError(newError);
 }

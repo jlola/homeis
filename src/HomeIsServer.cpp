@@ -76,7 +76,7 @@ HomeIsServer::HomeIsServer(vector<SSerPortConfig> pserports,int TcpPort) :
 	cout << strkey << ", " << strcert << endl;
 	const char *key=strkey.c_str();
 	const char *cert=strcert.c_str();
-	cw.use_ssl().https_mem_key(key).https_mem_cert(cert);
+	//cw.use_ssl().https_mem_key(key).https_mem_cert(cert);
 }
 
 void HomeIsServer::InitWebServer()

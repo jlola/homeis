@@ -49,7 +49,7 @@ void HisDevices::AddToRefreshQueue(HisDevBase* hisDevBase)
 {
 	STACK
 	__devRefreshMutex->lock();
-	CLogger::Info("Force refresh: %s" ,hisDevBase->GetName().c_str());
+	//CLogger::Info("Add to refresh queue: %s" ,hisDevBase->GetName().c_str());
 	queue.push_back(hisDevBase);
 	__devRefreshMutex->unlock();
 }
@@ -293,8 +293,8 @@ void HisDevices::Refresh()
 		devices[i]->Refresh(false);
 
 		vector<LOW_device*> alarmDevs = network->getSegments()[0]->searchDevices<LOW_device>(true);
-		if (alarmDevs.size()>0)
-			CLogger::Info("Detected %d alarms",alarmDevs.size());
+//		if (alarmDevs.size()>0)
+//			CLogger::Info("Detected %d alarms",alarmDevs.size());
 		for(size_t d=0;d<alarmDevs.size();d++)
 		{
 			size_t index = this->Find(alarmDevs[d]->getID());
@@ -316,7 +316,7 @@ void HisDevices::Refresh()
 			__devRefreshMutex->unlock();
 			for(size_t d=0;d<queueCopy.size();d++)
 			{
-				CLogger::Info("Force refresh: %s" ,devices[d]->GetName().c_str());
+				CLogger::Info("Refresh from queue: %s" ,queueCopy[d]->GetName().c_str());
 				queueCopy[d]->Refresh(false);
 			}
 		}

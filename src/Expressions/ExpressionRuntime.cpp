@@ -34,7 +34,7 @@ void ExpressionRuntime::AddToEvaluateQueue(HisDevBase* hisDevBase)
 	for (size_t i=0;i<expressionsToEval.size();i++)
 	{
 		queue.push_back(expressionsToEval[i]);
-		CLogger::Info("Added to evaluate %s to expresseionqueue",expressionsToEval[i]->GetName().c_str());
+		//CLogger::Info("Added to evaluate %s to expresseionqueue",expressionsToEval[i]->GetName().c_str());
 	}
 	__expressionEvaluateMutex->unlock();
 }
@@ -54,7 +54,7 @@ void ExpressionRuntime::Evaluate()
 			for(size_t d=0;d<queueCopy.size();d++)
 			{
 				queueCopy[d]->Evaluate();
-				CLogger::Info("Evaluated %s",queueCopy[d]->GetName().c_str());
+				//CLogger::Info("Queue evaluated %s",queueCopy[d]->GetName().c_str());
 			}
 			queueCopy.clear();
 		}

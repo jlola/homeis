@@ -52,24 +52,28 @@ void HisDevIO2413::CreateDataPoints()
 	valueAInput = new HisDevValue<bool>(strid, EHisDevDirection::Read, EDataType::Bool, PINNO_INPUTA,false);
 	valueAInput->delegateWrite = delegate;
 	valueAInput->Load();
+	valueAInput->SetName("InputA");
 	Add(valueAInput);
 
 	//valuenode = GetOrCreateNode(PINNO_INPUTB,GetNodePtr());
 	valueBInput = new HisDevValue<bool>(strid, EHisDevDirection::Read, EDataType::Bool, PINNO_INPUTB,false);
 	valueBInput->delegateWrite = delegate;
 	valueBInput->Load();
+	valueBInput->SetName("InputB");
 	Add(valueBInput);
 
 	//valuenode = GetOrCreateNode(PINNO_OUTPUTA,GetNodePtr());
 	valueAOutput = new HisDevValue<bool>(strid,EHisDevDirection::ReadWrite,EDataType::Bool,PINNO_OUTPUTA,false);
 	valueAOutput->delegateWrite = delegate;
 	valueAOutput->Load();
+	valueAOutput->SetName("OutputA");
 	Add(valueAOutput);
 
 	//valuenode = GetOrCreateNode(PINNO_OUTPUTB,GetNodePtr());
 	valueBOutput = new HisDevValue<bool>(strid,EHisDevDirection::ReadWrite,EDataType::Bool,PINNO_OUTPUTB,false);
 	valueBOutput->delegateWrite = delegate;
 	valueBOutput->Load();
+	valueBOutput->SetName("OutputB");
 	Add(valueBOutput);
 }
 

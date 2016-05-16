@@ -143,28 +143,25 @@ class HisDevTemp18B20 : public HisDevDallas
 	{
 		STACK
 		double tempvalue = 0;
-		vector<HisDevValue<double>*> values = GetItems<HisDevValue<double>>();
 		try
 		{
-			doConversion = true;
-			tempvalue = getTemperature(doConversion);
-
-			for (size_t i=0;i<values.size();i++)
+			if (alarm)
 			{
-				HisDevValue<double>* val = dynamic_cast<HisDevValue<double>*>(values[i]);
-				val->ReadedValueFromDevice(tempvalue,false);
+				int8_t high = 127;
+				int8_t low = -127;
+				tempdev->cmd_WriteScratchpad(low,high);
 			}
+			tempvalue = getTemperature(doConversion);
+			tempValue->ReadedValueFromDevice(tempvalue,false);
 			SetError(false);
 		}
 		catch(...)
 		{
 			SetError(true);
-			for (uint16_t i=0;i<values.size();i++)
-			{
-				HisDevValue<double>* val = dynamic_cast<HisDevValue<double>*>(values[i]);
-				val->ReadedValueFromDevice(tempvalue,true);
-			}
+			tempValue->ReadedValueFromDevice(tempvalue,true);
 		}
+		if (doConversion) doConversion = false;
+		else doConversion = true;
 	}
 
 	protected: virtual ~HisDevTemp18B20()
