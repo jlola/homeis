@@ -12,7 +12,7 @@
 
 #include <libxml/parser.h>
 #include <libxml/tree.h>
-
+#include <semaphore.h>
 #include "LOW_netSegment.h"
 #include "LOW_network.h"
 #include "LOW_device.h"
@@ -24,18 +24,23 @@
 #include "HisDevFactory.h"
 #include "VirtualDevices/HisDevVirtual.h"
 #include "PoppyDebugTools.h"
+#include "HisDevModbus.h"
+
 #include "HisDevices.h"
 
 
 void HisDevices::Scan()
 {
 	STACK
+	//while ((s = sem_timedwait(&sem, &ts)) == -1 && errno == EINTR);
 	network->searchDevices<LOW_device>(false);
 	AddScanned();
 }
 
-HisDevices::HisDevices(string fileName,LOW_network* pnetwork,ExpressionRuntime* pExpressionRuntime)
+HisDevices::HisDevices(string fileName,LOW_network* pnetwork,ExpressionRuntime* pExpressionRuntime
+		,ModbusManager* modbusManager)
 {
+	this->modbusManager = modbusManager;
 	expressionRuntime = pExpressionRuntime;
 	devicesFileName = fileName;
 	doc = NULL;
@@ -49,8 +54,8 @@ void HisDevices::AddToRefreshQueue(HisDevBase* hisDevBase)
 {
 	STACK
 	__devRefreshMutex->lock();
-	//CLogger::Info("Add to refresh queue: %s" ,hisDevBase->GetName().c_str());
-	queue.push_back(hisDevBase);
+	//CLogger::Info("Add %s to refresh queue." ,hisDevBase->GetName().c_str());
+	devqueue.push(hisDevBase);
 	__devRefreshMutex->unlock();
 }
 
@@ -136,43 +141,54 @@ void HisDevices::Load()
 
 		try
 		{
-			if (!HisDevVirtual::IsInternal(cur))
+			if (cur->type==XML_ELEMENT_NODE)
 			{
-				id = HisDevDallas::GetId(cur);
-				if (!network->ContainsDevice<LOW_device>(id))
+				if (HisDevModbus::Resolve(cur))
 				{
-					cout << "Offline device: "+id.getRomIDString() + "\n";
-					CLogger::Info("Offline device: %s",id.getRomIDString().c_str());
-					dev = LOW_deviceFactory::new_SpecificDevice(*(network->getSegments()[0]),id);
+					newhisdev = (HisDevBase*)new HisDevModbus(cur,modbusManager);
+				}
+				else if (HisDevVirtual::IsInternal(cur))
+				{
+					newhisdev = (HisDevBase*)new HisDevVirtual(cur);
 				}
 				else
 				{
-					CLogger::Info("Online device: %s",id.getRomIDString().c_str());
-					cout << "Online device:" << id.getRomIDString() + "\n";
-					dev = network->getDevice<LOW_device>(id);
+					id = HisDevDallas::GetId(cur);
+					if (!network->ContainsDevice<LOW_device>(id))
+					{
+						cout << "Offline device: "+id.getRomIDString() + "\n";
+						CLogger::Info("Offline device: %s",id.getRomIDString().c_str());
+						dev = LOW_deviceFactory::new_SpecificDevice(*(network->getSegments()[0]),id);
+					}
+					else
+					{
+						CLogger::Info("Online device: %s",id.getRomIDString().c_str());
+						cout << "Online device:" << id.getRomIDString() + "\n";
+						dev = network->getDevice<LOW_device>(id);
+					}
+					newhisdev = HisDevFactory::Instance().Create(cur,dev);
 				}
-				newhisdev = HisDevFactory::Instance().Create(cur,dev);
-			}
-			else
-			{
-				newhisdev = (HisDevBase*)new HisDevVirtual(cur);
-			}
-			if (newhisdev!=NULL)
-			{
-				newhisdev->Load();
-				newhisdev->OnRefresh = onRefreshdelegate;
-				devices.push_back(newhisdev);
+				if (newhisdev!=NULL)
+				{
+					newhisdev->Load();
+					newhisdev->OnRefresh = onRefreshdelegate;
+					devices.push_back(newhisdev);
+				}
 			}
 		}
 		catch(LOW_netSegment::noDevice_error & ex)
 		{
-			cout << "Error "+id.getRomIDString();
+			cout << "Error id:"+id.getRomIDString();
 			CLogger::Info(string("No device error id: "+id.getRomIDString()).c_str());
 		}
 		catch(...)
 		{
-			cout << "Error "+id.getRomIDString();
-			CLogger::Info(string("General error id: "+id.getRomIDString()).c_str());
+			string message = "General error on element: ";
+			message += (const char*)cur->name;
+
+			cout <<  message;
+
+			CLogger::Info(message.c_str());
 		}
 
 		cur = cur->next;
@@ -236,7 +252,6 @@ size_t HisDevices::Size()
 void HisDevices::Delete(uint16_t index)
 {
 	STACK
-	queue.clear();
 	uint16_t size = devices.size();
 	if (size>index)
 	{
@@ -285,6 +300,7 @@ HisDevValueBase* HisDevices::FindValue(CUUID valueId)
 
 void HisDevices::Refresh()
 {
+	HisDevBase* dev = NULL;
 	STACK
 	for(uint i=0;i<devices.size();i++)
 	{
@@ -292,36 +308,49 @@ void HisDevices::Refresh()
 
 		devices[i]->Refresh(false);
 
-		vector<LOW_device*> alarmDevs = network->getSegments()[0]->searchDevices<LOW_device>(true);
+//		vector<LOW_device*> alarmDevs = network->getSegments()[0]->searchDevices<LOW_device>(true);
 //		if (alarmDevs.size()>0)
 //			CLogger::Info("Detected %d alarms",alarmDevs.size());
-		for(size_t d=0;d<alarmDevs.size();d++)
-		{
-			size_t index = this->Find(alarmDevs[d]->getID());
-			if (index>=0)
-			{
-				CLogger::Info("Detected alarm from device: %s",devices[index]->GetName().c_str());
-				//refresh
-				devices[index]->Refresh(true);
-				//zaradim k okamzitemu vykonani
-				expressionRuntime->AddToEvaluateQueue(devices[index]);
-			}
-		}
+//		for(size_t d=0;d<alarmDevs.size();d++)
+//		{
+//			size_t index = this->Find(alarmDevs[d]->getID());
+//			if (index>=0)
+//			{
+//				CLogger::Info("Detected alarm from device: %s",devices[index]->GetName().c_str());
+//				//refresh
+//				devices[index]->Refresh(true);
+//				//zaradim k okamzitemu vykonani
+//				expressionRuntime->AddToEvaluateQueue(devices[index]);
+//			}
+//		}
 
-		if (queue.size()>0)
+		while (devqueue.size()>0)
 		{
 			__devRefreshMutex->lock();
-			vector<HisDevBase*> queueCopy(queue);
-			queue.clear();
+			dev = devqueue.front();
+			devqueue.pop();
 			__devRefreshMutex->unlock();
-			for(size_t d=0;d<queueCopy.size();d++)
-			{
-				CLogger::Info("Refresh from queue: %s" ,queueCopy[d]->GetName().c_str());
-				queueCopy[d]->Refresh(false);
-			}
+			//CLogger::Info("Refresh from queue: %s" ,dev->GetName().c_str());
+			dev->Refresh(false);
+
 		}
+		usleep(1000);
 		//((string*)0x00)->size();
 	}
+}
+
+int HisDevices::FindModbusDev(int addressId)
+{
+	for(uint i=0;i<devices.size();i++)
+	{
+		HisDevModbus* modbusdev = dynamic_cast<HisDevModbus*>(devices[i]);
+		if (modbusdev!=NULL)
+		{
+			if (modbusdev->GetAddress()==addressId)
+				return i;
+		}
+	}
+	return -1;
 }
 
 int HisDevices::Find(LOW_deviceID pid)
@@ -380,10 +409,13 @@ void HisDevices::Save()
 		devices[i]->Save();
 	}
 
-	FILE* f = fopen(devicesFileName.c_str(),"w");
-	if (f != NULL)
-	{
-		xmlDocDump( f, doc);
-		fclose( f );
-	}
+	xmlSaveFormatFileEnc( devicesFileName.c_str(), doc,"UTF-8", 1);
+
+//	FILE* f = fopen(devicesFileName.c_str(),"w");
+//	if (f != NULL)
+//	{
+//		//xmlDocDump( f, doc);
+//
+//		fclose( f );
+//	}
 }

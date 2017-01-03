@@ -15,7 +15,7 @@ HisDevIO2408::HisDevIO2408(LOW_devDS2408* pdev):
 	delegate = WriteToDeviceRequestDelegate::from_method<HisDevIO2408, &HisDevIO2408::WriteToDevice>(this);
 	SetName((char*)GetNodeName());
 	dev->WriteControlStatus(0x00);
-	SetError(!dev->WritePIO(0x00));
+	SetError(true);
 	memset(valueOutput,0x00,sizeof(HisDevValue<bool>*)*8);
 	CreateDataPoints(GetError());
 }
@@ -25,19 +25,18 @@ HisDevIO2408::HisDevIO2408(xmlNodePtr node,LOW_devDS2408* pdev):
 {
 	STACK
 	delegate = WriteToDeviceRequestDelegate::from_method<HisDevIO2408, &HisDevIO2408::WriteToDevice>(this);
-	dev->WriteControlStatus(0x00);
-	SetError(!dev->WritePIO(0x00));
+	SetError(true);
 	memset(valueOutput,0x00,sizeof(HisDevValue<bool>*)*8);
 }
 
 void HisDevIO2408::WriteToDevice(ValueChangedEventArgs args)
 {
 	STACK
-	HisDevValue<bool>* dpoint = valueOutput[args.GetValue()->GetPinNumber()];
-	SetError(!dev->WritePIO(dpoint->GetPinNumber(),dpoint->GetValue()));
-	dpoint->ReadedValueFromDevice(dpoint->GetValue(),GetError());
-	SetChanged();
-	NeedRefresh();
+//	HisDevValue<bool>* dpoint = valueOutput[args.GetValue()->GetPinNumber()];
+//	SetError(!dev->WritePIO(dpoint->GetPinNumber(),dpoint->GetValue()));
+//	dpoint->ReadedValueFromDevice(dpoint->GetValue(),GetError());
+//	SetChanged();
+//	NeedRefresh();
 }
 
 void HisDevIO2408::CreateDataPoints(bool error)
@@ -46,7 +45,8 @@ void HisDevIO2408::CreateDataPoints(bool error)
 	std::string strid = dev->getID().getRomIDString();
 	for(int i=0;i<8;i++)
 	{
-		HisDevValue<bool>* point = new HisDevValue<bool>(strid, EHisDevDirection::ReadWrite, EDataType::Bool, i,false);
+		//string strPinNo = Converter::itos(i,10);
+		HisDevValue<bool>* point = new HisDevValue<bool>(strid, EHisDevDirection::ReadWrite, EDataType::Bool,i ,false);
 		point->delegateWrite = delegate;
 		point->Load();
 		point->ReadedValueFromDevice(false,error);
@@ -57,6 +57,8 @@ void HisDevIO2408::CreateDataPoints(bool error)
 
 void HisDevIO2408::DoInternalRefresh(bool alarm)
 {
+	dev->WriteControlStatus(0x00);
+
 	uint8_t pio = 0;
 	for(int i=0;i<8;i++)
 	{
@@ -93,12 +95,12 @@ void HisDevIO2408::DoInternalLoad(xmlNodePtr & node)
 
 	for(size_t i=0;i<values.size();i++)
 	{
-		HisDevValue<bool> *value = values[i];
-		value->delegateWrite = delegate;
-		valueOutput[value->GetPinNumber()] = value;
-		value->SetValue(false);
-		//error = !dev->WritePIO(value->GetPinNumber() ,value->GetValue());
-		value->ReadedValueFromDevice(false,GetError());
+//		HisDevValue<bool> *value = values[i];
+//		value->delegateWrite = delegate;
+//		valueOutput[value->GetPinNumber()] = value;
+//		value->SetValue(false);
+//		//error = !dev->WritePIO(value->GetPinNumber() ,value->GetValue());
+//		value->ReadedValueFromDevice(false,GetError());
 
 	}
 }

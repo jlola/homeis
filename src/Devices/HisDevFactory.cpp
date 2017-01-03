@@ -70,15 +70,18 @@ void HisDevFactory::SetRooFolder(HisDevFolderRoot* proot)
 
 HisBase *HisDevFactory::Create(xmlNodePtr node)
 {
-	if (!xmlStrcmp(node->name,NODE_VALUEID))
-		return new HisDevValueId(node);
-	if (!xmlStrcmp(node->name,NODE_FODLER))
-		return new HisDevFolder(node);
-	if (!xmlStrcmp(node->name,NODE_VALUE))
-		return HisDevValueBase::Create(node);
-	if (!xmlStrcmp(node->name,NODE_EXPRESSION))
-		return new LuaExpression(node,devices,expressionRuntime);
-	CLogger::Error("HisDevFactory::Create | Not implemented %s constructor.",node->name);
+	if (node->type==XML_ELEMENT_NODE)
+	{
+		if (!xmlStrcmp(node->name,NODE_VALUEID))
+			return new HisDevValueId(node);
+		if (!xmlStrcmp(node->name,NODE_FODLER))
+			return new HisDevFolder(node);
+		if (!xmlStrcmp(node->name,NODE_VALUE))
+			return HisDevValueBase::Create(node);
+		if (!xmlStrcmp(node->name,NODE_EXPRESSION))
+			return new LuaExpression(node,devices,expressionRuntime);
+		CLogger::Error("HisDevFactory::Create | Not implemented %s constructor.",node->name);
+	}
 	return NULL;
 }
 

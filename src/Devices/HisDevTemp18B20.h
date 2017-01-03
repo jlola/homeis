@@ -110,7 +110,7 @@ class HisDevTemp18B20 : public HisDevDallas
 
 	  if ( scratchpad.tempLSB==0xaa && scratchpad.tempMSB==0x00 )
 	  {
-		  std::string message = "Illeagal data in scratchpad ";
+		  std::string message = "DS18B20 - Illeagal data in scratchpad ";
 		  message += tempdev->getID().getRomIDString();
 		  throw data_error(message.c_str() , __FILE__, __LINE__);
 	  }
@@ -145,6 +145,9 @@ class HisDevTemp18B20 : public HisDevDallas
 		double tempvalue = 0;
 		try
 		{
+			if (doConversion) doConversion = false;
+			else doConversion = true;
+
 			if (alarm)
 			{
 				int8_t high = 127;
@@ -155,13 +158,13 @@ class HisDevTemp18B20 : public HisDevDallas
 			tempValue->ReadedValueFromDevice(tempvalue,false);
 			SetError(false);
 		}
-		catch(...)
+		catch(LOW_exception & ex)
 		{
+			string msg = GetName() + " | " + ex.message;
+			//CLogger::Error(msg.c_str());
 			SetError(true);
 			tempValue->ReadedValueFromDevice(tempvalue,true);
 		}
-		if (doConversion) doConversion = false;
-		else doConversion = true;
 	}
 
 	protected: virtual ~HisDevTemp18B20()

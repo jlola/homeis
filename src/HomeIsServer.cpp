@@ -13,6 +13,7 @@
 #include <iostream>
 #include <fstream>
 #include <stdio.h>
+#include <Services/DevicesService.h>
 #include <unistd.h>
 
 #include "HisDevices.h"
@@ -20,28 +21,26 @@
 #include "logger.h"
 #include "Tags/TagBase.h"
 #include "HisDevRunTime.h"
-#include "EDataType.h"
+//#include "EDataType.h"
 #include "HisDevValue.h"
 #include "document.h"		// rapidjson's DOM-style API
 #include "Services/FileController.h"
-#include "Services/OneWireDevicesService.h"
 #include "Services/FoldersService.h"
 #include "Expressions/LuaExpression.h"
 #include "Services/ExpressionsService.h"
+#include "Services/ModbusDeviceService.h"
 #include "HisDevFactory.h"
 #include "LOWdevLCD.h"
-#include "LOW_devDS2408.h"
-//#include "OneWireDevicesService.h"
-//#include "EchoService.h"
-//#include "LogInService.h"
-//#include "Server.h"
-
 #include "HomeIsServer.h"
+#include "Modbus/ModbusWrapper.h"
+#include "Services/ModbusService.h"
+#include "Services/ConnectorsService.h"
+#include "Modbus/ModbusSimulator.h"
 
 bool HomeIsServer::Init()
 {
-	if (!InitOneWireLib(serports)) {
-		CLogger::Error("Error init HomeIsServer");
+	if (!InitModbus()) {
+		CLogger::Error("Error init modbus HomeIsServer");
 		return false;
 	}
 
@@ -67,25 +66,48 @@ void HomeIsServer::Start()
 	Init();
 }
 
-HomeIsServer::HomeIsServer(vector<SSerPortConfig> pserports,int TcpPort) :
-		serports(pserports),devruntime(NULL),rootFolder(NULL),
-		expressionRuntime(NULL),cw(create_webserver(TcpPort).max_threads(5)),devs(NULL)
+bool HomeIsServer::InitModbus()
+{
+	for (size_t i=0;i<serports.size();i++)
+	{
+		std::string driver = Converter::strtolower((serports[i].Driver));
+		if (driver=="modbus")
+		{
+			IModbus* m = new Modbus(serports[i]);
+			if (!m->Init()) return false;
+			momanager.Add(m);
+		}
+		if (driver=="modbussimulator")
+		{
+			IModbus* m = new ModbusSimulator(serports[i]);
+			if (!m->Init()) return false;
+			momanager.Add(m);
+		}
+	}
+
+	return true;
+}
+
+HomeIsServer::HomeIsServer(vector<SSerPortConfig> & pserports,int TcpPort) :
+		devruntime(NULL),rootFolder(NULL),expressionRuntime(NULL),
+		cw(create_webserver(TcpPort).max_threads(5)),devs(NULL),serports(pserports)
 {
 	string strkey = File::getexepath()+"/key.pem";
 	string strcert = File::getexepath()+"/cert.pem";
 	cout << strkey << ", " << strcert << endl;
-	const char *key=strkey.c_str();
-	const char *cert=strcert.c_str();
-	//cw.use_ssl().https_mem_key(key).https_mem_cert(cert);
 }
 
 void HomeIsServer::InitWebServer()
 {
 	FileController fc = FileController();
-	OneWireDevicesService owds = OneWireDevicesService(*devs,*rootFolder);
+	DevicesService owds = DevicesService(*devs,*rootFolder);
 
 	FoldersService foldersService= FoldersService(*devs,rootFolder);
 	ExpressionService expressionService = ExpressionService(rootFolder,expressionRuntime, devs);
+	ModbusDeviceService modbusDevService = ModbusDeviceService(devs,&momanager);
+	ModbusService modbusservice = ModbusService(&momanager);
+	ConnectorsService connectorsService = ConnectorsService(serports);
+
 	webserver ws_i = cw;
 	ws_i.register_resource(string("files/{path}"), &fc, true);
 	ws_i.register_resource(string(""), &fc, true);
@@ -108,13 +130,20 @@ void HomeIsServer::InitWebServer()
 	ws_i.register_resource(string("api/folder/allitems/{id}"), &foldersService, true);
 	ws_i.register_resource(string("api/folder/{id}"), &foldersService, true);
 	ws_i.register_resource(string("api/folder/valueid/{folderid}"), &foldersService, true);
+
+	ws_i.register_resource(string("api/modbus/scan/{connectorname}/{address}"),&modbusDevService,true);
+
+	///{connectorname}/{devaddress}/{baseaddress}/{count}
+	ws_i.register_resource(string("api/modbus/registers/{connectorname}/{devaddress}/{baseaddress}/{value}"),&modbusservice,true);
+
+	ws_i.register_resource(string("api/connectors"),&connectorsService,true);
 	ws_i.start(true);
 }
 
 bool HomeIsServer::InitHisDevices()
 {
 	expressionRuntime = new ExpressionRuntime();
-	devs = new HisDevices(File::getexepath() + "/devices.xml",&oneWireNet,expressionRuntime);
+	devs = new HisDevices(File::getexepath() + "/devices.xml",&oneWireNet,expressionRuntime,&momanager);
 	devs->Load();
 	devs->AddScanned();
 	HisDevFactory::Instance().SetDevices(devs);
@@ -132,7 +161,7 @@ bool HomeIsServer::InitHisDevices()
 	return true;
 }
 
-bool HomeIsServer::InitOneWireLib(vector<SSerPortConfig> pserports)
+bool HomeIsServer::InitOneWireLib(vector<SSerPortConfig> & pserports)
 {
 	// stuff for the passive adapter
 	//LOW_linkPassiveSerial  *passiveLink = 0;
@@ -164,7 +193,7 @@ bool HomeIsServer::InitOneWireLib(vector<SSerPortConfig> pserports)
 	}
 	catch( LOW_exception & ex) {
 		ex.logException();
-		return false;
+		//return false;
 	}
 	return true;
 }

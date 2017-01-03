@@ -469,7 +469,7 @@ string LuaExpression::GetLuaCodeInFuncion(string funcName, string luaCodeFilePat
 	string code = File::ReadWholeFile(luaCodeFilePath);
 	return "function " + funcName +"() \
 			" + code + " \
-			end";
+			end" ;
 }
 
 int LuaExpression::delays;
@@ -534,6 +534,7 @@ bool LuaExpression::Evaluate()
 {
 	STACK
 
+
 	HisLock lock(evaluateMutex);
 
 	if (inEvalFunc) return false;
@@ -551,7 +552,8 @@ bool LuaExpression::Evaluate()
 
 	if (!running && runningAllowed)
 	{
-		lastEvaluateError.clear();
+		STACK_SECTION("!running")
+		//lastEvaluateError.clear();
 		LuaExpression::delays = -1;
 		nextTime = 0;
 		/* initialize Lua */
@@ -571,26 +573,31 @@ bool LuaExpression::Evaluate()
 		/* add code to function */
 		string code = GetLuaCodeInFuncion("runExpression",GetFileName(GetName()));
 
+		STACK_SECTION("SetGlobals")
+		/* set golabl variables */
+		//SetGlobals(L);
+
 		/* load string and check syntax */
 		STACK_SECTION("luaL_dostring")
 		if (luaL_dostring(L,code.c_str()))
 		{
-			lastEvaluateError = StringBuilder::Format("Error load Lua script: %s\n",lua_tostring(L, -1));
-			CLogger::Error(lastEvaluateError.c_str());
+			string newEvaluateError = StringBuilder::Format("Error load Lua script: %s\n",lua_tostring(L, -1));
+			if (newEvaluateError!=lastEvaluateError)
+			{
+				lastEvaluateError = newEvaluateError;
+				CLogger::Error(lastEvaluateError.c_str());
+			}
 			//throw HisException(lastEvaluateError);
 			inEvalFunc = false;
 			return false;
 		}
 
-
-		/**/
-		//cL = lua_newthread(L);
-		STACK_SECTION("SetGlobals")
-		/* set golabl variables */
-		SetGlobals(L);
-
 		/* load func name to top stack */
 		lua_getglobal(L,"runExpression");
+
+		//STACK_SECTION("SetGlobals")
+		/* set golabl variables */
+		//GetGlobals(L);
 
 		running = true;
 
@@ -605,6 +612,7 @@ bool LuaExpression::Evaluate()
 
 	if (running)
 	{
+		STACK_SECTION("running")
 		if (runningAllowed)
 		{
 			uint64_t curTimeUs = HisDateTime::timeval_to_usec(HisDateTime::Now());
@@ -615,24 +623,51 @@ bool LuaExpression::Evaluate()
 				STACK_SECTION("lua_resume")
 				int status = lua_resume(L,NULL,0);
 
-				if (status == LUA_YIELD && LuaExpression::delays != -1)
+
+				if (status == LUA_YIELD)
 				{
-					nextTime = curTimeUs+LuaExpression::delays*1000000;
-					running = true;
+					lastEvaluateError.clear();
+					if (LuaExpression::delays != -1)
+					{
+						nextTime = curTimeUs+LuaExpression::delays*1000000;
+						running = true;
+						//get global variables
+						GetGlobals(L);
+					}
+					else
+					{
+						running = false;
+						//get global variables
+						GetGlobals(L);
+						lua_close(L);
+					}
+				}
+				else if (status == LUA_OK)
+				{
+					lastEvaluateError.clear();
+					running = false;
 					//get global variables
 					GetGlobals(L);
+					lua_close(L);
 				}
 				else
 				{
 					running = false;
 					//get global variables
-					GetGlobals(L);
+					//GetGlobals(L);
+					string newEvaluateError = StringBuilder::Format("Error running Lua script: %s . Error no: %d, Stack: %s",GetName().c_str(), status, lua_tostring(L, -1));
+					if (newEvaluateError != lastEvaluateError)
+					{
+						lastEvaluateError = newEvaluateError;
+						CLogger::Error(lastEvaluateError.c_str());
+					}
 					lua_close(L);
 				}
 			}
 		}
 		else
 		{
+			STACK_SECTION("lua_close")
 			lua_close(L);
 			running = false;
 		}

@@ -19,7 +19,6 @@
 
 */
 
-#include "microhttpd.h"
 #include "http_utils.hpp"
 #include "http_request.hpp"
 #include "string_utilities.hpp"
@@ -63,25 +62,25 @@ bool http_request::check_digest_auth(
     return true;
 }
 
-size_t http_request::get_headers(std::map<std::string, std::string, header_comparator>& result) const
+size_t http_request::get_headers(std::map<std::string, std::string, http::header_comparator>& result) const
 {
     result = this->headers;
     return result.size();
 }
 
-size_t http_request::get_footers(std::map<std::string, std::string, header_comparator>& result) const
+size_t http_request::get_footers(std::map<std::string, std::string, http::header_comparator>& result) const
 {
     result = this->footers;
     return result.size();
 }
 
-size_t http_request::get_cookies(std::map<std::string, std::string, header_comparator>& result) const
+size_t http_request::get_cookies(std::map<std::string, std::string, http::header_comparator>& result) const
 {
     result = this->cookies;
     return result.size();
 }
 
-size_t http_request::get_args(std::map<std::string, std::string, arg_comparator>& result) const
+size_t http_request::get_args(std::map<std::string, std::string, http::arg_comparator>& result) const
 {
     result = this->args;
     return result.size();
@@ -102,6 +101,6 @@ std::ostream &operator<< (std::ostream &os, const http_request &r)
 
     return os;
 }
-    
+
 
 }

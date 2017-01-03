@@ -117,7 +117,7 @@ void HisDevIO2406::DoInternalLoad(xmlNodePtr & node)
 	{
 		HisDevValue<bool> *value = values[i];
 		value->delegateWrite = delegate;
-		switch(value->GetPinNumber())
+		switch(Converter::stoi(value->GetPinNumber()))
 		{
 			case PINNO_INPUTA:
 				valueAInput = value;
@@ -139,13 +139,12 @@ void HisDevIO2406::DoInternalLoad(xmlNodePtr & node)
 				break;
 		}
 	}
-	SetScanPeriod(30000);
 	Init();
 }
 
 void HisDevIO2406::WriteToDevice(ValueChangedEventArgs args)
 {
-	switch(args.GetValue()->GetPinNumber())
+	switch(Converter::stoi(args.GetValue()->GetPinNumber()))
 	{
 		case PINNO_OUTPUTA:
 		case PINNO_OUTPUTB:
@@ -227,7 +226,9 @@ void HisDevIO2406::DoInternalRefresh(bool alarm)
 
 		//change polarity
 		LOW_devDS2406::activePolarity_t newPolarity = chInfo.sensedLevel_pioA ? LOW_devDS2406::activePolarity_t::activeLow : LOW_devDS2406::activePolarity_t::activeHigh;
-		if (newPolarity != status.activePolarity)
+		if (newPolarity != status.activePolarity ||
+				boolnewAValue!=status.channelFFQ_pioA ||
+				boolnewBValue!=status.channelFFQ_pioB)
 		{
 			CLogger::Info("DS2406 - cmd_WriteStatus change polarity");
 			dev->cmd_WriteStatus(LOW_devDS2406::chanSelect_t::chanASelect,
@@ -235,6 +236,12 @@ void HisDevIO2406::DoInternalRefresh(bool alarm)
 				chInfo.sensedLevel_pioA ? LOW_devDS2406::activePolarity_t::activeLow : LOW_devDS2406::activePolarity_t::activeHigh,
 				boolnewAValue,
 				boolnewBValue);
+			chInfo = dev->getChannel(LOW_devDS2406::CRCtype_t::CRC_disable,
+				LOW_devDS2406::chanSelect_t::chanASelect,
+				LOW_devDS2406::asyncInterleaveMode,
+				LOW_devDS2406::noToggleMode,
+				LOW_devDS2406::readMode,
+				LOW_devDS2406::noResetLatches);
 			//CLogger::Info("DS2406 - After cmd_WriteStatus change polarity");
 		}
 

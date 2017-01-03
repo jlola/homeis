@@ -41,14 +41,14 @@
 #include <deque>
 
 #include <pthread.h>
+#include <stdexcept>
 
 #include "httpserver/create_webserver.hpp"
 
 namespace httpserver {
 
-template<typename CHILD> class http_resource;
+class http_resource;
 class http_response;
-template<typename CHILD> class event_supplier;
 class create_webserver;
 
 namespace http {
@@ -57,14 +57,21 @@ struct httpserver_ska;
 };
 
 namespace details {
-    class http_resource_mirror;
-    class event_tuple;
     class http_endpoint;
     struct daemon_item;
     struct modded_request;
     struct cache_entry;
     class comet_manager;
 }
+
+class webserver_exception : public std::runtime_error
+{
+public:
+	webserver_exception()
+	: std::runtime_error("httpserver runtime error")
+	{
+	}
+};
 
 /**
  * Class representing the webserver. Main class of the apis.
@@ -102,14 +109,9 @@ class webserver
          * @param family boolean indicating whether the resource is registered for the endpoint and its child or not.
          * @return true if the resource was registered
         **/
-        template <typename T>
         bool register_resource(const std::string& resource,
-                http_resource<T>* res, bool family = false
-        )
-        {
-            details::http_resource_mirror hrm(res);
-            return register_resource(resource, hrm, family);
-        }
+                http_resource* res, bool family = false
+        );
 
         void unregister_resource(const std::string& resource);
         void ban_ip(const std::string& ip);
@@ -120,20 +122,12 @@ class webserver
         void send_message_to_topic(const std::string& topic,
                 const std::string& message
         );
-        void send_message_to_consumer(const http::httpserver_ska& connection_id,
-                const std::string& message, bool to_lock = true
-        );
         void register_to_topics(const std::vector<std::string>& topics,
-                const http::httpserver_ska& connection_id, int keepalive_secs = -1,
-                std::string keepalive_msg = ""
+                MHD_Connection* connection_id
         );
-        size_t read_message(const http::httpserver_ska& connection_id,
+        size_t read_message(MHD_Connection* connection_id,
             std::string& message
         );
-        size_t get_topic_consumers(const std::string& topic,
-                std::set<http::httpserver_ska>& consumers
-        );
-        bool pop_signaled(const http::httpserver_ska& consumer);
 
         http_response* get_from_cache(const std::string& key, bool* valid,
                 bool lock = false, bool write = false
@@ -151,35 +145,25 @@ class webserver
         bool is_valid(const std::string& key);
         void clean_cache();
 
-        const log_access_ptr get_access_logger() const
+        log_access_ptr get_access_logger() const
         {
             return this->log_access;
         }
 
-        const log_error_ptr get_error_logger() const
+        log_error_ptr get_error_logger() const
         {
             return this->log_error;
         }
 
-        const validator_ptr get_request_validator() const
+        validator_ptr get_request_validator() const
         {
             return this->validator;
         }
 
-        const unescaper_ptr get_unescaper() const
+        unescaper_ptr get_unescaper() const
         {
             return this->unescaper;
         }
-
-        template<typename T>
-        void register_event_supplier(const std::string& id,
-                event_supplier<T>* ev_supplier
-        )
-        {
-            register_event_supplier(id, details::event_tuple(ev_supplier));
-        }
-
-        void remove_event_supplier(const std::string& id);
 
         /**
          * Method used to kill the webserver waiting for it to terminate
@@ -195,6 +179,7 @@ class webserver
         const int max_threads;
         const int max_connections;
         const int memory_limit;
+        const size_t content_size_limit;
         const int connection_timeout;
         const int per_IP_connection_limit;
         log_access_ptr log_access;
@@ -224,6 +209,7 @@ class webserver
         const bool regex_checking;
         const bool ban_system_enabled;
         const bool post_process_enabled;
+        const bool comet_enabled;
         bool single_resource;
         pthread_mutex_t mutexwait;
         pthread_rwlock_t runguard;
@@ -232,8 +218,8 @@ class webserver
         render_ptr method_not_allowed_resource;
         render_ptr method_not_acceptable_resource;
         render_ptr internal_error_resource;
-        std::map<details::http_endpoint, details::http_resource_mirror> registered_resources;
-        std::map<std::string, details::http_resource_mirror*> registered_resources_str;
+        std::map<details::http_endpoint, http_resource*> registered_resources;
+        std::map<std::string, http_resource*> registered_resources_str;
 
         std::map<std::string, details::cache_entry*> response_cache;
         int next_to_choose;
@@ -244,16 +230,10 @@ class webserver
         std::vector<details::daemon_item*> daemons;
         std::vector<pthread_t> threads;
 
-        std::map<std::string, details::event_tuple> event_suppliers;
-
         details::comet_manager* internal_comet_manager;
 
         static void* select(void* self);
         static void* cleaner(void* self);
-
-        bool register_resource(const std::string& resource,
-                details::http_resource_mirror hrm, bool family = false
-        );
 
         void method_not_allowed_page(http_response** dhrs,
                 details::modded_request* mr
@@ -328,7 +308,7 @@ class webserver
 
         void end_request_construction(MHD_Connection* connection,
                 struct details::modded_request* mr, const char* version,
-                const char* method, char** user, char** pass, char** digested_user
+                const char* method, char*  user, char*  pass, char* digested_user
         );
 
         int finalize_answer(MHD_Connection* connection,
@@ -339,13 +319,6 @@ class webserver
                 struct details::modded_request* mr,
                 const char* version, const char* method
         );
-
-        void register_event_supplier(const std::string& id, const details::event_tuple& evt);
-
-        bool use_internal_select()
-        {
-            return this->start_method == http::http_utils::INTERNAL_SELECT;
-        }
 
         friend int policy_callback (void *cls,
                 const struct sockaddr* addr, socklen_t addrlen

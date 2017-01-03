@@ -67,7 +67,7 @@ bool FindFunction(HisBase* hisbase,void* args)
 	STACK
 	int* pint = static_cast<int*>(args);
 	HisDevValueBase* tag = dynamic_cast<HisDevValueBase*>(hisbase);
-	if (tag->GetPinNumber()==*pint)
+	if (Converter::stoi(tag->GetPinNumber())==*pint)
 		return true;
 	return false;
 }
@@ -170,7 +170,7 @@ void HisDevLCD::WriteToDevice(ValueChangedEventArgs args)
 {
 	SetChanged();
 //	STACK
-	switch(args.GetValue()->GetPinNumber())
+	switch(Converter::stoi(args.GetValue()->GetPinNumber()))
 	{
 	case LIGHTENABLED:
 		refreshLihtEnabled = true;
@@ -215,7 +215,7 @@ void HisDevLCD::DoInternalLoad(xmlNodePtr & node)
 	for(size_t i=0;i<values.size();i++)
 	{
 		values[i]->delegateWrite = delegate;
-		switch(values[i]->GetPinNumber())
+		switch(Converter::stoi(values[i]->GetPinNumber()))
 		{
 		case LIGHTENABLED:
 			lightEnabled = dynamic_cast<HisDevValue<bool>*>(values[i]);

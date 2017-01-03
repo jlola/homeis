@@ -44,8 +44,6 @@ namespace http
     class arg_comparator;
 };
 
-using namespace http;
-
 /**
  * Class representing an abstraction for an Http Request. It is used from classes using these apis to receive information through http protocol.
 **/
@@ -194,25 +192,25 @@ class http_request
          * @param result a map<string, string> > that will be filled with all headers
          * @result the size of the map
         **/
-        size_t get_headers(std::map<std::string, std::string, header_comparator>& result) const;
+        size_t get_headers(std::map<std::string, std::string, http::header_comparator>& result) const;
         /**
          * Method used to get all footers passed with the request.
          * @param result a map<string, string> > that will be filled with all footers
          * @result the size of the map
         **/
-        size_t get_footers(std::map<std::string, std::string, header_comparator>& result) const;
+        size_t get_footers(std::map<std::string, std::string, http::header_comparator>& result) const;
         /**
          * Method used to get all cookies passed with the request.
          * @param result a map<string, string> > that will be filled with all cookies
          * @result the size of the map
         **/
-        size_t get_cookies(std::map<std::string, std::string, header_comparator>& result) const;
+        size_t get_cookies(std::map<std::string, std::string, http::header_comparator>& result) const;
         /**
          * Method used to get all args passed with the request.
          * @param result a map<string, string> > that will be filled with all args
          * @result the size of the map
         **/
-        size_t get_args(std::map<std::string, std::string, arg_comparator>& result) const;
+        size_t get_args(std::map<std::string, std::string, http::arg_comparator>& result) const;
         /**
          * Method used to get a specific header passed with the request.
          * @param key the specific header to get the value from
@@ -312,6 +310,18 @@ class http_request
         {
             result = this->content;
         }
+        /**
+         * Method to check whether the size of the content reached or exceeded content_size_limit.
+         * @return boolean
+        **/
+        bool content_too_large() const
+        {
+            return content.size()>=content_size_limit;
+        }
+        /**
+         * Method used to get the content of the query string..
+         * @return the query string in string representation
+        **/
         const std::string get_querystring() const
         {
             return this->querystring;
@@ -363,7 +373,7 @@ class http_request
          * Default constructor of the class. It is a specific responsibility of apis to initialize this type of objects.
         **/
         http_request():
-            content(""), requestor_port(0),underlying_connection(NULL)
+            content(""), content_size_limit(static_cast<size_t>(-1))
         {
         }
         /**
@@ -383,9 +393,9 @@ class http_request
             args(b.args),
             querystring(b.querystring),
             content(b.content),
+            content_size_limit(b.content_size_limit),
             version(b.version),
             requestor(b.requestor),
-			requestor_port(0),
             underlying_connection(b.underlying_connection)
         {
         }
@@ -395,12 +405,13 @@ class http_request
         std::string digested_user;
         std::string method;
         std::vector<std::string> post_path;
-        std::map<std::string, std::string, header_comparator> headers;
-        std::map<std::string, std::string, header_comparator> footers;
-        std::map<std::string, std::string, header_comparator> cookies;
-        std::map<std::string, std::string, arg_comparator> args;
+        std::map<std::string, std::string, http::header_comparator> headers;
+        std::map<std::string, std::string, http::header_comparator> footers;
+        std::map<std::string, std::string, http::header_comparator> cookies;
+        std::map<std::string, std::string, http::arg_comparator> args;
         std::string querystring;
         std::string content;
+        size_t content_size_limit;
         std::string version;
         std::string requestor;
 
@@ -445,7 +456,7 @@ class http_request
         **/
         void set_arg(const std::string& key, const std::string& value)
         {
-            this->args[key] = value;
+            this->args[key] = value.substr(0,content_size_limit);
         }
         /**
          * Method used to set an argument value by key.
@@ -455,7 +466,8 @@ class http_request
         **/
         void set_arg(const char* key, const char* value, size_t size)
         {
-            this->args[key] = std::string(value, size);
+            this->args[key] = std::string(value,
+                                          std::min(size, content_size_limit));
         }
         /**
          * Method used to set the content of the request
@@ -463,7 +475,15 @@ class http_request
         **/
         void set_content(const std::string& content)
         {
-            this->content = content;
+            this->content = content.substr(0,content_size_limit);
+        }
+        /**
+         * Method used to set the maximum size of the content
+         * @param content_size_limit The limit on the maximum size of the content and arg's.
+        **/
+        void set_content_size_limit(size_t content_size_limit)
+        {
+            this->content_size_limit = content_size_limit;
         }
         /**
          * Method used to append content to the request preserving the previous inserted content
@@ -473,6 +493,10 @@ class http_request
         void grow_content(const char* content, size_t size)
         {
             this->content.append(content, size);
+            if (this->content.size() > content_size_limit)
+            {
+                this->content.resize (content_size_limit);
+            }
         }
         /**
          * Method used to set the path requested.
@@ -482,7 +506,7 @@ class http_request
         {
             this->path = path;
             std::vector<std::string> complete_path;
-            http_utils::tokenize_url(this->path, complete_path);
+            http::http_utils::tokenize_url(this->path, complete_path);
             for(unsigned int i = 0; i < complete_path.size(); i++)
             {
                 this->post_path.push_back(complete_path[i]);
@@ -563,7 +587,7 @@ class http_request
         {
             std::map<std::string, std::string>::const_iterator it;
             for(it = args.begin(); it != args.end(); ++it)
-                this->args[it->first] = it->second;
+                this->args[it->first] = it->second.substr(0,content_size_limit);
         }
         /**
          * Method used to set the username of the request.

@@ -220,7 +220,7 @@ void LOW_devDS2406::readMemUniversal( const uint16_t inStartAddr, byteVec_t &out
     expectedCrc16 |= (getLink().readDataByte() ^ 0xff);      // NOTE: CRC bytzes are sent _inverted_!
     expectedCrc16 |= (getLink().readDataByte() ^ 0xff) << 8; // NOTE: CRC bytzes are sent _inverted_!
     if ( LOW_helper_CRC::calcCRC16( outBytes, LOW_helper_CRC::calcCRC16( sendBytes)) != expectedCrc16 )
-      throw LOW_helper_CRC::crc_error( "CRC error in read operation", __FILE__, __LINE__);
+      throw LOW_helper_CRC::crc_error( "DS2406 - CRC error in read operation", __FILE__, __LINE__);
   }
 
   //getLink().resetBus();

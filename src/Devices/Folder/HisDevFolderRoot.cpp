@@ -103,12 +103,14 @@ void HisDevFolderRoot::Save()
 {
 	folder->Save();
 
-	FILE* f = fopen(fileName.c_str(),"w");
-	if (f != NULL)
-	{
-		xmlDocDump( f, doc);
-		fclose( f );
-	}
+	xmlSaveFormatFileEnc( fileName.c_str(), doc,"UTF-8", 1);
+
+//	FILE* f = fopen(fileName.c_str(),"w");
+//	if (f != NULL)
+//	{
+//		xmlDocDump( f, doc);
+//		fclose( f );
+//	}
 }
 
 HisDevFolder* HisDevFolderRoot::GetFolder()

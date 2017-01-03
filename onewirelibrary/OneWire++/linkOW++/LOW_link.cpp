@@ -205,6 +205,7 @@ LOW_deviceID::deviceIDVec_t LOW_link::searchDevices( const bool inOnlyAlarm, con
   int                            lastDiscr = 0;
   LOW_deviceID::deviceIDVec_t    foundIDVec;
 
+  STACK_SECTION("searchDevices.searchVec.setFamilyCode")
   // preload family type
   if ( inFamCode != LOW_device::anyDev_famCode )
     searchVec.setFamilyCode( inFamCode);
@@ -215,6 +216,7 @@ LOW_deviceID::deviceIDVec_t LOW_link::searchDevices( const bool inOnlyAlarm, con
       return foundIDVec;
       //throw LOW_device::noDevice_error( "Reset indicated no devices", __FILE__, __LINE__);
 
+    STACK_SECTION("writeData")
     if ( inOnlyAlarm )
       writeData( LOW_device::SearchAlarmROM_COMMAND);
     else

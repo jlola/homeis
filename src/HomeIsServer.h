@@ -21,25 +21,31 @@
 #include "Devices/Folder/HisDevFolderRoot.h"
 #include "Expressions/ExpressionRuntime.h"
 #include "HomeIsConfig.h"
+#include "modbus.h"
+#include "Modbus/ModbusManager.h"
+#include <algorithm>
 
 using namespace httpserver;
 using namespace std;
 
 class HomeIsServer
 {
-	vector<SSerPortConfig> serports;
 	LOW_network  oneWireNet;
 	HisDevRuntime* devruntime;
 	HisDevFolderRoot* rootFolder;
 	ExpressionRuntime* expressionRuntime;
 	create_webserver cw;
 	HisDevices* devs;
-	bool InitOneWireLib(vector<SSerPortConfig> pserports);
+	ModbusManager momanager;
+	vector<SSerPortConfig> & serports;
+
+	bool InitOneWireLib(vector<SSerPortConfig> & pserports);
 	bool Init();
+	bool InitModbus();
 	bool InitHisDevices();
 	void InitWebServer();
 public:
-	HomeIsServer(vector<SSerPortConfig> pserports,int tcpPort);
+	HomeIsServer(vector<SSerPortConfig> & serports,int tcpPort);
 	void Start();
 	void Stop();
 };

@@ -119,7 +119,7 @@ void ExpressionService::ExpressionsToJson(string strid, HisDevFolderRoot* root, 
 		expressions = folder->GetItems<LuaExpression>();
 		for (size_t i=0;i<expressions.size();i++)
 		{
-			ExpressionToJson(expressions[i],respjsondoc);
+			ExpressionToJson(folder, expressions[i],respjsondoc);
 		}
 	}
 }
@@ -139,7 +139,7 @@ void ExpressionService::ExpressionDebugLogToJson(LuaExpression *pExpression, Doc
 	}
 }
 
-void ExpressionService::ExpressionToJson(LuaExpression *pExpression, Document & respjsondoc)
+void ExpressionService::ExpressionToJson(HisBase* pParent, LuaExpression *pExpression, Document & respjsondoc)
 {
 	STACK
 	Value d(kObjectType);
@@ -335,7 +335,7 @@ void ExpressionService::render_POST(const http_request& req, http_response** res
 			Document respjsondoc;
 			respjsondoc.SetArray();
 
-			ExpressionToJson(expression,respjsondoc);
+			ExpressionToJson(expression->GetParent(), expression,respjsondoc);
 
 			StringBuffer buffer;
 			PrettyWriter<StringBuffer> wr(buffer);

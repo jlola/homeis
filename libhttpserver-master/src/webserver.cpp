@@ -50,13 +50,12 @@
 #include "http_response_builder.hpp"
 #include "details/http_endpoint.hpp"
 #include "string_utilities.hpp"
-#include "details/http_resource_mirror.hpp"
-#include "details/event_tuple.hpp"
 #include "create_webserver.hpp"
 #include "details/comet_manager.hpp"
 #include "webserver.hpp"
 #include "details/modded_request.hpp"
 #include "details/cache_entry.hpp"
+#include "PoppyDebugTools.h"
 
 #define _REENTRANT 1
 
@@ -86,21 +85,6 @@ struct daemon_item
         MHD_stop_daemon (this->daemon);
     }
 };
-
-void empty_render(const http_request& r, http_response** res)
-{
-    *res = new http_response(http_response_builder("", 200).string_response());
-}
-
-void empty_not_acceptable_render(const http_request& r, http_response** res)
-{
-    *res = new http_response(http_response_builder(NOT_METHOD_ERROR, 200).string_response());
-}
-
-bool empty_is_allowed(const std::string& method)
-{
-    return true;
-}
 
 }
 
@@ -158,6 +142,7 @@ webserver::webserver(const create_webserver& params):
     max_threads(params._max_threads),
     max_connections(params._max_connections),
     memory_limit(params._memory_limit),
+    content_size_limit(params._content_size_limit),
     connection_timeout(params._connection_timeout),
     per_IP_connection_limit(params._per_IP_connection_limit),
     log_access(params._log_access),
@@ -185,6 +170,7 @@ webserver::webserver(const create_webserver& params):
     regex_checking(params._regex_checking),
     ban_system_enabled(params._ban_system_enabled),
     post_process_enabled(params._post_process_enabled),
+    comet_enabled(params._comet_enabled),
     single_resource(params._single_resource),
     not_found_resource(params._not_found_resource),
     method_not_allowed_resource(params._method_not_allowed_resource),
@@ -227,130 +213,30 @@ void webserver::request_completed (
 )
 {
     details::modded_request* mr = static_cast<details::modded_request*>(*con_cls);
-    if (mr != 0x0)
-    {
-        if(mr->ws != 0x0)
-        {
-            mr->ws->internal_comet_manager->complete_request(mr->dhrs->connection_id);
-        }
-        if(mr->dhrs.res != 0x0 && mr->dhrs->ca != 0x0)
-            mr->dhrs->ca(mr->dhrs->closure_data);
-        delete mr;
-        mr = 0x0;
-    }
+    if (mr == 0x0) return;
+
+    if (mr->ws != 0x0) mr->ws->internal_comet_manager->complete_request(mr->dhrs->connection_id);
+
+    delete mr;
+    mr = 0x0;
 }
 
-bool webserver::register_resource(
-        const std::string& resource,
-        details::http_resource_mirror hrm,
-        bool family
-)
+bool webserver::register_resource(const std::string& resource, http_resource* hrm, bool family)
 {
-    if(method_not_acceptable_resource)
-        hrm.method_not_acceptable_resource = method_not_acceptable_resource;
-
     details::http_endpoint idx(resource, family, true, regex_checking);
 
-    pair<map<details::http_endpoint, details::http_resource_mirror>::iterator, bool> result = registered_resources.insert(
-        map<details::http_endpoint, details::http_resource_mirror>::value_type(idx, hrm)
+    pair<map<details::http_endpoint, http_resource*>::iterator, bool> result = registered_resources.insert(
+        map<details::http_endpoint, http_resource*>::value_type(idx, hrm)
     );
 
     if(result.second)
     {
         registered_resources_str.insert(
-            pair<string, details::http_resource_mirror*>(idx.get_url_complete(), &(result.first->second))
+            pair<string, http_resource*>(idx.get_url_complete(), result.first->second)
         );
     }
 
     return result.second;
-}
-
-void* webserver::select(void* self)
-{
-    fd_set rs;
-    fd_set ws;
-    fd_set es;
-    struct timeval timeout_value;
-    details::daemon_item* di = static_cast<details::daemon_item*>(self);
-    MHD_socket max;
-    while (di->ws->is_running())
-    {
-        max = 0;
-        FD_ZERO (&rs);
-        FD_ZERO (&ws);
-        FD_ZERO (&es);
-        if (MHD_YES != MHD_get_fdset (di->daemon, &rs, &ws, &es, &max))
-            abort(); /* fatal internal error */
-
-        unsigned long long timeout_microsecs = 0;
-        unsigned long long timeout_secs = 0;
-
-        if (!(MHD_get_timeout (di->daemon, &timeout_microsecs) == MHD_YES))
-        {
-            timeout_secs = 1;
-            timeout_microsecs = 0;
-        }
-        else
-        {
-            if(timeout_microsecs < 1000)
-            {
-                timeout_microsecs = timeout_microsecs * 1000;
-                timeout_secs = 0;
-            }
-        }
-
-        // SUPPLIERS MANAGEMENT
-        {
-            std::map<std::string, details::event_tuple>::const_iterator it;
-            pthread_rwlock_rdlock(&di->ws->runguard);
-            for(it = di->ws->event_suppliers.begin();
-                    it != di->ws->event_suppliers.end();
-                    ++it
-            )
-            {
-                MHD_socket local_max;
-                (*it).second.supply_events(&rs, &ws, &es, &local_max);
-
-                if(local_max > max)
-                    max = local_max;
-
-                struct timeval t = (*it).second.get_timeout();
-                if((unsigned MHD_LONG_LONG) t.tv_sec < timeout_secs ||
-                    ((unsigned MHD_LONG_LONG) t.tv_sec == timeout_secs
-                        && (unsigned MHD_LONG_LONG) t.tv_usec < timeout_microsecs
-                    )
-                )
-                {
-                    timeout_secs = t.tv_sec;
-                    timeout_microsecs = t.tv_usec;
-                }
-            }
-            pthread_rwlock_unlock(&di->ws->runguard);
-        }
-
-        // COMET CONNECTIONS MANAGEMENT
-        di->ws->internal_comet_manager->comet_select(&timeout_secs, &timeout_microsecs, di->ws->start_method);
-
-        timeout_value.tv_sec = timeout_secs;
-        timeout_value.tv_usec = timeout_microsecs;
-
-		/*On unix, MHD_socket will be an int anyway.
-		On windows, the cast is safe because winsock ignores first argument to select*/
-        ::select ((int) max + 1, &rs, &ws, &es, &timeout_value);
-        MHD_run (di->daemon);
-
-        //EVENT SUPPLIERS DISPATCHING
-        {
-            std::map<std::string, details::event_tuple>::const_iterator it;
-            pthread_rwlock_rdlock(&di->ws->runguard);
-            for(it = di->ws->event_suppliers.begin();
-                    it != di->ws->event_suppliers.end();
-                    ++it
-            )
-                (*it).second.dispatch_events();
-        }
-    }
-    return 0x0;
 }
 
 MHD_socket create_socket (int domain, int type, int protocol)
@@ -358,12 +244,12 @@ MHD_socket create_socket (int domain, int type, int protocol)
     int sock_cloexec = SOCK_CLOEXEC;
     int ctype = SOCK_STREAM | sock_cloexec;
 
-	/* use SOCK_STREAM rather than ai_socktype: some getaddrinfo
+    /* use SOCK_STREAM rather than ai_socktype: some getaddrinfo
     * implementations do not set ai_socktype, e.g. RHL6.2. */
     MHD_socket fd = socket(domain, ctype, protocol);
 
 #ifdef _WINDOWS
-	if (fd == INVALID_SOCKET)
+    if (fd == INVALID_SOCKET)
 #else
     if ((fd == -1) &&
         (errno == EINVAL || errno == EPROTONOSUPPORT) && (sock_cloexec != 0)
@@ -406,11 +292,14 @@ bool webserver::start(bool blocking)
         iov.push_back(gen(MHD_OPTION_SOCK_ADDR, (intptr_t) bind_address));
     if(bind_socket != 0)
         iov.push_back(gen(MHD_OPTION_LISTEN_SOCKET, bind_socket));
-    if(! (start_method == http_utils::INTERNAL_SELECT))
+    if(start_method == http_utils::THREAD_PER_CONNECTION && max_threads != 0)
     {
-        if(max_threads != 0)
-            iov.push_back(gen(MHD_OPTION_THREAD_POOL_SIZE, max_threads));
+        cout << "Cannot specify maximum number of threads when using a thread per connection" << endl;
+        throw ::httpserver::webserver_exception();
     }
+
+    if(max_threads != 0)
+        iov.push_back(gen(MHD_OPTION_THREAD_POOL_SIZE, max_threads));
     if(max_connections != 0)
         iov.push_back(gen(MHD_OPTION_CONNECTION_LIMIT, max_connections));
     if(memory_limit != 0)
@@ -453,85 +342,6 @@ bool webserver::start(bool blocking)
         iov.push_back(gen(MHD_OPTION_HTTPS_CRED_TYPE, cred_type));
 #endif //HAVE_GNUTLS
 
-    if(start_method == http_utils::INTERNAL_SELECT)
-    {
-        int on = 1;
-        bool bind_settled = true;
-        if(!bind_socket)
-        {
-            bind_settled = false;
-            struct sockaddr_in servaddr4;
-#if HAVE_INET6
-            struct sockaddr_in6 servaddr6;
-#endif
-            const struct sockaddr *servaddr = NULL;
-            socklen_t addrlen;
-#if HAVE_INET6
-            if (0 != (options & MHD_USE_IPv6))
-                addrlen = sizeof (struct sockaddr_in6);
-            else
-#endif
-                addrlen = sizeof (struct ::sockaddr_in);
-
-#if HAVE_INET6
-            if (0 != (options & MHD_USE_IPv6))
-            {
-              memset (&servaddr6, 0, sizeof (struct sockaddr_in6));
-              servaddr6.sin6_family = AF_INET6;
-              servaddr6.sin6_port = htons (port);
-#if HAVE_SOCKADDR_IN_SIN_LEN
-              servaddr6.sin6_len = sizeof (struct sockaddr_in6);
-#endif
-              servaddr = (struct sockaddr *) &servaddr6;
-            }
-            else
-#endif
-            {
-              memset (&servaddr4, 0, sizeof (struct ::sockaddr_in));
-              servaddr4.sin_family = AF_INET;
-              servaddr4.sin_port = htons (port);
-#if HAVE_SOCKADDR_IN_SIN_LEN
-              servaddr4.sin_len = sizeof (struct ::sockaddr_in);
-#endif
-              servaddr = (struct sockaddr *) &servaddr4;
-            }
-
-            if (use_ipv6)
-                bind_socket = create_socket (PF_INET6, SOCK_STREAM, 0);
-            else
-                bind_socket = create_socket (PF_INET, SOCK_STREAM, 0);
-
-            setsockopt (bind_socket,
-               SOL_SOCKET,
-               SO_REUSEADDR,
-               (const char*) &on, sizeof (on));
-
-            if(use_ipv6)
-            {
-#ifdef IPPROTO_IPV6
-#ifdef IPV6_V6ONLY
-                setsockopt (bind_socket,
-                    IPPROTO_IPV6, IPV6_V6ONLY,
-                    (const char*) &on, sizeof (on)
-                );
-#endif
-#endif
-            }
-            bind(bind_socket, servaddr, addrlen);
-        }
-#ifdef _WINDOWS
-		unsigned long ioarg = 1;
-        ioctlsocket(bind_socket, FIONBIO, &ioarg);
-#else
-        int flags = fcntl (bind_socket, F_GETFL);
-        flags |= O_NONBLOCK;
-        fcntl (bind_socket, F_SETFL, flags);
-#endif
-        if(!bind_settled)
-            listen(bind_socket, 1);
-        iov.push_back(gen(MHD_OPTION_LISTEN_SOCKET, bind_socket));
-    }
-
     iov.push_back(gen(MHD_OPTION_END, 0, NULL ));
 
     int start_conf = start_method;
@@ -543,63 +353,30 @@ bool webserver::start(bool blocking)
         start_conf |= MHD_USE_DEBUG;
     if(pedantic)
         start_conf |= MHD_USE_PEDANTIC_CHECKS;
+    if(comet_enabled)
+        start_conf |= MHD_USE_SUSPEND_RESUME;
 
-    int num_threads = 1;
-    if(max_threads > num_threads)
-        num_threads = max_threads;
+#ifdef USE_FASTOPEN
+    start_conf |= MHD_USE_TCP_FASTOPEN;
+#endif
 
     this->running = true;
-    if(start_method == http_utils::INTERNAL_SELECT)
-    {
-        for(int i = 0; i < num_threads; i++)
-        {
-            struct MHD_Daemon* daemon = MHD_start_daemon
-            (
-                    start_conf, this->port, &policy_callback, this,
-                    &answer_to_connection, this, MHD_OPTION_ARRAY,
-                    &iov[0], MHD_OPTION_END
-            );
-            if(NULL == daemon)
-            {
-                cout << gettext("Unable to connect daemon to port: ") <<
-                    this->port << endl;
-                abort();
-            }
-            details::daemon_item* di = new details::daemon_item(this, daemon);
-            daemons.push_back(di);
 
-            //RUN SELECT THREADS
-            pthread_t t;
-            threads.push_back(t);
-
-            if(pthread_create(
-                    &threads[i],
-                    NULL,
-                    &webserver::select,
-                    static_cast<void*>(di)
-            ))
-            {
-                abort();
-            }
-        }
-    }
-    else
+    struct MHD_Daemon* daemon = MHD_start_daemon
+    (
+            start_conf, this->port, &policy_callback, this,
+            &answer_to_connection, this, MHD_OPTION_ARRAY,
+            &iov[0], MHD_OPTION_END
+    );
+    if(NULL == daemon)
     {
-        struct MHD_Daemon* daemon = MHD_start_daemon
-        (
-                start_conf, this->port, &policy_callback, this,
-                &answer_to_connection, this, MHD_OPTION_ARRAY,
-                &iov[0], MHD_OPTION_END
-        );
-        if(NULL == daemon)
-        {
-            cout << gettext("Unable to connect daemon to port: ") <<
-                this->port << endl;
-            abort();
-        }
-        details::daemon_item* di = new details::daemon_item(this, daemon);
-        daemons.push_back(di);
+        cout << gettext("Unable to connect daemon to port: ") <<
+            this->port << endl;
+        throw ::httpserver::webserver_exception();
     }
+    details::daemon_item* di = new details::daemon_item(this, daemon);
+    daemons.push_back(di);
+
     bool value_onclose = false;
     if(blocking)
     {
@@ -619,29 +396,28 @@ bool webserver::is_running()
 
 bool webserver::stop()
 {
-    if(this->running)
+    if(!this->running) return false;
+
+    pthread_mutex_lock(&mutexwait);
+    this->running = false;
+    pthread_cond_signal(&mutexcond);
+    pthread_mutex_unlock(&mutexwait);
+    for(unsigned int i = 0; i < threads.size(); ++i)
     {
-        pthread_mutex_lock(&mutexwait);
-        this->running = false;
-        pthread_cond_signal(&mutexcond);
-        pthread_mutex_unlock(&mutexwait);
-        for(unsigned int i = 0; i < threads.size(); ++i)
-        {
-            void* t_res;
-            pthread_join(threads[i], &t_res);
-            free(t_res);
-        }
-        threads.clear();
-        typedef vector<details::daemon_item*>::const_iterator daemon_item_it;
-        for(daemon_item_it it = daemons.begin(); it != daemons.end(); ++it)
-            delete *it;
-        daemons.clear();
-        return true;
+        void* t_res;
+        pthread_join(threads[i], &t_res);
+        free(t_res);
     }
-    else
-    {
-        return false;
-    }
+    threads.clear();
+    typedef vector<details::daemon_item*>::const_iterator daemon_item_it;
+
+    for(daemon_item_it it = daemons.begin(); it != daemons.end(); ++it)
+        delete *it;
+    daemons.clear();
+
+    shutdown(bind_socket, 2);
+
+    return true;
 }
 
 void webserver::unregister_resource(const string& resource)
@@ -752,18 +528,20 @@ int webserver::build_request_args (
 
 int policy_callback (void *cls, const struct sockaddr* addr, socklen_t addrlen)
 {
-    if((static_cast<webserver*>(cls))->ban_system_enabled)
+    if(!(static_cast<webserver*>(cls))->ban_system_enabled) return MHD_YES;
+
+    if((((static_cast<webserver*>(cls))->default_policy == http_utils::ACCEPT) &&
+       ((static_cast<webserver*>(cls))->bans.count(addr)) &&
+       (!(static_cast<webserver*>(cls))->allowances.count(addr))
+    ) ||
+    (((static_cast<webserver*>(cls))->default_policy == http_utils::REJECT)
+       && ((!(static_cast<webserver*>(cls))->allowances.count(addr)) ||
+       ((static_cast<webserver*>(cls))->bans.count(addr)))
+    ))
     {
-        if((((static_cast<webserver*>(cls))->default_policy == http_utils::ACCEPT) &&
-           ((static_cast<webserver*>(cls))->bans.count(addr)) &&
-           (!(static_cast<webserver*>(cls))->allowances.count(addr))
-        ) ||
-        (((static_cast<webserver*>(cls))->default_policy == http_utils::REJECT)
-           && ((!(static_cast<webserver*>(cls))->allowances.count(addr)) ||
-           ((static_cast<webserver*>(cls))->bans.count(addr)))
-        ))
-            return MHD_NO;
+        return MHD_NO;
     }
+
     return MHD_YES;
 }
 
@@ -778,14 +556,12 @@ void* uri_log(void* cls, const char* uri)
 void error_log(void* cls, const char* fmt, va_list ap)
 {
     webserver* dws = static_cast<webserver*>(cls);
-    if(dws->log_error != 0x0)
-        dws->log_error(fmt);
+    if(dws->log_error != 0x0) dws->log_error(fmt);
 }
 
 void access_log(webserver* dws, string uri)
 {
-    if(dws->log_access != 0x0)
-        dws->log_access(uri);
+    if(dws->log_access != 0x0) dws->log_access(uri);
 }
 
 size_t unescaper_func(void * cls, struct MHD_Connection *c, char *s)
@@ -807,10 +583,8 @@ size_t internal_unescaper(void* cls, char* s)
         dws->unescaper(s);
         return strlen(s);
     }
-    else
-    {
-        return http_unescape(s);
-    }
+
+    return http_unescape(s);
 }
 
 int webserver::post_iterator (void *cls, enum MHD_ValueKind kind,
@@ -822,7 +596,7 @@ int webserver::post_iterator (void *cls, enum MHD_ValueKind kind,
     )
 {
     struct details::modded_request* mr = (struct details::modded_request*) cls;
-    mr->dhr->set_arg(key, data, size);
+    mr->dhr->set_arg(key, mr->dhr->get_arg(key) + std::string(data, size));
     return MHD_YES;
 }
 
@@ -840,27 +614,6 @@ void webserver::not_found_page(
         not_found_resource(*mr->dhr, dhrs);
     else
         *dhrs = new http_response(http_response_builder(NOT_FOUND_ERROR, http_utils::http_not_found).string_response());
-}
-
-int webserver::method_not_acceptable_page (const void *cls,
-    struct MHD_Connection *connection)
-{
-    int ret;
-    struct MHD_Response *response;
-
-    /* unsupported HTTP method */
-    response = MHD_create_response_from_buffer (strlen (NOT_METHOD_ERROR),
-        (void *) NOT_METHOD_ERROR,
-        MHD_RESPMEM_PERSISTENT);
-    ret = MHD_queue_response (connection,
-        MHD_HTTP_METHOD_NOT_ACCEPTABLE,
-        response);
-    MHD_add_response_header (response,
-        MHD_HTTP_HEADER_CONTENT_ENCODING,
-        "text/plain");
-    MHD_destroy_response (response);
-
-    return ret;
 }
 
 void webserver::method_not_allowed_page(
@@ -903,6 +656,7 @@ int webserver::bodyfull_requests_answer_first_step(
 {
     mr->second = true;
     mr->dhr = new http_request();
+    mr->dhr->set_content_size_limit(content_size_limit);
     const char *encoding = MHD_lookup_connection_value (
             connection,
             MHD_HEADER_KIND,
@@ -918,13 +672,19 @@ int webserver::bodyfull_requests_answer_first_step(
                                 encoding,
                                 strlen (MHD_HTTP_POST_ENCODING_FORM_URLENCODED)
                                 )
-            ))
+              )
+             || (0 == strncasecmp (
+                                   MHD_HTTP_POST_ENCODING_MULTIPART_FORMDATA,
+                                   encoding,
+                                   strlen (MHD_HTTP_POST_ENCODING_MULTIPART_FORMDATA)
+                                   )))
         )
     )
     {
+        const size_t post_memory_limit (32*1024);  // Same as #MHD_POOL_SIZE_DEFAULT
         mr->pp = MHD_create_post_processor (
                 connection,
-                1024,
+                post_memory_limit,
                 &post_iterator,
                 mr
         );
@@ -942,21 +702,16 @@ int webserver::bodyfull_requests_answer_second_step(
     size_t* upload_data_size, struct details::modded_request* mr
 )
 {
-    if ( 0 != *upload_data_size)
-    {
-#ifdef DEBUG
-        cout << "Writing content: " << upload_data << endl;
-#endif //DEBUG
-        mr->dhr->grow_content(upload_data, *upload_data_size);
-        if (mr->pp != NULL)
-        {
-            MHD_post_process(mr->pp, upload_data, *upload_data_size);
-        }
-        *upload_data_size = 0;
-        return MHD_YES;
-    }
+    if (0 == *upload_data_size) return complete_request(connection, mr, version, method);
 
-    return complete_request(connection, mr, version, method);
+#ifdef DEBUG
+    cout << "Writing content: " << upload_data << endl;
+#endif //DEBUG
+    mr->dhr->grow_content(upload_data, *upload_data_size);
+
+    if (mr->pp != NULL) MHD_post_process(mr->pp, upload_data, *upload_data_size);
+    *upload_data_size = 0;
+    return MHD_YES;
 }
 
 void webserver::end_request_construction(
@@ -964,9 +719,9 @@ void webserver::end_request_construction(
         struct details::modded_request* mr,
         const char* version,
         const char* method,
-        char** user,
-        char** pass,
-        char** digested_user
+        char*   user,
+        char*   pass,
+        char*  digested_user
 )
 {
     mr->ws = this;
@@ -1000,10 +755,10 @@ void webserver::end_request_construction(
 
     if(basic_auth_enabled)
     {
-        *user = MHD_basic_auth_get_username_password(connection, pass);
+        user = MHD_basic_auth_get_username_password(connection, &pass);
     }
     if(digest_auth_enabled)
-        *digested_user = MHD_digest_auth_get_username(connection);
+        digested_user = MHD_digest_auth_get_username(connection);
     mr->dhr->set_version(version);
     const MHD_ConnectionInfo * conninfo = MHD_get_connection_info(
             connection,
@@ -1013,14 +768,14 @@ void webserver::end_request_construction(
     get_ip_str(conninfo->client_addr, ip_str);
     mr->dhr->set_requestor(ip_str);
     mr->dhr->set_requestor_port(get_port(conninfo->client_addr));
-    if(*pass != 0x0)
+    if(pass != 0x0)
     {
-        mr->dhr->set_pass(*pass);
-        mr->dhr->set_user(*user);
+        mr->dhr->set_pass(pass);
+        mr->dhr->set_user(user);
     }
-    if(*digested_user != 0x0)
+    if(digested_user != 0x0)
     {
-        mr->dhr->set_digested_user(*digested_user);
+        mr->dhr->set_digested_user(digested_user);
     }
 }
 
@@ -1030,12 +785,13 @@ int webserver::finalize_answer(
         const char* method
 )
 {
+	STACK
     int to_ret = MHD_NO;
     http_response* dhrs = 0x0;
 
-    map<string, details::http_resource_mirror*>::iterator fe;
+    map<string, http_resource*>::iterator fe;
 
-    details::http_resource_mirror* hrm;
+    http_resource* hrm;
 
     bool found = false;
     struct MHD_Response* raw_response;
@@ -1049,7 +805,7 @@ int webserver::finalize_answer(
             {
 
                 map<
-                    details::http_endpoint, details::http_resource_mirror
+                    details::http_endpoint, http_resource*
                 >::iterator found_endpoint;
 
                 details::http_endpoint endpoint(
@@ -1058,7 +814,7 @@ int webserver::finalize_answer(
 
                 map<
                     details::http_endpoint,
-                    details::http_resource_mirror
+                    http_resource*
                 >::iterator it;
 
                 size_t len = 0;
@@ -1104,7 +860,7 @@ int webserver::finalize_answer(
                         mr->dhr->set_arg(url_pars[i], url_pieces[chunkes[i]]);
                     }
 
-                    hrm = &found_endpoint->second;
+                    hrm = found_endpoint->second;
                 }
             }
         }
@@ -1116,17 +872,19 @@ int webserver::finalize_answer(
     }
     else
     {
-        hrm = &registered_resources.begin()->second;
+        hrm = registered_resources.begin()->second;
         found = true;
     }
     mr->dhr->set_underlying_connection(connection);
 
+    STACK_SECTION("found")
     if(found)
     {
         try
         {
             if(hrm->is_allowed(method))
             {
+            	STACK_SECTION("((hrm)->*(mr->callback))(*mr->dhr, &dhrs);")
                 ((hrm)->*(mr->callback))(*mr->dhr, &dhrs);
                 if (dhrs == 0x0) internal_error_page(&dhrs, mr);
             }
@@ -1148,12 +906,14 @@ int webserver::finalize_answer(
     {
         not_found_page(&dhrs, mr);
     }
+    STACK_SECTION("mr->dhrs = dhrs;")
     mr->dhrs = dhrs;
     mr->dhrs->underlying_connection = connection;
     try
     {
         try
         {
+        	STACK_SECTION("dhrs->get_raw_response(&raw_response, this);")
             dhrs->get_raw_response(&raw_response, this);
         }
         catch(const file_access_exception& fae)
@@ -1177,6 +937,7 @@ int webserver::finalize_answer(
         internal_error_page(&dhrs, mr, true);
         dhrs->get_raw_response(&raw_response, this);
     }
+    STACK_SECTION("dhrs->decorate_response(raw_response);")
     dhrs->decorate_response(raw_response);
     to_ret = dhrs->enqueue_response(connection, raw_response);
     MHD_destroy_response (raw_response);
@@ -1190,6 +951,7 @@ int webserver::complete_request(
         const char* method
 )
 {
+	STACK
     char* pass = 0x0;
     char* user = 0x0;
     char* digested_user = 0x0;
@@ -1199,9 +961,9 @@ int webserver::complete_request(
             mr,
             version,
             method,
-            &pass,
-            &user,
-            &digested_user
+            pass,
+            user,
+            digested_user
     );
 
     int to_ret = finalize_answer(connection, mr, method);
@@ -1225,74 +987,7 @@ int webserver::answer_to_connection(void* cls, MHD_Connection* connection,
     struct details::modded_request* mr =
         static_cast<struct details::modded_request*>(*con_cls);
 
-    if(mr->second == false)
-    {
-        mr->standardized_url = new string();
-        internal_unescaper((void*) static_cast<webserver*>(cls), (char*) url);
-        http_utils::standardize_url(url, *mr->standardized_url);
-
-        bool body = false;
-
-        access_log(
-                static_cast<webserver*>(cls),
-                *(mr->complete_uri) + " METHOD: " + method
-        );
-
-        if( 0 == strcasecmp(method, http_utils::http_method_get.c_str()))
-        {
-            mr->callback = &details::http_resource_mirror::render_GET;
-        }
-        else if (0 == strcmp(method, http_utils::http_method_post.c_str()))
-        {
-            mr->callback = &details::http_resource_mirror::render_POST;
-            body = true;
-        }
-        else if (0 == strcasecmp(method, http_utils::http_method_put.c_str()))
-        {
-            mr->callback = &details::http_resource_mirror::render_PUT;
-            body = true;
-        }
-        else if (0 == strcasecmp(method,http_utils::http_method_delete.c_str()))
-        {
-            mr->callback = &details::http_resource_mirror::render_DELETE;
-        }
-        else if (0 == strcasecmp(method, http_utils::http_method_head.c_str()))
-        {
-            mr->callback = &details::http_resource_mirror::render_HEAD;
-        }
-        else if (0 ==strcasecmp(method,http_utils::http_method_connect.c_str()))
-        {
-            mr->callback = &details::http_resource_mirror::render_CONNECT;
-        }
-        else if (0 == strcasecmp(method, http_utils::http_method_trace.c_str()))
-        {
-            mr->callback = &details::http_resource_mirror::render_TRACE;
-        }
-        else if (0 ==strcasecmp(method,http_utils::http_method_options.c_str()))
-        {
-            mr->callback = &details::http_resource_mirror::render_OPTIONS;
-        }
-        else
-        {
-            using namespace details;
-            if(static_cast<webserver*>(cls)->method_not_acceptable_resource)
-                mr->callback =
-                    &http_resource_mirror::method_not_acceptable_resource;
-            else
-                return static_cast<webserver*>(cls)->method_not_acceptable_page(
-                        cls,
-                        connection
-                );
-        }
-
-        if(body)
-            return static_cast<webserver*>(cls)->
-                bodyfull_requests_answer_first_step(connection, mr);
-        else
-            return static_cast<webserver*>(cls)->
-                bodyless_requests_answer(connection, method, version, mr);
-    }
-    else
+    if(mr->second != false)
     {
         return static_cast<webserver*>(cls)->
             bodyfull_requests_answer_second_step(
@@ -1304,15 +999,54 @@ int webserver::answer_to_connection(void* cls, MHD_Connection* connection,
                     mr
             );
     }
-}
 
-void webserver::send_message_to_consumer(
-        const httpserver_ska& connection_id,
-        const std::string& message,
-        bool to_lock
-)
-{
-    internal_comet_manager->send_message_to_consumer(connection_id, message, to_lock, start_method);
+    mr->standardized_url = new string();
+    internal_unescaper((void*) static_cast<webserver*>(cls), (char*) url);
+    http_utils::standardize_url(url, *mr->standardized_url);
+
+    bool body = false;
+
+    access_log(
+            static_cast<webserver*>(cls),
+            *(mr->complete_uri) + " METHOD: " + method
+    );
+
+    if( 0 == strcasecmp(method, http_utils::http_method_get.c_str()))
+    {
+        mr->callback = &http_resource::render_GET;
+    }
+    else if (0 == strcmp(method, http_utils::http_method_post.c_str()))
+    {
+        mr->callback = &http_resource::render_POST;
+        body = true;
+    }
+    else if (0 == strcasecmp(method, http_utils::http_method_put.c_str()))
+    {
+        mr->callback = &http_resource::render_PUT;
+        body = true;
+    }
+    else if (0 == strcasecmp(method,http_utils::http_method_delete.c_str()))
+    {
+        mr->callback = &http_resource::render_DELETE;
+    }
+    else if (0 == strcasecmp(method, http_utils::http_method_head.c_str()))
+    {
+        mr->callback = &http_resource::render_HEAD;
+    }
+    else if (0 ==strcasecmp(method,http_utils::http_method_connect.c_str()))
+    {
+        mr->callback = &http_resource::render_CONNECT;
+    }
+    else if (0 == strcasecmp(method, http_utils::http_method_trace.c_str()))
+    {
+        mr->callback = &http_resource::render_TRACE;
+    }
+    else if (0 ==strcasecmp(method,http_utils::http_method_options.c_str()))
+    {
+        mr->callback = &http_resource::render_OPTIONS;
+    }
+
+    return body ? static_cast<webserver*>(cls)->bodyfull_requests_answer_first_step(connection, mr) : static_cast<webserver*>(cls)->bodyless_requests_answer(connection, method, version, mr);
 }
 
 void webserver::send_message_to_topic(
@@ -1320,37 +1054,22 @@ void webserver::send_message_to_topic(
         const std::string& message
 )
 {
-    internal_comet_manager->send_message_to_topic(topic, message, start_method);
+    internal_comet_manager->send_message_to_topic(topic, message);
 }
 
 void webserver::register_to_topics(
         const std::vector<std::string>& topics,
-        const httpserver_ska& connection_id,
-        int keepalive_secs,
-        string keepalive_msg
+        MHD_Connection* connection_id
 )
 {
-    internal_comet_manager->register_to_topics(topics, connection_id, keepalive_secs, keepalive_msg, start_method);
+    internal_comet_manager->register_to_topics(topics, connection_id);
 }
 
-size_t webserver::read_message(const httpserver_ska& connection_id,
+size_t webserver::read_message(MHD_Connection* connection_id,
     std::string& message
 )
 {
     return internal_comet_manager->read_message(connection_id, message);
-}
-
-size_t webserver::get_topic_consumers(
-        const std::string& topic,
-        std::set<httpserver_ska>& consumers
-)
-{
-    return internal_comet_manager->get_topic_consumers(topic, consumers);
-}
-
-bool webserver::pop_signaled(const httpserver_ska& consumer)
-{
-    return internal_comet_manager->pop_signaled(consumer, start_method);
 }
 
 http_response* webserver::get_from_cache(
@@ -1541,20 +1260,6 @@ void webserver::lock_cache_entry(details::cache_entry* ce)
 void webserver::get_response(details::cache_entry* ce, http_response** res)
 {
     *res = ce->response.ptr();
-}
-
-void webserver::remove_event_supplier(const std::string& id)
-{
-    pthread_rwlock_wrlock(&runguard);
-    event_suppliers.erase(id);
-    pthread_rwlock_unlock(&runguard);
-}
-
-void webserver::register_event_supplier(const std::string& id, const details::event_tuple& evt)
-{
-    pthread_rwlock_wrlock(&runguard);
-    event_suppliers.insert(std::pair<std::string, details::event_tuple>(id, evt));
-    pthread_rwlock_unlock(&runguard);
 }
 
 };

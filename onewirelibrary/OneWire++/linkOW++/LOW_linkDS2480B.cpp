@@ -91,7 +91,7 @@ byteVec_t LOW_linkDS2480B::touchBlock( const byteVec_t &inBytes, const strongPul
   commLock lock( *this);
 
   //byteVec_t   retValue = byteVec_t( inBytes.size()-1);  // create it smaller, last byte will be pushed
-  byteVec_t   retValue = byteVec_t( inBytes.size());
+  byteVec_t   retValue = byteVec_t(inBytes.size());
   //byteVec_t   writeBytes;
     
   uint8_t commandMode = SwitchToCommandMode_Cmd;
@@ -725,7 +725,7 @@ uint8_t LOW_linkDS2480B::readConfigValue( const uint8_t inParamCode)
 void LOW_linkDS2480B::setMode( const internalMode_t inMode)
 {
   // locking done in publicly accessible methods
-
+	STACK
   if ( internalMode == inMode )
     return;
 

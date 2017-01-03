@@ -25,7 +25,9 @@ private:
 
 	HisDevFactory();
 	virtual ~HisDevFactory();
+
 public:
+
 	static HisDevFactory & Instance();
 
 	void SetDevices(HisDevices* pdevices);

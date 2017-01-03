@@ -97,7 +97,7 @@ void LOW_devDS1820::cmd_ConvertT() const
     getLink().writeData( ConvertT_COMMAND);
     
     // poll bits to detect conversion has finished
-    while ( getLink().readDataBit() == false );
+    //while ( getLink().readDataBit() == false );
   }
   else {
     // pull up
@@ -113,13 +113,14 @@ void LOW_devDS1820::cmd_ReadScratchpad( scratchpadDS1820_t *outScratchpad) const
   cmd_MatchROM();  
   getLink().writeData( ReadScratchpad_COMMAND);
   
-  byteVec_t scratchpad = byteVec_t( sizeof( scratchpadDS1820_t));
+  byteVec_t scratchpad(sizeof( scratchpadDS1820_t));
   getLink().readData( scratchpad);
   if ( LOW_helper_CRC::calcCRC8( scratchpad) != 0x00 )
-    throw LOW_helper_CRC::crc_error( "CRC error in read scratchpad", __FILE__, __LINE__);
+    throw LOW_helper_CRC::crc_error( "DS18B20 - CRC error in read scratchpad", __FILE__, __LINE__);
 
-  for ( unsigned int a=0; a<=sizeof( scratchpadDS1820_t); a++)
-    (reinterpret_cast<uint8_t *>(outScratchpad))[a] = scratchpad[a];
+
+  for ( size_t a=0; a < sizeof( scratchpadDS1820_t ); a++)
+    ((uint8_t*)outScratchpad)[a] = scratchpad[a];
 }
 
 

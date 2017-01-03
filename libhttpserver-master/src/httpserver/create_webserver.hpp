@@ -52,6 +52,7 @@ class create_webserver
             _max_threads(0),
             _max_connections(0),
             _memory_limit(0),
+            _content_size_limit(static_cast<size_t>(-1)),
             _connection_timeout(DEFAULT_WS_TIMEOUT),
             _per_IP_connection_limit(0),
             _log_access(0x0),
@@ -78,6 +79,7 @@ class create_webserver
             _regex_checking(true),
             _ban_system_enabled(true),
             _post_process_enabled(true),
+            _comet_enabled(false),
             _single_resource(0x0),
             _not_found_resource(0x0),
             _method_not_allowed_resource(0x0),
@@ -92,6 +94,7 @@ class create_webserver
             _max_threads(0),
             _max_connections(0),
             _memory_limit(0),
+            _content_size_limit(static_cast<size_t>(-1)),
             _connection_timeout(DEFAULT_WS_TIMEOUT),
             _per_IP_connection_limit(0),
             _log_access(0x0),
@@ -118,6 +121,7 @@ class create_webserver
             _regex_checking(true),
             _ban_system_enabled(true),
             _post_process_enabled(true),
+            _comet_enabled(false),
             _single_resource(0x0),
             _not_found_resource(0x0),
             _method_not_allowed_resource(0x0),
@@ -144,6 +148,10 @@ class create_webserver
         create_webserver& memory_limit(int memory_limit)
         {
             _memory_limit = memory_limit; return *this;
+        }
+        create_webserver& content_size_limit(size_t content_size_limit)
+        {
+            _content_size_limit = content_size_limit; return *this;
         }
         create_webserver& connection_timeout(int connection_timeout)
         {
@@ -264,6 +272,14 @@ class create_webserver
         {
             _digest_auth_enabled = false; return *this;
         }
+        create_webserver& comet()
+        {
+            _comet_enabled = true; return *this;
+        }
+        create_webserver& no_comet()
+        {
+            _comet_enabled = false; return *this;
+        }
         create_webserver& regex_checking()
         {
             _regex_checking = true; return *this;
@@ -323,6 +339,7 @@ class create_webserver
         int _max_threads;
         int _max_connections;
         int _memory_limit;
+        size_t _content_size_limit;
         int _connection_timeout;
         int _per_IP_connection_limit;
         log_access_ptr _log_access;
@@ -349,6 +366,7 @@ class create_webserver
         bool _regex_checking;
         bool _ban_system_enabled;
         bool _post_process_enabled;
+        bool _comet_enabled;
         render_ptr _single_resource;
         render_ptr _not_found_resource;
         render_ptr _method_not_allowed_resource;

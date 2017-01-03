@@ -11,12 +11,14 @@
 #include <string.h>
 #include "File.h"
 #include <libconfig.h++>
+#include <vector>
 
 using namespace std;
 using namespace libconfig;
 
 struct SSerPortConfig
 {
+	string Port;
 	string Name;
 	string Driver;
 };

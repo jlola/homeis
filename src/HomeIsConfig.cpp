@@ -21,11 +21,18 @@ const char configFileDefault[] = "\
 #Server port\n\
 Port=81;\n\
 \n\
-SerialPorts = ({\n\
-		Name=\"/dev/ttyS2\"		#name of port\n\
-		Driver=\"DS2480B\"	#driver: DS2480B or PassiveSerial\n\
-		});\n\
-USBCount=0;				#count of connected adapters\n\
+SerialPorts = (\
+		#{\n\
+		#Port=\"/dev/ttyUSB0\"		#name of port\n\
+		#Driver=\"Modbus\"	#driver: DS2480B or PassiveSerial\n\
+		#Name=\"Main\"\n\
+		#},\
+		{\n\
+		Port=\"SimulatedPort\"		#name of port\n\
+		Driver=\"ModbusSimulator\"	#driver: DS2480B or PassiveSerial\n\
+		Name=\"Simulator\"\n\
+		}\
+		);\n\
 ";
 
 
@@ -90,15 +97,17 @@ vector<SSerPortConfig> HomeIsConfig::GetSerialPorts()
 		const Setting &serialports = root["SerialPorts"];
 		int count = serialports.getLength();
 		SSerPortConfig serport;
-		string name,driver;
+		string name,driver,port;
 		for(int i=0;i<count;i++)
 		{
 			const Setting &serialport = serialports[i];
 			if (serialport.lookupValue("Name", name)&&
-				serialport.lookupValue("Driver", driver))
+				serialport.lookupValue("Driver", driver)&&
+				serialport.lookupValue("Port", port))
 			{
 				serport.Driver = driver;
 				serport.Name = name;
+				serport.Port = port;
 				serports.push_back(serport);
 			}
 		}

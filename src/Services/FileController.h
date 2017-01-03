@@ -13,7 +13,7 @@
 using namespace std;
 using namespace httpserver;
 
-class FileController : public http_resource<FileController> {
+class FileController : public http_resource {
 	public:
 		FileController();
 		void render_GET(const http_request&, http_response**);

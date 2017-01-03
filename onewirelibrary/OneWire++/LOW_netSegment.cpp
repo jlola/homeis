@@ -175,7 +175,7 @@ void LOW_netSegment::cmd_MatchROM( const LOW_device *inDevice) const
   byteVec_t id = inDevice->getID().getRomIDVec();  
   outVec.insert( outVec.end(), id.begin(), id.end());
     STACK_SECTION("link.writeData( outVec )")
-  link.writeData( outVec );
+  link.writeData( outVec);
 }
 
 

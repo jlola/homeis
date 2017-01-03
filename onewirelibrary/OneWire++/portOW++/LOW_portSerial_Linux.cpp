@@ -27,6 +27,9 @@
 #include <sys/stat.h>
 #include <sys/time.h>
 #include <sys/ioctl.h>
+#include <sstream>
+#include <string>
+#include <iostream>
 
 #include <memory>
 #include <new>
@@ -35,7 +38,9 @@
 #include "LOW_portSerial_Linux.h"
 #include "LOW_helper_msglog.h"
 #include "Helpers/logger.h"
+#include "Helpers/StringBuilder.h"
 
+using namespace std;
 
 //=====================================================================================
 //
@@ -47,7 +52,7 @@ LOW_portSerial_Linux::LOW_portSerial_Linux( const LOW_portSerialFactory::portSpe
   serialPortPath( inSerialPort)
 {
   // Open the serial port, turning on devices
-  if ( (serialFD=open( serialPortPath.c_str(), O_RDWR)) == -1 ) {
+  if ( (serialFD=open( serialPortPath.c_str(), O_RDWR | O_NDELAY)) == -1 ) {
     throw portSerial_error( errno, "Error opening tty " + serialPortPath, __FILE__, __LINE__);
   }
 }
@@ -58,7 +63,64 @@ LOW_portSerial_Linux::~LOW_portSerial_Linux()
   close( serialFD);
 }
 
+int
+set_interface_attribs (int fd, int speed, int parity)
+{
+        struct termios tty;
+        memset (&tty, 0, sizeof tty);
+        if (tcgetattr (fd, &tty) != 0)
+        {
+                throw ("error %d from tcgetattr", errno);
+                return -1;
+        }
 
+        cfsetospeed (&tty, speed);
+        cfsetispeed (&tty, speed);
+
+        tty.c_cflag = (tty.c_cflag & ~CSIZE) | CS8;     // 8-bit chars
+        // disable IGNBRK for mismatched speed tests; otherwise receive break
+        // as \000 chars
+        tty.c_iflag &= ~IGNBRK;         // disable break processing
+        tty.c_lflag = 0;                // no signaling chars, no echo,
+                                        // no canonical processing
+        tty.c_oflag = 0;                // no remapping, no delays
+        tty.c_cc[VMIN]  = 0;            // read doesn't block
+        tty.c_cc[VTIME] = 5;            // 0.5 seconds read timeout
+
+        tty.c_iflag &= ~(IXON | IXOFF | IXANY); // shut off xon/xoff ctrl
+
+        tty.c_cflag |= (CLOCAL | CREAD);// ignore modem controls,
+                                        // enable reading
+        tty.c_cflag &= ~(PARENB | PARODD);      // shut off parity
+        tty.c_cflag |= parity;
+        tty.c_cflag &= ~CSTOPB;
+        tty.c_cflag &= ~CRTSCTS;
+
+        if (tcsetattr (fd, TCSANOW, &tty) != 0)
+        {
+                throw ("error %d from tcsetattr", errno);
+                return -1;
+        }
+        return 0;
+}
+
+void
+set_blocking (int fd, int should_block)
+{
+        struct termios tty;
+        memset (&tty, 0, sizeof tty);
+        if (tcgetattr (fd, &tty) != 0)
+        {
+                throw ("error %d from tggetattr", errno);
+                return;
+        }
+
+        tty.c_cc[VMIN]  = should_block ? 1 : 0;
+        tty.c_cc[VTIME] = 5;            // 0.5 seconds read timeout
+
+        if (tcsetattr (fd, TCSANOW, &tty) != 0)
+                throw ("error %d setting term attributes", errno);
+}
 
 //=====================================================================================
 //
@@ -72,10 +134,10 @@ void LOW_portSerial_Linux::tty_configure( const flowControl_t inFlowCtl, const d
 
   struct serial_struct   serial;
   struct termios         term;
-  
+
   if ( ioctl( serialFD, TIOCGSERIAL, &serial) < 0 )
     throw portSerial_error( errno, "TIOCGSERIAL failed", __FILE__, __LINE__);
-    
+
   // Get the current device settings
   if( tcgetattr( serialFD, &term) < 0 )
     throw portSerial_error( errno, "Error with tcgetattr", __FILE__, __LINE__);
@@ -87,85 +149,85 @@ void LOW_portSerial_Linux::tty_configure( const flowControl_t inFlowCtl, const d
   term.c_lflag = 0;
 
   // set the config values
-            
+
   switch ( inFlowCtl ) {
-    
+
     case none_flowControl:
       term.c_cflag |= CLOCAL;
       break;
-    
+
     case xonxoff_flowControl:
       term.c_iflag |= IXON | IXOFF;
       term.c_cflag |= CLOCAL;
       break;
-    
+
     case rtscts_flowControl:
       term.c_cflag |= CRTSCTS;
       break;
-      
+
     default:
       throw portSerial_error( "Unknown control parameter value", __FILE__, __LINE__);
       break;
   }
-  
+
   switch ( inParity ) {
-    
+
     case no_parity:
       term.c_iflag |= IGNPAR;
       break;
-    
+
     case odd_parity:
       term.c_iflag |= INPCK;
       term.c_cflag |= PARENB | PARODD;
       break;
-    
+
     case even_parity:
       term.c_iflag |= INPCK;
       term.c_cflag |= PARENB;
       break;
-      
+
     default:
       throw portSerial_error( "Unknown control parameter value", __FILE__, __LINE__);
       break;
   }
-  
+
   switch ( inDataBits ) {
-    
+
     case bit5_size:
       term.c_cflag |= CS5;
       break;
-  
+
     case bit6_size:
       term.c_cflag |= CS6;
       break;
-  
+
     case bit7_size:
       term.c_cflag |= CS7;
       break;
-  
+
     case bit8_size:
       term.c_cflag |= CS8;
       break;
-      
+
     default:
       throw portSerial_error( "Unknown control parameter value", __FILE__, __LINE__);
       break;
   }
-  
+
   switch ( inStopBits ) {
-    
+
     case bit1_stopBit:
       break;
-  
+
     case bit2_stopBit:
       term.c_cflag |= CSTOPB;
       break;
-      
+
     default:
       throw portSerial_error( "Unknown control parameter value", __FILE__, __LINE__);
       break;
   }
-  
+
   int speed = 0;
   switch ( inSpeed ) {
     case B50_speed:     speed = B50;      break;
@@ -185,33 +247,43 @@ void LOW_portSerial_Linux::tty_configure( const flowControl_t inFlowCtl, const d
     case B38400_speed:  speed = B38400;   break;
     case B57600_speed:  speed = B57600;   break;
     case B115200_speed: speed = B115200;  break;
-    
+
     case B10472_speed:  speed = B38400;   break;
-    
+
     default:
       throw portSerial_error( "Unknown control parameter value", __FILE__, __LINE__);
       break;
   }
   cfsetospeed( &term, speed);
   cfsetispeed( &term, speed);
-  
+
   if ( inSpeed == B10472_speed ) {
     serial.flags = (serial.flags & ~ASYNC_SPD_MASK) | ASYNC_SPD_CUST;
     serial.custom_divisor = 11;   // 10472bps
   }
   else {
     serial.flags = (serial.flags & ~ASYNC_SPD_MASK);  // make 38400 really 38400
+    serial.custom_divisor = 1;   // 10472bps
   }
-  
+
   // read one byte without timeout. timeouts will be done by select
   term.c_cc[VMIN]  = 1;
   term.c_cc[VTIME] = 0;
-    
-  if ( ioctl( serialFD, TIOCSSERIAL, &serial) < 0 )
-    throw portSerial_error( errno, "TIOCSSERIAL failed", __FILE__, __LINE__);
-  
-  if( tcsetattr( serialFD, TCSAFLUSH, &term ) < 0 )
-    throw portSerial_error( errno, "Error with tcsetattr", __FILE__, __LINE__);
+
+//  int stat = ioctl( serialFD, TIOCSSERIAL, &serial);
+//  if (stat  < 0 )
+//  {
+//	  string msg = "";
+//	  msg = StringBuilder::Format("TIOCSSERIAL failed. Error: %d",stat);
+//	  //msg << stat;
+//	  throw portSerial_error( errno, msg, __FILE__, __LINE__);
+//  }
+
+  int stat = tcsetattr( serialFD, TCSAFLUSH, &term );
+  if( stat < 0 )
+    throw portSerial_error( errno, "Error with tcsetattr. Error: " + stat, __FILE__, __LINE__);
+  //set_interface_attribs(serialFD,B9600,0);
+  //set_blocking (serialFD, 1);
 }
 
 
@@ -305,7 +377,7 @@ void LOW_portSerial_Linux::tty_read( byteVec_t &outReadBytes, const bool inTrash
     int            selRet;
     uint8_t        buffer[256];
 
-    ssize_t readedBytes = 0;
+    size_t readedBytes = 0;
       while ( true ) {
 
         // Setup for wait for a response or timeout

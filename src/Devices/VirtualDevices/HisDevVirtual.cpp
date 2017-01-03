@@ -41,6 +41,7 @@ void HisDevVirtual::OnError()
 
 HisDevValueBase* HisDevVirtual::CreateHisDevValue(string address,EHisDevDirection direction,EDataType ptype,int pinNo)
 {
+	//string pinNo = Converter::itos(ppinNo);
 	STACK
 	HisDevValueBase* result = NULL;
 	switch(ptype)

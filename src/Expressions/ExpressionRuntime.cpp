@@ -33,8 +33,8 @@ void ExpressionRuntime::AddToEvaluateQueue(HisDevBase* hisDevBase)
 	vector<IExpression*> expressionsToEval = hisDevBase->GetExpressions();
 	for (size_t i=0;i<expressionsToEval.size();i++)
 	{
-		queue.push_back(expressionsToEval[i]);
-		//CLogger::Info("Added to evaluate %s to expresseionqueue",expressionsToEval[i]->GetName().c_str());
+		exqueue.push(expressionsToEval[i]);
+		CLogger::Info("Added to evaluate %s to expresseionqueue",expressionsToEval[i]->GetName().c_str());
 	}
 	__expressionEvaluateMutex->unlock();
 }
@@ -42,25 +42,26 @@ void ExpressionRuntime::AddToEvaluateQueue(HisDevBase* hisDevBase)
 void ExpressionRuntime::Evaluate()
 {
 	STACK
+	IExpression* expr = NULL;
+
 	for(size_t i=0;i<expressions.size();i++)
 	{
-
-		if (queue.size()>0)
+		while(!exqueue.empty())
 		{
 			__expressionEvaluateMutex->lock();
-			vector<IExpression*> queueCopy(queue);
-			queue.clear();
+			expr = exqueue.front();
+			exqueue.pop();
 			__expressionEvaluateMutex->unlock();
-			for(size_t d=0;d<queueCopy.size();d++)
-			{
-				queueCopy[d]->Evaluate();
-				//CLogger::Info("Queue evaluated %s",queueCopy[d]->GetName().c_str());
-			}
-			queueCopy.clear();
+
+			CLogger::Info("Start queued expression evaluate %s",expr->GetName().c_str());
+			expr->Evaluate();
+			CLogger::Info("Stop queued expression evaluate %s",expr->GetName().c_str());
 		}
+
 		//int* test = 0x00;
 		//*test = 10;
 		expressions[i]->Evaluate();
+		usleep(1000);
 	}
 }
 
@@ -75,12 +76,16 @@ void* ExpressionRuntime::ThreadFunction(void* obj)
 	{
 		try
 		{
-			usleep(1000);
 			runtime->Evaluate();
+		}
+		catch(std::exception & ex)
+		{
+			CLogger::Error("ExpressionRuntime::ThreadFunction exception. Error: %s",ex.what());
 		}
 		catch(...)
 		{
-			CLogger::Error("ExpressionRuntime::ThreadFunction unexpected error");
+			string msg = Stack::GetTraceString();
+			CLogger::Error("ExpressionRuntime::ThreadFunction unexpected error. Stack: %s",msg.c_str());
 		}
 	}
 

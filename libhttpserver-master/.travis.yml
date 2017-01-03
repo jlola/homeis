@@ -6,12 +6,9 @@ env:
  - DEBUG="debug"
  - DEBUG="nodebug"
 before_install:
- - sudo apt-get install texinfo
+ - sudo apt-get install info install-info
  - sudo pip install cpp-coveralls
  - sudo pip install gcovr
- - sudo apt-get install libjson-perl
- - sudo apt-get install libjson-xs-perl
- - sudo apt-get install libfile-slurp-perl
  - wget ftp://ftp.gnu.org/gnu/libmicrohttpd/libmicrohttpd-0.9.37.tar.gz
  - tar -xvzf libmicrohttpd-0.9.37.tar.gz
  - cd libmicrohttpd-0.9.37
@@ -23,7 +20,7 @@ script:
  - ./bootstrap
  - mkdir build
  - cd build
- - if [ $DEBUG = "debug" ]; then ../configure --enable-debug --disable-shared; else ../configure; fi
+ - if [ $DEBUG = "debug" ]; then ../configure --enable-debug --disable-shared --disable-fastopen; else ../configure --disable-fastopen; fi
  - make
  - make check
 after_success:

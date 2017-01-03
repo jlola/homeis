@@ -24,6 +24,23 @@ class Converter
 	typedef unsigned char base;
 
 public:
+	static string strtoupper(string str)
+	{
+	    int leng=str.length();
+	    for(int i=0; i<leng; i++)
+	        if (97<=str[i]&&str[i]<=122)//a-z
+	            str[i]-=32;
+	    return str;
+	}
+	static string strtolower(string str)
+	{
+	    int leng=str.length();
+	    for(int i=0; i<leng; i++)
+	        if (65<=str[i]&&str[i]<=90)//A-Z
+	            str[i]+=32;
+	    return str;
+	}
+
 	static std::vector<uint8_t> stobytes(std::string s)
 	{
 		string strbyte;

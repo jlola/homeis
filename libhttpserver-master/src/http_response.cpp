@@ -25,8 +25,6 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include "http_utils.hpp"
-#include "details/http_resource_mirror.hpp"
-#include "details/event_tuple.hpp"
 #include "webserver.hpp"
 #include "http_response.hpp"
 #include "http_response_builder.hpp"
@@ -35,6 +33,8 @@ using namespace std;
 
 namespace httpserver
 {
+
+class webserver;
 
 http_response::http_response(const http_response_builder& builder):
     content(builder._content_hook),
@@ -53,8 +53,6 @@ http_response::http_response(const http_response_builder& builder):
     keepalive_msg(builder._keepalive_msg),
     send_topic(builder._send_topic),
     underlying_connection(0x0),
-    ca(0x0),
-    closure_data(0x0),
     ce(builder._ce),
     cycle_callback(builder._cycle_callback),
     get_raw_response(this, builder._get_raw_response),
@@ -72,19 +70,19 @@ http_response::~http_response()
         webserver::unlock_cache_entry(ce);
 }
 
-size_t http_response::get_headers(std::map<std::string, std::string, header_comparator>& result) const
+size_t http_response::get_headers(std::map<std::string, std::string, http::header_comparator>& result) const
 {
     result = this->headers;
     return result.size();
 }
 
-size_t http_response::get_footers(std::map<std::string, std::string, header_comparator>& result) const
+size_t http_response::get_footers(std::map<std::string, std::string, http::header_comparator>& result) const
 {
     result = this->footers;
     return result.size();
 }
 
-size_t http_response::get_cookies(std::map<std::string, std::string, header_comparator>& result) const
+size_t http_response::get_cookies(std::map<std::string, std::string, http::header_comparator>& result) const
 {
     result = this->cookies;
     return result.size();
@@ -103,7 +101,7 @@ void http_response::get_raw_response_str(MHD_Response** response, webserver* ws)
 
 void http_response::decorate_response_str(MHD_Response* response)
 {
-    map<string, string, header_comparator>::iterator it;
+    map<string, string, http::header_comparator>::iterator it;
 
     for (it=headers.begin() ; it != headers.end(); ++it)
         MHD_add_response_header(
@@ -244,19 +242,14 @@ void http_response::get_raw_response_lp_receive(
 )
 {
     this->ws = ws;
-    this->connection_id = MHD_get_connection_info(
-            this->underlying_connection,
-            MHD_CONNECTION_INFO_CLIENT_ADDRESS
-    )->client_addr;
+    this->connection_id = this->underlying_connection;
 
     *response = MHD_create_response_from_callback(MHD_SIZE_UNKNOWN, 80,
         &http_response::data_generator, (void*) this, NULL);
 
     ws->register_to_topics(
             topics,
-            connection_id,
-            keepalive_secs,
-            keepalive_msg
+            connection_id
     );
 }
 
@@ -269,15 +262,10 @@ ssize_t http_response::data_generator(
 {
     http_response* _this = static_cast<http_response*>(cls);
 
-    if(_this->ws->pop_signaled(_this->connection_id))
-    {
-        string message;
-        size_t size = _this->ws->read_message(_this->connection_id, message);
-        memcpy(buf, message.c_str(), size);
-        return size;
-    }
-    else
-        return 0;
+    string message;
+    size_t size = _this->ws->read_message(_this->connection_id, message);
+    memcpy(buf, message.c_str(), size);
+    return size;
 }
 
 void http_response::get_raw_response_lp_send(
@@ -300,5 +288,5 @@ std::ostream &operator<< (std::ostream &os, const http_response &r)
     return os;
 }
 
-    
+
 };

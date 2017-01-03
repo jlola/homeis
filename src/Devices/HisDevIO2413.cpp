@@ -49,14 +49,14 @@ void HisDevIO2413::CreateDataPoints()
 	WriteToDeviceRequestDelegate delegate = WriteToDeviceRequestDelegate::from_method<HisDevIO2413, &HisDevIO2413::WriteToDevice>(this);
 	//create data points
 	//xmlNodePtr valuenode = NULL;//GetOrCreateNode(PINNO_INPUTA,GetNodePtr());
-	valueAInput = new HisDevValue<bool>(strid, EHisDevDirection::Read, EDataType::Bool, PINNO_INPUTA,false);
+	valueAInput = new HisDevValue<bool>(strid, EHisDevDirection::Read, EDataType::Bool,PINNO_INPUTA,false);
 	valueAInput->delegateWrite = delegate;
 	valueAInput->Load();
 	valueAInput->SetName("InputA");
 	Add(valueAInput);
 
 	//valuenode = GetOrCreateNode(PINNO_INPUTB,GetNodePtr());
-	valueBInput = new HisDevValue<bool>(strid, EHisDevDirection::Read, EDataType::Bool, PINNO_INPUTB,false);
+	valueBInput = new HisDevValue<bool>(strid, EHisDevDirection::Read, EDataType::Bool,PINNO_INPUTB,false);
 	valueBInput->delegateWrite = delegate;
 	valueBInput->Load();
 	valueBInput->SetName("InputB");
@@ -80,7 +80,7 @@ void HisDevIO2413::CreateDataPoints()
 
 void HisDevIO2413::WriteToDevice(ValueChangedEventArgs args)
 {
-	switch(args.GetValue()->GetPinNumber())
+	switch(Converter::stoi(args.GetValue()->GetPinNumber()))
 	{
 		case PINNO_INPUTA:
 		case PINNO_INPUTB:
@@ -142,7 +142,7 @@ void HisDevIO2413::DoInternalLoad(xmlNodePtr & node)
 	{
 		HisDevValue<bool> *value = values[i];
 		value->delegateWrite = delegate;
-		switch(value->GetPinNumber())
+		switch(Converter::stoi(value->GetPinNumber()))
 		{
 			case PINNO_INPUTA:
 				valueAInput = value;

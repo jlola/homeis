@@ -21,7 +21,7 @@
 
 AC_PREREQ(2.57)
 m4_define([libhttpserver_MAJOR_VERSION],[0])dnl
-m4_define([libhttpserver_MINOR_VERSION],[9])dnl
+m4_define([libhttpserver_MINOR_VERSION],[11])dnl
 m4_define([libhttpserver_REVISION],[1])dnl
 m4_define([libhttpserver_PKG_VERSION],[libhttpserver_MAJOR_VERSION.libhttpserver_MINOR_VERSION.libhttpserver_REVISION])dnl
 m4_define([libhttpserver_LDF_VERSION],[libhttpserver_MAJOR_VERSION:libhttpserver_MINOR_VERSION:libhttpserver_REVISION])dnl
@@ -56,19 +56,21 @@ if test x"$samedirectory" = x"no"; then
     fi
 fi
 
+is_windows=yes;
 case "$host" in
     *-mingw*)
-	    NETWORK_HEADER="winsock2.h"
-		REGEX_LIBS="-lregex -lpthread -no-undefined"
+        NETWORK_HEADER="winsock2.h"
+        REGEX_LIBS="-lregex -lpthread -no-undefined"
         native_srcdir=$(cd $srcdir; pwd -W)
         ;;
     *-cygwin*)
-	    NETWORK_HEADER="winsock2.h"
-		REGEX_LIBS="-lregex -lpthread -no-undefined"
+        NETWORK_HEADER="winsock2.h"
+        REGEX_LIBS="-lregex -lpthread -no-undefined"
         ;;
     *)
-	    NETWORK_HEADER="arpa/inet.h"
-		REGEX_LIBS=""
+        NETWORK_HEADER="arpa/inet.h"
+        REGEX_LIBS=""
+        is_windows=no
         ;;
 esac
 
@@ -110,6 +112,26 @@ AC_CHECK_HEADER([microhttpd.h],
 
 CXXFLAGS="-DHTTPSERVER_COMPILATION -D_REENTRANT $LIBMICROHTTPD_CFLAGS $CXXFLAGS"
 LDFLAGS="$LIBMICROHTTPD_LIBS $REGEX_LIBS $LD_FLAGS"
+
+AC_MSG_CHECKING([whether to build with TCP_FASTOPEN support])
+AC_ARG_ENABLE([fastopen],
+    [AS_HELP_STRING([--enable-fastopen],
+        [enable use of TCP_FASTOPEN (def=yes)])],
+    [fastopen="$enableval"],
+    [fastopen=yes])
+AC_MSG_RESULT([$fastopen])
+
+is_fastopen_supported=no;
+if test x"$fastopen" = x"yes"; then
+    if test x"$is_windows" = x"no"; then
+        if test `uname -r |cut -d. -f1` -ge 3; then
+            if test `uname -r |cut -d. -f2` -ge 7; then
+                CXXFLAGS="-DUSE_FASTOPEN $CXXFLAGS";
+                is_fastopen_supported=yes;
+            fi
+        fi
+    fi
+fi
 
 m4_pattern_allow([AC_TYPE_SIZE_T])
 m4_pattern_allow([AC_TYPE_UINT16_T])
@@ -207,4 +229,5 @@ AC_MSG_NOTICE([Configuration Summary:
   License         :  LGPL only
   Debug	          :  ${debugit}
   TLS Enabled     :  ${have_gnutls}
+  TCP_FASTOPEN    :  ${is_fastopen_supported}
 ])

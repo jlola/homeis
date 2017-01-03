@@ -26,102 +26,100 @@
 					<folderInfo id="cdt.managedbuild.config.gnu.exe.debug.1454666133." name="/" resourcePath="">
 						<toolChain errorParsers="" id="cdt.managedbuild.toolchain.gnu.cross.base.1940839442" name="Cross GCC" nonInternalBuilderId="cdt.managedbuild.builder.gnu.cross" superClass="cdt.managedbuild.toolchain.gnu.cross.base">
 							<option id="cdt.managedbuild.option.gnu.cross.prefix.1070758115" name="Prefix" superClass="cdt.managedbuild.option.gnu.cross.prefix" value="arm-linux-gnueabihf-" valueType="string"/>
-							<option id="cdt.managedbuild.option.gnu.cross.path.1033661255" name="Path" superClass="cdt.managedbuild.option.gnu.cross.path" value="c:\Program Files (x86)\Linaro\gcc-linaro-arm-linux-gnueabihf-4.9-2014.09\bin\" valueType="string"/>
+							<option id="cdt.managedbuild.option.gnu.cross.path.1033661255" name="Path" superClass="cdt.managedbuild.option.gnu.cross.path" value="C:\Program Files (x86)\Linaro\gcc-linaro-arm-linux-gnueabihf-4.9-2014.09\bin" valueType="string"/>
 							<targetPlatform archList="all" binaryParser="org.eclipse.cdt.core.ELF" id="cdt.managedbuild.targetPlatform.gnu.cross.361377448" isAbstract="false" osList="all" superClass="cdt.managedbuild.targetPlatform.gnu.cross"/>
 							<builder autoBuildTarget="all" buildPath="${workspace_loc:/dis}/Debug" cleanBuildTarget="clean" errorParsers="" id="org.eclipse.cdt.build.core.internal.builder.1013196586" incrementalBuildTarget="all" keepEnvironmentInBuildfile="false" managedBuildOn="true" name="CDT Internal Builder" parallelBuildOn="false" superClass="org.eclipse.cdt.build.core.internal.builder"/>
 							<tool command="gcc" commandLinePattern="${COMMAND} ${FLAGS} ${OUTPUT_FLAG} ${OUTPUT_PREFIX}${OUTPUT} ${INPUTS}" errorParsers="org.eclipse.cdt.core.GCCErrorParser" id="cdt.managedbuild.tool.gnu.cross.c.compiler.1320566611" name="Cross GCC Compiler" superClass="cdt.managedbuild.tool.gnu.cross.c.compiler">
 								<option id="gnu.c.compiler.option.include.paths.333433591" name="Include paths (-I)" superClass="gnu.c.compiler.option.include.paths" useByScannerDiscovery="false" valueType="includePath">
-									<listOptionValue builtIn="false" value="&quot;C:\gcc-linaro-arm-linux-gnueabihf-4.8-2014.04\arm-linux-gnueabihf\libc\usr\include&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/libcrash-master}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/onewirelibrary}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/rapidjson}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/linuxcs}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/libhttpserver-master/src/httpserver}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/libhttpserver-master/src}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/uuid}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/lua-5.2.1/src}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/libs/libusbcompat/include}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;D:\Elektronika\homeis\homeisworkspace\libxml2-2.8.0\include\libxml2&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;D:\Elektronika\homeis\homeisworkspace\libmicrohttpd\include&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/libs/libsources/libmicrohttpd/include}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/libs/libsources/libxml2-2.8.0/include/libxml2}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/Helpers}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/Devices}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/libs/libconfig/include}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/libs/libconfig/include}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/libs/libsources/libxml2-2.8.0/include/libxml2}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/libs/libsources/libmicrohttpd/include}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/libs/libusbcompat/include}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/lua-5.2.1/src}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/uuid}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/libhttpserver-master/src}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/libhttpserver-master/src/httpserver}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/linuxcs}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/rapidjson}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/onewirelibrary}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/libcrash-master}&quot;"/>
 								</option>
 								<option id="gnu.c.compiler.option.preprocessor.def.symbols.304171922" name="Defined symbols (-D)" superClass="gnu.c.compiler.option.preprocessor.def.symbols" useByScannerDiscovery="false" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="HTTPSERVER_COMPILATION"/>
 									<listOptionValue builtIn="false" value="USE_THREADS"/>
 									<listOptionValue builtIn="false" value="LUA_USE_MKSTEMP"/>
+									<listOptionValue builtIn="false" value="MEMWATCH"/>
 								</option>
 								<option defaultValue="gnu.c.optimization.level.none" id="gnu.c.compiler.option.optimization.level.776817531" name="Optimization Level" superClass="gnu.c.compiler.option.optimization.level" useByScannerDiscovery="false" valueType="enumerated"/>
 								<option id="gnu.c.compiler.option.debugging.level.1562821371" name="Debug Level" superClass="gnu.c.compiler.option.debugging.level" useByScannerDiscovery="false" value="gnu.c.debugging.level.max" valueType="enumerated"/>
-								<option id="gnu.c.compiler.option.misc.other.90107978" name="Other flags" superClass="gnu.c.compiler.option.misc.other" useByScannerDiscovery="false" value="-c -fmessage-length=0 -march=armv7-a" valueType="string"/>
+								<option id="gnu.c.compiler.option.misc.other.90107978" name="Other flags" superClass="gnu.c.compiler.option.misc.other" useByScannerDiscovery="false" value="-c -fmessage-length=0 -march=armv7-a -funwind-tables -fno-omit-frame-pointer -rdynamic" valueType="string"/>
 								<option id="gnu.c.compiler.option.dialect.std.189805159" name="Language standard" superClass="gnu.c.compiler.option.dialect.std" useByScannerDiscovery="true" value="gnu.c.compiler.dialect.default" valueType="enumerated"/>
 								<option id="gnu.c.compiler.option.debugging.other.1804049479" name="Other debugging flags" superClass="gnu.c.compiler.option.debugging.other" useByScannerDiscovery="false" value="-g" valueType="string"/>
-								<option id="gnu.c.compiler.option.debugging.prof.305840280" name="Generate prof information (-p)" superClass="gnu.c.compiler.option.debugging.prof" useByScannerDiscovery="false" value="true" valueType="boolean"/>
-								<option id="gnu.c.compiler.option.debugging.gprof.1125427413" name="Generate gprof information (-pg)" superClass="gnu.c.compiler.option.debugging.gprof" useByScannerDiscovery="false" value="true" valueType="boolean"/>
-								<option id="gnu.c.compiler.option.debugging.codecov.1582431898" name="Generate gcov information (-ftest-coverage -fprofile-arcs)" superClass="gnu.c.compiler.option.debugging.codecov" useByScannerDiscovery="false" value="true" valueType="boolean"/>
+								<option id="gnu.c.compiler.option.debugging.prof.305840280" name="Generate prof information (-p)" superClass="gnu.c.compiler.option.debugging.prof" useByScannerDiscovery="false" value="false" valueType="boolean"/>
+								<option id="gnu.c.compiler.option.debugging.gprof.1125427413" name="Generate gprof information (-pg)" superClass="gnu.c.compiler.option.debugging.gprof" useByScannerDiscovery="false" value="false" valueType="boolean"/>
+								<option id="gnu.c.compiler.option.debugging.codecov.1582431898" name="Generate gcov information (-ftest-coverage -fprofile-arcs)" superClass="gnu.c.compiler.option.debugging.codecov" useByScannerDiscovery="false" value="false" valueType="boolean"/>
 								<inputType id="cdt.managedbuild.tool.gnu.c.compiler.input.1680953258" superClass="cdt.managedbuild.tool.gnu.c.compiler.input"/>
 							</tool>
 							<tool command="g++" commandLinePattern="${COMMAND} ${FLAGS} ${OUTPUT_FLAG} ${OUTPUT_PREFIX}${OUTPUT} ${INPUTS}" errorParsers="org.eclipse.cdt.core.GCCErrorParser" id="cdt.managedbuild.tool.gnu.cross.cpp.compiler.774094333" name="Cross G++ Compiler" superClass="cdt.managedbuild.tool.gnu.cross.cpp.compiler">
 								<option id="gnu.cpp.compiler.option.include.paths.1618131780" name="Include paths (-I)" superClass="gnu.cpp.compiler.option.include.paths" useByScannerDiscovery="false" valueType="includePath">
-									<listOptionValue builtIn="false" value="&quot;C:\gcc-linaro-arm-linux-gnueabihf-4.8-2014.04\arm-linux-gnueabihf\libc\usr\include&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/rapidjson}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/onewirelibrary/OneWire++}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/onewirelibrary/OneWire++/threadOW++}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/onewirelibrary/OneWire++/componentOW++}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/onewirelibrary/OneWire++/linkOW++}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/onewirelibrary/OneWire++/deviceOW++}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/onewirelibrary/OneWire++/platformOW++}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/onewirelibrary/OneWire++/portOW++}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/libcrash-master}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/onewirelibrary}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/linuxcs}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/libhttpserver-master/src/httpserver}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/libhttpserver-master/src}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/uuid}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/lua-5.2.1/src}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/libs/libusbcompat/include}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;D:\Elektronika\homeis\homeisworkspace\libxml2-2.8.0\include\libxml2&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;D:\Elektronika\homeis\homeisworkspace\libmicrohttpd\include&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/libs/libsources/libmicrohttpd/include}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/libs/libsources/libxml2-2.8.0/include/libxml2}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/Helpers}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/Devices}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/libs/libconfig/include}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/onewirelibrary/OneWire++}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/onewirelibrary/OneWire++/threadOW++}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/onewirelibrary/OneWire++/componentOW++}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/onewirelibrary/OneWire++/linkOW++}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/libs/libconfig/include}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/libs/libsources/libxml2-2.8.0/include/libxml2}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/libs/libsources/libmicrohttpd/include}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/libs/libusbcompat/include}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/lua-5.2.1/src}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/onewirelibrary/OneWire++/deviceOW++}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/onewirelibrary/OneWire++/platformOW++}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/onewirelibrary/OneWire++/portOW++}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/libcrash-master}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/onewirelibrary}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/linuxcs}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/uuid}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/libhttpserver-master/src}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/libhttpserver-master/src/httpserver}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/rapidjson}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/libs/libmodbus/include}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/libs/libleaktracer/include}&quot;"/>
 								</option>
 								<option id="gnu.cpp.compiler.option.preprocessor.def.100794621" name="Defined symbols (-D)" superClass="gnu.cpp.compiler.option.preprocessor.def" useByScannerDiscovery="false" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="HTTPSERVER_COMPILATION"/>
 									<listOptionValue builtIn="false" value="USE_THREADS"/>
 									<listOptionValue builtIn="false" value="LUA_USE_MKSTEMP"/>
-									<listOptionValue builtIn="false" value="MHD_socket=int"/>
+									<listOptionValue builtIn="false" value="MEMWATCH"/>
 								</option>
 								<option id="gnu.cpp.compiler.option.optimization.level.947909698" name="Optimization Level" superClass="gnu.cpp.compiler.option.optimization.level" useByScannerDiscovery="false" value="gnu.cpp.compiler.optimization.level.none" valueType="enumerated"/>
 								<option id="gnu.cpp.compiler.option.debugging.level.1390750396" name="Debug Level" superClass="gnu.cpp.compiler.option.debugging.level" useByScannerDiscovery="false" value="gnu.cpp.compiler.debugging.level.max" valueType="enumerated"/>
-								<option id="gnu.cpp.compiler.option.other.other.1113880852" name="Other flags" superClass="gnu.cpp.compiler.option.other.other" useByScannerDiscovery="false" value="-c -fmessage-length=0 -lrt -march=armv7-a" valueType="string"/>
+								<option id="gnu.cpp.compiler.option.other.other.1113880852" name="Other flags" superClass="gnu.cpp.compiler.option.other.other" useByScannerDiscovery="false" value="-c -fmessage-length=0 -lrt -march=armv7-a -funwind-tables -fno-omit-frame-pointer -rdynamic" valueType="string"/>
 								<option id="gnu.cpp.compiler.option.dialect.std.946327515" name="Language standard" superClass="gnu.cpp.compiler.option.dialect.std" useByScannerDiscovery="true" value="gnu.cpp.compiler.dialect.c++11" valueType="enumerated"/>
 								<option id="gnu.cpp.compiler.option.debugging.other.1477463052" name="Other debugging flags" superClass="gnu.cpp.compiler.option.debugging.other" useByScannerDiscovery="false" value="-g" valueType="string"/>
-								<option id="gnu.cpp.compiler.option.debugging.prof.521807193" name="Generate prof information (-p)" superClass="gnu.cpp.compiler.option.debugging.prof" useByScannerDiscovery="false" value="true" valueType="boolean"/>
-								<option id="gnu.cpp.compiler.option.debugging.gprof.1397066354" name="Generate gprof information (-pg)" superClass="gnu.cpp.compiler.option.debugging.gprof" useByScannerDiscovery="false" value="true" valueType="boolean"/>
-								<option id="gnu.cpp.compiler.option.debugging.codecov.1859559865" name="Generate gcov information (-ftest-coverage -fprofile-arcs)" superClass="gnu.cpp.compiler.option.debugging.codecov" useByScannerDiscovery="false" value="true" valueType="boolean"/>
+								<option id="gnu.cpp.compiler.option.debugging.prof.521807193" name="Generate prof information (-p)" superClass="gnu.cpp.compiler.option.debugging.prof" useByScannerDiscovery="false" value="false" valueType="boolean"/>
+								<option id="gnu.cpp.compiler.option.debugging.gprof.1397066354" name="Generate gprof information (-pg)" superClass="gnu.cpp.compiler.option.debugging.gprof" useByScannerDiscovery="false" value="false" valueType="boolean"/>
+								<option id="gnu.cpp.compiler.option.debugging.codecov.1859559865" name="Generate gcov information (-ftest-coverage -fprofile-arcs)" superClass="gnu.cpp.compiler.option.debugging.codecov" useByScannerDiscovery="false" value="false" valueType="boolean"/>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.19796104" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
 							</tool>
 							<tool id="cdt.managedbuild.tool.gnu.cross.c.linker.951548800" name="Cross GCC Linker" superClass="cdt.managedbuild.tool.gnu.cross.c.linker"/>
 							<tool command="g++" commandLinePattern="${COMMAND} ${FLAGS} ${OUTPUT_FLAG} ${OUTPUT_PREFIX}${OUTPUT} ${INPUTS}" errorParsers="org.eclipse.cdt.core.GLDErrorParser" id="cdt.managedbuild.tool.gnu.cross.cpp.linker.845265110" name="Cross G++ Linker" superClass="cdt.managedbuild.tool.gnu.cross.cpp.linker">
 								<option id="gnu.cpp.link.option.libs.1187565361" name="Libraries (-l)" superClass="gnu.cpp.link.option.libs" valueType="libs">
 									<listOptionValue builtIn="false" value="pthread"/>
+									<listOptionValue builtIn="false" value="modbus"/>
 									<listOptionValue builtIn="false" value="dl"/>
 									<listOptionValue builtIn="false" value="usb-1.0"/>
 									<listOptionValue builtIn="false" value="usb"/>
 									<listOptionValue builtIn="false" value="xml2"/>
-									<listOptionValue builtIn="false" value="microhttpd"/>
 									<listOptionValue builtIn="false" value="rt"/>
-									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="config++"/>
+									<listOptionValue builtIn="false" value="config++"/>
+									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="microhttpd"/>
 								</option>
 								<option id="gnu.cpp.link.option.paths.226678105" name="Library search path (-L)" superClass="gnu.cpp.link.option.paths" valueType="libPaths">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/libs/libusbcompat/lib}&quot;"/>
@@ -130,11 +128,16 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/libs/libsources/libxml2-2.8.0/lib}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/libs/libconfig/lib}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/libs/libsources/libmicrohttpd/lib}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/libs/tcmalloc/gcc4.8}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/libs/libmodbus/lib}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/libs/libleaktracer/lib}&quot;"/>
 								</option>
-								<option id="gnu.cpp.link.option.flags.1653308680" name="Linker flags" superClass="gnu.cpp.link.option.flags" value="-march=armv7-a -rdynamic" valueType="string"/>
-								<option id="gnu.cpp.link.option.debugging.prof.1615855711" name="Generate prof information (-p)" superClass="gnu.cpp.link.option.debugging.prof" value="true" valueType="boolean"/>
-								<option id="gnu.cpp.link.option.debugging.gprof.931734091" name="Generate gprof information (-pg)" superClass="gnu.cpp.link.option.debugging.gprof" value="true" valueType="boolean"/>
-								<option id="gnu.cpp.link.option.debugging.codecov.1534371597" name="Generate gcov information (-ftest-coverage -fprofile-arcs)" superClass="gnu.cpp.link.option.debugging.codecov" value="true" valueType="boolean"/>
+								<option id="gnu.cpp.link.option.flags.1653308680" name="Linker flags" superClass="gnu.cpp.link.option.flags" value="-march=armv7-a -rdynamic -funwind-tables" valueType="string"/>
+								<option id="gnu.cpp.link.option.debugging.prof.1615855711" name="Generate prof information (-p)" superClass="gnu.cpp.link.option.debugging.prof" value="false" valueType="boolean"/>
+								<option id="gnu.cpp.link.option.debugging.gprof.931734091" name="Generate gprof information (-pg)" superClass="gnu.cpp.link.option.debugging.gprof" value="false" valueType="boolean"/>
+								<option id="gnu.cpp.link.option.debugging.codecov.1534371597" name="Generate gcov information (-ftest-coverage -fprofile-arcs)" superClass="gnu.cpp.link.option.debugging.codecov" value="false" valueType="boolean"/>
+								<option id="gnu.cpp.link.option.nodeflibs.2111587249" name="Do not use default libraries (-nodefaultlibs)" superClass="gnu.cpp.link.option.nodeflibs" value="false" valueType="boolean"/>
+								<option id="gnu.cpp.link.option.shared.1547806575" name="Shared (-shared)" superClass="gnu.cpp.link.option.shared" value="false" valueType="boolean"/>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.linker.input.351125594" superClass="cdt.managedbuild.tool.gnu.cpp.linker.input">
 									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
 									<additionalInput kind="additionalinput" paths="$(LIBS)"/>
@@ -143,22 +146,21 @@
 							<tool id="cdt.managedbuild.tool.gnu.cross.archiver.1446144075" name="Cross GCC Archiver" superClass="cdt.managedbuild.tool.gnu.cross.archiver"/>
 							<tool command="as" commandLinePattern="${COMMAND} ${FLAGS} ${OUTPUT_FLAG} ${OUTPUT_PREFIX}${OUTPUT} ${INPUTS}" errorParsers="org.eclipse.cdt.core.GASErrorParser" id="cdt.managedbuild.tool.gnu.cross.assembler.1202731631" name="Cross GCC Assembler" superClass="cdt.managedbuild.tool.gnu.cross.assembler">
 								<option id="gnu.both.asm.option.include.paths.1580647521" name="Include paths (-I)" superClass="gnu.both.asm.option.include.paths" valueType="includePath">
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/onewirelibrary}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/linuxcs}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/libhttpserver-master/src/httpserver}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/libhttpserver-master/src}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/uuid}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/lua-5.2.1/src}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/libs/libusbcompat/include}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;C:\gcc-linaro-arm-linux-gnueabihf-4.8-2014.04\arm-linux-gnueabihf\libc\usr\include&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/libcrash-master}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/libs/libsources/libmicrohttpd/include}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/libs/libsources/libxml2-2.8.0/include/libxml2}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/src/Devices}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/src/Helpers}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/libs/libconfig/include}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/onewirelibrary}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/libs/libconfig/include}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/Helpers}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/Devices}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/libs/libsources/libxml2-2.8.0/include/libxml2}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/libs/libsources/libmicrohttpd/include}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/libcrash-master}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/libs/libusbcompat/include}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/lua-5.2.1/src}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/uuid}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/libhttpserver-master/src}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/libhttpserver-master/src/httpserver}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/linuxcs}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}}&quot;"/>
 								</option>
 								<option id="gnu.both.asm.option.flags.779682679" name="Assembler flags" superClass="gnu.both.asm.option.flags" value="" valueType="string"/>
 								<inputType id="cdt.managedbuild.tool.gnu.assembler.input.1757918674" superClass="cdt.managedbuild.tool.gnu.assembler.input"/>
@@ -224,7 +226,7 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="onewirelibrary/test_temp.cpp|onewirelibrary/test_switch.cpp|onewirelibrary/test_jalousie.cpp|onewirelibrary/OneWire++/componentOW++|libs/libconfig|PushFramework/private/DemuxImpl_Win.h|PushFramework/private/SystemServiceImpl_Win.h|PushFramework/private/ListenerImpl_Win.cpp|PushFramework/private/Dispatcher_Win.cpp|PushFramework/private/StopWatchImpl_Win.h|libmicrohttpd-0.9.7/src/testzzuf|libmicrohttpd-0.9.7/src/examples|libmicrohttpd-0.9.7/src/testcurl|libhttpserver-master/test/littletest.hpp|PushFramework/private/IOQueue_Win.cpp|libhttpserver-master/examples|PushFramework/private/Utilities_Win.cpp|PushFramework/private/StopWatchImpl_Win.cpp|libs/libsources|PushFramework/private/PhysicalConnection_Win.cpp|uuid/gen_uuid_nt.c|PushFramework/private/ChannelFactory_Win.cpp|PushFramework/private/IOQueue_Win.h|libcrash-master|PushFramework/private/DemuxImpl_Win.cpp|PushFramework/private/SystemServiceImpl_Win.cpp|libhttpserver-master/test/basic.cpp|PushFramework/private/ListenerImpl_Win.h|libhttpserver-master/test" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="dis.cpp|libcrash-master|onewirelibrary/test_thread.cpp|onewirelibrary/test_temp.cpp|onewirelibrary/test_switch.cpp|onewirelibrary/test_net.cpp|onewirelibrary/test_msgLogging.cpp|onewirelibrary/test_lock.cpp|onewirelibrary/test_link.cpp|onewirelibrary/test_jalousie.cpp|onewirelibrary/test_ds2890.cpp|onewirelibrary/test_ds2413.cpp|onewirelibrary/test_ds2406.cpp|onewirelibrary/test_ds2405.cpp|onewirelibrary/main.cpp|onewirelibrary/helper.cpp|uuid/gen_uuid_nt.c|onewirelibrary/OneWire++/componentOW++|libhttpserver-master/examples|libhttpserver-master/test|libs/libsources/libxml2-2.8.0/share/doc|libs/libsources/libxml2-2.8.0/share/doc/libxml2-2.8.0/examples" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
@@ -319,6 +321,7 @@
 									<listOptionValue builtIn="false" value="_HTTPSERVER_HPP_INSIDE_"/>
 									<listOptionValue builtIn="false" value="_STDINT_H"/>
 									<listOptionValue builtIn="false" value="HAVE_INTTYPES_H"/>
+									<listOptionValue builtIn="false" value="MEMWATCH"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.c.compiler.input.1841714188" superClass="cdt.managedbuild.tool.gnu.c.compiler.input"/>
 							</tool>
@@ -369,6 +372,105 @@
 							</tool>
 						</toolChain>
 					</folderInfo>
+					<folderInfo id="cdt.managedbuild.config.gnu.exe.release.1595537726.1938543400" name="/" resourcePath="src">
+						<toolChain id="cdt.managedbuild.toolchain.gnu.exe.release.1561258594" name="Linux GCC" superClass="cdt.managedbuild.toolchain.gnu.exe.release" unusedChildren="">
+							<targetPlatform id="cdt.managedbuild.target.gnu.platform.exe.release" name="Debug Platform" superClass="cdt.managedbuild.target.gnu.platform.exe.release"/>
+							<tool id="cdt.managedbuild.tool.gnu.archiver.base.643349636" name="GCC Archiver" superClass="cdt.managedbuild.tool.gnu.archiver.base.1761674684"/>
+							<tool id="cdt.managedbuild.tool.gnu.cpp.compiler.exe.release.740594163" name="GCC C++ Compiler" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.exe.release.756742676">
+								<option id="gnu.cpp.compiler.option.include.paths.11148819" name="Include paths (-I)" superClass="gnu.cpp.compiler.option.include.paths" valueType="includePath">
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/root/raspberrypi/tools/arm-bcm2708/gcc-linaro-arm-linux-gnueabihf-raspbian/arm-linux-gnueabihf/include}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/root/raspberrypi/tools/arm-bcm2708/gcc-linaro-arm-linux-gnueabihf-raspbian/arm-linux-gnueabihf/libc/usr/include}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/root/raspberrypi/tools/arm-bcm2708/gcc-linaro-arm-linux-gnueabihf-raspbian/lib/gcc/arm-linux-gnueabihf/4.7.2/finclude}&quot;"/>
+									<listOptionValue builtIn="false" value="/root/raspberrypi/tools/arm-bcm2708/gcc-linaro-arm-linux-gnueabihf-raspbian/lib/gcc/arm-linux-gnueabihf/4.7.2/include"/>
+									<listOptionValue builtIn="false" value="/root/raspberrypi/tools/arm-bcm2708/gcc-linaro-arm-linux-gnueabihf-raspbian/lib/gcc/arm-linux-gnueabihf/4.7.2/finclude-fixed"/>
+									<listOptionValue builtIn="false" value="/usr/lib"/>
+									<listOptionValue builtIn="false" value="/root/raspberrypi/libxml2-2.9.0/lib"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/homeis/Devices}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/homeis/Helpers}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/linuxcs}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/libhttpserver-master/src/httpserver}&quot;"/>
+									<listOptionValue builtIn="false" value="/root/raspberrypi/libmicrohttpd/include"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/libhttpserver-master/src}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/uuid}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/lua-5.2.1/src}&quot;"/>
+									<listOptionValue builtIn="false" value="/usr/include"/>
+									<listOptionValue builtIn="false" value="/root/libmicrohttpd-0.9.26/src/include"/>
+									<listOptionValue builtIn="false" value="/root/libxml2-2.8.0/include"/>
+									<listOptionValue builtIn="false" value="&quot;C:\gcc-linaro-arm-linux-gnueabihf-4.9-2014.09\arm-linux-gnueabihf\libc\usr\include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/libs/libsources/libmicrohttpd/include}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/libs/libsources/libxml2-2.8.0/include}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/libs/libsources/libxml2-2.8.0/include/libxml2/libxml}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/libs/libconfig/include}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/memwatch-2.69}&quot;"/>
+								</option>
+								<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.16673755" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
+							</tool>
+							<tool id="cdt.managedbuild.tool.gnu.c.compiler.exe.release.207715725" name="GCC C Compiler" superClass="cdt.managedbuild.tool.gnu.c.compiler.exe.release.757826232">
+								<option id="gnu.c.compiler.option.include.paths.1903277110" name="Include paths (-I)" superClass="gnu.c.compiler.option.include.paths" valueType="includePath">
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/root/raspberrypi/tools/arm-bcm2708/gcc-linaro-arm-linux-gnueabihf-raspbian/arm-linux-gnueabihf/include}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/root/raspberrypi/tools/arm-bcm2708/gcc-linaro-arm-linux-gnueabihf-raspbian/arm-linux-gnueabihf/libc/usr/include}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/root/raspberrypi/tools/arm-bcm2708/gcc-linaro-arm-linux-gnueabihf-raspbian/lib/gcc/arm-linux-gnueabihf/4.7.2/finclude}&quot;"/>
+									<listOptionValue builtIn="false" value="/root/raspberrypi/tools/arm-bcm2708/gcc-linaro-arm-linux-gnueabihf-raspbian/lib/gcc/arm-linux-gnueabihf/4.7.2/include"/>
+									<listOptionValue builtIn="false" value="/root/raspberrypi/tools/arm-bcm2708/gcc-linaro-arm-linux-gnueabihf-raspbian/lib/gcc/arm-linux-gnueabihf/4.7.2/finclude-fixed"/>
+									<listOptionValue builtIn="false" value="/root/raspberrypi/libxml2-2.9.0/lib"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/homeis/Devices}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/homeis/Helpers}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/linuxcs}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/libhttpserver-master/src/httpserver}&quot;"/>
+									<listOptionValue builtIn="false" value="/root/raspberrypi/libmicrohttpd/include"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/libhttpserver-master/src}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/uuid}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/lua-5.2.1/src}&quot;"/>
+									<listOptionValue builtIn="false" value="/usr/include"/>
+									<listOptionValue builtIn="false" value="/root/libmicrohttpd-0.9.26/src/include"/>
+									<listOptionValue builtIn="false" value="/root/libxml2-2.8.0/include"/>
+									<listOptionValue builtIn="false" value="&quot;C:\gcc-linaro-arm-linux-gnueabihf-4.9-2014.09\arm-linux-gnueabihf\libc\usr\include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/libs/libsources/libmicrohttpd/include}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/libs/libsources/libxml2-2.8.0/include}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/libs/libsources/libxml2-2.8.0/include/libxml2/libxml}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/libs/libconfig/include}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/memwatch-2.69}&quot;"/>
+								</option>
+								<inputType id="cdt.managedbuild.tool.gnu.c.compiler.input.430069936" superClass="cdt.managedbuild.tool.gnu.c.compiler.input"/>
+							</tool>
+							<tool id="cdt.managedbuild.tool.gnu.c.linker.exe.release.123634734" name="GCC C Linker" superClass="cdt.managedbuild.tool.gnu.c.linker.exe.release.975587519"/>
+							<tool id="cdt.managedbuild.tool.gnu.cpp.linker.exe.release.1139270676" name="GCC C++ Linker" superClass="cdt.managedbuild.tool.gnu.cpp.linker.exe.release.1581494430"/>
+							<tool id="cdt.managedbuild.tool.gnu.assembler.exe.release.1230562763" name="GCC Assembler" superClass="cdt.managedbuild.tool.gnu.assembler.exe.release.450413600">
+								<option id="gnu.both.asm.option.include.paths.1722892710" name="Include paths (-I)" superClass="gnu.both.asm.option.include.paths" valueType="includePath">
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/root/raspberrypi/tools/arm-bcm2708/gcc-linaro-arm-linux-gnueabihf-raspbian/arm-linux-gnueabihf/include}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/root/raspberrypi/tools/arm-bcm2708/gcc-linaro-arm-linux-gnueabihf-raspbian/arm-linux-gnueabihf/libc/usr/include}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/root/raspberrypi/tools/arm-bcm2708/gcc-linaro-arm-linux-gnueabihf-raspbian/lib/gcc/arm-linux-gnueabihf/4.7.2/finclude}&quot;"/>
+									<listOptionValue builtIn="false" value="/root/raspberrypi/tools/arm-bcm2708/gcc-linaro-arm-linux-gnueabihf-raspbian/lib/gcc/arm-linux-gnueabihf/4.7.2/include"/>
+									<listOptionValue builtIn="false" value="/root/raspberrypi/tools/arm-bcm2708/gcc-linaro-arm-linux-gnueabihf-raspbian/lib/gcc/arm-linux-gnueabihf/4.7.2/finclude-fixed"/>
+									<listOptionValue builtIn="false" value="/usr/include"/>
+									<listOptionValue builtIn="false" value="/root/raspberrypi/libxml2-2.9.0/lib"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/homeis/Devices}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/homeis/Helpers}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/linuxcs}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/libhttpserver-master/src/httpserver}&quot;"/>
+									<listOptionValue builtIn="false" value="/root/raspberrypi/libmicrohttpd/include"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/libhttpserver-master/src}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/uuid}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/lua-5.2.1/src}&quot;"/>
+									<listOptionValue builtIn="false" value="/root/libmicrohttpd-0.9.26/src/include"/>
+									<listOptionValue builtIn="false" value="/root/libxml2-2.8.0/include"/>
+									<listOptionValue builtIn="false" value="&quot;C:\gcc-linaro-arm-linux-gnueabihf-4.9-2014.09\arm-linux-gnueabihf\libc\usr\include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/libs/libsources/libmicrohttpd/include}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/libs/libsources/libxml2-2.8.0/include}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/libs/libsources/libxml2-2.8.0/include/libxml2/libxml}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/libs/libconfig/include}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/memwatch-2.69}&quot;"/>
+								</option>
+								<inputType id="cdt.managedbuild.tool.gnu.assembler.input.1828176270" superClass="cdt.managedbuild.tool.gnu.assembler.input"/>
+							</tool>
+						</toolChain>
+					</folderInfo>
+					<sourceEntries>
+						<entry excluding="onewirelibrary/test_thread.cpp|onewirelibrary/test_temp.cpp|onewirelibrary/test_switch.cpp|onewirelibrary/test_net.cpp|onewirelibrary/test_msgLogging.cpp|onewirelibrary/test_lock.cpp|onewirelibrary/test_link.cpp|onewirelibrary/test_jalousie.cpp|onewirelibrary/test_ds2890.cpp|onewirelibrary/test_ds2413.cpp|onewirelibrary/test_ds2406.cpp|onewirelibrary/test_ds2405.cpp|onewirelibrary/main.cpp|onewirelibrary/helper.cpp" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+					</sourceEntries>
 				</configuration>
 			</storageModule>
 			<storageModule moduleId="org.eclipse.cdt.core.externalSettings"/>
@@ -429,6 +531,7 @@
 									<listOptionValue builtIn="false" value="HTTPSERVER_COMPILATION"/>
 									<listOptionValue builtIn="false" value="USE_THREADS"/>
 									<listOptionValue builtIn="false" value="LUA_USE_MKSTEMP"/>
+									<listOptionValue builtIn="false" value="MEMWATCH"/>
 								</option>
 								<option defaultValue="gnu.c.optimization.level.none" id="gnu.c.compiler.option.optimization.level.249821000" name="Optimization Level" superClass="gnu.c.compiler.option.optimization.level" useByScannerDiscovery="false" valueType="enumerated"/>
 								<option id="gnu.c.compiler.option.debugging.level.784330516" name="Debug Level" superClass="gnu.c.compiler.option.debugging.level" useByScannerDiscovery="false" value="gnu.c.debugging.level.max" valueType="enumerated"/>
@@ -558,6 +661,95 @@
 							</tool>
 						</toolChain>
 					</folderInfo>
+					<folderInfo id="cdt.managedbuild.config.gnu.exe.debug.1454666133.1828639746.153149427" name="/" resourcePath="src">
+						<toolChain id="cdt.managedbuild.toolchain.gnu.cross.base.317529625" name="Cross GCC" superClass="cdt.managedbuild.toolchain.gnu.cross.base" unusedChildren="">
+							<option id="cdt.managedbuild.option.gnu.cross.prefix.1897521662.617767861" name="Prefix" superClass="cdt.managedbuild.option.gnu.cross.prefix.1897521662"/>
+							<option id="cdt.managedbuild.option.gnu.cross.path.1065038206.1082046487" name="Path" superClass="cdt.managedbuild.option.gnu.cross.path.1065038206"/>
+							<targetPlatform archList="all" binaryParser="org.eclipse.cdt.core.ELF" id="cdt.managedbuild.targetPlatform.gnu.cross" isAbstract="false" osList="all" superClass="cdt.managedbuild.targetPlatform.gnu.cross"/>
+							<tool id="cdt.managedbuild.tool.gnu.cross.c.compiler.326593825" name="Cross GCC Compiler" superClass="cdt.managedbuild.tool.gnu.cross.c.compiler.308932258">
+								<option id="gnu.c.compiler.option.include.paths.1141504590" name="Include paths (-I)" superClass="gnu.c.compiler.option.include.paths" valueType="includePath">
+									<listOptionValue builtIn="false" value="&quot;C:\gcc-linaro-arm-linux-gnueabihf-4.8-2014.04\arm-linux-gnueabihf\libc\usr\include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/libcrash-master}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/onewirelibrary}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/rapidjson}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/linuxcs}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/libhttpserver-master/src/httpserver}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/libhttpserver-master/src}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/uuid}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/lua-5.2.1/src}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/libs/libusbcompat/include}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;D:\Elektronika\homeis\homeisworkspace\libxml2-2.8.0\include\libxml2&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;D:\Elektronika\homeis\homeisworkspace\libmicrohttpd\include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/libs/libsources/libmicrohttpd/include}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/libs/libsources/libxml2-2.8.0/include/libxml2}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/Helpers}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/Devices}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/libs/libconfig/include}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/memwatch-2.69}&quot;"/>
+								</option>
+								<inputType id="cdt.managedbuild.tool.gnu.c.compiler.input.1473465300" superClass="cdt.managedbuild.tool.gnu.c.compiler.input"/>
+							</tool>
+							<tool id="cdt.managedbuild.tool.gnu.cross.cpp.compiler.1116766111" name="Cross G++ Compiler" superClass="cdt.managedbuild.tool.gnu.cross.cpp.compiler.1350336959">
+								<option id="gnu.cpp.compiler.option.include.paths.2115299919" name="Include paths (-I)" superClass="gnu.cpp.compiler.option.include.paths" valueType="includePath">
+									<listOptionValue builtIn="false" value="&quot;C:\gcc-linaro-arm-linux-gnueabihf-4.8-2014.04\arm-linux-gnueabihf\libc\usr\include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/rapidjson}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/onewirelibrary/OneWire++}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/onewirelibrary/OneWire++/threadOW++}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/onewirelibrary/OneWire++/componentOW++}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/onewirelibrary/OneWire++/linkOW++}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/onewirelibrary/OneWire++/deviceOW++}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/onewirelibrary/OneWire++/platformOW++}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/onewirelibrary/OneWire++/portOW++}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/libcrash-master}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/onewirelibrary}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/linuxcs}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/libhttpserver-master/src/httpserver}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/libhttpserver-master/src}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/uuid}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/lua-5.2.1/src}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/libs/libusbcompat/include}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;D:\Elektronika\homeis\homeisworkspace\libxml2-2.8.0\include\libxml2&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;D:\Elektronika\homeis\homeisworkspace\libmicrohttpd\include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/libs/libsources/libmicrohttpd/include}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/libs/libsources/libxml2-2.8.0/include/libxml2}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/Helpers}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/Devices}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/libs/libconfig/include}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/memwatch-2.69}&quot;"/>
+								</option>
+								<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.1114882712" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
+							</tool>
+							<tool id="cdt.managedbuild.tool.gnu.cross.c.linker.707073098" name="Cross GCC Linker" superClass="cdt.managedbuild.tool.gnu.cross.c.linker.1903295868"/>
+							<tool id="cdt.managedbuild.tool.gnu.cross.cpp.linker.947777700" name="Cross G++ Linker" superClass="cdt.managedbuild.tool.gnu.cross.cpp.linker.764842186"/>
+							<tool id="cdt.managedbuild.tool.gnu.cross.archiver.1575213596" name="Cross GCC Archiver" superClass="cdt.managedbuild.tool.gnu.cross.archiver.1181082831"/>
+							<tool id="cdt.managedbuild.tool.gnu.cross.assembler.1076584710" name="Cross GCC Assembler" superClass="cdt.managedbuild.tool.gnu.cross.assembler.1890412817">
+								<option id="gnu.both.asm.option.include.paths.750574018" name="Include paths (-I)" superClass="gnu.both.asm.option.include.paths" valueType="includePath">
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/onewirelibrary}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/linuxcs}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/libhttpserver-master/src/httpserver}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/libhttpserver-master/src}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/uuid}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/lua-5.2.1/src}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/libs/libusbcompat/include}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;C:\gcc-linaro-arm-linux-gnueabihf-4.8-2014.04\arm-linux-gnueabihf\libc\usr\include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/libcrash-master}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/libs/libsources/libmicrohttpd/include}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/libs/libsources/libxml2-2.8.0/include/libxml2}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/src/Devices}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/src/Helpers}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/libs/libconfig/include}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dis/memwatch-2.69}&quot;"/>
+								</option>
+								<inputType id="cdt.managedbuild.tool.gnu.assembler.input.520269512" superClass="cdt.managedbuild.tool.gnu.assembler.input"/>
+							</tool>
+						</toolChain>
+					</folderInfo>
 					<folderInfo id="cdt.managedbuild.config.gnu.exe.debug.1454666133.1828639746.libs/libconfig" name="/" resourcePath="libs/libconfig">
 						<toolChain id="cdt.managedbuild.toolchain.gnu.cross.base.128662183" name="Cross GCC" superClass="cdt.managedbuild.toolchain.gnu.cross.base" unusedChildren="">
 							<option id="cdt.managedbuild.option.gnu.cross.prefix.1070758115.1029949268.2146553107" name="Prefix" superClass="cdt.managedbuild.option.gnu.cross.prefix.1070758115"/>
@@ -597,7 +789,7 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="onewirelibrary/test_temp.cpp|onewirelibrary/test_switch.cpp|onewirelibrary/test_jalousie.cpp|onewirelibrary/OneWire++/componentOW++|libs/libconfig|PushFramework/private/DemuxImpl_Win.h|PushFramework/private/SystemServiceImpl_Win.h|PushFramework/private/ListenerImpl_Win.cpp|PushFramework/private/Dispatcher_Win.cpp|PushFramework/private/StopWatchImpl_Win.h|libmicrohttpd-0.9.7/src/testzzuf|libmicrohttpd-0.9.7/src/examples|libmicrohttpd-0.9.7/src/testcurl|libhttpserver-master/test/littletest.hpp|PushFramework/private/IOQueue_Win.cpp|libhttpserver-master/examples|PushFramework/private/Utilities_Win.cpp|PushFramework/private/StopWatchImpl_Win.cpp|libs/libsources|PushFramework/private/PhysicalConnection_Win.cpp|uuid/gen_uuid_nt.c|PushFramework/private/ChannelFactory_Win.cpp|PushFramework/private/IOQueue_Win.h|libcrash-master|PushFramework/private/DemuxImpl_Win.cpp|PushFramework/private/SystemServiceImpl_Win.cpp|libhttpserver-master/test/basic.cpp|PushFramework/private/ListenerImpl_Win.h|libhttpserver-master/test" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="onewirelibrary/test_thread.cpp|onewirelibrary/test_net.cpp|onewirelibrary/test_msgLogging.cpp|onewirelibrary/test_lock.cpp|onewirelibrary/test_link.cpp|onewirelibrary/test_ds2890.cpp|onewirelibrary/test_ds2413.cpp|onewirelibrary/test_ds2406.cpp|onewirelibrary/test_ds2405.cpp|onewirelibrary/main.cpp|onewirelibrary/helper.cpp|onewirelibrary/test_temp.cpp|onewirelibrary/test_switch.cpp|onewirelibrary/test_jalousie.cpp|onewirelibrary/OneWire++/componentOW++|libs/libconfig|PushFramework/private/DemuxImpl_Win.h|PushFramework/private/SystemServiceImpl_Win.h|PushFramework/private/ListenerImpl_Win.cpp|PushFramework/private/Dispatcher_Win.cpp|PushFramework/private/StopWatchImpl_Win.h|libmicrohttpd-0.9.7/src/testzzuf|libmicrohttpd-0.9.7/src/examples|libmicrohttpd-0.9.7/src/testcurl|libhttpserver-master/test/littletest.hpp|PushFramework/private/IOQueue_Win.cpp|libhttpserver-master/examples|PushFramework/private/Utilities_Win.cpp|PushFramework/private/StopWatchImpl_Win.cpp|libs/libsources|PushFramework/private/PhysicalConnection_Win.cpp|uuid/gen_uuid_nt.c|PushFramework/private/ChannelFactory_Win.cpp|PushFramework/private/IOQueue_Win.h|libcrash-master|PushFramework/private/DemuxImpl_Win.cpp|PushFramework/private/SystemServiceImpl_Win.cpp|libhttpserver-master/test/basic.cpp|PushFramework/private/ListenerImpl_Win.h|libhttpserver-master/test" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
@@ -750,6 +942,49 @@
 				</scannerInfoProvider>
 			</profile>
 		</scannerConfigBuildInfo>
+		<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.gnu.exe.debug.1454666133.1828639746;cdt.managedbuild.config.gnu.exe.debug.1454666133.1828639746.;cdt.managedbuild.tool.gnu.cross.c.compiler.308932258;cdt.managedbuild.tool.gnu.c.compiler.input.653937125">
+			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
+			<profile id="org.eclipse.cdt.make.core.GCCStandardMakePerProjectProfile">
+				<buildOutputProvider>
+					<openAction enabled="true" filePath=""/>
+					<parser enabled="true"/>
+				</buildOutputProvider>
+				<scannerInfoProvider id="specsFile">
+					<runAction arguments="-E -P -v -dD ${plugin_state_location}/${specs_file}" command="gcc" useDefault="true"/>
+					<parser enabled="true"/>
+				</scannerInfoProvider>
+			</profile>
+			<profile id="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfile">
+				<buildOutputProvider>
+					<openAction enabled="true" filePath=""/>
+					<parser enabled="true"/>
+				</buildOutputProvider>
+				<scannerInfoProvider id="specsFile">
+					<runAction arguments="-E -P -v -dD ${plugin_state_location}/${specs_file}" command="gcc" useDefault="true"/>
+					<parser enabled="true"/>
+				</scannerInfoProvider>
+			</profile>
+			<profile id="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfileCPP">
+				<buildOutputProvider>
+					<openAction enabled="true" filePath=""/>
+					<parser enabled="true"/>
+				</buildOutputProvider>
+				<scannerInfoProvider id="specsFile">
+					<runAction arguments="-E -P -v -dD ${plugin_state_location}/specs.cpp" command="g++" useDefault="true"/>
+					<parser enabled="true"/>
+				</scannerInfoProvider>
+			</profile>
+			<profile id="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfileC">
+				<buildOutputProvider>
+					<openAction enabled="true" filePath=""/>
+					<parser enabled="true"/>
+				</buildOutputProvider>
+				<scannerInfoProvider id="specsFile">
+					<runAction arguments="-E -P -v -dD ${plugin_state_location}/specs.c" command="gcc" useDefault="true"/>
+					<parser enabled="true"/>
+				</scannerInfoProvider>
+			</profile>
+		</scannerConfigBuildInfo>
 		<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.gnu.exe.debug.1454666133;cdt.managedbuild.config.gnu.exe.debug.1454666133.;cdt.managedbuild.tool.gnu.cpp.compiler.exe.debug.537593220;cdt.managedbuild.tool.gnu.cpp.compiler.input.1651025650">
 			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfileCPP"/>
 			<profile id="org.eclipse.cdt.make.core.GCCStandardMakePerProjectProfile">
@@ -794,6 +1029,49 @@
 			</profile>
 		</scannerConfigBuildInfo>
 		<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.gnu.exe.debug.1454666133;cdt.managedbuild.config.gnu.exe.debug.1454666133.;cdt.managedbuild.tool.gnu.cross.c.compiler.1320566611;cdt.managedbuild.tool.gnu.c.compiler.input.1680953258">
+			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
+			<profile id="org.eclipse.cdt.make.core.GCCStandardMakePerProjectProfile">
+				<buildOutputProvider>
+					<openAction enabled="true" filePath=""/>
+					<parser enabled="true"/>
+				</buildOutputProvider>
+				<scannerInfoProvider id="specsFile">
+					<runAction arguments="-E -P -v -dD ${plugin_state_location}/${specs_file}" command="gcc" useDefault="true"/>
+					<parser enabled="true"/>
+				</scannerInfoProvider>
+			</profile>
+			<profile id="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfile">
+				<buildOutputProvider>
+					<openAction enabled="true" filePath=""/>
+					<parser enabled="true"/>
+				</buildOutputProvider>
+				<scannerInfoProvider id="specsFile">
+					<runAction arguments="-E -P -v -dD ${plugin_state_location}/${specs_file}" command="gcc" useDefault="true"/>
+					<parser enabled="true"/>
+				</scannerInfoProvider>
+			</profile>
+			<profile id="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfileCPP">
+				<buildOutputProvider>
+					<openAction enabled="true" filePath=""/>
+					<parser enabled="true"/>
+				</buildOutputProvider>
+				<scannerInfoProvider id="specsFile">
+					<runAction arguments="-E -P -v -dD ${plugin_state_location}/specs.cpp" command="g++" useDefault="true"/>
+					<parser enabled="true"/>
+				</scannerInfoProvider>
+			</profile>
+			<profile id="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfileC">
+				<buildOutputProvider>
+					<openAction enabled="true" filePath=""/>
+					<parser enabled="true"/>
+				</buildOutputProvider>
+				<scannerInfoProvider id="specsFile">
+					<runAction arguments="-E -P -v -dD ${plugin_state_location}/specs.c" command="gcc" useDefault="true"/>
+					<parser enabled="true"/>
+				</scannerInfoProvider>
+			</profile>
+		</scannerConfigBuildInfo>
+		<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.gnu.exe.debug.1454666133.1828639746;cdt.managedbuild.config.gnu.exe.debug.1454666133.1828639746.;cdt.managedbuild.tool.gnu.cross.cpp.compiler.1350336959;cdt.managedbuild.tool.gnu.cpp.compiler.input.1640480606">
 			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
 			<profile id="org.eclipse.cdt.make.core.GCCStandardMakePerProjectProfile">
 				<buildOutputProvider>

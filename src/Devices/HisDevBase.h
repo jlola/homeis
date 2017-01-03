@@ -63,10 +63,13 @@ protected:
 	//const xmlChar* GetNodeNameInternal();
 	bool GetError();
 	void SetError(bool perror);
-	void SetChanged();
+
 
 
 public:
+
+	void SetChanged();
+
 	HisDevBase();
 	virtual ~HisDevBase();
 	/*

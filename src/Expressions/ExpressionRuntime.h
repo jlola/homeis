@@ -15,6 +15,7 @@
 #include "LOW_thread_Factory.h"
 #include "IExpression.h"
 #include "HisDevBase.h"
+#include <queue>          // std::queue
 
 using namespace std;
 
@@ -24,7 +25,7 @@ class ExpressionRuntime
 	pthread_t thread;
 	bool running;
 	vector<IExpression*> expressions;
-	vector<IExpression*> queue;
+	queue<IExpression*> exqueue;
 	LOW_thread_mutex  *__expressionEvaluateMutex;  /**< Mutex for exclusive access. */
 	static void* ThreadFunction(void* obj);
 public:

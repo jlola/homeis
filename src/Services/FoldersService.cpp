@@ -67,7 +67,7 @@ void FoldersService::render_GET(const http_request& req, http_response** res)
 		STACK_SECTION("/api/folder");
 		if (folder!=NULL)
 		{
-			FolderToJson(root, folder,respjsondoc);
+			FolderToJson(root,folder->GetParent(), folder,respjsondoc);
 		}
 	}
 
@@ -75,12 +75,12 @@ void FoldersService::render_GET(const http_request& req, http_response** res)
 	StringBuffer buffer;
 	PrettyWriter<StringBuffer> wr(buffer);
 	respjsondoc.Accept(wr);
-	std::string json = buffer.GetString();
+	const std::string json(buffer.GetString());
 	//*res = new http_string_response(json, 200, "application/json");
 	*res = new http_response(http_response_builder(json, 200,"application/json").string_response());
 }
 
-void FoldersService::FolderToJson(HisDevFolderRoot* root, HisBase *pFolder, Document & respjsondoc)
+void FoldersService::FolderToJson(HisDevFolderRoot* root,HisBase *pParentFolder, HisBase *pFolder, Document & respjsondoc)
 {
 	STACK
 
@@ -93,6 +93,16 @@ void FoldersService::FolderToJson(HisDevFolderRoot* root, HisBase *pFolder, Docu
 	strvalue = (const char*)pFolder->GetNodeName();
 	jsonvalue.SetString(strvalue.c_str(),strvalue.length(),respjsondoc.GetAllocator());
 	d.AddMember("NodeName",jsonvalue, respjsondoc.GetAllocator());
+
+	if (pParentFolder!=NULL)
+	{
+		strvalue = pParentFolder->GetRecordId().ToString();
+		jsonvalue.SetString(strvalue.c_str(),strvalue.length(),respjsondoc.GetAllocator());
+		d.AddMember("ParentId",jsonvalue, respjsondoc.GetAllocator());
+		strvalue = pParentFolder->GetName();
+		jsonvalue.SetString(strvalue.c_str(),strvalue.length(),respjsondoc.GetAllocator());
+		d.AddMember("ParentName",jsonvalue, respjsondoc.GetAllocator());
+	}
 
 	strvalue = pFolder->GetRecordId().ToString();
 	jsonvalue.SetString(strvalue.c_str(),strvalue.length(),respjsondoc.GetAllocator());
@@ -125,7 +135,7 @@ void FoldersService::FoldersToJson(HisDevFolderRoot* root,HisDevFolder *parentFo
 		LuaExpression* pExpression = dynamic_cast<LuaExpression*>(folders[i]);
 
 		if (pFolder!=NULL)
-			FolderToJson(root,pFolder,respjsondoc);
+			FolderToJson(root,parentFolder,pFolder,respjsondoc);
 		else if (!foldersOnly)
 		{
 			if (pValueId!=NULL)
@@ -134,13 +144,13 @@ void FoldersService::FoldersToJson(HisDevFolderRoot* root,HisDevFolder *parentFo
 				HisDevValueBase* devValue = devices.FindValue(pValueId->GetDeviceValueId());
 				if (devValue!=NULL)
 				{
-					OneWireDevicesService::DevValueToJson(d,pValueId,devValue,respjsondoc);
+					DevicesService::DevValueToJson(d,pValueId,devValue,respjsondoc);
 					respjsondoc.PushBack(d, respjsondoc.GetAllocator());
 				}
 			}
 			else if (pExpression!=NULL)
 			{
-				ExpressionService::ExpressionToJson(pExpression, respjsondoc);
+				ExpressionService::ExpressionToJson(pExpression->GetParent() ,pExpression, respjsondoc);
 			}
 		}
 	}

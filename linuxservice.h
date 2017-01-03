@@ -8,6 +8,7 @@
 #ifndef LINUXSERVICE_H_
 #define LINUXSERVICE_H_
 
+void daemonize(const char *pidfile);
 void daemonize();
 void redirect_stdout(const char* logfile_pathname);
 

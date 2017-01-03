@@ -12,15 +12,15 @@
 
 #define NODE_NAME_LCD "DEV_LCD"
 
-#define LIGHTENABLED 0
-#define ID_ROW1 1
-#define ID_ROW1ADDR 2
-#define ID_ROW2 3
-#define ID_ROW2ADDR 4
-#define ID_ROW3 5
-#define ID_ROW3ADDR 6
-#define ID_ROW4 7
-#define ID_ROW4ADDR 8
+#define LIGHTENABLED 	0
+#define ID_ROW1 		1
+#define ID_ROW1ADDR 	2
+#define ID_ROW2 		3
+#define ID_ROW2ADDR 	4
+#define ID_ROW3 		5
+#define ID_ROW3ADDR 	6
+#define ID_ROW4 		7
+#define ID_ROW4ADDR 	8
 #define ID_INPUT1 		9
 #define ID_INPUT2 		10
 #define ID_INPUT3 		11

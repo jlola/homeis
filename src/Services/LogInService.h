@@ -13,7 +13,7 @@
 using namespace std;
 using namespace httpserver;
 
-class LoginService : public http_resource<LoginService>
+class LoginService : public http_resource
 {
 public:
 	LoginService(void);

@@ -14,6 +14,7 @@ HisBase::HisBase()
 	isloaded = false;
 	node = NULL;
 	parent = NULL;
+	name = "-------";
 }
 
 const xmlChar* HisBase::GetNodeName()

@@ -1,6 +1,8 @@
 #ifndef POPPY_H
 #define POPPY_H
 
+#include <iostream>
+
 //Set this to 0 to disable the whole Poppy, both for stack tracing and performance measurement
 #define STACK_TRACING_ENABLED 1
 
@@ -27,7 +29,7 @@
 #endif
 
 //a general-purpose macro for converting anything to string.
-#define toString(x) dynamic_cast<ostringstream&>(ostringstream() << std::dec << x).str()
+#define toString(x) dynamic_cast<ostringstream&>(ostringstream() << std::dec << x)
 
 using namespace std;
 
@@ -366,24 +368,27 @@ class Stack{
 };
 
 //Represents a scope in the code - everything between a { and } bracket pair in a function or control block.
-class Scope{
+class Scope {
 	
 	//the Frame associated with this Scope object. The Frame may be returned to the reuse cache (i.e. pop)
 	//before this Stack object is destroyed if it is a Section-type frame
 	private: Frame* frame;
 	
-	private: inline Frame* GetReusableFrame(Scope* scope, const string& text, FrameType type
+	private:
+	inline Frame* GetReusableFrame(Scope* scope, const string& text, FrameType type
 		#if PERFORMANCE_COUNTING_ENABLED
 			, double startTime, CallTree* aCallTree
 		#endif
-		){
+		)
+	{
+		Stack* stack = Stack::Get();
 		Frame* reusableFrame;
-		if(Stack::Get()->frameCache.empty()){
+		if(stack->frameCache.empty()){
 			reusableFrame = new Frame();
 		}
 		else{
-			reusableFrame = Stack::Get()->frameCache.back();
-			Stack::Get()->frameCache.pop_back();
+			reusableFrame = stack->frameCache.back();
+			stack->frameCache.pop_back();
 		}
 		reusableFrame->name = text;
 		reusableFrame->type = type;
@@ -397,10 +402,11 @@ class Scope{
 	
 	private: inline void ReturnTopFrameToCache(){
 		//a Section frame might already be popped and cached if another Section has been pushed to the stack
-		Frame* frameToReturn = Stack::Get()->trace.back();
-		Stack::Get()->trace.pop_back();
+		Stack* stack = Stack::Get();
+		Frame* frameToReturn = stack->trace.back();
+		stack->trace.pop_back();
 		frameToReturn->scope = NULL; //don't risk a dangling pointer
-		Stack::Get()->frameCache.push_back(frameToReturn);
+		stack->frameCache.push_back(frameToReturn);
 	}
 	private: inline void ReturnFrameToCache(list<Frame*>::reverse_iterator& frameIter){
 		//only normal forward iterators work with list.erase. Reverse iterators 
@@ -408,25 +414,43 @@ class Scope{
 		//the element after the reverse iterator's)
 		Frame* frameToReturn = *frameIter;
 		++frameIter;
-		Stack::Get()->trace.erase(frameIter.base());
+		Stack* stack = Stack::Get();
+		stack->trace.erase(frameIter.base());
 		frameToReturn->scope = NULL; //don't risk a dangling pointer
-		Stack::Get()->frameCache.push_back(frameToReturn);
+		stack->frameCache.push_back(frameToReturn);
 	}
 	
+	//extracts the filename from a path
+	inline static string extractFileName(const string& path) {
+		string str(path);
+		size_t slashPos = str.find_last_of("/\\");
+		if(slashPos != string::npos){
+			return str.substr(slashPos + 1);
+		}
+		else{
+			return str;
+		}
+	}
 	
-	public: Scope(const string& text, FrameType type){
+	public:
+	Scope(const string& text, FrameType type)
+	{
+		Init(text,type);
+	}
 
+	void Init(const string& text, FrameType type){
+		Stack* stack = Stack::Get();
 		//get the exit marker, if any, out of the way
-		if(Stack::Get()->isLastFrameExitMarker){
+		if(stack->isLastFrameExitMarker){
 			ReturnTopFrameToCache();
-			Stack::Get()->isLastFrameExitMarker = false;
+			stack->isLastFrameExitMarker = false;
 		}
 		
 		if(type == Section){
 			//search for the last Section in the stack, if any, in the current
 			//Function or Block and delete it. Preserve any Values you meet along the way
-			list<Frame*>::reverse_iterator frameIter = Stack::Get()->trace.rbegin();
-			while(frameIter != Stack::Get()->trace.rend() &&
+			list<Frame*>::reverse_iterator frameIter = stack->trace.rbegin();
+			while(frameIter != stack->trace.rend() &&
 					(*frameIter)->type != Function &&
 					(*frameIter)->type != Block){
 				
@@ -439,7 +463,7 @@ class Scope{
 						(*frameIter)->callTree->IncrementTime(elapsedTime);
 						//sever the link from the scope to frame, as the frame will already be recycled when the scope is destroyed
 
-						Stack::Get()->currentCall = Stack::Get()->currentCall->GetParent();
+						stack->currentCall = Stack::Get()->currentCall->GetParent();
 					#endif
 					
 					(*frameIter)->scope->frame = NULL;
@@ -450,6 +474,7 @@ class Scope{
 			}
 		}
 		
+
 		#if PERFORMANCE_COUNTING_ENABLED
 			double startTime;
 			//Value frames don't need to measure performance
@@ -459,11 +484,11 @@ class Scope{
 			}
 			else{
 				startTime = CurrentTime();
-				if(Stack::Get()->currentCall){
-					Stack::Get()->currentCall = Stack::Get()->currentCall->GetChild(text);
+				if(stack->currentCall){
+					stack->currentCall = stack->currentCall->GetChild(text);
 				}
 				else{
-					Stack::Get()->currentCall = CallTree::GetRoot(text);
+					stack->currentCall = CallTree::GetRoot(text);
 				}
 				//progress the time intervals on each new scope
 				CallTree::Update(startTime);
@@ -472,15 +497,28 @@ class Scope{
 		
 		frame = GetReusableFrame(this, text, type
 		#if PERFORMANCE_COUNTING_ENABLED
-			, startTime, Stack::Get()->currentCall
+			, startTime, stack->currentCall
 		#endif
 		);
 		
 		//place the new frame onto the stack
-		Stack::Get()->trace.push_back(frame);
+		stack->trace.push_back(frame);
 	}
 	
+	//(string("function ") + __FUNCTION__ + " at " + extractFileName(__FILE__) + ":" + std::to_string(__LINE__), Function);
+	Scope(const char* name,const char* funcName,const char* file,int line, FrameType type )
+	{
+		const string filename = extractFileName(file);
+		string s;
+		//s += name + string(funcName) + at + filename + colon + std::to_string(line);
+		std::ostringstream str;
+		str << name << funcName << " at " << filename << ":" << line;
+		s = str.str();
+		Init(s,type);
+	}
+
 	public: virtual ~Scope(){
+		Stack* stack = Stack::Get();
 		//std::uncaught_exception returns true if there is an ongoing propagating exception that is unwinding the call stack.
 		//Do not destroy the gathered stack in that case as we will need to print it
 		if(!std::uncaught_exception()){
@@ -493,18 +531,18 @@ class Scope{
 					if(frame->type != Value){
 						double elapsedTime = CurrentTime() - frame->startTime;
 						frame->callTree->IncrementTime(elapsedTime);
-						CallTree* parent = Stack::Get()->currentCall->GetParent();
-						Stack::Get()->currentCall = parent;
+						CallTree* parent = stack->currentCall->GetParent();
+						stack->currentCall = parent;
 					}
 				#endif
 				
 				//when exiting several nested scopes in a row, clear the previous exit marker
-				if(Stack::Get()->isLastFrameExitMarker){
+				if(stack->isLastFrameExitMarker){
 					ReturnTopFrameToCache();
 				}
 		
 				//mark that we have succesfully exited the current top frame in the stack
-				Stack::Get()->isLastFrameExitMarker = true;
+				stack->isLastFrameExitMarker = true;
 			}
 		}
 	}
@@ -515,22 +553,13 @@ class Scope{
 #define CONCATENATE_DETAIL(x, y) x##y 
 #define CONCAT(x, y) CONCATENATE_DETAIL(x, y)
 
-//extracts the filename from a path
-static string extractFileName(const string& path) {
-	string str(path);
-	size_t slashPos = str.find_last_of("/\\");
-	if(slashPos != string::npos){
-		return str.substr(slashPos + 1);
-	}
-	else{
-		return str;
-	}
-}
+
 
 #if STACK_TRACING_ENABLED
 	//Marks a function in code to be added to the stack trace.
 	//__FUNCTION__ is a GCC compiler-specific macro. If it doesn't work on other compilers, try __func__ and __PRETTY_FUNCTION__
-	#define STACK Scope a(string("function ") + __FUNCTION__ + " at " + extractFileName(__FILE__) + ":" + toString(__LINE__), Function); 
+	//#define STACK Scope a(string("function ") + __FUNCTION__ + " at " + extractFileName(__FILE__) + ":" + toString(__LINE__), Function);
+	#define STACK Scope a("function ", __FUNCTION__ , __FILE__, __LINE__, Function);
 
 	//Marks nested blocks, e.g. loops and "if"s , which you can also name. Several can be used inside a single block too,
 	//because each will have a unique name. You can have multiple blocks in a single scope and they will stack one on top of the other, unlike sections.

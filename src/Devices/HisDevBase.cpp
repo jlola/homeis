@@ -82,6 +82,14 @@ bool HisDevBase::GetError()
 void HisDevBase::SetError(bool perror)
 {
 	error = perror;
+	if (error)
+	{
+		vector<HisDevValueBase*> values = GetItems<HisDevValueBase>();
+		for(size_t i = 0; i< values.size(); i++)
+		{
+			values[i]->SetError();
+		}
+	}
 }
 
 void HisDevBase::NeedRefresh()
@@ -141,6 +149,10 @@ void HisDevBase::Refresh(bool alarm)
 			string msg = "Error in %s name: %s | error: %s\nStack trace: " + Stack::GetTraceString();
 			CLogger::Error( msg.c_str(), GetNodeName(), GetName().c_str(), ex.message.c_str());
 			OnError();
+		}
+		catch(...)
+		{
+			CLogger::Error("HisDevBase::Refresh | Unexpected error");
 		}
 	}
 }

@@ -18,7 +18,7 @@
 #include "Helpers/StringBuilder.h"
 #include "HisDevValue.h"
 
-HisDevValueBase::HisDevValueBase(std::string pdevaddr, EHisDevDirection direct, EDataType pdatatype,int ppinNumber)
+HisDevValueBase::HisDevValueBase(std::string pdevaddr, EHisDevDirection direct, EDataType pdatatype,string ppinNumber)
 {
 	pinNumber = ppinNumber;
 	direction = direct;
@@ -31,7 +31,7 @@ HisDevValueBase::HisDevValueBase(std::string pdevaddr, EHisDevDirection direct, 
 HisDevValueBase::HisDevValueBase(xmlNodePtr pnode) :
 	HisBase::HisBase(pnode)
 {
-	pinNumber = 0;
+	pinNumber = "";
 	direction = EHisDevDirection::Read;
 	datatype = EDataType::Int;
 	deviceError = true;
@@ -57,6 +57,11 @@ HisDevValueBase::HisDevValueBase(HisDevValueBase & src)
 	datatype = src.datatype;
 	deviceError = src.deviceError;
 	allowForceOutput = false;
+}
+
+void HisDevValueBase::SetError()
+{
+	this->deviceError = true;
 }
 
 HisDevValueBase* HisDevValueBase::Create(xmlNodePtr pNode)
@@ -91,13 +96,13 @@ HisDevValueBase* HisDevValueBase::Create(xmlNodePtr pNode)
 
 void HisDevValueBase::DoInternalSave(xmlNodePtr & node)
 {
-	STACK
 	HisBase::DoInternalSave(node);
 
 	if (node != NULL)
 	{
 		//xmlSetProp(node,PAR_PINNAME,(xmlChar*)pinname.c_str());
-		xmlSetProp(node,PAR_PINNO,(xmlChar*)Converter::itos(pinNumber).c_str());
+		xmlSetProp(node,PAR_LOADTYPE,(xmlChar*)loadtype.c_str());
+		xmlSetProp(node,PAR_PINNO,(xmlChar*)pinNumber.c_str());
 		xmlSetProp(node,PAR_VALUE,(xmlChar*)GetStringValue().c_str());
 		xmlSetProp(node,PAR_DATATYPE,(xmlChar*)Converter::itos(datatype).c_str());
 		xmlSetProp(node,PAR_DEV_ADDR,(xmlChar*)devaddr.c_str());
@@ -122,6 +127,12 @@ void HisDevValueBase::DoInternalLoad(xmlNodePtr & node)
 			addressName = GetName();
 		xmlFree(prop);
 	}
+	if (xmlHasProp(node,PAR_LOADTYPE))
+		{
+			prop = xmlGetProp(node,PAR_LOADTYPE);
+			loadtype = (char*)prop;
+			xmlFree(prop);
+		}
 	if (xmlHasProp(node,PAR_UNIT))
 	{
 		prop = xmlGetProp(node,PAR_UNIT);
@@ -131,7 +142,7 @@ void HisDevValueBase::DoInternalLoad(xmlNodePtr & node)
 	if (xmlHasProp(node,PAR_PINNO))
 	{
 		prop = xmlGetProp(node,PAR_PINNO);
-		pinNumber = Converter::stoi((char*)prop);
+		pinNumber = (char*)prop;
 		xmlFree(prop);
 	}
 	if (xmlHasProp(node,PAR_DATATYPE))
@@ -206,6 +217,17 @@ void HisDevValueBase::UnRegister(void* owner)
 	delegatesMap.erase(owner);
 }
 
+std::string HisDevValueBase::GetLoadType()
+{
+	return this->loadtype;
+}
+
+void HisDevValueBase::SetLoadType(std::string loadtype)
+{
+	this->loadtype = loadtype;
+}
+
+
 void HisDevValueBase::SetAddressName(string pAddressName)
 {
 	addressName = pAddressName;
@@ -234,7 +256,7 @@ EDataType HisDevValueBase::GetDataType()
 	return datatype;
 }
 
-uint16_t HisDevValueBase::GetPinNumber()
+string HisDevValueBase::GetPinNumber()
 {
 	return pinNumber;
 }

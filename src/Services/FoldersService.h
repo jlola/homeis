@@ -8,19 +8,19 @@
 #ifndef FOLDERSSERVICE_H_
 #define FOLDERSSERVICE_H_
 
+#include <Services/DevicesService.h>
 #include "document.h"		// rapidjson's DOM-style API
 #include "prettywriter.h"
 #include "stringbuffer.h"
 #include "filestream.h"	// wrapper of C stream for prettywriter as output
 #include "Folder/HisDevFolder.h"
 #include "Folder/HisDevFolderRoot.h"
-#include "OneWireDevicesService.h"
 
 using namespace std;
 using namespace httpserver;
 using namespace rapidjson;
 
-class FoldersService : public http_resource<FoldersService>
+class FoldersService : public http_resource
 {
 	HisDevFolderRoot* root;
 	HisDevices & devices;
@@ -34,7 +34,7 @@ public:
 	void FoldersToJson(HisDevFolderRoot* root, HisDevFolder *pFolder, Document & respjsondoc, bool foldersOnly);
 	bool AddValueIdToFolder(string strFolderId, string strJson);
 	string DeleteDevValue(string strDevValueRecordId);
-	static void FolderToJson(HisDevFolderRoot* root,HisBase *pFolder, Document & respjsondoc);
+	static void FolderToJson(HisDevFolderRoot* root,HisBase *pParentFolder, HisBase *pFolder, Document & respjsondoc);
 	bool CreateFolder(string strJson);
 	bool UpdateFolder(string strid, string strJson);
 };

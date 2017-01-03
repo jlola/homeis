@@ -13,6 +13,7 @@
 #include "Common/HisLock.h"
 #include <queue>          // std::queue
 #include "Devices/HisDevBase.h"
+#include "Modbus/ModbusManager.h"
 #include "Expressions/ExpressionRuntime.h"
 
 using namespace std;
@@ -24,11 +25,13 @@ class HisDevices {
 	std::vector<HisDevBase*> devices;
 	//LOW_thread_mutex  *__expressionMutex;  /**< Mutex for exclusive access. */
 	LOW_thread_mutex  *__devRefreshMutex;  /**< Mutex for exclusive access. */
-	vector<HisDevBase*> queue;
+	queue<HisDevBase*> devqueue;
 	OnRefreshDelegate onRefreshdelegate;
 	ExpressionRuntime* expressionRuntime;
+	ModbusManager* modbusManager;
 public:
-	HisDevices(string fileName,LOW_network *network,ExpressionRuntime* pExpressionRuntime);
+	HisDevices(string fileName,LOW_network *network,ExpressionRuntime* pExpressionRuntime
+			,ModbusManager* modbusManager);
 	int Find(CUUID RecordId);
 	size_t Size();
 	void AddScanned();
@@ -44,6 +47,7 @@ public:
 	//long GetNextDelay();
 	//long GetNextDelayTimeMS();
 	void AddToRefreshQueue(HisDevBase* hisDevBase);
+	int FindModbusDev(int addressId);
 	void Save();
 	void Load();
 	void Delete(uint16_t index);

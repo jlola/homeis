@@ -30,6 +30,7 @@
 #define PAR_DEV_ADDR BAD_CAST "devaddr"
 #define PAR_DIRECTION BAD_CAST "direction"
 #define PAR_UNIT BAD_CAST "unit"
+#define PAR_LOADTYPE BAD_CAST	"loadtype"
 #define PAR_ADDRESSNAME BAD_CAST "addressname"
 
 #ifdef SRUTIL_DELEGATE_PREFERRED_SYNTAX
@@ -49,10 +50,11 @@ typedef srutil::delegate<void (ValueChangedEventArgs)> OnEditDelegate;
 class HisDevValueBase : public HisBase
 {
 	string addressName;
-	uint16_t pinNumber;
+	string pinNumber;
 	EHisDevDirection direction;
 	EDataType datatype;
 	OnValueChangedDelegate ValueChanged;
+	std::string loadtype;
 	map<void*,OnValueChangedDelegate> delegatesMap;
 protected:
 	std::string unit;
@@ -66,7 +68,7 @@ protected:
 	virtual const xmlChar* GetNodeNameInternal();
 public:	WriteToDeviceRequestDelegate delegateWrite;
 public:
-	HisDevValueBase(std::string pdevname, EHisDevDirection direct, EDataType pdatatype,int ppinNumber);
+	HisDevValueBase(std::string pdevname, EHisDevDirection direct, EDataType pdatatype,string ppinNumber);
 
 	HisDevValueBase(xmlNodePtr pnode);
 
@@ -78,13 +80,17 @@ public:
 
 	void UnRegister(void* owner);
 
+	std::string GetLoadType();
+
+	void SetLoadType(std::string loadtype);
+
 	std::string GetAddress();
 
 	EHisDevDirection GetDirection();
 
 	EDataType GetDataType();
 
-	uint16_t GetPinNumber();
+	string GetPinNumber();
 
 	std::string GetAddressName();
 
@@ -110,6 +116,8 @@ public:
 
 	void SetForceOutput(bool force);
 
+	void SetError();
+
 	static HisDevValueBase* Create(xmlNodePtr pNode);
 };
 
@@ -129,8 +137,19 @@ private:
 
 	T oldValue;
 public:
-	HisDevValue(std::string addr, EHisDevDirection direct, EDataType pdatatype,int pPinNumber,T defaultValue) :
+	/*
+	 * addr - addres of device
+	 * dircet - direction
+	 * pinnumer - unicat number of pin
+	 * */
+	HisDevValue(std::string addr, EHisDevDirection direct, EDataType pdatatype,string pPinNumber,T defaultValue) :
 		HisDevValueBase::HisDevValueBase(addr, direct, pdatatype,pPinNumber),value(defaultValue),oldValue(defaultValue)
+	{
+
+	}
+
+	HisDevValue(std::string addr, EHisDevDirection direct, EDataType pdatatype,int pPinNumber,T defaultValue) :
+		HisDevValue::HisDevValue(addr, direct, pdatatype, Converter::itos(pPinNumber),defaultValue)
 	{
 
 	}
