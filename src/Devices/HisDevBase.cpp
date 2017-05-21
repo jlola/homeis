@@ -66,6 +66,7 @@ void HisDevBase::DoInternalSave(xmlNodePtr & node)
 	HisBase::DoInternalSave(node);
 
 	xmlSetProp(node,PROP_SCANPERIOD,(const xmlChar*)Converter::itos(scanPeriodMs,10).c_str());
+	xmlSetProp(node,PROP_ENABLED,(const xmlChar*)(enabled?"1":"0"));
 }
 
 timeval HisDevBase::ComputeNextScanTime(timeval pLastScanTime)
@@ -124,18 +125,25 @@ void HisDevBase::RemoveExpression(IExpression* pExpression)
 		expressions.erase(position);
 }
 
+
+HisBase* HisDevBase::Remove(CUUID puuid)
+{
+	return HisBase::Remove(puuid);
+}
+
 void HisDevBase::Refresh(bool alarm)
 {
 	STACK
 
-	//HisLock lock(refreshmutex);
+	HisLock lock(refreshmutex);
+
 
 	uint64_t curTimeUs = HisDateTime::timeval_to_usec(HisDateTime::Now());
-
 	if (curTimeUs >= nextScanTime || needRefresh || alarm)
 	{
 		needRefresh = false;
-		nextScanTime =curTimeUs + scanPeriodMs*1000;
+		SetNextScanTime(this->scanPeriodMs);
+
 		try
 		{
 			DoInternalRefresh(alarm);
@@ -170,11 +178,28 @@ void HisDevBase::DoInternalLoad(xmlNodePtr & node)
 		scanPeriodMs = Converter::stoui(strScanPeriod,10);
 		xmlFree(prop);
 	}
+	if (xmlHasProp(node,PROP_ENABLED))
+	{
+		prop = xmlGetProp(node,PROP_ENABLED);
+		string strEnabled = (const char*)prop;
+		enabled = strEnabled=="1" ? true : false;
+		xmlFree(prop);
+	}
+	else
+	{
+		enabled = true;
+	}
 }
 
 uint32_t HisDevBase::GetScanPeriod()
 {
 	return scanPeriodMs;
+}
+
+void HisDevBase::SetNextScanTime(uint64_t period)
+{
+	uint64_t curTimeUs = HisDateTime::timeval_to_usec(HisDateTime::Now());
+	nextScanTime =curTimeUs + period*1000;
 }
 
 //period ms
@@ -191,7 +216,7 @@ vector<HisDevValueBase*> HisDevBase::GetValues()
 
 bool HisDevBase::IsEnabled()
 {
-	return true;
+	return enabled;
 }
 
 void HisDevBase::Enable(bool penabled)

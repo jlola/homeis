@@ -1,10 +1,12 @@
 /*
  * HisDevFolderRoot.cpp
+
  *
  *  Created on: May 24, 2013
  *      Author: root
  */
 
+#include "Helpers/logger.h"
 #include "HisDevFolderRoot.h"
 
 
@@ -103,7 +105,13 @@ void HisDevFolderRoot::Save()
 {
 	folder->Save();
 
-	xmlSaveFormatFileEnc( fileName.c_str(), doc,"UTF-8", 1);
+	int result = xmlSaveFormatFileEnc( fileName.c_str(), doc,"UTF-8", 1);
+
+	if (result<0)
+	{
+		CLogger::Error("Error while writing folders.xml");
+		throw std::domain_error("Error while writing folders.xml");
+	}
 
 //	FILE* f = fopen(fileName.c_str(),"w");
 //	if (f != NULL)

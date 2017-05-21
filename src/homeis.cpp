@@ -6,8 +6,6 @@
  */
 
 #include <unistd.h>
-
-//#include "MemoryTrace.hpp"
 #include "HisDevRunTime.h"
 #include "HomeIsServer.h"
 #include "logger.h"
@@ -19,7 +17,6 @@
 #include "Common/CUUID.h"
 #include "Devices/Folder/HisDevFolder.h"
 #include "Devices/Folder/HisDevFolderRoot.h"
-
 
 //#include "homeis/Expressions/LuaExpression.h"
 #include "death_handler.h"
@@ -48,48 +45,10 @@ extern "C" {
 #include <fcntl.h>
 #include <termios.h>
 #include <string.h>
-//#include "HomeIsConfig.h"
-
-int SendTTy()
-{
-	int fd; // file descriptor
-	int flags; // communication flags
-	int rsl_len; // result size
-	char message[100]; // message to send
-	char result; // result to read
-
-	flags = O_RDWR | O_NOCTTY; // Read and write, and make the job control for portability
-	if ((fd = open("/dev/ttyUSB0", flags)) == -1 ) {
-	  printf("Error while opening\n"); // Just if you want user interface error control
-	  return -1;
-	}
-	// In this point your communication is already estabilished, lets send out something
-	strcpy(message, "Hellofsdaf");
-	message[0] = 2;
-	message[1] = 3;
-	if (rsl_len = write(fd, message, strlen(message)) < 0 ) {
-	  printf("Error while sending message\n"); // Again just in case
-	  return -2;
-	}
-	if (rsl_len = read(fd, &result, sizeof(result)) < 0 ) {
-	  printf("Error while reading return\n");
-	  return -3;
-	}
-	close(fd);
-
-	return 0;
-}
-
-//using namespace leaktracer;
 
 int main(int argc, char **argv)
 {
-//	MemoryTrace::GetInstance().startMonitoringAllThreads();
-
-//	for(int i=0;i<10;i++)
-//		SendTTy();
 	Debug::DeathHandler dh;
-
 	bool dodaemonize = true;
 	bool printversion = false;
 
@@ -105,6 +64,11 @@ int main(int argc, char **argv)
 			{
 				printversion = true;
 			}
+		}
+		if (dodaemonize && !printversion)
+		{
+			printf("Homeis was run with wrong arguments");
+			exit(1);
 		}
 	}
 
@@ -131,12 +95,10 @@ Home information system %d.%d.%8d\n\
 	CLogger::Info(infomsg,VERSION_MAIN,VERSION_SEC,VERSION_BUILD);
 
 	HomeIsConfig config("homeis.cfg");
-
 	vector<SSerPortConfig> serports = config.GetSerialPorts();
 
-
 	HomeIsServer server(serports,config.GetServerPort());
-	server.Start();
+	server.Start(true);
 	server.Stop();
 
 	exit(EXIT_SUCCESS);

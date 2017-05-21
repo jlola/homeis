@@ -41,7 +41,7 @@ void ModbusDeviceService::render_GET(const http_request& req, http_response** re
 	int address = Converter::stoui(strid,10);
 
 	int index = devices->FindModbusDev(address);
-	if (index>0)
+	if (index>=0)
 	{
 		HisDevModbus* dev = reinterpret_cast<HisDevModbus*>(devices->operator [](index));
 		if (dev!=NULL)
@@ -49,14 +49,6 @@ void ModbusDeviceService::render_GET(const http_request& req, http_response** re
 			dev->Scan(true);
 			devices->Save();
 		}
-
-//		document.SetObject();
-//		jsonvalue.SetObject();
-//		jsonvalue.SetString("Error",document.GetAllocator());
-//		document.AddMember("Result",jsonvalue,document.GetAllocator());
-//		string message = StringBuilder::Format("Device address %d already exists",address);
-//		jsonvalue.SetString(message.c_str(),document.GetAllocator());
-//		document.AddMember("Message",jsonvalue,document.GetAllocator());
 
 		document.SetObject();
 		jsonvalue.SetString("Success",document.GetAllocator());

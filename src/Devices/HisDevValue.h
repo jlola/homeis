@@ -182,7 +182,7 @@ public:
 	 */
 	void SetValue(T pValue)
 	{
-		STACK
+		//STACK
 		if (value!=pValue)
 		{
 			oldValue = value;
@@ -202,7 +202,7 @@ public:
 	 */
 	void ForceValue(T pValue)
 	{
-		STACK
+		//STACK
 		//if (allowForceOutput)
 		{
 			value = pValue;
@@ -225,7 +225,7 @@ public:
 
 	void ReadedValueFromDevice(T pvalue, bool perror)
 	{
-		STACK
+		//STACK
 		deviceError = perror;
 
 		if (!perror )

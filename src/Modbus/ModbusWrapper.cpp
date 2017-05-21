@@ -35,25 +35,28 @@ bool Modbus::Init()
 		CLogger::Error("Unable to create the libmodbus context %s\n",config.Port.c_str());
 		return false;
 	}
+
+	//modbus_set_debug(ctx,1);
+
 	if (modbus_connect(ctx) == -1) {
 	    fprintf(stderr, "Connection failed: %s\n", modbus_strerror(errno));
 	    modbus_free(ctx);
 	    return false;
 	}
 
-	struct timeval timeout;
-
-	modbus_get_byte_timeout(ctx, &timeout);
-
-	timeout.tv_sec = 0;
-	timeout.tv_usec = 10000;
-	modbus_set_byte_timeout(ctx, &timeout);
-
-	timeout.tv_sec = 0;
-	timeout.tv_usec = 20000;
-	modbus_set_response_timeout(ctx, &timeout);
+	uint32_t sec;
+	uint32_t usec;
 
 
+	modbus_get_byte_timeout(ctx, &sec,&usec);
+
+	sec = 0;
+	usec = 100000;
+	modbus_set_byte_timeout(ctx, sec, usec);
+
+	sec = 0;
+	usec = 100000;
+	modbus_set_response_timeout(ctx, sec,usec);
 	return true;
 }
 
@@ -81,6 +84,7 @@ bool Modbus::setBitInput(uint16_t address,uint16_t index, uint16_t state) {
 	modbusmutex->unlock();
 	return status < 0 ? false : true;
 }
+
 bool Modbus::getBitInput(uint16_t address,uint16_t index,bool & bit){
 	modbusmutex->lock();
 	int status = SetSlave(address);
@@ -125,10 +129,10 @@ bool Modbus::setCoil(uint16_t address,uint16_t index, uint16_t state){
 			CLogger::Error("Error setCoil: %d, error: %s",address,modbus_strerror(errno));
 		}
 	}
-
 	modbusmutex->unlock();
 	return status < 0 ? false : true;
 }
+
 bool Modbus::getCoil(uint16_t address,uint16_t index,bool & coil){
 	modbusmutex->lock();
 	int status = SetSlave(address);
@@ -160,6 +164,7 @@ bool Modbus::setHolding(uint16_t address,uint16_t index, uint16_t val){
 	modbusmutex->unlock();
 	return status < 0 ? false : true;
 }
+
 bool Modbus::getHolding(uint16_t address,uint16_t index,uint16_t* holding){
 	modbusmutex->lock();
 	int status = SetSlave(address);
@@ -168,6 +173,8 @@ bool Modbus::getHolding(uint16_t address,uint16_t index,uint16_t* holding){
 		uint16_t dest[2];
 		status = modbus_read_registers(ctx,index,sizeof(dest)/2,dest);
 		if (status == -1) {
+			modbus_set_error_recovery(ctx, MODBUS_ERROR_RECOVERY_PROTOCOL);
+			modbus_set_error_recovery(ctx, MODBUS_ERROR_RECOVERY_LINK );
 			fprintf(stderr, "Error getHolding: %s\n", modbus_strerror(errno));
 			CLogger::Error("Error getHolding: %d, error: %s",address,modbus_strerror(errno));
 		}
@@ -185,6 +192,8 @@ bool Modbus::getHoldings(uint16_t address,uint16_t offset,uint16_t count,uint16_
 	{
 		status = modbus_read_registers(ctx,offset,count,target);
 		if (status == -1) {
+			modbus_set_error_recovery(ctx,(modbus_error_recovery_mode)( MODBUS_ERROR_RECOVERY_PROTOCOL | MODBUS_ERROR_RECOVERY_LINK));
+			//modbus_set_error_recovery(ctx, MODBUS_ERROR_RECOVERY_LINK );
 			fprintf(stderr, "Error getHoldings: %s\n", modbus_strerror(errno));
 			CLogger::Error("Error getHoldings: %d, error: %s",address,modbus_strerror(errno));
 		}

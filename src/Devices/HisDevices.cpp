@@ -32,20 +32,16 @@
 void HisDevices::Scan()
 {
 	STACK
-	//while ((s = sem_timedwait(&sem, &ts)) == -1 && errno == EINTR);
 	network->searchDevices<LOW_device>(false);
 	AddScanned();
 }
 
-HisDevices::HisDevices(string fileName,LOW_network* pnetwork,ExpressionRuntime* pExpressionRuntime
-		,ModbusManager* modbusManager)
+HisDevices::HisDevices(string fileName,LOW_network* pnetwork,ModbusManager* modbusManager)
 {
 	this->modbusManager = modbusManager;
-	expressionRuntime = pExpressionRuntime;
 	devicesFileName = fileName;
 	doc = NULL;
 	network=pnetwork;
-	//this->__expressionMutex = HisLock::CreateMutex();
 	this->__devRefreshMutex = HisLock::CreateMutex();
 	onRefreshdelegate = OnRefreshDelegate::from_method<HisDevices, &HisDevices::AddToRefreshQueue>(this);
 }
@@ -61,7 +57,6 @@ void HisDevices::AddToRefreshQueue(HisDevBase* hisDevBase)
 
 HisDevBase *HisDevices::operator[](unsigned int i)
 {
-	STACK
 	if (devices.size()>i)
 	{
 		return devices[i];
@@ -185,9 +180,7 @@ void HisDevices::Load()
 		{
 			string message = "General error on element: ";
 			message += (const char*)cur->name;
-
 			cout <<  message;
-
 			CLogger::Info(message.c_str());
 		}
 
@@ -197,10 +190,8 @@ void HisDevices::Load()
 
 void HisDevices::Add(HisDevBase *hisdev)
 {
-
 	STACK
 	xmlNodePtr root_node = xmlDocGetRootElement(doc);
-	//xmlNodePtr cur = NULL;
 	if (root_node==NULL)
 	{
 		root_node = xmlNewNode(NULL, BAD_CAST "devices");
@@ -282,7 +273,7 @@ HisDevValueBase* HisDevices::FindValue(string address)
 
 HisDevValueBase* HisDevices::FindValue(CUUID valueId)
 {
-	STACK
+	//STACK
 	for(uint16_t i=0;i<devices.size();i++)
 	{
 		vector<HisDevValueBase*> tagvalues = devices[i]->GetValues();
@@ -304,25 +295,8 @@ void HisDevices::Refresh()
 	STACK
 	for(uint i=0;i<devices.size();i++)
 	{
-		//int64_t curTimeUs = HisDateTime::timeval_to_usec(HisDateTime::Now());
-
-		devices[i]->Refresh(false);
-
-//		vector<LOW_device*> alarmDevs = network->getSegments()[0]->searchDevices<LOW_device>(true);
-//		if (alarmDevs.size()>0)
-//			CLogger::Info("Detected %d alarms",alarmDevs.size());
-//		for(size_t d=0;d<alarmDevs.size();d++)
-//		{
-//			size_t index = this->Find(alarmDevs[d]->getID());
-//			if (index>=0)
-//			{
-//				CLogger::Info("Detected alarm from device: %s",devices[index]->GetName().c_str());
-//				//refresh
-//				devices[index]->Refresh(true);
-//				//zaradim k okamzitemu vykonani
-//				expressionRuntime->AddToEvaluateQueue(devices[index]);
-//			}
-//		}
+		if (devices[i]->IsEnabled())
+			devices[i]->Refresh(false);
 
 		while (devqueue.size()>0)
 		{
@@ -331,7 +305,8 @@ void HisDevices::Refresh()
 			devqueue.pop();
 			__devRefreshMutex->unlock();
 			//CLogger::Info("Refresh from queue: %s" ,dev->GetName().c_str());
-			dev->Refresh(false);
+			if (dev->IsEnabled())
+				dev->Refresh(false);
 
 		}
 		usleep(1000);
@@ -380,27 +355,6 @@ int HisDevices::Find(CUUID recordId)
 	return -1;
 }
 
-//long HisDevices::GetNextDelayTimeMS()
-//{
-//	SortByNextScanTime();
-//	timeval start = devices[0]->GetNextScanTime();
-//	timeval stop = HisDateTime::Now();
-//	timeval result;
-//	timersub(&stop,&start,&result);
-//	return HisDateTime::timeval_to_usec(result);
-//}
-//
-//bool compareNextScanTime (HisDevBase* i,HisDevBase* j) {
-//	timeval it = i->GetNextScanTime();
-//	timeval jt = j->GetNextScanTime();
-//	return timercmp(&it, &jt, > );
-//}
-
-//void HisDevices::SortByNextScanTime()
-//{
-//	sort(devices.begin(),devices.end(),compareNextScanTime);
-//}
-
 void HisDevices::Save()
 {
 	STACK
@@ -409,13 +363,11 @@ void HisDevices::Save()
 		devices[i]->Save();
 	}
 
-	xmlSaveFormatFileEnc( devicesFileName.c_str(), doc,"UTF-8", 1);
+	int result = xmlSaveFormatFileEnc( devicesFileName.c_str(), doc,"UTF-8", 1);
 
-//	FILE* f = fopen(devicesFileName.c_str(),"w");
-//	if (f != NULL)
-//	{
-//		//xmlDocDump( f, doc);
-//
-//		fclose( f );
-//	}
+	if (result<0)
+	{
+		CLogger::Error("Error while writing devices.xml");
+		throw std::domain_error("Error while writing devices.xml");
+	}
 }

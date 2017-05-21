@@ -11,6 +11,7 @@
     <persistedState key="workingSets" value="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?>&#xD;&#xA;&lt;workingSets/>"/>
     <persistedState key="aggregateWorkingSetId" value="Aggregate for window 1475869903678"/>
     <tags>topLevel</tags>
+    <tags>shellMaximized</tags>
     <children xsi:type="basic:PartSashContainer" xmi:id="_dJrHYIzHEeamM9gRtWjsRA" selectedElement="_dJrHYYzHEeamM9gRtWjsRA" horizontal="true">
       <children xsi:type="advanced:PerspectiveStack" xmi:id="_dJrHYYzHEeamM9gRtWjsRA" elementId="org.eclipse.ui.ide.perspectivestack" containerData="7500" selectedElement="_dzKwUIzHEeamM9gRtWjsRA">
         <children xsi:type="advanced:Perspective" xmi:id="_dzKwUIzHEeamM9gRtWjsRA" elementId="org.eclipse.cdt.ui.CPerspective" selectedElement="_dzKwUYzHEeamM9gRtWjsRA" label="C/C++" iconURI="platform:/plugin/org.eclipse.cdt.ui/icons/view16/c_pers.gif">
@@ -128,7 +129,7 @@
       </children>
     </sharedElements>
     <sharedElements xsi:type="basic:Part" xmi:id="_dywgoIzHEeamM9gRtWjsRA" elementId="org.eclipse.ui.navigator.ProjectExplorer" contributionURI="bundleclass://org.eclipse.ui.workbench/org.eclipse.ui.internal.e4.compatibility.CompatibilityView" label="Project Explorer" iconURI="platform:/plugin/org.eclipse.ui.navigator.resources/icons/full/eview16/resource_persp.gif" tooltip="" closeable="true">
-      <persistedState key="memento" value="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?>&#xD;&#xA;&lt;view CommonNavigator.LINKING_ENABLED=&quot;0&quot; org.eclipse.cdt.ui.cview.groupincludes=&quot;false&quot; org.eclipse.cdt.ui.cview.groupmacros=&quot;false&quot; org.eclipse.cdt.ui.editor.CUChildren=&quot;true&quot; org.eclipse.ui.navigator.resources.workingSets.showTopLevelWorkingSets=&quot;0&quot;/>"/>
+      <persistedState key="memento" value="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?>&#xD;&#xA;&lt;view CommonNavigator.LINKING_ENABLED=&quot;0&quot; currentWorkingSetName=&quot;Aggregate for window 1475869903678&quot; org.eclipse.cdt.ui.cview.groupincludes=&quot;false&quot; org.eclipse.cdt.ui.cview.groupmacros=&quot;false&quot; org.eclipse.cdt.ui.editor.CUChildren=&quot;true&quot; org.eclipse.ui.navigator.resources.workingSets.showTopLevelWorkingSets=&quot;0&quot;/>"/>
       <tags>View</tags>
       <tags>categoryTag:General</tags>
       <tags>active</tags>
@@ -198,7 +199,7 @@
       </children>
       <children xsi:type="menu:ToolBar" xmi:id="_dPYt0IzHEeamM9gRtWjsRA" elementId="org.eclipse.ui.workbench.file">
         <tags>Draggable</tags>
-        <children xsi:type="menu:HandledToolItem" xmi:id="_dPuFAIzHEeamM9gRtWjsRA" elementId="print" visible="false" iconURI="platform:/plugin/org.eclipse.ui/icons/full/etool16/print_edit.png" tooltip="Print" enabled="false" command="_cA1QF4zHEeamM9gRtWjsRA"/>
+        <children xsi:type="menu:HandledToolItem" xmi:id="_l2_RQN_TEeaDnv1p82QsSQ" elementId="print" visible="false" iconURI="platform:/plugin/org.eclipse.ui/icons/full/etool16/print_edit.png" tooltip="Print" command="_cA1QF4zHEeamM9gRtWjsRA"/>
       </children>
       <children xsi:type="menu:ToolBar" xmi:id="_dPZU4IzHEeamM9gRtWjsRA" elementId="additions" toBeRendered="false">
         <tags>toolbarSeparator</tags>
@@ -222,7 +223,7 @@
       </children>
       <children xsi:type="menu:ToolBar" xmi:id="_dPZ78IzHEeamM9gRtWjsRA" elementId="org.eclipse.ui.workbench.navigate">
         <tags>Draggable</tags>
-        <children xsi:type="menu:HandledToolItem" xmi:id="_dPxvYIzHEeamM9gRtWjsRA" elementId="org.eclipse.ui.window.pinEditor" visible="false" iconURI="platform:/plugin/org.eclipse.ui/icons/full/etool16/pin_editor.png" tooltip="Pin Editor" type="Check" command="_cA0B_ozHEeamM9gRtWjsRA"/>
+        <children xsi:type="menu:HandledToolItem" xmi:id="_l2_RSt_TEeaDnv1p82QsSQ" elementId="org.eclipse.ui.window.pinEditor" visible="false" iconURI="platform:/plugin/org.eclipse.ui/icons/full/etool16/pin_editor.png" tooltip="Pin Editor" type="Check" command="_cA0B_ozHEeamM9gRtWjsRA"/>
       </children>
       <children xsi:type="menu:ToolBar" xmi:id="_dPajAIzHEeamM9gRtWjsRA" elementId="group.editor" toBeRendered="false">
         <tags>toolbarSeparator</tags>
@@ -932,7 +933,7 @@
     <tags>View</tags>
     <tags>categoryTag:LTTng</tags>
   </descriptors>
-  <descriptors xmi:id="_cKjMsIzHEeamM9gRtWjsRA" elementId="org.eclipse.linuxtools.lttng2.ust.memoryusage" label="UST Memory Usage" iconURI="platform:/plugin/org.eclipse.ui/icons/full/eview16/defaultview_misc.png" tooltip="" category="LTTng" closeable="true" contributionURI="bundleclass://org.eclipse.ui.workbench/org.eclipse.ui.internal.e4.compatibility.CompatibilityView">
+  <descriptors xmi:id="_cKjMsIzHEeamM9gRtWjsRA" elementId="org.eclipse.linuxtools.lttng2.ust.memoryusage" label="UST Memory Usage" iconURI="platform:/plugin/org.eclipse.tracecompass.lttng2.ust.ui/icons/eview16/memory-usage.png" tooltip="" category="LTTng" closeable="true" contributionURI="bundleclass://org.eclipse.ui.workbench/org.eclipse.ui.internal.e4.compatibility.CompatibilityView">
     <tags>View</tags>
     <tags>categoryTag:LTTng</tags>
   </descriptors>
@@ -1203,6 +1204,30 @@
   <descriptors xmi:id="_cMTgMIzHEeamM9gRtWjsRA" elementId="ilg.gnuarmeclipse.debug.gdbjtag.ui.views.PeripheralsView" label="Peripherals" iconURI="platform:/plugin/ilg.gnuarmeclipse.debug.gdbjtag/icons/peripheral.png" tooltip="" category="Debug" closeable="true" contributionURI="bundleclass://org.eclipse.ui.workbench/org.eclipse.ui.internal.e4.compatibility.CompatibilityView">
     <tags>View</tags>
     <tags>categoryTag:Debug</tags>
+  </descriptors>
+  <descriptors xmi:id="_VKKyQNzsEea8tsWcNMFO_g" elementId="ilg.gnuarmeclipse.managedbuild.packs.ui.views.DocsView" label="Documents" iconURI="platform:/plugin/ilg.gnuarmeclipse.managedbuild.packs/icons/pdficon_small.png" tooltip="" category="C/C++ Packs" closeable="true" contributionURI="bundleclass://org.eclipse.ui.workbench/org.eclipse.ui.internal.e4.compatibility.CompatibilityView">
+    <tags>View</tags>
+    <tags>categoryTag:C/C++ Packs</tags>
+  </descriptors>
+  <descriptors xmi:id="_VKPDsNzsEea8tsWcNMFO_g" elementId="ilg.gnuarmeclipse.packs.ui.views.DevicesView" label="Devices" iconURI="platform:/plugin/ilg.gnuarmeclipse.packs.ui/icons/hardware_chip.png" tooltip="" category="C/C++ Packs" closeable="true" contributionURI="bundleclass://org.eclipse.ui.workbench/org.eclipse.ui.internal.e4.compatibility.CompatibilityView">
+    <tags>View</tags>
+    <tags>categoryTag:C/C++ Packs</tags>
+  </descriptors>
+  <descriptors xmi:id="_VKQ44NzsEea8tsWcNMFO_g" elementId="ilg.gnuarmeclipse.packs.ui.views.BoardsView" label="Boards" iconURI="platform:/plugin/ilg.gnuarmeclipse.packs.ui/icons/board.png" tooltip="" category="C/C++ Packs" closeable="true" contributionURI="bundleclass://org.eclipse.ui.workbench/org.eclipse.ui.internal.e4.compatibility.CompatibilityView">
+    <tags>View</tags>
+    <tags>categoryTag:C/C++ Packs</tags>
+  </descriptors>
+  <descriptors xmi:id="_VKSHANzsEea8tsWcNMFO_g" elementId="ilg.gnuarmeclipse.packs.ui.views.KeywordsView" label="Keywords" iconURI="platform:/plugin/ilg.gnuarmeclipse.packs.ui/icons/info_obj.png" tooltip="" category="C/C++ Packs" closeable="true" contributionURI="bundleclass://org.eclipse.ui.workbench/org.eclipse.ui.internal.e4.compatibility.CompatibilityView">
+    <tags>View</tags>
+    <tags>categoryTag:C/C++ Packs</tags>
+  </descriptors>
+  <descriptors xmi:id="_VKTVINzsEea8tsWcNMFO_g" elementId="ilg.gnuarmeclipse.packs.ui.views.PackagesView" label="Packs" iconURI="platform:/plugin/ilg.gnuarmeclipse.packs.ui/icons/packages.png" tooltip="" category="C/C++ Packs" closeable="true" contributionURI="bundleclass://org.eclipse.ui.workbench/org.eclipse.ui.internal.e4.compatibility.CompatibilityView">
+    <tags>View</tags>
+    <tags>categoryTag:C/C++ Packs</tags>
+  </descriptors>
+  <descriptors xmi:id="_VKUjQNzsEea8tsWcNMFO_g" elementId="ilg.gnuarmeclipse.packs.ui.views.OutlineView" label="Outline" iconURI="platform:/plugin/ilg.gnuarmeclipse.packs.ui/icons/outline_co.png" tooltip="" category="C/C++ Packs" closeable="true" contributionURI="bundleclass://org.eclipse.ui.workbench/org.eclipse.ui.internal.e4.compatibility.CompatibilityView">
+    <tags>View</tags>
+    <tags>categoryTag:C/C++ Packs</tags>
   </descriptors>
   <trimContributions xmi:id="_2r10UF9tEeO-yojH_y4TJA" elementId="org.eclipse.ui.ide.application.trimcontribution.QuickAccess" contributorURI="platform:/plugin/org.eclipse.ui.ide.application" toBeRendered="false" parentId="org.eclipse.ui.main.toolbar" positionInParent="last">
     <children xsi:type="menu:ToolControl" xmi:id="_76uUAF9tEeO-yojH_y4TJA" elementId="Spacer Glue" contributorURI="platform:/plugin/org.eclipse.ui.ide.application" contributionURI="bundleclass://org.eclipse.e4.ui.workbench.renderers.swt/org.eclipse.e4.ui.workbench.renderers.swt.LayoutModifierToolControl">
@@ -2315,6 +2340,12 @@
   <commands xmi:id="_dIliQYzHEeamM9gRtWjsRA" elementId="AUTOGEN:::org.eclipse.cdt.dsf.debug.ui.viewmodel.debugview.update.Refresh/org.eclipse.cdt.dsf.debug.ui.debugview.viewmodel.update.actions.refresh" commandName="Refresh" category="_cAWu4YzHEeamM9gRtWjsRA"/>
   <commands xmi:id="_dImJUIzHEeamM9gRtWjsRA" elementId="AUTOGEN:::org.eclipse.cdt.debug.ui.disassembly.toolbar/org.eclipse.pinclone.disassembly.pinDebugContext" commandName="Pin to Debug Context" category="_cAWu4YzHEeamM9gRtWjsRA"/>
   <commands xmi:id="_dImwYIzHEeamM9gRtWjsRA" elementId="AUTOGEN:::org.eclipse.cdt.debug.ui.disassembly.toolbar/org.eclipse.pinclone.disassembly.clone" commandName="Open New View" category="_cAWu4YzHEeamM9gRtWjsRA"/>
+  <commands xmi:id="_VC2CQNzsEea8tsWcNMFO_g" elementId="ilg.gnuarmeclipse.packs.commands.updateCommand" commandName="Refresh" category="_VC0NEdzsEea8tsWcNMFO_g"/>
+  <commands xmi:id="_VC2pUNzsEea8tsWcNMFO_g" elementId="org.eclipse.linuxtools.internal.lttng2.ui.commands.control.save" commandName="Save..." description="Save session(s)" category="_cAWH3ozHEeamM9gRtWjsRA"/>
+  <commands xmi:id="_VC4egNzsEea8tsWcNMFO_g" elementId="ilg.gnuarmeclipse.packs.commands.showPerspectiveCommand" commandName="Switch to C/C++ Packs Perspective" category="_VC0NEdzsEea8tsWcNMFO_g"/>
+  <commands xmi:id="_VC4egdzsEea8tsWcNMFO_g" elementId="org.eclipse.linuxtools.internal.lttng2.ui.commands.control.load" commandName="Load..." description="Load session(s)" category="_cAWH3ozHEeamM9gRtWjsRA"/>
+  <commands xmi:id="_VC5FkNzsEea8tsWcNMFO_g" elementId="org.eclipse.egit.ui.team.PullWithOptions" commandName="Pull..." category="_cAWu9ozHEeamM9gRtWjsRA"/>
+  <commands xmi:id="_VC5FkdzsEea8tsWcNMFO_g" elementId="org.eclipse.oomph.setup.editor.synchronizePreferences" commandName="Synchronize Preferences" category="_cAWu6YzHEeamM9gRtWjsRA"/>
   <addons xmi:id="_b-1E54zHEeamM9gRtWjsRA" elementId="org.eclipse.e4.core.commands.service" contributorURI="platform:/plugin/org.eclipse.platform" contributionURI="bundleclass://org.eclipse.e4.core.commands/org.eclipse.e4.core.commands.CommandServiceAddon"/>
   <addons xmi:id="_b-1E6IzHEeamM9gRtWjsRA" elementId="org.eclipse.e4.ui.contexts.service" contributorURI="platform:/plugin/org.eclipse.platform" contributionURI="bundleclass://org.eclipse.e4.ui.services/org.eclipse.e4.ui.services.ContextServiceAddon"/>
   <addons xmi:id="_b-1E6YzHEeamM9gRtWjsRA" elementId="org.eclipse.e4.ui.bindings.service" contributorURI="platform:/plugin/org.eclipse.platform" contributionURI="bundleclass://org.eclipse.e4.ui.bindings/org.eclipse.e4.ui.bindings.BindingServiceAddon"/>
@@ -2379,4 +2410,5 @@
   <categories xmi:id="_cAWu-4zHEeamM9gRtWjsRA" elementId="rpmstubby.commands" name="RPMStubby Commands" description="Commands for the RPM Stubby plugin"/>
   <categories xmi:id="_cAWu_IzHEeamM9gRtWjsRA" elementId="org.eclipse.cdt.debug.ui.category.reverseDebugging" name="Reverse Debugging Commands" description="Set of commands for Reverse Debugging"/>
   <categories xmi:id="_cAWu_YzHEeamM9gRtWjsRA" elementId="org.eclipse.cdt.debug.ui.category.tracing" name="Tracing Commands" description="Category for Tracing Commands"/>
+  <categories xmi:id="_VC0NEdzsEea8tsWcNMFO_g" elementId="ilg.gnuarmeclipse.packs.commands.category" name="C/C++ Packages Category"/>
 </application:Application>

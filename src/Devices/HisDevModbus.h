@@ -119,7 +119,7 @@ class HisDevModbus : public HisDevBase
 	int address;
 	vector<HisDevValue<bool>*> valuesOutput;
 	vector<HisDevValue<bool>*> valuesInput;
-	vector<HisDevValue<double>*> ds18b20s;
+	//vector<HisDevValue<double>*> ds18b20s;
 
 	HisDevValue<bool>* scantag;
 

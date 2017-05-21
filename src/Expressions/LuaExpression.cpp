@@ -36,7 +36,7 @@
 
 LuaExpression* LuaExpression::ActualExpression=NULL;
 
-LuaExpression::LuaExpression(xmlNodePtr pnode,HisDevices* hisDevices,ExpressionRuntime *pExpressionRuntime) :
+LuaExpression::LuaExpression(xmlNodePtr pnode,HisDevices* hisDevices,IExpressionRuntime *pExpressionRuntime) :
 	HisBase(pnode),started(false)
 {
 	STACK
@@ -54,10 +54,11 @@ LuaExpression::LuaExpression(xmlNodePtr pnode,HisDevices* hisDevices,ExpressionR
 	folder = NULL;
 }
 
-LuaExpression::LuaExpression(HisDevFolder* pfolder,HisDevices* hisDevices, string expressionName,ExpressionRuntime *pExpressionRuntime) :
+LuaExpression::LuaExpression(HisDevFolder* pfolder,HisDevices* hisDevices, string expressionName,IExpressionRuntime *pExpressionRuntime) :
 	HisBase(),started(false)
 {
 	STACK
+	CreateFolder();
 	mutex = HisLock::CreateMutex();
 	evaluateMutex = HisLock::CreateMutex();
 	expressionRuntime = pExpressionRuntime;
@@ -168,6 +169,7 @@ void LuaExpression::CreateFolder()
 void LuaExpression::SaveExpressionToFile()
 {
 	STACK
+
 	if (oldName!=GetName())
 	{
 		if (File::Exists(GetFileName(oldName)))
@@ -374,7 +376,7 @@ void LuaExpression::SetGlobals(lua_State* L)
 				break;
 			case EDataType::Int:
 			{
-				STACK_SECTION("Int")
+				//STACK_SECTION("Int")
 				HisDevValue<int>* value = dynamic_cast<HisDevValue<int>*>(values[i]);
 				lua_pushinteger(L,value->GetValue());
 				lua_setglobal( L, value->GetAddressName().c_str() );
@@ -386,7 +388,7 @@ void LuaExpression::SetGlobals(lua_State* L)
 			}
 			case EDataType::Double:
 			{
-				STACK_SECTION("Double")
+				//STACK_SECTION("Double")
 				HisDevValue<double>* value = dynamic_cast<HisDevValue<double>*>(values[i]);
 				lua_pushnumber(L,value->GetValue());
 				lua_setglobal( L, value->GetAddressName().c_str() );
@@ -410,7 +412,7 @@ void LuaExpression::SetGlobals(lua_State* L)
 			}
 			case EDataType::String:
 			{
-				STACK_SECTION("String")
+				//STACK_SECTION("String")
 				HisDevValue<string>* value = dynamic_cast<HisDevValue<string>*>(values[i]);
 				lua_pushstring(L,value->GetValue().c_str());
 				lua_setglobal( L, value->GetAddressName().c_str() );
@@ -475,13 +477,12 @@ string LuaExpression::GetLuaCodeInFuncion(string funcName, string luaCodeFilePat
 int LuaExpression::delays;
 
 int lua_sleep(lua_State *L) {
-	STACK
 	LuaExpression::delays = lua_tointeger(L, -1);      /* Get the single number arg */
     //printf("lua_sleep called %d s\n",LuaExpression::delays);
     return lua_yield(L,0);
 }
 
-int l_debuglog(lua_State* L) {
+int lua_debuglog(lua_State* L) {
 	int nargs = lua_gettop(L);
 
 	for (int i=1; i <= nargs; i++) {
@@ -491,6 +492,7 @@ int l_debuglog(lua_State* L) {
 	        	{
 	        		string arg = lua_tostring(L, i);
 	        		LuaExpression::ActualExpression->DebugLog(arg);
+	        		CLogger::Info("Expr. | %s",arg.c_str());
 	        	}
 
 	        }
@@ -501,7 +503,7 @@ int l_debuglog(lua_State* L) {
 	return 0;
 }
 
-int l_log(lua_State* L) {
+int lua_log(lua_State* L) {
     int nargs = lua_gettop(L);
 
     for (int i=1; i <= nargs; i++) {
@@ -534,7 +536,6 @@ bool LuaExpression::Evaluate()
 {
 	STACK
 
-
 	HisLock lock(evaluateMutex);
 
 	if (inEvalFunc) return false;
@@ -552,33 +553,33 @@ bool LuaExpression::Evaluate()
 
 	if (!running && runningAllowed)
 	{
-		STACK_SECTION("!running")
+		//STACK_SECTION("!running")
 		//lastEvaluateError.clear();
 		LuaExpression::delays = -1;
 		nextTime = 0;
 		/* initialize Lua */
 		L = luaL_newstate();                        /* Create Lua state variable */
-		STACK_SECTION("luaL_openlibs")
+		//STACK_SECTION("luaL_openlibs")
 		/* load Lua base libraries */
 		luaL_openlibs(L);
-		STACK_SECTION("lua_register")
+		//STACK_SECTION("lua_register")
 		lua_register(L, "sleep", lua_sleep);
 		lua_register(L, "delay", lua_sleep);
-		lua_register(L, "log", l_log);
-		lua_register(L, "debuglog", l_debuglog);
-		STACK_SECTION("GetLuaCodeInFuncion")
+		lua_register(L, "log", lua_log);
+		lua_register(L, "debuglog", lua_debuglog);
+		//STACK_SECTION("GetLuaCodeInFuncion")
 
 		string path = GetLuaFilesPath()+"/?.lua";
 		this->setLuaPath(L,path.c_str());
 		/* add code to function */
 		string code = GetLuaCodeInFuncion("runExpression",GetFileName(GetName()));
 
-		STACK_SECTION("SetGlobals")
+		//STACK_SECTION("SetGlobals")
 		/* set golabl variables */
 		//SetGlobals(L);
 
 		/* load string and check syntax */
-		STACK_SECTION("luaL_dostring")
+		//STACK_SECTION("luaL_dostring")
 		if (luaL_dostring(L,code.c_str()))
 		{
 			string newEvaluateError = StringBuilder::Format("Error load Lua script: %s\n",lua_tostring(L, -1));
@@ -612,7 +613,7 @@ bool LuaExpression::Evaluate()
 
 	if (running)
 	{
-		STACK_SECTION("running")
+		//STACK_SECTION("running")
 		if (runningAllowed)
 		{
 			uint64_t curTimeUs = HisDateTime::timeval_to_usec(HisDateTime::Now());
@@ -620,7 +621,7 @@ bool LuaExpression::Evaluate()
 			if (curTimeUs >= nextTime)
 			{
 				SetGlobals(L);
-				STACK_SECTION("lua_resume")
+				//STACK_SECTION("lua_resume")
 				int status = lua_resume(L,NULL,0);
 
 
@@ -667,7 +668,7 @@ bool LuaExpression::Evaluate()
 		}
 		else
 		{
-			STACK_SECTION("lua_close")
+			//STACK_SECTION("lua_close")
 			lua_close(L);
 			running = false;
 		}

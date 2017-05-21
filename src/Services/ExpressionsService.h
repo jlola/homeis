@@ -29,10 +29,10 @@ class ExpressionService : public http_resource
 private:
 	HisDevFolderRoot* root;
 	HisDevices* devices;
-	ExpressionRuntime *expressionRuntime;
+	IExpressionRuntime *expressionRuntime;
 	LuaExpression* CreateOrUpdateExpression(string strJson,string & message);
 public:
-	ExpressionService(HisDevFolderRoot* folder,ExpressionRuntime *pexpressionRuntime, HisDevices* pdevices);
+	ExpressionService(HisDevFolderRoot* folder,IExpressionRuntime *pexpressionRuntime, HisDevices* pdevices);
 	~ExpressionService(void);
 	bool DeleteExpression(string strid,string & message);
 	static void ExpressionToJson(HisBase* pParent,LuaExpression *pExpression, Document & respjsondoc);

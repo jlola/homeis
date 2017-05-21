@@ -25,8 +25,8 @@ class DevicesService : public http_resource
 	HisDevFolderRoot & rootFolder;
 	bool UpdateDevValue(CUUID devValueId, string strjson);
 	//bool SetForce(string address, string force);
-	HisDevValueBase* CreateVirtualDevValue(string strjson);
-	HisDevVirtual* CreateVirtualDevice(string strjson);
+	HisDevValueBase* CreateVirtualDevValue(string strjson,string & message);
+	HisDevVirtual* CreateVirtualDevice(string strjson,string & message);
 	HisDevBase* UpdateDevice(string strjson,string strDevId);
 	bool DeleteValueId(string strValueId);
 	string DeleteDevValue(string strDevValueRecordId);

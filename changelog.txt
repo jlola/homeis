@@ -1,0 +1,3 @@
+20170402 - Fix saving filder. Bad JSON param - ParentId
+20170521 - fixed memory leak  - removed STACK from lua c functions
+ 		- added enabled property to device

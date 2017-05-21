@@ -13,17 +13,16 @@ using namespace std;
 
 bool Directory::Exists(string dirpath)
 {
+	struct stat sb;
 
-	if (0 != access(dirpath.c_str(), F_OK)) {
-	  if (ENOENT == errno) {
-		 return false;
-	  }
-	//  if (ENOTDIR == errno) {
-	//     // not a directory
-	//  }
+	if (stat(dirpath.c_str(), &sb) == 0 && S_ISDIR(sb.st_mode))
+	{
+		return true;
 	}
-
-	return true;
+	else
+	{
+		return false;
+	}
 }
 
 bool Directory::Create(string path)

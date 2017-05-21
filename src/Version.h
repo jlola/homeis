@@ -9,8 +9,8 @@
 #define SRC_VERSION_H_
 
 
-#define VERSION_MAIN	1
+#define VERSION_MAIN	2
 #define VERSION_SEC		0
-#define VERSION_BUILD	20170102
+#define VERSION_BUILD	20170402
 
 #endif /* SRC_VERSION_H_ */

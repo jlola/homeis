@@ -64,7 +64,7 @@ public:
 	 */
 	int FindIndex(CUUID id);
 	void Add(HisBase *pitem);
-	HisBase* Remove(CUUID puuid);
+	virtual HisBase* Remove(CUUID puuid);
 	void Load();
 	void Save();
 	xmlNodePtr GetNodePtr();
@@ -79,7 +79,7 @@ public:
 	template<class T>
 	vector<T*> GetItems()
 	{
-		STACK
+		//STACK
 		vector<T*> result;
 		for(size_t i=0;i<items.size();i++)
 		{

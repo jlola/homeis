@@ -14,7 +14,7 @@
 #include <queue>          // std::queue
 #include "Devices/HisDevBase.h"
 #include "Modbus/ModbusManager.h"
-#include "Expressions/ExpressionRuntime.h"
+#include "Expressions/IExpressionRuntime.h"
 
 using namespace std;
 
@@ -27,11 +27,9 @@ class HisDevices {
 	LOW_thread_mutex  *__devRefreshMutex;  /**< Mutex for exclusive access. */
 	queue<HisDevBase*> devqueue;
 	OnRefreshDelegate onRefreshdelegate;
-	ExpressionRuntime* expressionRuntime;
 	ModbusManager* modbusManager;
 public:
-	HisDevices(string fileName,LOW_network *network,ExpressionRuntime* pExpressionRuntime
-			,ModbusManager* modbusManager);
+	HisDevices(string fileName,LOW_network *network ,ModbusManager* modbusManager);
 	int Find(CUUID RecordId);
 	size_t Size();
 	void AddScanned();

@@ -32,11 +32,11 @@ public:
 	void render_PUT(const http_request& req, http_response** res);
 	void render_DELETE(const http_request& req, http_response** res);
 	void FoldersToJson(HisDevFolderRoot* root, HisDevFolder *pFolder, Document & respjsondoc, bool foldersOnly);
-	bool AddValueIdToFolder(string strFolderId, string strJson);
+	bool AddValueIdToFolder(string strFolderId, string strJson,string & message);
 	string DeleteDevValue(string strDevValueRecordId);
 	static void FolderToJson(HisDevFolderRoot* root,HisBase *pParentFolder, HisBase *pFolder, Document & respjsondoc);
-	bool CreateFolder(string strJson);
-	bool UpdateFolder(string strid, string strJson);
+	bool CreateFolder(string strJson,string & message);
+	bool UpdateFolder(string strid, string strJson,string & message);
 };
 
 #endif /* FOLDERSSERVICE_H_ */

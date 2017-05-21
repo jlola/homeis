@@ -6,7 +6,9 @@
  */
 
 #include <HisDevModbus.h>
+#include <StringBuilder.h>
 #include "Modbus/IModbus.h"
+#include <unistd.h>
 
 HisDevModbus::HisDevModbus(IModbus* connection,int address)
 	: HisDevBase::HisDevBase(),
@@ -119,7 +121,7 @@ void HisDevModbus::CreateOrValidOneWire(bool addnew)
 				tempertag = new HisDevValue<double>(Converter::itos(address,10),EHisDevDirection::Read,EDataType::Double,strid,0);
 				tempertag->SetLoadType(LOADTYPE_ONEWIRE);
 				Add(tempertag);
-				ds18b20s.push_back(tempertag);
+				//ds18b20s.push_back(tempertag);
 			}
 			double temper = (double)mds18b20.temperature / 100.0;
 			tempertag->ReadedValueFromDevice(temper,false);
@@ -136,6 +138,7 @@ bool HisDevModbus::Scan(bool addnew)
 	if (connection==NULL)
 	{
 		SetError(true);
+		return false;
 	}
 
 	uint16_t* pheader = reinterpret_cast<uint16_t*>(&header);
@@ -179,6 +182,7 @@ bool HisDevModbus::Scan(bool addnew)
 							sowiretypesdefsIndex = i;
 							owheader = reinterpret_cast<SOWHeader*>(&data[typesdefs[i].OffsetOfType]);
 							CreateOrValidOneWireHeader(addnew);
+							CLogger::Info(StringBuilder::Format("Scanned %d ds18b20",owheader->count).c_str());
 							if (owheader->count>0)
 							{
 								sds18b20s = reinterpret_cast<SDS18B20*>(&data[typesdefs[i].OffsetOfType+OW_DEVICES_OFFSET]);
@@ -305,6 +309,7 @@ void HisDevModbus::RefreshOutputs()
 
 	if (scantag->GetValue()==true)
 	{
+		CLogger::Info("Write to setHolding OW_SCAN_OFFSET to 1");
 		resultok = connection->setHolding(address,typesdefs[sowiretypesdefsIndex].OffsetOfType+OW_SCAN_OFFSET,scantag->GetValue());
 		if (!resultok)
 		{
@@ -313,6 +318,7 @@ void HisDevModbus::RefreshOutputs()
 		}
 		else
 		{
+			sleep(1);
 			scanRequest = 100;
 		}
 	}
@@ -369,23 +375,28 @@ void HisDevModbus::DoInternalRefresh(bool alarm)
 			return;
 		}
 
-		if (scanRequest>0)
+		if (typesdefs==NULL)
 		{
-			scanRequest--;
-			if (scanRequest>0) this->Scan(false);
+			CLogger::Info("Wrong data scanned. Var typesdefs is NULL.");
+			return;
 		}
 
-		uint16_t lscan = data[typesdefs[sowiretypesdefsIndex].OffsetOfType];
-		if (lscan)
+		if (scantag!=NULL)
 		{
-			scantag->ReadedValueFromDevice(true,!modbusok);
-		}
-		else
-		{
-			scantag->ReadedValueFromDevice(false,!modbusok);
+			uint16_t lscan = data[typesdefs[sowiretypesdefsIndex].OffsetOfType];
+			scantag->ReadedValueFromDevice(lscan,!modbusok);
+			if (!lscan && scanRequest)
+			{
+				scanRequest = 0;
+				if (!this->Scan(true))
+				{
+					SetError(true);
+					return;
+				}
+			}
 		}
 
-		STACK_VAL(DoInternalRefresh,"File: "+string(__FILE__)+",Line: "+Converter::itos(__LINE__))
+		//STACK_VAL(DoInternalRefresh,"File: "+string(__FILE__)+",Line: "+Converter::itos(__LINE__))
 
 
 		for(size_t v=0;v<valuesInput.size();v++)
@@ -403,8 +414,9 @@ void HisDevModbus::DoInternalRefresh(bool alarm)
 			}
 		}
 
-		STACK_VAL(DoInternalRefresh,"File: "+string(__FILE__)+",Line: "+Converter::itos(__LINE__))
+		//STACK_VAL(DoInternalRefresh,"File: "+string(__FILE__)+",Line: "+Converter::itos(__LINE__))
 
+		vector<HisDevValue<double>*> ds18b20s = GetItems<HisDevValue<double>>();
 		for(size_t v=0;v<ds18b20s.size();v++)
 		{
 			if (sds18b20s!=NULL && modbusok && owheader->count>0)
@@ -496,14 +508,14 @@ void HisDevModbus::DoInternalLoad(xmlNodePtr & node)
 		}
 	}
 
-	vector<HisDevValue<double>*> doubles = GetItems<HisDevValue<double>>();
-	for(size_t i=0;i<doubles.size();i++)
-	{
-		if (doubles[i]->GetLoadType()==LOADTYPE_ONEWIRE)
-		{
-			ds18b20s.push_back(doubles[i]);
-		}
-	}
+//	vector<HisDevValue<double>*> doubles = GetItems<HisDevValue<double>>();
+//	for(size_t i=0;i<doubles.size();i++)
+//	{
+//		if (doubles[i]->GetLoadType()==LOADTYPE_ONEWIRE)
+//		{
+//			ds18b20s.push_back(doubles[i]);
+//		}
+//	}
 }
 
 void HisDevModbus::OnError() {

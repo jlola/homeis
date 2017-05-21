@@ -15,11 +15,12 @@
 #include "LOW_thread_Factory.h"
 #include "IExpression.h"
 #include "HisDevBase.h"
+#include "IExpressionRuntime.h"
 #include <queue>          // std::queue
 
 using namespace std;
 
-class ExpressionRuntime
+class ExpressionRuntime : public IExpressionRuntime
 {
 	pthread_attr_t attr;
 	pthread_t thread;

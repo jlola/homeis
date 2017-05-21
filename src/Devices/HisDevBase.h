@@ -40,13 +40,14 @@ typedef srutil::delegate<void ()> OnRefreshDelegate;
 
 
 #define PROP_SCANPERIOD (const xmlChar *)"ScanPeriod"
+#define PROP_ENABLED (const xmlChar *)"Enabled"
 //#define KEY_DEVICENODE (const xmlChar *)"device"
 
 class HisDevBase : public HisBase
 {
 	bool enabled;
 	uint64_t scanPeriodMs;
-	uint64_t nextScanTime;
+	volatile uint64_t nextScanTime;
 	EDataSource dataSource;
 	bool error;
 	bool changed;
@@ -67,11 +68,11 @@ protected:
 
 
 public:
-
-	void SetChanged();
-
 	HisDevBase();
 	virtual ~HisDevBase();
+	virtual HisBase* Remove(CUUID puuid);
+	void SetChanged();
+	void SetNextScanTime(uint64_t ms);
 	/*
 	 * read device and if change any value fire event ValueChanged
 	 */

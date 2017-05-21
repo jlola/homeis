@@ -71,6 +71,7 @@ void* ExpressionRuntime::ThreadFunction(void* obj)
 	STACK
 	//set_signal_handler("/home/linaro/homeis/dis");
 	ExpressionRuntime* runtime = (ExpressionRuntime*)obj;
+	CLogger::Info("Strat thread ExpressionRuntime::ThreadFunction with threadid: %ul",pthread_self());
 
 	while(runtime->running)
 	{

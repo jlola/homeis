@@ -156,7 +156,7 @@ void FoldersService::FoldersToJson(HisDevFolderRoot* root,HisDevFolder *parentFo
 	}
 }
 
-bool FoldersService::AddValueIdToFolder(string strFolderId, string strJson)
+bool FoldersService::AddValueIdToFolder(string strFolderId, string strJson,string & message)
 {
 	STACK
 	Document document;	// Default template parameter uses UTF8 and MemoryPoolAllocator.
@@ -164,7 +164,7 @@ bool FoldersService::AddValueIdToFolder(string strFolderId, string strJson)
 	if (document.Parse<0>((char*)strJson.c_str()).HasParseError())
 		return NULL;
 
-	if (document.HasMember("DevValueId"))
+	if (document.HasMember("DevValueId") && document["DevValueId"].IsString())
 	{
 		string strDevValueId = document["DevValueId"].GetString();
 		CUUID devValueId = CUUID::Parse(strDevValueId);
@@ -183,6 +183,10 @@ bool FoldersService::AddValueIdToFolder(string strFolderId, string strJson)
 			}
 		}
 	}
+	else
+	{
+		message = "AddValueIdToFolder. JSON does not contain valid DevValueId.";
+	}
 	return false;
 }
 
@@ -190,13 +194,14 @@ void FoldersService::render_POST(const http_request& req, http_response** res)
 {
 	STACK
 	std::string content = req.get_content();
+	string message;
 
 	if (req.get_user()=="a" && req.get_pass()=="a")
 	{
 
 		//string address = req.get_arg("id");
 
-		if (CreateFolder(content))
+		if (CreateFolder(content,message))
 		{
 			//*res = new http_string_response("", 200, "application/json");
 			*res = new http_response(http_response_builder("", 200,"application/json").string_response());
@@ -205,20 +210,21 @@ void FoldersService::render_POST(const http_request& req, http_response** res)
 	}
 	else
 	{
-		string message = "Autentication error";
+		message = "Autentication error";
 		//*res = new http_string_response(message.c_str(), 401, "application/json");
 		*res = new http_response(http_response_builder(message, 401,"application/json").string_response());
 		return;
 	}
 
 	//*res = new http_string_response("", 403, "application/json");
-	*res = new http_response(http_response_builder("", 403,"application/json").string_response());
+	*res = new http_response(http_response_builder(message, 403,"application/json").string_response());
 }
 
-bool FoldersService::UpdateFolder(string strid, string strJson)
+bool FoldersService::UpdateFolder(string strid, string strJson,string & message)
 {
 	STACK
 	Document document;	// Default template parameter uses UTF8 and MemoryPoolAllocator.
+
 
 		if (document.Parse<0>((char*)strJson.c_str()).HasParseError())
 			return false;
@@ -228,15 +234,25 @@ bool FoldersService::UpdateFolder(string strid, string strJson)
 		id = CUUID::Parse(strid);
 
 		CUUID parentid;
-		if (document.HasMember("parentId"))
+		if (document.HasMember("ParentId") && document["ParentId"].IsString())
 		{
-			parentid = CUUID::Parse(document["parentId"].GetString());
+			parentid = CUUID::Parse(document["ParentId"].GetString());
+		}
+		else
+		{
+			message = "Json does not conatin valid ParentId field";
+			return false;
 		}
 
 		string name;
-		if (document.HasMember("name"))
+		if (document.HasMember("name") && document["name"].IsString())
 		{
 			name = document["name"].GetString();
+		}
+		else
+		{
+			message = "Json does not conatin valid name field";
+			return false;
 		}
 
 		HisDevFolder* folder = dynamic_cast<HisDevFolder*>(root->GetFolder()->Find(id));
@@ -267,7 +283,7 @@ bool FoldersService::UpdateFolder(string strid, string strJson)
 		return false;
 }
 
-bool FoldersService::CreateFolder(string strJson)
+bool FoldersService::CreateFolder(string strJson,string & message)
 {
 	STACK
 	Document document;	// Default template parameter uses UTF8 and MemoryPoolAllocator.
@@ -276,12 +292,11 @@ bool FoldersService::CreateFolder(string strJson)
 		return false;
 
 	CUUID parentid = CUUID::Empty();
-	if (document.HasMember("parentId"))
+	if (document.HasMember("parentId") && document["parentId"].IsString())
 	{
 		try
 		{
-			if (document["parentId"].IsString())
-				parentid = CUUID::Parse(document["parentId"].GetString());
+			parentid = CUUID::Parse(document["parentId"].GetString());
 		}
 		catch(...)
 		{
@@ -290,10 +305,15 @@ bool FoldersService::CreateFolder(string strJson)
 	}
 
 	HisDevFolder* newFolder = NULL;
-	if (document.HasMember("name"))
+	if (document.HasMember("name") && document["name"].IsString())
 	{
 		string name = document["name"].GetString();
 		newFolder = new HisDevFolder(name);
+	}
+	else
+	{
+		message = "Json does not contain valid name property";
+		return false;
 	}
 
 	HisDevFolder* parent = dynamic_cast<HisDevFolder*>(root->GetFolder()->Find(parentid));
@@ -310,6 +330,7 @@ bool FoldersService::CreateFolder(string strJson)
 void FoldersService::render_PUT(const http_request& req, http_response** res)
 {
 	STACK
+	string message;
 	if (req.get_user()=="a" && req.get_pass()=="a")
 	{
 		string strid = req.get_arg("id");
@@ -320,31 +341,25 @@ void FoldersService::render_PUT(const http_request& req, http_response** res)
 		{
 			string strfolderid = req.get_arg("folderid");
 			//vytvori id datoveho bodu ve slozce
-			if (AddValueIdToFolder(strfolderid,content))
+			if (AddValueIdToFolder(strfolderid,content,message))
 			{
-				//*res = new http_string_response("", 200, "application/json");
 				*res = new http_response(http_response_builder("", 200,"application/json").string_response());
 				return;
 			}
 		}
-		else if (UpdateFolder(strid,content))
+		else if (UpdateFolder(strid,content,message))
 		{
-			//*res = new http_string_response("", 200, "application/json");
 			*res = new http_response(http_response_builder("", 200,"application/json").string_response());
 			return;
 		}
 	}
 	else
 	{
-		string message = "Autentication error";
-		//*res = new http_string_response(message.c_str(), 401, "application/json");
+		message = "Autentication error";
 		*res = new http_response(http_response_builder(message, 401,"application/json").string_response());
 		return;
 	}
-
-	//*res = new http_string_response("", 403, "application/json");
-	*res = new http_response(http_response_builder("", 403,"application/json").string_response());
-
+	*res = new http_response(http_response_builder(message, 403,"application/json").string_response());
 }
 
 string FoldersService::DeleteDevValue(string strDevValueRecordId)

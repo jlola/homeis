@@ -27,6 +27,8 @@ void* HisDevRuntime::ThreadFunction(void* obj)
 	STACK
 	HisDevRuntime* runtime = (HisDevRuntime*)obj;
 
+	CLogger::Info("Strat thread HisDevRuntime::ThreadFunction with threadid: %ul",pthread_self());
+
 	while(runtime->running)
 	{
 		runtime->devices.Refresh();

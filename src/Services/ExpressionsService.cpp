@@ -7,9 +7,10 @@
 
 #include "ExpressionsService.h"
 #include "PoppyDebugTools.h"
+#include "StringBuilder.h"
 #include "Common/HisException.h"
 
-ExpressionService::ExpressionService(HisDevFolderRoot* folder,ExpressionRuntime *pexpressionRuntime, HisDevices* pdevices)
+ExpressionService::ExpressionService(HisDevFolderRoot* folder, IExpressionRuntime *pexpressionRuntime, HisDevices* pdevices)
 {
 	STACK
 	devices = pdevices;
@@ -235,13 +236,13 @@ LuaExpression* ExpressionService::CreateOrUpdateExpression(string strJson,string
 			return NULL;
 
 		CUUID parentid;
-		if (document.HasMember("parentId"))
+		if (document.HasMember("parentId") && document["parentId"].IsString())
 		{
 			parentid = CUUID::Parse(document["parentId"].GetString());
 		}
 
 		CUUID expressionid;
-		if (document.HasMember("id"))
+		if (document.HasMember("id") && document["id"].IsString())
 		{
 			expressionid = CUUID::Parse(document["id"].GetString());
 		}
@@ -252,7 +253,7 @@ LuaExpression* ExpressionService::CreateOrUpdateExpression(string strJson,string
 		bool saveReq = false;
 		expressionObj = dynamic_cast<LuaExpression*>(parent->Find(expressionid));
 
-		if (document.HasMember("name"))
+		if (document.HasMember("name") && document["name"].IsString())
 		{
 			string name = document["name"].GetString();
 			if (expressionObj!=NULL)
@@ -270,7 +271,7 @@ LuaExpression* ExpressionService::CreateOrUpdateExpression(string strJson,string
 				saveReq = true;
 			}
 
-			if (document.HasMember("description"))
+			if (document.HasMember("description") && document["description"].IsString())
 			{
 				string description = document["description"].GetString();
 				if (description!=expressionObj->GetDescription())
@@ -280,7 +281,7 @@ LuaExpression* ExpressionService::CreateOrUpdateExpression(string strJson,string
 				}
 			}
 
-			if (document.HasMember("expression"))
+			if (document.HasMember("expression") && document["expression"].IsString())
 			{
 				string strexpression = document["expression"].GetString();
 				if (strexpression!=expressionObj->GetExpression())
@@ -301,8 +302,19 @@ LuaExpression* ExpressionService::CreateOrUpdateExpression(string strJson,string
 
 			if (document.HasMember("running"))
 			{
-				string strrunning = document["running"].GetString();
-				bool running = strrunning=="1" ? true : false;
+				bool running = false;
+				if (document["running"].IsString())
+				{
+					string strrunning = document["running"].GetString();
+					running = strrunning=="1" ? true : false;
+				}
+				else if (document["running"].IsBool())
+					running = document["running"].GetBool();
+				else
+				{
+					message = StringBuilder::Format("Property 'running': can not convert received value to bool");
+				}
+
 				if (running!=expressionObj->GetRunning())
 				{
 					expressionObj->SetRunning(running);
@@ -312,9 +324,13 @@ LuaExpression* ExpressionService::CreateOrUpdateExpression(string strJson,string
 
 			if (saveReq) root->Save();
 		}
+		else
+		{
+			message = "Json does not contain valid name field";
+		}
 		return expressionObj;
 	}
-	catch(HisException & ex)
+	catch(std::exception & ex)
 	{
 		message = ex.what();
 		return NULL;

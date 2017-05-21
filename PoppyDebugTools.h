@@ -2,6 +2,7 @@
 #define POPPY_H
 
 #include <iostream>
+#include "src/Helpers/logger.h"
 
 //Set this to 0 to disable the whole Poppy, both for stack tracing and performance measurement
 #define STACK_TRACING_ENABLED 1
@@ -22,6 +23,9 @@
 #include <ctime>
 #include <map>
 #include <pthread.h>
+#include "linuxcs.h"
+#include "ScopedLock.h"
+
 
 #ifdef __APPLE__
 #include <mach/clock.h>
@@ -285,6 +289,8 @@ class Frame{
 	
 };
 
+
+
 //This singleton keeps the gathered trace and can print it.
 //It is also used to keep the static stack data,
 //so that it can be declared in a header file, without needing 
@@ -294,11 +300,13 @@ class Stack{
 	//TODO: the current implementation is not thread safe. You can make it thread-safe
 	//by making the static variables thread-local
 	private: list<Frame*> trace;
+	private: uint32_t tracesize;
 
 	//optimize the stack keeping by using a pool of reusable 
 	//objects for the stack frames. This minimizes memory 
 	//allocations and allows stack keeping in production builds
 	private: list<Frame*> frameCache;
+	private: uint32_t cachesize;
 	
 	//Let's say if we have a routine with several subfunctions and we don't place a STACK* macro 
 	//in some subfunction that throws an exception. The trace that we would get is that of the 
@@ -313,19 +321,41 @@ class Stack{
 	#endif
 	
 	private: Stack() :
-		isLastFrameExitMarker(false)
+		tracesize(0),cachesize(0),isLastFrameExitMarker(false)
 	{}
 
-	public: static inline Stack* Get(){
+	public: static Stack* Get(){
+		static CRITICAL_SECTION _csLock;
+		PushFramework::ScopedLock lock(_csLock);
 		static map<pthread_t,Stack*> threadspec;
+		static uint32_t threadspecsize=0;
 		pthread_t threadid = pthread_self();
 		std::map<pthread_t,Stack*>::iterator it;
 		//static Stack singleton;
 		//return &singleton;
+
 		it = threadspec.find(threadid);
 		if (it == threadspec.end())
 			threadspec[threadid] = new Stack();
-		return threadspec[threadid];
+		Stack* pstack =	threadspec[threadid];
+
+		if (threadspec.size()>threadspecsize)
+		{
+			CLogger::Info("Thread: %ul. New size of threadspec is %d",threadid,threadspec.size());
+			threadspecsize = threadspec.size();
+		}
+		if (pstack->trace.size()>pstack->tracesize)
+		{
+			CLogger::Info("Thread: %ul. New size of trace is %d",threadid,pstack->trace.size());
+			pstack->tracesize = pstack->trace.size();
+		}
+		if (pstack->frameCache.size()>pstack->cachesize)
+		{
+			CLogger::Info("Thread: %ul. New size of frameCache is %d",threadid,pstack->frameCache.size());
+			pstack->cachesize = pstack->frameCache.size();
+		}
+
+		return pstack;
 	}
 	
 	public: static string GetTraceString(){
@@ -453,7 +483,7 @@ class Scope {
 			while(frameIter != stack->trace.rend() &&
 					(*frameIter)->type != Function &&
 					(*frameIter)->type != Block){
-				
+
 				if((*frameIter)->type == FrameTypeValue){
 					++frameIter;
 				}
@@ -465,7 +495,7 @@ class Scope {
 
 						stack->currentCall = Stack::Get()->currentCall->GetParent();
 					#endif
-					
+
 					(*frameIter)->scope->frame = NULL;
 					ReturnFrameToCache(frameIter);
 					//there can only be one older section, nothing more to do
@@ -473,7 +503,7 @@ class Scope {
 				}
 			}
 		}
-		
+
 
 		#if PERFORMANCE_COUNTING_ENABLED
 			double startTime;
@@ -494,7 +524,7 @@ class Scope {
 				CallTree::Update(startTime);
 			}
 		#endif
-		
+
 		frame = GetReusableFrame(this, text, type
 		#if PERFORMANCE_COUNTING_ENABLED
 			, startTime, stack->currentCall
@@ -509,7 +539,7 @@ class Scope {
 	Scope(const char* name,const char* funcName,const char* file,int line, FrameType type )
 	{
 		const string filename = extractFileName(file);
-		string s;
+		string s = filename;
 		//s += name + string(funcName) + at + filename + colon + std::to_string(line);
 		std::ostringstream str;
 		str << name << funcName << " at " << filename << ":" << line;
@@ -522,7 +552,7 @@ class Scope {
 		//std::uncaught_exception returns true if there is an ongoing propagating exception that is unwinding the call stack.
 		//Do not destroy the gathered stack in that case as we will need to print it
 		if(!std::uncaught_exception()){
-			
+
 			//Section-type frames may get popped and returned to the cache before the Scope object is destroyed
 			//if another Section is created in the same block
 			if(frame){
@@ -535,12 +565,12 @@ class Scope {
 						stack->currentCall = parent;
 					}
 				#endif
-				
+
 				//when exiting several nested scopes in a row, clear the previous exit marker
 				if(stack->isLastFrameExitMarker){
 					ReturnTopFrameToCache();
 				}
-		
+
 				//mark that we have succesfully exited the current top frame in the stack
 				stack->isLastFrameExitMarker = true;
 			}
@@ -564,16 +594,16 @@ class Scope {
 	//Marks nested blocks, e.g. loops and "if"s , which you can also name. Several can be used inside a single block too,
 	//because each will have a unique name. You can have multiple blocks in a single scope and they will stack one on top of the other, unlike sections.
 	//The __COUNTER__ macro returns an auto-incrementing integer every time it is called
-	#define STACK_BLOCK(x) Scope CONCAT(debugVar,__COUNTER__)(string("block \"")+#x+"\"", Block); 
+	#define STACK_BLOCK(x) //Scope CONCAT(debugVar,__COUNTER__)(string("block \"")+#x+"\"", Block);
 	
 	//Similar the STACK_BLOCK, a Section stack frame pops any previous sections in the scope of the last Block or Function. 
 	//Thus sections, unlike blocks, do not nest/stack and the stack trace doesn't unnecessarily show any past sections 
 	//that lead to the current position
-	#define STACK_SECTION(x) Scope CONCAT(debugVar,__COUNTER__)(string("section \"")+#x+"\"", Section); 
+	#define STACK_SECTION(x) //Scope CONCAT(debugVar,__COUNTER__)(string("section \"")+#x+"\"", Section);
 	
 	//use this to output values in the stack trace, e.g. parameter values, variables or loop counters.
 	//The given value must be a string, or string expression
-	#define STACK_VAL(var, value) Scope CONCAT(debugVar,__COUNTER__)(string("")+#var+" = "+(value), FrameTypeValue);
+	#define STACK_VAL(var, value) //Scope CONCAT(debugVar,__COUNTER__)(string("")+#var+" = "+(value), FrameTypeValue);
 #else
 	#define STACK
 	#define STACK_BLOCK(x)

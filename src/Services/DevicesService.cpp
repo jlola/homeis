@@ -44,8 +44,28 @@ void DevicesService::render_GET(const http_request& req, http_response** res)
 	string path = req.get_path();
 	//CLogger::Info(path.c_str());
 	//Value a(kArrayType);
+	//devices/{devid}/devvalue/{valueid}
+	if (path.find("/api/devices")!=string::npos && path.find("devvalues")!=string::npos)
+	{
+		string strdevid = req.get_arg("devid");
+		string strvalueid = req.get_arg("valueid");
+		CUUID devid = CUUID::Parse(strdevid);
+		CUUID valueid = CUUID::Parse(strvalueid);
 
-	if (path.find("/api/onewiredevices/folder")!=string::npos)
+		int index = devices.Find(devid);
+		if (index>=0)
+		{
+			//Value devjson(kObjectType);
+			respjsondoc.SetObject();
+			HisDevBase* dev = devices[index];
+			HisDevValueBase* devvalue = dynamic_cast<HisDevValueBase*>(dev->Find(valueid));
+			if (devvalue!=NULL)
+			{
+				DevValueToJson(respjsondoc,NULL,devvalue,respjsondoc);
+			}
+		}
+	}
+	else if (path.find("/api/onewiredevices/folder")!=string::npos)
 	{
 		string strFolderId = req.get_arg("id");
 		HisDevFolder* folder = NULL;
@@ -61,18 +81,20 @@ void DevicesService::render_GET(const http_request& req, http_response** res)
 		//ToJson(folder,respjsondoc);
 		FillFolderDevicesToJson(folder,respjsondoc,devices);
 	}
-	else if (path.find("/api/onewiredevices")!=string::npos)
+	else if (path.find("/api/onewiredevices")!=string::npos ||
+			 path.find("/api/devices")!=string::npos)
 	{
-		string strDevId = req.get_arg("id");
+		string strDevId = req.get_arg("devid");
 		if (strDevId.length()>0)
 		{
 			CUUID devId = CUUID::Parse(strDevId);
 			int index = devices.Find(devId);
 			if (index>=0)
 			{
-				Value devjson(kObjectType);
-				FillDeviceToJson(devjson,devices[index],respjsondoc);
-				respjsondoc.PushBack(devjson, respjsondoc.GetAllocator());
+				//Value devjson(kObjectType);
+				respjsondoc.SetObject();
+				FillDeviceToJson(respjsondoc,devices[index],respjsondoc);
+				//respjsondoc.PushBack(devjson, respjsondoc.GetAllocator());
 			}
 		}
 		else
@@ -123,6 +145,11 @@ void DevicesService::FillDeviceToJson(Value & devjson, HisDevBase* dev,Document 
 	strvalue = dev->GetRecordId().ToString();
 	jsonvalue.SetString(strvalue.c_str(),strvalue.length(),respjsondoc.GetAllocator());
 	devjson.AddMember("Id",jsonvalue,respjsondoc.GetAllocator());
+
+
+	jsonvalue.SetString(strvalue.c_str(),strvalue.length(),respjsondoc.GetAllocator());
+	jsonvalue.SetBool(dev->IsEnabled());
+	devjson.AddMember("Enabled",jsonvalue,respjsondoc.GetAllocator());
 
 	HisDevDallas* devDallas = dynamic_cast<HisDevDallas*>(dev);
 	if (devDallas!=NULL)
@@ -242,7 +269,7 @@ void DevicesService::render_POST(const http_request& req, http_response** res)
 	{
 		if (path.find("/api/onewiredevices/devvalue")!=string::npos)
 		{
-			HisDevValueBase* devvalue = CreateVirtualDevValue(content);
+			HisDevValueBase* devvalue = CreateVirtualDevValue(content,message);
 			if (devvalue!=NULL)
 			{
 				if (UpdateDevValue(devvalue->GetRecordId(),content))
@@ -255,7 +282,7 @@ void DevicesService::render_POST(const http_request& req, http_response** res)
 		}
 		else if (path.find("/api/onewiredevices")!=string::npos)
 		{
-			HisDevVirtual* vritualdev = CreateVirtualDevice(content);
+			HisDevVirtual* vritualdev = CreateVirtualDevice(content,message);
 			if (vritualdev!=NULL)
 			{
 				devices.Add(vritualdev);
@@ -284,7 +311,7 @@ void DevicesService::render_POST(const http_request& req, http_response** res)
 		return;
 	}
 	//*res = new http_string_response("", 403, "application/json");
-	*res = new http_response(http_response_builder("", 403,"application/json").string_response());
+	*res = new http_response(http_response_builder(message, 403,"application/json").string_response());
 }
 
 void DevicesService::render_PUT(const http_request& req, http_response** res)
@@ -307,7 +334,7 @@ void DevicesService::render_PUT(const http_request& req, http_response** res)
 		}
 		else if (path.find("/api/onewiredevices")!=string::npos)
 		{
-			string strDevId = req.get_arg("id");
+			string strDevId = req.get_arg("devid");
 			if (UpdateDevice(strDevId,content))
 			{
 				//*res = new http_string_response("", 200, "application/json");
@@ -359,7 +386,7 @@ void DevicesService::render_DELETE(const http_request& req, http_response** res)
 		}
 		else if (path.find("/api/onewiredevices")!=string::npos)
 		{
-			string strRecordId = req.get_arg("id");
+			string strRecordId = req.get_arg("devid");
 			msg = DeleteDev(strRecordId);
 			if (msg=="")
 			{
@@ -424,6 +451,7 @@ string DevicesService::DeleteDevValue(string strDevValueRecordId)
 		{
 			delete(devvalue);
 			devvalue = NULL;
+			devices.Save();
 		}
 		else
 		{
@@ -487,24 +515,26 @@ bool DevicesService::DeleteValueId(string strValueId)
 }
 
 
-HisDevVirtual* DevicesService::CreateVirtualDevice(string strjson)
+HisDevVirtual* DevicesService::CreateVirtualDevice(string strjson,string & message)
 {
 	Document document;	// Default template parameter uses UTF8 and MemoryPoolAllocator.
 
 	if (document.Parse<0>((char*)strjson.c_str()).HasParseError())
 		return NULL;
-	HisDevVirtual* virtualdev = new HisDevVirtual();
-	if (document.HasMember("Name"))
+	HisDevVirtual* virtualdev = NULL;
+	if (document.HasMember("Name") && document["Name"].IsString())
 	{
+		virtualdev = new HisDevVirtual();
 		virtualdev->SetName(document["Name"].GetString());
 	}
-
-
-
+	else
+	{
+		message = "Error creating VirtualDevice. Name should be filled in.";
+	}
 	return virtualdev;
 }
 
-HisDevValueBase* DevicesService::CreateVirtualDevValue(string strjson)
+HisDevValueBase* DevicesService::CreateVirtualDevValue(string strjson,string & message)
 {
 	Document document;	// Default template parameter uses UTF8 and MemoryPoolAllocator.
 
@@ -520,10 +550,14 @@ HisDevValueBase* DevicesService::CreateVirtualDevValue(string strjson)
 		if (index>=0)
 		{
 			HisDevVirtual* virtualdev = dynamic_cast<HisDevVirtual*>(devices[index]);
-			if (document.HasMember("type"))
+			if (document.HasMember("type") && document["type"].IsInt())
 			{
 				EDataType type = (EDataType)document["type"].GetInt();
 				return virtualdev->AddDevValue(type);
+			}
+			else
+			{
+				message = "Creating VirtualDevValue. Type shoould be filled in.";
 			}
 		 }
 	}
@@ -548,11 +582,20 @@ HisDevBase* DevicesService::UpdateDevice(string strDevId, string strjson)
 		dev = dynamic_cast<HisDevBase*>(devices[index]);
 		if (dev!=NULL)
 		{
-			if (document.HasMember("Name"))
+			if (document.HasMember("Name")&&document["Name"].IsString())
 			{
 				if (dev->GetName()!=document["Name"].GetString())
 				{
 					dev->SetName(document["Name"].GetString());
+					changed = true;
+				}
+			}
+			if (document.HasMember("Enabled")&&document["Enabled"].IsBool())
+			{
+				bool enabled = document["Enabled"].GetBool();
+				if (dev->IsEnabled()!=enabled)
+				{
+					dev->Enable(enabled);
 					changed = true;
 				}
 			}
@@ -599,7 +642,7 @@ bool DevicesService::UpdateDevValue(CUUID devValueId, string strjson)
 	HisDevValueBase* devValue = devices.FindValue(devValueId);
 	if (devValue != NULL)
 	{
-		if (document.HasMember("name"))
+		if (document.HasMember("name") && document["name"].IsString())
 		{
 			string name = document["name"].GetString();
 			if (name!=devValue->GetPinName())
@@ -609,7 +652,7 @@ bool DevicesService::UpdateDevValue(CUUID devValueId, string strjson)
 			}
 		}
 
-		if (document.HasMember("addressname"))
+		if (document.HasMember("addressname") && document["addressname"].IsString())
 		{
 			string addressname = document["addressname"].GetString();
 			if (addressname!=devValue->GetAddressName())
@@ -619,7 +662,7 @@ bool DevicesService::UpdateDevValue(CUUID devValueId, string strjson)
 			}
 		}
 
-		if (document.HasMember("unit"))
+		if (document.HasMember("unit") && document["unit"].IsString())
 		{
 			string strunit = document["unit"].GetString();
 			if (strunit!=devValue->GetUnit())
@@ -629,12 +672,12 @@ bool DevicesService::UpdateDevValue(CUUID devValueId, string strjson)
 			}
 		}
 
-		if (document.HasMember("force"))
+		if (document.HasMember("force") && document["force"].IsBool())
 		{
 			bool force = document["force"].GetBool();
 			devValue->SetForceOutput(force);
 		}
-		if (document.HasMember("value"))
+		if (document.HasMember("value") && document["value"].IsString())
 		{
 			string strvalue = document["value"].GetString();
 

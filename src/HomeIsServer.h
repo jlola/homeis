@@ -23,7 +23,16 @@
 #include "HomeIsConfig.h"
 #include "modbus.h"
 #include "Modbus/ModbusManager.h"
+#include "HisDevRunTime.h"
 #include <algorithm>
+
+#include "Services/FileController.h"
+#include "Services/FoldersService.h"
+#include "Services/ExpressionsService.h"
+#include "Services/ModbusDeviceService.h"
+#include "Services/ModbusService.h"
+#include "Services/ConnectorsService.h"
+
 
 using namespace httpserver;
 using namespace std;
@@ -38,15 +47,25 @@ class HomeIsServer
 	HisDevices* devs;
 	ModbusManager momanager;
 	vector<SSerPortConfig> & serports;
+	webserver ws_i;
+
+	FileController* fc;
+	DevicesService* owds;
+	FoldersService* foldersService;
+	ExpressionService* expressionService;
+	ModbusDeviceService* modbusDevService;
+	ModbusService* modbusservice;
+	ConnectorsService* connectorsService;
 
 	bool InitOneWireLib(vector<SSerPortConfig> & pserports);
-	bool Init();
+	bool Init(bool blocking);
 	bool InitModbus();
 	bool InitHisDevices();
-	void InitWebServer();
+	void InitWebServer(bool blocking);
 public:
 	HomeIsServer(vector<SSerPortConfig> & serports,int tcpPort);
-	void Start();
+	void AddModbus(IModbus* m);
+	void Start(bool blocking);
 	void Stop();
 };
 
