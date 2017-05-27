@@ -17,6 +17,8 @@
 #include "Common/CUUID.h"
 #include "Devices/Folder/HisDevFolder.h"
 #include "Devices/Folder/HisDevFolderRoot.h"
+#include "StringBuilder.h"
+#include "Helpers/File.h"
 
 //#include "homeis/Expressions/LuaExpression.h"
 #include "death_handler.h"
@@ -40,11 +42,6 @@ extern "C" {
 #include <stdlib.h>
 #include <execinfo.h>
 #include <cxxabi.h>
-
-#include <unistd.h>
-#include <fcntl.h>
-#include <termios.h>
-#include <string.h>
 
 int main(int argc, char **argv)
 {
@@ -80,8 +77,8 @@ int main(int argc, char **argv)
 
 	if (dodaemonize)
 	{
-		string path;
-		daemonize("/var/run/homeisd.pid");
+		string pid = StringBuilder::Format("/var/run/%s.pid",File::getexefile().c_str());
+		daemonize(pid.c_str());
 		sleep(5);
 	}
 

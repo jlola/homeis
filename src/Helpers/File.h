@@ -17,6 +17,7 @@ public:
 	static std::string getexepath();
 	static bool Delete(std::string fileName);
 	static std::string ReadWholeFile(std::string filePath);
+	static std::string getexefile();
 };
 
 #endif /* FILE_H_ */

@@ -37,6 +37,17 @@ std::string File::getexepath()
 	return path;
 }
 
+std::string File::getexefile()
+{
+	char result[ PATH_MAX ];
+	ssize_t rcount = readlink( "/proc/self/exe", result, PATH_MAX );
+	std::string path( result, (rcount > 0) ? rcount : 0 );
+
+	int pos = path.find_last_of("/\\");
+	path.erase(path.begin(),path.begin()+pos+1);
+	return path;
+}
+
 bool File::Delete(string fileName)
 {
 	int result = remove(fileName.c_str());

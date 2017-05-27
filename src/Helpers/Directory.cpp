@@ -7,6 +7,14 @@
 #include <string>
 #include <unistd.h>
 #include <sys/stat.h>
+#include <sys/types.h>
+#include <dirent.h>
+#include <errno.h>
+#include <vector>
+#include <iostream>
+#include <exception>
+#include "Helpers/StringBuilder.h"
+#include "logger.h"
 #include "Directory.h"
 
 using namespace std;
@@ -31,3 +39,24 @@ bool Directory::Create(string path)
 		return true;
 	return false;
 }
+
+/*function... might want it in some class?*/
+vector<string> Directory::GetFileList(string dir)
+{
+	vector<std::string> files;
+	DIR *dp;
+	struct dirent *dirp;
+	if((dp = opendir(dir.c_str())) == NULL)
+	{
+		string log = StringBuilder::Format("Error( %d ) opening %s ",errno,dir.c_str());
+		CLogger::Info(log.c_str());
+		return files;
+	}
+
+	while ((dirp = readdir(dp)) != NULL) {
+		files.push_back(string(dirp->d_name));
+	}
+	closedir(dp);
+	return files;
+}
+

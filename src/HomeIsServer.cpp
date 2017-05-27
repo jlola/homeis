@@ -109,11 +109,14 @@ void HomeIsServer::InitWebServer(bool blocking)
 	modbusDevService = new ModbusDeviceService(devs,&momanager);
 	modbusservice = new ModbusService(&momanager);
 	connectorsService = new ConnectorsService(serports);
+	logservice = new LogService();
 
 	//ws_i = cw;
 	ws_i.register_resource(string("files/{path}"), fc, true);
 	ws_i.register_resource(string(""), fc, true);
 
+	ws_i.register_resource(string("api/logs"), logservice, true);
+	ws_i.register_resource(string("api/logs/{log}"), logservice, true);
 	ws_i.register_resource(string("api/onewiredevices"), owds, true);
 	ws_i.register_resource(string("api/devices"), owds, true);
 	ws_i.register_resource(string("api/onewiredevices/{devid}"), owds, true);

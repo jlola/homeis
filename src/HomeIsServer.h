@@ -32,7 +32,7 @@
 #include "Services/ModbusDeviceService.h"
 #include "Services/ModbusService.h"
 #include "Services/ConnectorsService.h"
-
+#include "Services/LogService.h"
 
 using namespace httpserver;
 using namespace std;
@@ -56,6 +56,7 @@ class HomeIsServer
 	ModbusDeviceService* modbusDevService;
 	ModbusService* modbusservice;
 	ConnectorsService* connectorsService;
+	LogService* logservice;
 
 	bool InitOneWireLib(vector<SSerPortConfig> & pserports);
 	bool Init(bool blocking);

@@ -8,6 +8,8 @@
 #ifndef DIRECTORY_H_
 #define DIRECTORY_H_
 
+#include <vector>
+
 using namespace std;
 
 class Directory
@@ -15,6 +17,7 @@ class Directory
 public:
 	static bool Exists(string path);
 	static bool Create(string path);
+	static vector<string> GetFileList(string dir);
 };
 
 #endif /* DIRECTORY_H_ */
