@@ -78,7 +78,7 @@ int main(int argc, char **argv)
 	if (dodaemonize)
 	{
 		string pid = StringBuilder::Format("/var/run/%s.pid",File::getexefile().c_str());
-		daemonize(pid.c_str());
+		daemonize2(pid.c_str());
 		sleep(5);
 	}
 
@@ -95,6 +95,7 @@ Home information system %d.%d.%8d\n\
 	vector<SSerPortConfig> serports = config.GetSerialPorts();
 
 	HomeIsServer server(serports,config.GetServerPort());
+
 	server.Start(true);
 	server.Stop();
 

@@ -28,6 +28,8 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <sys/time.h>
+#include "PoppyDebugTools.h"
+#include "logger.h"
 
 #if defined(__MINGW32__) || defined(__CYGWIN32__)
 #include <winsock2.h>
@@ -263,7 +265,7 @@ MHD_socket create_socket (int domain, int type, int protocol)
 
 bool webserver::start(bool blocking)
 {
-
+	STACK
     struct {
         MHD_OptionItem operator ()(
                 enum MHD_OPTION opt,
@@ -341,7 +343,7 @@ bool webserver::start(bool blocking)
     if(cred_type != http_utils::NONE)
         iov.push_back(gen(MHD_OPTION_HTTPS_CRED_TYPE, cred_type));
 #endif //HAVE_GNUTLS
-
+STACK_SECTION("HAVE_GNUTLS")
     iov.push_back(gen(MHD_OPTION_END, 0, NULL ));
 
     int start_conf = start_method;
@@ -356,6 +358,7 @@ bool webserver::start(bool blocking)
     if(comet_enabled)
         start_conf |= MHD_USE_SUSPEND_RESUME;
 
+#define USE_FASTOPEN
 #ifdef USE_FASTOPEN
     start_conf |= MHD_USE_TCP_FASTOPEN;
 #endif
@@ -368,12 +371,14 @@ bool webserver::start(bool blocking)
             &answer_to_connection, this, MHD_OPTION_ARRAY,
             &iov[0], MHD_OPTION_END
     );
+    STACK_SECTION("daemon")
     if(NULL == daemon)
     {
         cout << gettext("Unable to connect daemon to port: ") <<
             this->port << endl;
         throw ::httpserver::webserver_exception();
     }
+    STACK_SECTION("daemon!=NULL")
     details::daemon_item* di = new details::daemon_item(this, daemon);
     daemons.push_back(di);
 
@@ -528,6 +533,7 @@ int webserver::build_request_args (
 
 int policy_callback (void *cls, const struct sockaddr* addr, socklen_t addrlen)
 {
+	CLogger::Info("policy_callback");
     if(!(static_cast<webserver*>(cls))->ban_system_enabled) return MHD_YES;
 
     if((((static_cast<webserver*>(cls))->default_policy == http_utils::ACCEPT) &&
@@ -984,6 +990,7 @@ int webserver::answer_to_connection(void* cls, MHD_Connection* connection,
     size_t* upload_data_size, void** con_cls
     )
 {
+	CLogger::Info("answer_to_connection");
     struct details::modded_request* mr =
         static_cast<struct details::modded_request*>(*con_cls);
 

@@ -1,0 +1,3 @@
+soubory je treba nahrat do:
+
+/usr/lib/arm-linux-gnueabihf

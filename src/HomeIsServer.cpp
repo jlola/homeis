@@ -91,13 +91,13 @@ bool HomeIsServer::InitModbus()
 
 HomeIsServer::HomeIsServer(vector<SSerPortConfig> & pserports,int TcpPort) :
 		devruntime(NULL),rootFolder(NULL),expressionRuntime(NULL),
-		cw(create_webserver(TcpPort).max_threads(5)),devs(NULL),serports(pserports),ws_i(cw),
+		cw(create_webserver(TcpPort).debug().max_threads(5).use_ssl().https_mem_key(File::getexepath()+"/server.key").https_mem_cert(File::getexepath()+"/server.crt")),devs(NULL),serports(pserports),ws_i(cw),
 		fc(NULL),owds(NULL),foldersService(NULL),expressionService(NULL), modbusDevService(NULL),
-		modbusservice(NULL), connectorsService(NULL)
+		modbusservice(NULL), connectorsService(NULL),logservice(NULL)
 {
-	string strkey = File::getexepath()+"/key.pem";
-	string strcert = File::getexepath()+"/cert.pem";
-	cout << strkey << ", " << strcert << endl;
+	string strkey = File::getexepath()+"/server.key";
+	string strcert = File::getexepath()+"/server.crt";
+	CLogger::Info( "%s , %s",strkey.c_str(), strcert.c_str());
 }
 
 void HomeIsServer::InitWebServer(bool blocking)
@@ -144,6 +144,7 @@ void HomeIsServer::InitWebServer(bool blocking)
 	///{connectorname}/{devaddress}/{baseaddress}/{count}
 	ws_i.register_resource(string("api/modbus/registers/{connectorname}/{devaddress}/{baseaddress}/{value}"),modbusservice,true);
 	ws_i.register_resource(string("api/connectors"),connectorsService,true);
+	CLogger::Info("Start webserver with blocking %d", blocking ? 1 : 0);
 	ws_i.start(blocking);
 }
 

@@ -594,16 +594,16 @@ class Scope {
 	//Marks nested blocks, e.g. loops and "if"s , which you can also name. Several can be used inside a single block too,
 	//because each will have a unique name. You can have multiple blocks in a single scope and they will stack one on top of the other, unlike sections.
 	//The __COUNTER__ macro returns an auto-incrementing integer every time it is called
-	#define STACK_BLOCK(x) //Scope CONCAT(debugVar,__COUNTER__)(string("block \"")+#x+"\"", Block);
+	#define STACK_BLOCK(x) Scope CONCAT(debugVar,__COUNTER__)(string("block \"")+#x+"\"", Block);
 	
 	//Similar the STACK_BLOCK, a Section stack frame pops any previous sections in the scope of the last Block or Function. 
 	//Thus sections, unlike blocks, do not nest/stack and the stack trace doesn't unnecessarily show any past sections 
 	//that lead to the current position
-	#define STACK_SECTION(x) //Scope CONCAT(debugVar,__COUNTER__)(string("section \"")+#x+"\"", Section);
+	#define STACK_SECTION(x) Scope CONCAT(debugVar,__COUNTER__)(string("section \"")+#x+"\"", Section);
 	
 	//use this to output values in the stack trace, e.g. parameter values, variables or loop counters.
 	//The given value must be a string, or string expression
-	#define STACK_VAL(var, value) //Scope CONCAT(debugVar,__COUNTER__)(string("")+#var+" = "+(value), FrameTypeValue);
+	#define STACK_VAL(var, value) Scope CONCAT(debugVar,__COUNTER__)(string("")+#var+" = "+(value), FrameTypeValue);
 #else
 	#define STACK
 	#define STACK_BLOCK(x)
