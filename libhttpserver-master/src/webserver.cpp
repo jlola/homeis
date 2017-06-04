@@ -533,7 +533,6 @@ int webserver::build_request_args (
 
 int policy_callback (void *cls, const struct sockaddr* addr, socklen_t addrlen)
 {
-	CLogger::Info("policy_callback");
     if(!(static_cast<webserver*>(cls))->ban_system_enabled) return MHD_YES;
 
     if((((static_cast<webserver*>(cls))->default_policy == http_utils::ACCEPT) &&
@@ -990,7 +989,6 @@ int webserver::answer_to_connection(void* cls, MHD_Connection* connection,
     size_t* upload_data_size, void** con_cls
     )
 {
-	CLogger::Info("answer_to_connection");
     struct details::modded_request* mr =
         static_cast<struct details::modded_request*>(*con_cls);
 

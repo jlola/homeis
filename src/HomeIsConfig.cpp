@@ -21,6 +21,11 @@ const char configFileDefault[] = "\
 #Server port\n\
 Port=81;\n\
 \n\
+UseHttps=true;\n\
+#relative path to homeis dir\n\
+https_key=\"server.key\"\n\
+https_cert=\"server.crt\"\n\
+\n\
 SerialPorts = (\
 		#{\n\
 		#Port=\"/dev/ttyUSB0\"		#name of port\n\
@@ -36,6 +41,47 @@ SerialPorts = (\
 ";
 
 
+bool HomeIsConfig::UseHTTPS()
+{
+	Setting& root = cfg.getRoot();
+	if (root.exists("SerialPorts"))
+	{
+		bool useHttps = false;
+		if (root.lookupValue("UseHttps",useHttps))
+		{
+			return useHttps;
+		}
+	}
+	return false;
+}
+
+string HomeIsConfig::HTTPSCert()
+{
+	Setting& root = cfg.getRoot();
+	if (root.exists("SerialPorts"))
+	{
+		string httpscert;
+		if (root.lookupValue("https_cert",httpscert))
+		{
+			return httpscert;
+		}
+	}
+	return "server.crt";
+}
+
+string HomeIsConfig::HTTPSKey()
+{
+	Setting& root = cfg.getRoot();
+	if (root.exists("SerialPorts"))
+	{
+		string httpskey;
+		if (root.lookupValue("https_key",httpskey))
+		{
+			return httpskey;
+		}
+	}
+	return "server.key";
+}
 
 HomeIsConfig::HomeIsConfig(string pfilename)
 {

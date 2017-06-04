@@ -41,6 +41,12 @@ public:
 
 	vector<SSerPortConfig> GetSerialPorts();
 
+	bool UseHTTPS();
+
+	string HTTPSKey();
+
+	string HTTPSCert();
+
 //	string GetMountMassScript();
 //
 //	string GetMountFolderScript();

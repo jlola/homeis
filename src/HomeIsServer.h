@@ -47,7 +47,7 @@ class HomeIsServer
 	HisDevices* devs;
 	ModbusManager momanager;
 	vector<SSerPortConfig> & serports;
-	webserver ws_i;
+	webserver* ws_i;
 
 	FileController* fc;
 	DevicesService* owds;
@@ -64,10 +64,12 @@ class HomeIsServer
 	bool InitHisDevices();
 	void InitWebServer(bool blocking);
 public:
-	HomeIsServer(vector<SSerPortConfig> & serports,int tcpPort);
+	HomeIsServer(vector<SSerPortConfig> & serports,int tcpPort,bool useHttps,
+			string httpsKey, string httpsCert);
 	void AddModbus(IModbus* m);
 	void Start(bool blocking);
 	void Stop();
+	~HomeIsServer();
 };
 
 #endif /* HOMEISSERVER_H_ */

@@ -94,7 +94,8 @@ Home information system %d.%d.%8d\n\
 	HomeIsConfig config("homeis.cfg");
 	vector<SSerPortConfig> serports = config.GetSerialPorts();
 
-	HomeIsServer server(serports,config.GetServerPort());
+	HomeIsServer server(serports,config.GetServerPort(),config.UseHTTPS(),
+			config.HTTPSKey(),config.HTTPSCert());
 
 	server.Start(true);
 	server.Stop();

@@ -53,7 +53,7 @@ bool HomeIsServer::Init(bool blocking)
 
 void HomeIsServer::Stop()
 {
-	ws_i.stop();
+	ws_i->stop();
 	devruntime->Stop();
 }
 
@@ -89,12 +89,19 @@ bool HomeIsServer::InitModbus()
 	return true;
 }
 
-HomeIsServer::HomeIsServer(vector<SSerPortConfig> & pserports,int TcpPort) :
+HomeIsServer::HomeIsServer(vector<SSerPortConfig> & pserports,int TcpPort,bool useHttps,
+		string httpsKey, string httpsCert) :
 		devruntime(NULL),rootFolder(NULL),expressionRuntime(NULL),
-		cw(create_webserver(TcpPort).debug().max_threads(5).use_ssl().https_mem_key(File::getexepath()+"/server.key").https_mem_cert(File::getexepath()+"/server.crt")),devs(NULL),serports(pserports),ws_i(cw),
+		cw(create_webserver(TcpPort)),devs(NULL),serports(pserports),
 		fc(NULL),owds(NULL),foldersService(NULL),expressionService(NULL), modbusDevService(NULL),
 		modbusservice(NULL), connectorsService(NULL),logservice(NULL)
 {
+	if (useHttps)
+	{
+		cw.max_threads(5).use_ssl().https_mem_key(File::getexepath()+"/"+httpsKey).https_mem_cert(File::getexepath()+"/"+httpsCert);
+	}
+	ws_i = new webserver(cw);
+
 	string strkey = File::getexepath()+"/server.key";
 	string strcert = File::getexepath()+"/server.crt";
 	CLogger::Info( "%s , %s",strkey.c_str(), strcert.c_str());
@@ -112,40 +119,40 @@ void HomeIsServer::InitWebServer(bool blocking)
 	logservice = new LogService();
 
 	//ws_i = cw;
-	ws_i.register_resource(string("files/{path}"), fc, true);
-	ws_i.register_resource(string(""), fc, true);
+	ws_i->register_resource(string("files/{path}"), fc, true);
+	ws_i->register_resource(string(""), fc, true);
 
-	ws_i.register_resource(string("api/logs"), logservice, true);
-	ws_i.register_resource(string("api/logs/{log}"), logservice, true);
-	ws_i.register_resource(string("api/onewiredevices"), owds, true);
-	ws_i.register_resource(string("api/devices"), owds, true);
-	ws_i.register_resource(string("api/onewiredevices/{devid}"), owds, true);
-	ws_i.register_resource(string("api/devices/{devid}"), owds, true);
-	ws_i.register_resource(string("api/onewiredevices/devvalue/{id}"), owds, true);
-	ws_i.register_resource(string("api/devices/{devid}/devvalues/{valueid}"),owds,true);
-	ws_i.register_resource(string("api/onewiredevices/folder/{id}"), owds, true);
+	ws_i->register_resource(string("api/logs"), logservice, true);
+	ws_i->register_resource(string("api/logs/{log}"), logservice, true);
+	ws_i->register_resource(string("api/onewiredevices"), owds, true);
+	ws_i->register_resource(string("api/devices"), owds, true);
+	ws_i->register_resource(string("api/onewiredevices/{devid}"), owds, true);
+	ws_i->register_resource(string("api/devices/{devid}"), owds, true);
+	ws_i->register_resource(string("api/onewiredevices/devvalue/{id}"), owds, true);
+	ws_i->register_resource(string("api/devices/{devid}/devvalues/{valueid}"),owds,true);
+	ws_i->register_resource(string("api/onewiredevices/folder/{id}"), owds, true);
 
 	//run all expressions in folder
-	ws_i.register_resource(string("api/expression/run/{id}"), expressionService, true);
-	ws_i.register_resource(string("api/expression/folder/{id}"), expressionService, true);
-	ws_i.register_resource(string("api/expression/debuglog/{id}"), expressionService, true);
-	ws_i.register_resource(string("api/expression/{id}"), expressionService, true);
-	ws_i.register_resource(string("api/expression"), expressionService, true);
+	ws_i->register_resource(string("api/expression/run/{id}"), expressionService, true);
+	ws_i->register_resource(string("api/expression/folder/{id}"), expressionService, true);
+	ws_i->register_resource(string("api/expression/debuglog/{id}"), expressionService, true);
+	ws_i->register_resource(string("api/expression/{id}"), expressionService, true);
+	ws_i->register_resource(string("api/expression"), expressionService, true);
 
-	ws_i.register_resource(string("api/folders"), foldersService, true);
-	ws_i.register_resource(string("api/folder"), foldersService, true);
-	ws_i.register_resource(string("api/folders/{id}"), foldersService, true);
-	ws_i.register_resource(string("api/folder/allitems/{id}"), foldersService, true);
-	ws_i.register_resource(string("api/folder/{id}"), foldersService, true);
-	ws_i.register_resource(string("api/folder/valueid/{folderid}"), foldersService, true);
+	ws_i->register_resource(string("api/folders"), foldersService, true);
+	ws_i->register_resource(string("api/folder"), foldersService, true);
+	ws_i->register_resource(string("api/folders/{id}"), foldersService, true);
+	ws_i->register_resource(string("api/folder/allitems/{id}"), foldersService, true);
+	ws_i->register_resource(string("api/folder/{id}"), foldersService, true);
+	ws_i->register_resource(string("api/folder/valueid/{folderid}"), foldersService, true);
 
-	ws_i.register_resource(string("api/modbus/scan/{connectorname}/{address}"),modbusDevService,true);
+	ws_i->register_resource(string("api/modbus/scan/{connectorname}/{address}"),modbusDevService,true);
 
 	///{connectorname}/{devaddress}/{baseaddress}/{count}
-	ws_i.register_resource(string("api/modbus/registers/{connectorname}/{devaddress}/{baseaddress}/{value}"),modbusservice,true);
-	ws_i.register_resource(string("api/connectors"),connectorsService,true);
+	ws_i->register_resource(string("api/modbus/registers/{connectorname}/{devaddress}/{baseaddress}/{value}"),modbusservice,true);
+	ws_i->register_resource(string("api/connectors"),connectorsService,true);
 	CLogger::Info("Start webserver with blocking %d", blocking ? 1 : 0);
-	ws_i.start(blocking);
+	ws_i->start(blocking);
 }
 
 bool HomeIsServer::InitHisDevices()
@@ -204,4 +211,12 @@ bool HomeIsServer::InitOneWireLib(vector<SSerPortConfig> & pserports)
 		//return false;
 	}
 	return true;
+}
+
+HomeIsServer::~HomeIsServer()
+{
+	delete(ws_i);
+	ws_i = NULL;
+	delete(rootFolder);
+	rootFolder = NULL;
 }
