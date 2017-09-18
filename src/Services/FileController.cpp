@@ -20,7 +20,7 @@ FileController::FileController()
 
 }
 
-void FileController::render_GET(const http_request& r, http_response** res)
+const http_response FileController::render_GET(const http_request& r)
 {
 	STACK
 	std::string filepar = r.get_arg("path");
@@ -32,9 +32,15 @@ void FileController::render_GET(const http_request& r, http_response** res)
 	else
 		file += r.get_path();
 	if (file.find(".css")!= std::string::npos)
+	{
 		//*res = new http_file_response(file, 200, "text/css");
-		*res = new http_response(http_response_builder(file, 200, "text/css").file_response());
+		http_response resp(http_response_builder(file, 200, "text/css").file_response());
+		return resp;
+	}
 	else
+	{
 		//*res = new http_file_response(file, 200, "text/html");
-		*res = new http_response(http_response_builder(file, 200, "text/html").file_response());
+		http_response resp(http_response_builder(file, 200, "text/html").file_response());
+		return resp;
+	}
 }

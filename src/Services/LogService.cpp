@@ -25,7 +25,8 @@ LogService::~LogService() {
 
 }
 
-void LogService::render_GET(const http_request& req, http_response** res)
+//void LogService::render_GET(const http_request& req, http_response** res)
+const http_response LogService::render_GET(const http_request& req)
 {
 	STACK
 
@@ -54,7 +55,8 @@ void LogService::render_GET(const http_request& req, http_response** res)
 		}
 		document.Accept(wr);
 		std::string json = buffer.GetString();
-		*res = new http_response(http_response_builder(json, 200,"application/json").string_response());
+		http_response response(http_response_builder(json, 200,"application/json").string_response());
+		return response;
 	}
 	else
 	{
@@ -67,14 +69,17 @@ void LogService::render_GET(const http_request& req, http_response** res)
 			document.AddMember(logname.c_str(),jsonvalue,document.GetAllocator());
 			document.Accept(wr);
 			std::string json = buffer.GetString();
-			*res = new http_response(http_response_builder(json, 200,"application/json").string_response());
+			vector<string> topics;
+			topics.push_back(json);
+			return http_response_builder(json, 200,"application/json").string_response();
 		}
 		else
 		{
 			jsonvalue.SetString("Not exists",document.GetAllocator());
 			document.AddMember("Result",jsonvalue,document.GetAllocator());
 			std::string json = buffer.GetString();
-			*res = new http_response(http_response_builder(json, 400,"application/json").string_response());
+			http_response resp(http_response_builder(json, 400,"application/json").string_response());
+			return resp;
 		}
 	}
 }

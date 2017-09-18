@@ -27,10 +27,10 @@ class FoldersService : public http_resource
 public:
 	FoldersService(HisDevices & dev,HisDevFolderRoot* proot);
 	~FoldersService(void);
-	void render_GET(const http_request&, http_response**);
-	void render_POST(const http_request& r, http_response** res);
-	void render_PUT(const http_request& req, http_response** res);
-	void render_DELETE(const http_request& req, http_response** res);
+	const http_response render_GET(const http_request& req);
+	const http_response render_POST(const http_request& req);
+	const http_response render_PUT(const http_request& req);
+	const http_response render_DELETE(const http_request& req);
 	void FoldersToJson(HisDevFolderRoot* root, HisDevFolder *pFolder, Document & respjsondoc, bool foldersOnly);
 	bool AddValueIdToFolder(string strFolderId, string strJson,string & message);
 	string DeleteDevValue(string strDevValueRecordId);

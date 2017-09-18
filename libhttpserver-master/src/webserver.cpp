@@ -28,8 +28,6 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <sys/time.h>
-#include "PoppyDebugTools.h"
-#include "logger.h"
 
 #if defined(__MINGW32__) || defined(__CYGWIN32__)
 #include <winsock2.h>
@@ -57,13 +55,14 @@
 #include "webserver.hpp"
 #include "details/modded_request.hpp"
 #include "details/cache_entry.hpp"
-#include "PoppyDebugTools.h"
 
 #define _REENTRANT 1
 
 #ifndef SOCK_CLOEXEC
 #define SOCK_CLOEXEC 02000000
 #endif
+
+#define NEW_OR_MOVE(TYPE, VALUE) new TYPE(VALUE)
 
 using namespace std;
 
@@ -265,7 +264,7 @@ MHD_socket create_socket (int domain, int type, int protocol)
 
 bool webserver::start(bool blocking)
 {
-	STACK
+
     struct {
         MHD_OptionItem operator ()(
                 enum MHD_OPTION opt,
@@ -290,8 +289,8 @@ bool webserver::start(bool blocking)
                 this)
     );
     iov.push_back(gen(MHD_OPTION_CONNECTION_TIMEOUT, connection_timeout));
-    if(bind_address != 0x0)
-        iov.push_back(gen(MHD_OPTION_SOCK_ADDR, (intptr_t) bind_address));
+    //if(bind_address != 0x0)
+    //    iov.push_back(gen(MHD_OPTION_SOCK_ADDR, (intptr_t) bind_address));
     if(bind_socket != 0)
         iov.push_back(gen(MHD_OPTION_LISTEN_SOCKET, bind_socket));
     if(start_method == http_utils::THREAD_PER_CONNECTION && max_threads != 0)
@@ -343,7 +342,7 @@ bool webserver::start(bool blocking)
     if(cred_type != http_utils::NONE)
         iov.push_back(gen(MHD_OPTION_HTTPS_CRED_TYPE, cred_type));
 #endif //HAVE_GNUTLS
-STACK_SECTION("HAVE_GNUTLS")
+
     iov.push_back(gen(MHD_OPTION_END, 0, NULL ));
 
     int start_conf = start_method;
@@ -358,31 +357,40 @@ STACK_SECTION("HAVE_GNUTLS")
     if(comet_enabled)
         start_conf |= MHD_USE_SUSPEND_RESUME;
 
-#define USE_FASTOPEN
 #ifdef USE_FASTOPEN
     start_conf |= MHD_USE_TCP_FASTOPEN;
 #endif
 
-    this->running = true;
+    struct MHD_Daemon* daemon = NULL;
+    if(bind_address == 0x0) {
+        daemon = MHD_start_daemon
+        (
+                start_conf, this->port, &policy_callback, this,
+                &answer_to_connection, this, MHD_OPTION_ARRAY,
+                &iov[0], MHD_OPTION_END
+        );
+    } else {
+        daemon = MHD_start_daemon
+        (
+                start_conf, 1, &policy_callback, this,
+                &answer_to_connection, this, MHD_OPTION_ARRAY,
+                &iov[0], MHD_OPTION_SOCK_ADDR, bind_address, MHD_OPTION_END
+        );
+    }
 
-    struct MHD_Daemon* daemon = MHD_start_daemon
-    (
-            start_conf, this->port, &policy_callback, this,
-            &answer_to_connection, this, MHD_OPTION_ARRAY,
-            &iov[0], MHD_OPTION_END
-    );
-    STACK_SECTION("daemon")
     if(NULL == daemon)
     {
         cout << gettext("Unable to connect daemon to port: ") <<
             this->port << endl;
         throw ::httpserver::webserver_exception();
     }
-    STACK_SECTION("daemon!=NULL")
     details::daemon_item* di = new details::daemon_item(this, daemon);
     daemons.push_back(di);
 
     bool value_onclose = false;
+
+    this->running = true;
+
     if(blocking)
     {
         pthread_mutex_lock(&mutexwait);
@@ -610,38 +618,36 @@ void webserver::upgrade_handler (void *cls, struct MHD_Connection* connection,
 {
 }
 
-void webserver::not_found_page(
-        http_response** dhrs,
-        details::modded_request* mr
-)
+const http_response webserver::not_found_page(details::modded_request* mr) const
 {
     if(not_found_resource != 0x0)
-        not_found_resource(*mr->dhr, dhrs);
+    {
+        return not_found_resource(*mr->dhr);
+    }
     else
-        *dhrs = new http_response(http_response_builder(NOT_FOUND_ERROR, http_utils::http_not_found).string_response());
+    {
+        return http_response_builder(NOT_FOUND_ERROR, http_utils::http_not_found).string_response();
+    }
 }
 
-void webserver::method_not_allowed_page(
-        http_response** dhrs,
-        details::modded_request* mr
-)
+const http_response webserver::method_not_allowed_page(details::modded_request* mr) const
 {
     if(method_not_acceptable_resource != 0x0)
-        method_not_allowed_resource(*mr->dhr, dhrs);
+    {
+        return method_not_allowed_resource(*mr->dhr);
+    }
     else
-        *dhrs = new http_response(http_response_builder(METHOD_ERROR, http_utils::http_method_not_allowed).string_response());
+    {
+        return http_response_builder(METHOD_ERROR, http_utils::http_method_not_allowed).string_response();
+    }
 }
 
-void webserver::internal_error_page(
-        http_response** dhrs,
-        details::modded_request* mr,
-        bool force_our
-)
+const http_response webserver::internal_error_page(details::modded_request* mr, bool force_our) const
 {
     if(internal_error_resource != 0x0 && !force_our)
-        internal_error_resource(*mr->dhr, dhrs);
+        return internal_error_resource(*mr->dhr);
     else
-        *dhrs = new http_response(http_response_builder(GENERIC_ERROR, http_utils::http_internal_server_error).string_response());
+        return http_response_builder(GENERIC_ERROR, http_utils::http_internal_server_error).string_response();
 }
 
 int webserver::bodyless_requests_answer(
@@ -724,9 +730,9 @@ void webserver::end_request_construction(
         struct details::modded_request* mr,
         const char* version,
         const char* method,
-        char*   user,
-        char*   pass,
-        char*  digested_user
+        char* &user,
+        char* &pass,
+        char* &digested_user
 )
 {
     mr->ws = this;
@@ -790,9 +796,7 @@ int webserver::finalize_answer(
         const char* method
 )
 {
-	STACK
     int to_ret = MHD_NO;
-    http_response* dhrs = 0x0;
 
     map<string, http_resource*>::iterator fe;
 
@@ -809,36 +813,19 @@ int webserver::finalize_answer(
             if(regex_checking)
             {
 
-                map<
-                    details::http_endpoint, http_resource*
-                >::iterator found_endpoint;
+                map<details::http_endpoint, http_resource*>::iterator found_endpoint;
 
-                details::http_endpoint endpoint(
-                        st_url, false, false, regex_checking
-                );
+                details::http_endpoint endpoint(st_url, false, false, regex_checking);
 
-                map<
-                    details::http_endpoint,
-                    http_resource*
-                >::iterator it;
+                map<details::http_endpoint, http_resource*>::iterator it;
 
                 size_t len = 0;
                 size_t tot_len = 0;
-                for(
-                        it=registered_resources.begin();
-                        it!=registered_resources.end();
-                        ++it
-                )
+                for(it=registered_resources.begin(); it!=registered_resources.end(); ++it)
                 {
                     size_t endpoint_pieces_len = (*it).first.get_url_pieces_num();
                     size_t endpoint_tot_len = (*it).first.get_url_complete_size();
-                    if(!found ||
-                        endpoint_pieces_len > len ||
-                        (
-                            endpoint_pieces_len == len &&
-                            endpoint_tot_len > tot_len
-                        )
-                    )
+                    if(!found || endpoint_pieces_len > len || (endpoint_pieces_len == len && endpoint_tot_len > tot_len))
                     {
                         if((*it).first.match(endpoint))
                         {
@@ -853,8 +840,7 @@ int webserver::finalize_answer(
                 {
                     vector<string> url_pars;
 
-                    size_t pars_size =
-                        found_endpoint->first.get_url_pars(url_pars);
+                    size_t pars_size = found_endpoint->first.get_url_pars(url_pars);
 
                     vector<string> url_pieces;
                     endpoint.get_url_pieces(url_pieces);
@@ -880,71 +866,68 @@ int webserver::finalize_answer(
         hrm = registered_resources.begin()->second;
         found = true;
     }
+
     mr->dhr->set_underlying_connection(connection);
 
-    STACK_SECTION("found")
     if(found)
     {
         try
         {
             if(hrm->is_allowed(method))
             {
-            	STACK_SECTION("((hrm)->*(mr->callback))(*mr->dhr, &dhrs);")
-                ((hrm)->*(mr->callback))(*mr->dhr, &dhrs);
-                if (dhrs == 0x0) internal_error_page(&dhrs, mr);
+                mr->dhrs = NEW_OR_MOVE(http_response, ((hrm)->*(mr->callback))(*mr->dhr)); //copy in memory (move in case)
+                if (mr->dhrs->get_response_code() == -1) mr->dhrs = NEW_OR_MOVE(http_response, internal_error_page(mr));
             }
             else
             {
-                method_not_allowed_page(&dhrs, mr);
+                mr->dhrs = NEW_OR_MOVE(http_response, method_not_allowed_page(mr));
             }
         }
         catch(const std::exception& e)
         {
-            internal_error_page(&dhrs, mr);
+            mr->dhrs = NEW_OR_MOVE(http_response, internal_error_page(mr));
         }
         catch(...)
         {
-            internal_error_page(&dhrs, mr);
+            mr->dhrs = NEW_OR_MOVE(http_response, internal_error_page(mr));
         }
     }
     else
     {
-        not_found_page(&dhrs, mr);
+        mr->dhrs = NEW_OR_MOVE(http_response, not_found_page(mr));
     }
-    STACK_SECTION("mr->dhrs = dhrs;")
-    mr->dhrs = dhrs;
+
     mr->dhrs->underlying_connection = connection;
+
     try
     {
         try
         {
-        	STACK_SECTION("dhrs->get_raw_response(&raw_response, this);")
-            dhrs->get_raw_response(&raw_response, this);
+            mr->dhrs->get_raw_response(&raw_response, this);
         }
         catch(const file_access_exception& fae)
         {
-            not_found_page(&dhrs, mr);
-            dhrs->get_raw_response(&raw_response, this);
+            mr->dhrs = NEW_OR_MOVE(http_response, not_found_page(mr));
+            mr->dhrs->get_raw_response(&raw_response, this);
         }
         catch(const std::exception& e)
         {
-            internal_error_page(&dhrs, mr);
-            dhrs->get_raw_response(&raw_response, this);
+            mr->dhrs = NEW_OR_MOVE(http_response, internal_error_page(mr));
+            mr->dhrs->get_raw_response(&raw_response, this);
         }
         catch(...)
         {
-            internal_error_page(&dhrs, mr);
-            dhrs->get_raw_response(&raw_response, this);
+            mr->dhrs = NEW_OR_MOVE(http_response, internal_error_page(mr));
+            mr->dhrs->get_raw_response(&raw_response, this);
         }
     }
     catch(...)
     {
-        internal_error_page(&dhrs, mr, true);
-        dhrs->get_raw_response(&raw_response, this);
+        mr->dhrs = NEW_OR_MOVE(http_response, internal_error_page(mr, true));
+        mr->dhrs->get_raw_response(&raw_response, this);
     }
-    STACK_SECTION("dhrs->decorate_response(raw_response);")
-    dhrs->decorate_response(raw_response);
-    to_ret = dhrs->enqueue_response(connection, raw_response);
+    mr->dhrs->decorate_response(raw_response);
+    to_ret = mr->dhrs->enqueue_response(connection, raw_response);
     MHD_destroy_response (raw_response);
     return to_ret;
 }
@@ -956,7 +939,6 @@ int webserver::complete_request(
         const char* method
 )
 {
-	STACK
     char* pass = 0x0;
     char* user = 0x0;
     char* digested_user = 0x0;

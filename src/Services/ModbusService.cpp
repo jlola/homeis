@@ -17,7 +17,7 @@ ModbusService::ModbusService(ModbusManager* mm)
 	this->mm = mm;
 }
 
-void ModbusService::render_GET(const http_request& req, http_response** res)
+const http_response ModbusService::render_GET(const http_request& req)
 {
 	//api/modbus/holdings/{connectorname}/{devaddress}/{baseaddress}/{count}
 	string connectorName = req.get_arg("connectorname");
@@ -73,10 +73,11 @@ void ModbusService::render_GET(const http_request& req, http_response** res)
 
 	document.Accept(wr);
 	std::string json = buffer.GetString();
-	*res = new http_response(http_response_builder(json, 200,"application/json").string_response());
+	http_response resp(http_response_builder(json, 200,"application/json").string_response());
+	return resp;
 }
 
-void ModbusService::render_PUT(const http_request& req, http_response** res)
+const http_response ModbusService::render_PUT(const http_request& req)
 {
 	string connectorName = req.get_arg("connectorname");
 	string strDevAddress = req.get_arg("devaddress");
@@ -119,7 +120,8 @@ void ModbusService::render_PUT(const http_request& req, http_response** res)
 	}
 	document.Accept(wr);
 	std::string json = buffer.GetString();
-	*res = new http_response(http_response_builder(json, 200,"application/json").string_response());
+	http_response resp(http_response_builder(json, 200,"application/json").string_response());
+	return resp;
 }
 
 ModbusService::~ModbusService() {

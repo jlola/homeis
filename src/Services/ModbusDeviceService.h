@@ -25,7 +25,7 @@ class ModbusDeviceService : public http_resource {
 public:
 	ModbusDeviceService(HisDevices *devices,ModbusManager* mm);
 	virtual ~ModbusDeviceService();
-	void render_GET(const http_request& req, http_response** res);
+	const http_response render_GET(const http_request& req);
 };
 
 #endif /* SRC_SERVICES_MODBUSDEVICESERVICE_H_ */

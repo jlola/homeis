@@ -21,8 +21,8 @@
 
 AC_PREREQ(2.57)
 m4_define([libhttpserver_MAJOR_VERSION],[0])dnl
-m4_define([libhttpserver_MINOR_VERSION],[11])dnl
-m4_define([libhttpserver_REVISION],[1])dnl
+m4_define([libhttpserver_MINOR_VERSION],[13])dnl
+m4_define([libhttpserver_REVISION],[0])dnl
 m4_define([libhttpserver_PKG_VERSION],[libhttpserver_MAJOR_VERSION.libhttpserver_MINOR_VERSION.libhttpserver_REVISION])dnl
 m4_define([libhttpserver_LDF_VERSION],[libhttpserver_MAJOR_VERSION:libhttpserver_MINOR_VERSION:libhttpserver_REVISION])dnl
 AC_INIT([libhttpserver], libhttpserver_PKG_VERSION, [electrictwister2000@gmail.com])
@@ -92,17 +92,17 @@ AC_CHECK_HEADER([gnutls/gnutls.h],[have_gnutls="yes"],[AC_MSG_WARN("gnutls/gnutl
 # Checks for libmicrohttpd
 AC_CHECK_HEADER([microhttpd.h],
     AC_CHECK_LIB([microhttpd], [MHD_get_fdset2],
-        [AC_MSG_CHECKING([for libmicrohttpd >= 0.9.37])
+        [AC_MSG_CHECKING([for libmicrohttpd >= 0.9.52])
             AC_COMPILE_IFELSE(
                 [AC_LANG_SOURCE([
                     #include <microhttpd.h>
-                    #if (MHD_VERSION < 0x0093700)
-                    #error needs at least version 0.9.37
+                    #if (MHD_VERSION < 0x00095102)
+                    #error needs at least version 0.9.52
                     #endif
                     int main () { return 0; }
                 ])],
             [],
-            [AC_MSG_ERROR("libmicrohttpd is too old - install libmicrohttpd >= 0.9.37")]
+            [AC_MSG_ERROR("libmicrohttpd is too old - install libmicrohttpd >= 0.9.52")]
             )
         ],
         [AC_MSG_ERROR(["libmicrohttpd not found"])]
@@ -131,6 +131,18 @@ if test x"$fastopen" = x"yes"; then
             fi
         fi
     fi
+fi
+
+AC_MSG_CHECKING([whether to link statically])
+AC_ARG_ENABLE([static],
+    [AS_HELP_STRING([--enable-static],
+        [enable use static linking (def=yes)])],
+    [static="$enableval"],
+    [static=yes])
+AC_MSG_RESULT([$static])
+
+if test x"$static" = x"$yes"; then
+    LDFLAGS="-static $LDFLAGS";
 fi
 
 m4_pattern_allow([AC_TYPE_SIZE_T])
@@ -214,13 +226,6 @@ AC_OUTPUT(
       src/Makefile
       test/Makefile
       examples/Makefile
-      debian/changelog
-      debian/copyright
-      debian/control
-      debian/libhttpserver-dev.install
-      debian/libhttpserver.install
-      debian/rules
-      redhat/libhttpserver.SPEC
 )
 
 AC_MSG_NOTICE([Configuration Summary:  
@@ -230,4 +235,5 @@ AC_MSG_NOTICE([Configuration Summary:
   Debug	          :  ${debugit}
   TLS Enabled     :  ${have_gnutls}
   TCP_FASTOPEN    :  ${is_fastopen_supported}
+  Static          :  ${static}
 ])

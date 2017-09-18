@@ -24,7 +24,7 @@ class ConnectorsService : public http_resource
 	vector<SSerPortConfig> & serports;
 public:
 	ConnectorsService(vector<SSerPortConfig> & pserports);
-	void render_GET(const http_request&, http_response**);
+	const http_response render_GET(const http_request& r);
 	virtual ~ConnectorsService();
 };
 

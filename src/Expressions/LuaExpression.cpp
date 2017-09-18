@@ -785,6 +785,6 @@ const xmlChar* LuaExpression::GetNodeNameInternal()
 LuaExpression::~LuaExpression()
 {
 	STACK
-	SetRunning(false);
+	//SetRunning(false);
 	File::Delete(GetFileName(GetName()));
 }

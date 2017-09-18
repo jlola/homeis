@@ -24,7 +24,7 @@ FoldersService::~FoldersService(void)
 
 }
 
-void FoldersService::render_GET(const http_request& req, http_response** res)
+const http_response FoldersService::render_GET(const http_request& req)
 {
 	STACK
 	Document respjsondoc;
@@ -77,7 +77,8 @@ void FoldersService::render_GET(const http_request& req, http_response** res)
 	respjsondoc.Accept(wr);
 	const std::string json(buffer.GetString());
 	//*res = new http_string_response(json, 200, "application/json");
-	*res = new http_response(http_response_builder(json, 200,"application/json").string_response());
+	http_response resp(http_response_builder(json, 200,"application/json").string_response());
+	return resp;
 }
 
 void FoldersService::FolderToJson(HisDevFolderRoot* root,HisBase *pParentFolder, HisBase *pFolder, Document & respjsondoc)
@@ -89,6 +90,14 @@ void FoldersService::FolderToJson(HisDevFolderRoot* root,HisBase *pParentFolder,
 	Value jsonvalue;
 	jsonvalue.SetString(strvalue.c_str(),strvalue.length(),respjsondoc.GetAllocator());
 	d.AddMember("name",jsonvalue, respjsondoc.GetAllocator());
+
+	strvalue = pFolder->GetCreateDateTime().ToString();
+	jsonvalue.SetString(strvalue.c_str(),strvalue.length(),respjsondoc.GetAllocator());
+	d.AddMember("createtime",jsonvalue, respjsondoc.GetAllocator());
+
+	strvalue = pFolder->GetModifyDateTime().ToString();
+	jsonvalue.SetString(strvalue.c_str(),strvalue.length(),respjsondoc.GetAllocator());
+	d.AddMember("modifytime",jsonvalue, respjsondoc.GetAllocator());
 
 	strvalue = (const char*)pFolder->GetNodeName();
 	jsonvalue.SetString(strvalue.c_str(),strvalue.length(),respjsondoc.GetAllocator());
@@ -190,7 +199,7 @@ bool FoldersService::AddValueIdToFolder(string strFolderId, string strJson,strin
 	return false;
 }
 
-void FoldersService::render_POST(const http_request& req, http_response** res)
+const http_response FoldersService::render_POST(const http_request& req)
 {
 	STACK
 	std::string content = req.get_content();
@@ -204,20 +213,21 @@ void FoldersService::render_POST(const http_request& req, http_response** res)
 		if (CreateFolder(content,message))
 		{
 			//*res = new http_string_response("", 200, "application/json");
-			*res = new http_response(http_response_builder("", 200,"application/json").string_response());
-			return;
+			http_response resp(http_response_builder("", 200,"application/json").string_response());
+			return resp;
 		}
 	}
 	else
 	{
 		message = "Autentication error";
 		//*res = new http_string_response(message.c_str(), 401, "application/json");
-		*res = new http_response(http_response_builder(message, 401,"application/json").string_response());
-		return;
+		http_response resp(http_response_builder(message, 401,"application/json").string_response());
+		return resp;
 	}
 
 	//*res = new http_string_response("", 403, "application/json");
-	*res = new http_response(http_response_builder(message, 403,"application/json").string_response());
+	http_response resp(http_response_builder(message, 403,"application/json").string_response());
+	return resp;
 }
 
 bool FoldersService::UpdateFolder(string strid, string strJson,string & message)
@@ -327,7 +337,7 @@ bool FoldersService::CreateFolder(string strJson,string & message)
 }
 
 
-void FoldersService::render_PUT(const http_request& req, http_response** res)
+const http_response FoldersService::render_PUT(const http_request& req)
 {
 	STACK
 	string message;
@@ -343,23 +353,24 @@ void FoldersService::render_PUT(const http_request& req, http_response** res)
 			//vytvori id datoveho bodu ve slozce
 			if (AddValueIdToFolder(strfolderid,content,message))
 			{
-				*res = new http_response(http_response_builder("", 200,"application/json").string_response());
-				return;
+				http_response resp(http_response_builder("", 200,"application/json").string_response());
+				return resp;
 			}
 		}
 		else if (UpdateFolder(strid,content,message))
 		{
-			*res = new http_response(http_response_builder("", 200,"application/json").string_response());
-			return;
+			http_response resp(http_response_builder("", 200,"application/json").string_response());
+			return resp;
 		}
 	}
 	else
 	{
 		message = "Autentication error";
-		*res = new http_response(http_response_builder(message, 401,"application/json").string_response());
-		return;
+		http_response resp(http_response_builder(message, 401,"application/json").string_response());
+		return resp;
 	}
-	*res = new http_response(http_response_builder(message, 403,"application/json").string_response());
+	http_response resp(http_response_builder(message, 403,"application/json").string_response());
+	return resp;
 }
 
 string FoldersService::DeleteDevValue(string strDevValueRecordId)
@@ -404,7 +415,7 @@ string FoldersService::DeleteDevValue(string strDevValueRecordId)
 	return "";
 }
 
-void FoldersService::render_DELETE(const http_request& req, http_response** res)
+const http_response FoldersService::render_DELETE(const http_request& req)
 {
 	STACK
 	if (req.get_user()=="a" && req.get_pass()=="a")
@@ -422,19 +433,19 @@ void FoldersService::render_DELETE(const http_request& req, http_response** res)
 			root->Save();
 
 			//*res = new http_string_response("", 200, "application/json");
-			*res = new http_response(http_response_builder("", 200,"application/json").string_response());
-			return;
+			http_response resp(http_response_builder("", 200,"application/json").string_response());
+			return resp;
 		}
 	}
 	else
 	{
 		string message = "Autentication error";
 		//*res = new http_string_response(message.c_str(), 401, "application/json");
-		*res = new http_response(http_response_builder(message, 401,"application/json").string_response());
-		return;
+		http_response resp(http_response_builder(message, 401,"application/json").string_response());
+		return resp;
 	}
 
 	//*res = new http_string_response("", 403, "application/json");
-	*res = new http_response(http_response_builder("", 403,"application/json").string_response());
-
+	http_response resp(http_response_builder("", 403,"application/json").string_response());
+	return resp;
 }

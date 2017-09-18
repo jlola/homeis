@@ -19,9 +19,9 @@ public:
 	LoginService(void);
 	~LoginService(void);
 	//void handle( LogicalConnection* pClient, IncomingPacket* pRequest );
-	void render_GET(const http_request&, http_response**);
-	void render_POST(const http_request& r, http_response** res);
-	void render_PUT(const http_request& r, http_response** res);
+	const http_response render_GET(const http_request&);
+	const http_response render_POST(const http_request& r);
+	const http_response render_PUT(const http_request& r);
 
 };
 

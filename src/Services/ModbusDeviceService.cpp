@@ -26,7 +26,7 @@ ModbusDeviceService::~ModbusDeviceService()
 
 }
 
-void ModbusDeviceService::render_GET(const http_request& req, http_response** res)
+const http_response ModbusDeviceService::render_GET(const http_request& req)
 {
 	STACK
 	Document document;
@@ -79,5 +79,6 @@ void ModbusDeviceService::render_GET(const http_request& req, http_response** re
 	}
 	document.Accept(wr);
 	std::string json = buffer.GetString();
-	*res = new http_response(http_response_builder(json, 200,"application/json").string_response());
+	http_response resp(http_response_builder(json, 200,"application/json").string_response());
+	return resp;
 }

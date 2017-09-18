@@ -13,6 +13,7 @@
 #include <libxml/tree.h>
 #include "srutil/event/event.hpp"
 #include "srutil/delegate/delegate.hpp"
+#include "Common/DateTime.h"
 
 #include "logger.h"
 #include "converter.h"
@@ -56,7 +57,9 @@ class HisDevValueBase : public HisBase
 	OnValueChangedDelegate ValueChanged;
 	std::string loadtype;
 	map<void*,OnValueChangedDelegate> delegatesMap;
+
 protected:
+	DateTime valueChangeTime;
 	std::string unit;
 	//std::string pinname;
 	std::string devaddr;
@@ -79,6 +82,8 @@ public:
 	void Register(OnValueChangedDelegate delegate, void* owner);
 
 	void UnRegister(void* owner);
+
+	DateTime GetValueChangeTime();
 
 	std::string GetLoadType();
 
@@ -173,8 +178,6 @@ public:
 		return extvalue;
 	}
 
-
-
 	/*
 	 * set value from application to this object
 	 * and should be written to device if is not allowForceOutput set
@@ -185,6 +188,7 @@ public:
 		//STACK
 		if (value!=pValue)
 		{
+			valueChangeTime = DateTime::Now();
 			oldValue = value;
 			value = pValue;
 
@@ -206,6 +210,7 @@ public:
 		//if (allowForceOutput)
 		{
 			value = pValue;
+			valueChangeTime = DateTime::Now();
 			if (GetDirection()==EHisDevDirection::Write || GetDirection()==EHisDevDirection::ReadWrite)
 			{
 				ValueChangedEventArgs args(this);
@@ -233,7 +238,13 @@ public:
 			if (allowForceOutput)
 				extvalue = pvalue;
 			else
-				value = pvalue;
+			{
+				if (value!=pvalue)
+				{
+					value = pvalue;
+					valueChangeTime = DateTime::Now();
+				}
+			}
 		}
 	}
 };

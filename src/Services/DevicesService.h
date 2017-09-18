@@ -35,10 +35,10 @@ public:
 	DevicesService(HisDevices & dev,HisDevFolderRoot & folder);
 	~DevicesService(void);
 	static void FillFolderDevicesToJson(HisDevFolder* folder,Document & respjsondoc, HisDevices & dev);
-	void render_GET(const http_request&, http_response**);
-	void render_POST(const http_request& r, http_response** res);
-	void render_PUT(const http_request& req, http_response** res);
-	void render_DELETE(const http_request& req, http_response** res);
+	const http_response render_GET(const http_request&);
+	const http_response render_POST(const http_request& r);
+	const http_response render_PUT(const http_request& req);
+	const http_response render_DELETE(const http_request& req);
 	static void FillDeviceToJson(Value & d, HisDevBase* dev,Document & respjsondoc);
 	static void DevValueToJson(Value & d, HisDevValueId* valueId,HisDevValueBase* devValue,Document & respjsondoc);
 };

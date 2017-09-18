@@ -1,4 +1,0 @@
-reason_phrase.lo: /root/libmicrohttpd-0.9.26/src/daemon/reason_phrase.c \
- /root/libmicrohttpd-0.9.26/src/daemon/reason_phrase.h
-
-/root/libmicrohttpd-0.9.26/src/daemon/reason_phrase.h:

@@ -16,7 +16,8 @@ using namespace httpserver;
 class LogService : public http_resource {
 public:
 	LogService();
-	void render_GET(const http_request&, http_response**);
+	//void render_GET(const http_request&, http_response**);
+	const http_response render_GET(const http_request& req);
 	virtual ~LogService();
 };
 

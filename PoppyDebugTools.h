@@ -2,7 +2,7 @@
 #define POPPY_H
 
 #include <iostream>
-#include "src/Helpers/logger.h"
+//#include "src/Helpers/logger.h"
 
 //Set this to 0 to disable the whole Poppy, both for stack tracing and performance measurement
 #define STACK_TRACING_ENABLED 1
@@ -328,7 +328,7 @@ class Stack{
 		static CRITICAL_SECTION _csLock;
 		PushFramework::ScopedLock lock(_csLock);
 		static map<pthread_t,Stack*> threadspec;
-		static uint32_t threadspecsize=0;
+		//static uint32_t threadspecsize=0;
 		pthread_t threadid = pthread_self();
 		std::map<pthread_t,Stack*>::iterator it;
 		//static Stack singleton;
@@ -339,21 +339,21 @@ class Stack{
 			threadspec[threadid] = new Stack();
 		Stack* pstack =	threadspec[threadid];
 
-		if (threadspec.size()>threadspecsize)
-		{
-			CLogger::Info("Thread: %ul. New size of threadspec is %d",threadid,threadspec.size());
-			threadspecsize = threadspec.size();
-		}
-		if (pstack->trace.size()>pstack->tracesize)
-		{
-			CLogger::Info("Thread: %ul. New size of trace is %d",threadid,pstack->trace.size());
-			pstack->tracesize = pstack->trace.size();
-		}
-		if (pstack->frameCache.size()>pstack->cachesize)
-		{
-			CLogger::Info("Thread: %ul. New size of frameCache is %d",threadid,pstack->frameCache.size());
-			pstack->cachesize = pstack->frameCache.size();
-		}
+//		if (threadspec.size()>threadspecsize)
+//		{
+//			CLogger::Info("Thread: %ul. New size of threadspec is %d",threadid,threadspec.size());
+//			threadspecsize = threadspec.size();
+//		}
+//		if (pstack->trace.size()>pstack->tracesize)
+//		{
+//			CLogger::Info("Thread: %ul. New size of trace is %d",threadid,pstack->trace.size());
+//			pstack->tracesize = pstack->trace.size();
+//		}
+//		if (pstack->frameCache.size()>pstack->cachesize)
+//		{
+//			CLogger::Info("Thread: %ul. New size of frameCache is %d",threadid,pstack->frameCache.size());
+//			pstack->cachesize = pstack->frameCache.size();
+//		}
 
 		return pstack;
 	}

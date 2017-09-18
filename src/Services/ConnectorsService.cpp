@@ -15,7 +15,7 @@ ConnectorsService::ConnectorsService(vector<SSerPortConfig> & pserports)
 {
 }
 
-void ConnectorsService::render_GET(const http_request& req, http_response** resp)
+const http_response ConnectorsService::render_GET(const http_request& req)
 {
 	Document respjsondoc;
 	respjsondoc.SetArray();
@@ -39,8 +39,8 @@ void ConnectorsService::render_GET(const http_request& req, http_response** resp
 	respjsondoc.Accept(wr);
 	std::string json = buffer.GetString();
 	//*res = new http_string_response(json, 200, "application/json");
-	*resp = new http_response(http_response_builder(json, 200,"application/json").string_response());
-
+	http_response resp(http_response_builder(json, 200,"application/json").string_response());
+	return resp;
 }
 
 ConnectorsService::~ConnectorsService() {

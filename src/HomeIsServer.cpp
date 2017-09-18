@@ -53,8 +53,10 @@ bool HomeIsServer::Init(bool blocking)
 
 void HomeIsServer::Stop()
 {
-	ws_i->stop();
+	CLogger::Info("Stop server");
 	devruntime->Stop();
+	expressionRuntime->Stop();
+	ws_i->stop();
 }
 
 void HomeIsServer::Start(bool blocking)
@@ -98,13 +100,12 @@ HomeIsServer::HomeIsServer(vector<SSerPortConfig> & pserports,int TcpPort,bool u
 {
 	if (useHttps)
 	{
-		cw.max_threads(5).use_ssl().https_mem_key(File::getexepath()+"/"+httpsKey).https_mem_cert(File::getexepath()+"/"+httpsCert);
+		cw.max_threads(5).comet().use_ssl().https_mem_key(File::getexepath()+"/"+httpsKey).https_mem_cert(File::getexepath()+"/"+httpsCert);
+		string strkey = File::getexepath()+"/server.key";
+		string strcert = File::getexepath()+"/server.crt";
+		CLogger::Info("Starting with https: %s , %s",strkey.c_str(), strcert.c_str());
 	}
 	ws_i = new webserver(cw);
-
-	string strkey = File::getexepath()+"/server.key";
-	string strcert = File::getexepath()+"/server.crt";
-	CLogger::Info( "%s , %s",strkey.c_str(), strcert.c_str());
 }
 
 void HomeIsServer::InitWebServer(bool blocking)
@@ -219,4 +220,21 @@ HomeIsServer::~HomeIsServer()
 	ws_i = NULL;
 	delete(rootFolder);
 	rootFolder = NULL;
+
+	delete fc;
+	fc = NULL;
+	delete(owds);
+	owds = NULL;
+	delete foldersService;
+	foldersService = NULL;
+	delete expressionService;
+	expressionService = NULL;
+	delete modbusDevService;
+	modbusDevService = NULL;
+	delete modbusservice;
+	modbusservice = NULL;
+	delete connectorsService;
+	connectorsService = NULL;
+	delete logservice;
+	logservice = NULL;
 }

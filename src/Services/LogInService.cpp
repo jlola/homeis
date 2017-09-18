@@ -22,19 +22,19 @@ LoginService::~LoginService(void)
 {
 }
 
-void LoginService::render_GET(const http_request&, http_response**)
+const http_response LoginService::render_GET(const http_request&)
 {
-
+	return http_response();
 }
 
-void LoginService::render_POST(const http_request& r, http_response** res)
+const http_response LoginService::render_POST(const http_request& r)
 {
-
+	return http_response();
 }
 
-void LoginService::render_PUT(const http_request& r, http_response** res)
+const http_response LoginService::render_PUT(const http_request& r)
 {
-
+	return http_response();
 }
 
 //void LoginService::handle( LogicalConnection* pClient, IncomingPacket* pRequest )

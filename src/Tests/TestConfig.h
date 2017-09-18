@@ -10,7 +10,7 @@
 
 
 #define SERVER_NAME "localhost"
-#define SERVER_PORT 82
+#define SERVER_PORT 83
 
 
 #endif /* SRC_TEST_TESTCONFIG_H_ */

@@ -15,6 +15,7 @@
 #include "Common/CUUID.h"
 #include "document.h"		// rapidjson's DOM-style API
 #include "converter.h"
+#include "DateTime.h"
 #include "PoppyDebugTools.h"
 
 using namespace rapidjson;
@@ -22,6 +23,8 @@ using namespace std;
 
 #define PROP_NAME BAD_CAST "name"
 #define PROP_RECORDID  BAD_CAST "recordid"
+#define PROP_CREATE_DATE BAD_CAST "createdate"
+#define PROP_MODIFY_DATE BAD_CAST "modifydate"
 
 class HisBase;
 
@@ -38,6 +41,8 @@ class HisBase
 	bool isnew;
 	bool isloaded;
 	vector<HisBase*> items;
+	DateTime modifyDate;
+	DateTime createDate;
 public:
 	HisBase();
 	//HisBase(xmlNodePtr pnode,CUUID recordid);
@@ -65,6 +70,9 @@ public:
 	int FindIndex(CUUID id);
 	void Add(HisBase *pitem);
 	virtual HisBase* Remove(CUUID puuid);
+	DateTime GetModifyDateTime();
+	void SetModifyDateTime(DateTime modifyDate);
+	DateTime GetCreateDateTime();
 	void Load();
 	void Save();
 	xmlNodePtr GetNodePtr();

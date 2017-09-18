@@ -266,6 +266,11 @@ HisDevValueBase::~HisDevValueBase()
 
 }
 
+DateTime HisDevValueBase::GetValueChangeTime()
+{
+	return valueChangeTime;
+}
+
 bool HisDevValueBase::ForceStringValue(string strvalue, bool checkChange)
 {
 	STACK

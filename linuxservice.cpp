@@ -104,6 +104,13 @@ void daemonize2( const char *lockfile )
     /* Change the file mode mask */
     umask(0);
 
+    char str[10];
+    /* Get and format PID */
+     sprintf(str,"%d\n",getpid());
+
+     /* write pid to lockfile */
+     write(lfp, str, strlen(str));
+
     /* Create a new SID for the child process */
     sid = setsid();
     if (sid < 0) {

@@ -36,7 +36,7 @@ DevicesService::~DevicesService(void)
 {
 }
 
-void DevicesService::render_GET(const http_request& req, http_response** res)
+const http_response DevicesService::render_GET(const http_request& req)
 {
 	STACK
 	Document respjsondoc;
@@ -114,7 +114,8 @@ void DevicesService::render_GET(const http_request& req, http_response** res)
 	respjsondoc.Accept(wr);
 	std::string json = buffer.GetString();
 	//*res = new http_string_response(json, 200, "application/json");
-	*res = new http_response(http_response_builder(json, 200,"application/json").string_response());
+	http_response resp(http_response_builder(json, 200,"application/json").string_response());
+	return resp;
 }
 
 void DevicesService::FillFolderDevicesToJson(HisDevFolder* folder,Document & respjsondoc,HisDevices & devices)
@@ -141,6 +142,14 @@ void DevicesService::FillDeviceToJson(Value & devjson, HisDevBase* dev,Document 
 	string strvalue = dev->GetName();
 	jsonvalue.SetString(strvalue.c_str(),strvalue.length(),respjsondoc.GetAllocator());
 	devjson.AddMember("Name",jsonvalue,respjsondoc.GetAllocator());
+
+	strvalue = dev->GetCreateDateTime().ToString();
+	jsonvalue.SetString(strvalue.c_str(),strvalue.length(),respjsondoc.GetAllocator());
+	devjson.AddMember("createtime",jsonvalue, respjsondoc.GetAllocator());
+
+	strvalue = dev->GetModifyDateTime().ToString();
+	jsonvalue.SetString(strvalue.c_str(),strvalue.length(),respjsondoc.GetAllocator());
+	devjson.AddMember("modifytime",jsonvalue, respjsondoc.GetAllocator());
 
 	strvalue = dev->GetRecordId().ToString();
 	jsonvalue.SetString(strvalue.c_str(),strvalue.length(),respjsondoc.GetAllocator());
@@ -201,6 +210,15 @@ void DevicesService::DevValueToJson(Value & d, HisDevValueId* valueId,HisDevValu
 	jsonvalue.SetString(strvalue.c_str(),strvalue.length(),respjsondoc.GetAllocator());
 	d.AddMember( "name",jsonvalue, respjsondoc.GetAllocator());
 
+	strvalue = devValue->GetCreateDateTime().ToString();
+	jsonvalue.SetString(strvalue.c_str(),strvalue.length(),respjsondoc.GetAllocator());
+	d.AddMember("createtime",jsonvalue, respjsondoc.GetAllocator());
+
+	strvalue = devValue->GetModifyDateTime().ToString();
+	jsonvalue.SetString(strvalue.c_str(),strvalue.length(),respjsondoc.GetAllocator());
+	d.AddMember("modifytime",jsonvalue, respjsondoc.GetAllocator());
+
+
 	if (valueId!=NULL)
 	{
 		strvalue = valueId->GetRecordId().ToString();
@@ -229,14 +247,17 @@ void DevicesService::DevValueToJson(Value & d, HisDevValueId* valueId,HisDevValu
 
 	d.AddMember( "type",devValue->GetDataType(), respjsondoc.GetAllocator());
 	d.AddMember( "direction",devValue->GetDirection(), respjsondoc.GetAllocator());
+
 	strvalue = devValue->GetStringValue();
 	jsonvalue.SetString(strvalue.c_str(),strvalue.length(),respjsondoc.GetAllocator());
 	d.AddMember( "value",jsonvalue, respjsondoc.GetAllocator());
 
+	strvalue = devValue->GetValueChangeTime().ToString();
+	jsonvalue.SetString(strvalue.c_str(),strvalue.length(),respjsondoc.GetAllocator());
+	d.AddMember( "valuechangetime",jsonvalue, respjsondoc.GetAllocator());
+
 	d.AddMember("error",devValue->GetDeviceError(),respjsondoc.GetAllocator());
 	d.AddMember("force",devValue->GetForceOutput(),respjsondoc.GetAllocator());
-	jsonvalue.SetString(strvalue.c_str(),strvalue.length(),respjsondoc.GetAllocator());
-	d.AddMember( "value",jsonvalue, respjsondoc.GetAllocator());
 
 	strvalue = devValue->GetUnit();
 	jsonvalue.SetString(strvalue.c_str(),strvalue.length(),respjsondoc.GetAllocator());
@@ -253,7 +274,7 @@ void DevicesService::DevValueToJson(Value & d, HisDevValueId* valueId,HisDevValu
 		d.AddMember( "internal",false, respjsondoc.GetAllocator());
 }
 
-void DevicesService::render_POST(const http_request& req, http_response** res)
+const http_response DevicesService::render_POST(const http_request& req)
 {
 	std::string content = req.get_content();
 	string path = req.get_path();
@@ -275,8 +296,8 @@ void DevicesService::render_POST(const http_request& req, http_response** res)
 				if (UpdateDevValue(devvalue->GetRecordId(),content))
 				{
 					//*res = new http_string_response("", 200, "application/json");
-					*res = new http_response(http_response_builder("", 200,"application/json").string_response());
-					return;
+					http_response resp(http_response_builder("", 200,"application/json").string_response());
+					return resp;
 				}
 			}
 		}
@@ -298,8 +319,8 @@ void DevicesService::render_POST(const http_request& req, http_response** res)
 				respjsondoc.Accept(wr);
 				std::string json = buffer.GetString();
 				//*res = new http_string_response(json, 200, "application/json");
-				*res = new http_response(http_response_builder(json, 200,"application/json").string_response());
-				return;
+				http_response resp(http_response_builder(json, 200,"application/json").string_response());
+				return resp;
 			}
 		}
 	}
@@ -307,14 +328,14 @@ void DevicesService::render_POST(const http_request& req, http_response** res)
 	{
 		string message = "Authentication error";
 		//*res = new http_string_response(message.c_str(), 401, "application/json");
-		*res = new http_response(http_response_builder(message, 401,"application/json").string_response());
-		return;
+		http_response resp(http_response_builder(message, 401,"application/json").string_response());
+		return resp;
 	}
 	//*res = new http_string_response("", 403, "application/json");
-	*res = new http_response(http_response_builder(message, 403,"application/json").string_response());
+	http_response resp(http_response_builder(message, 403,"application/json").string_response());
 }
 
-void DevicesService::render_PUT(const http_request& req, http_response** res)
+const http_response DevicesService::render_PUT(const http_request& req)
 {
 	std::string content = req.get_content();
 	string path = req.get_path();
@@ -328,8 +349,8 @@ void DevicesService::render_PUT(const http_request& req, http_response** res)
 			if (UpdateDevValue(devValueId,content))
 			{
 				//*res = new http_string_response("", 200, "application/json");
-				*res = new http_response(http_response_builder("", 200,"application/json").string_response());
-				return;
+				http_response resp(http_response_builder("", 200,"application/json").string_response());
+				return resp;
 			}
 		}
 		else if (path.find("/api/onewiredevices")!=string::npos)
@@ -338,8 +359,8 @@ void DevicesService::render_PUT(const http_request& req, http_response** res)
 			if (UpdateDevice(strDevId,content))
 			{
 				//*res = new http_string_response("", 200, "application/json");
-				*res = new http_response(http_response_builder("", 200,"application/json").string_response());
-				return;
+				http_response resp(http_response_builder("", 200,"application/json").string_response());
+				return resp;
 			}
 		}
 	}
@@ -347,15 +368,15 @@ void DevicesService::render_PUT(const http_request& req, http_response** res)
 	{
 		string message = "Autentication error";
 		//*res = new http_string_response(message.c_str(), 401, "application/json");
-		*res = new http_response(http_response_builder(message, 401,"application/json").string_response());
-		return;
+		http_response resp(http_response_builder(message, 401,"application/json").string_response());
+		return resp;
 	}
 
 	//*res = new http_string_response("", 403, "application/json");
-	*res = new http_response(http_response_builder("", 403,"application/json").string_response());
+	http_response resp(http_response_builder("", 403,"application/json").string_response());
 }
 
-void DevicesService::render_DELETE(const http_request& req, http_response** res)
+const http_response DevicesService::render_DELETE(const http_request& req)
 {
 	std::string content = req.get_content();
 	string path = req.get_path();
@@ -369,8 +390,8 @@ void DevicesService::render_DELETE(const http_request& req, http_response** res)
 			if (DeleteValueId(strValueIdRecordId))
 			{
 				//*res = new http_string_response("", 200, "application/json");
-				*res = new http_response(http_response_builder("", 200,"application/json").string_response());
-				return;
+				http_response resp(http_response_builder("", 200,"application/json").string_response());
+				return resp;
 			}
 		}
 		else if (path.find("/api/onewiredevices/devvalue")!=string::npos)
@@ -380,8 +401,8 @@ void DevicesService::render_DELETE(const http_request& req, http_response** res)
 			if (msg=="")
 			{
 				//*res = new http_string_response("OK", 200, "application/json");
-				*res = new http_response(http_response_builder("OK", 200,"application/json").string_response());
-				return;
+				http_response resp(http_response_builder("OK", 200,"application/json").string_response());
+				return resp;
 			}
 		}
 		else if (path.find("/api/onewiredevices")!=string::npos)
@@ -391,8 +412,8 @@ void DevicesService::render_DELETE(const http_request& req, http_response** res)
 			if (msg=="")
 			{
 				//*res = new http_string_response("OK", 200, "application/json");
-				*res = new http_response(http_response_builder("OK", 200,"application/json").string_response());
-				return;
+				http_response resp(http_response_builder("OK", 200,"application/json").string_response());
+				return resp;
 			}
 		}
 	}
@@ -400,8 +421,8 @@ void DevicesService::render_DELETE(const http_request& req, http_response** res)
 	{
 		string message = "Autentication error";
 		//*res = new http_string_response(message.c_str(), 401, "application/json");
-		*res = new http_response(http_response_builder(message, 401,"application/json").string_response());
-		return;
+		http_response resp(http_response_builder(message, 401,"application/json").string_response());
+		return resp;
 	}
 
 	Document respjsondoc;
@@ -418,7 +439,8 @@ void DevicesService::render_DELETE(const http_request& req, http_response** res)
 	respjsondoc.Accept(wr);
 	std::string json = buffer.GetString();
 	//*res = new http_string_response(json, 403, "application/json");
-	*res = new http_response(http_response_builder(json, 403,"application/json").string_response());
+	http_response resp(http_response_builder(json, 403,"application/json").string_response());
+	return resp;
 }
 
 string DevicesService::DeleteDevValue(string strDevValueRecordId)

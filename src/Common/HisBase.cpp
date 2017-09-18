@@ -10,6 +10,8 @@
 
 HisBase::HisBase()
 {
+	createDate = DateTime::Now();
+	modifyDate = createDate;
 	isnew = true;
 	isloaded = false;
 	node = NULL;
@@ -20,6 +22,21 @@ HisBase::HisBase()
 const xmlChar* HisBase::GetNodeName()
 {
 	return GetNodeNameInternal();
+}
+
+void HisBase::SetModifyDateTime(DateTime modifyDate)
+{
+	this->modifyDate = modifyDate;
+}
+
+DateTime HisBase::GetModifyDateTime()
+{
+	return modifyDate;
+}
+
+DateTime HisBase::GetCreateDateTime()
+{
+	return createDate;
 }
 
 vector<HisBase*> HisBase::GetAllItems()
@@ -143,6 +160,10 @@ void HisBase::DoInternalSave(xmlNodePtr & node)
 {
 	if (node==NULL)	node = xmlNewNode(NULL,this->GetNodeName());
 
+	modifyDate = DateTime::Now();
+
+	xmlSetProp(node, PROP_MODIFY_DATE,BAD_CAST modifyDate.ToString().c_str());
+	xmlSetProp(node, PROP_CREATE_DATE,BAD_CAST createDate.ToString().c_str());
 	xmlSetProp(node, PROP_NAME,BAD_CAST name.c_str());
 	xmlSetProp(node, PROP_RECORDID, BAD_CAST recordId.ToString().c_str());
 
@@ -175,13 +196,38 @@ void HisBase::DoInternalLoad(xmlNodePtr & node)
 	{
 		if (!xmlStrcmp(node->name,GetNodeName()))
 		{
+			string strtemp;
 			xmlChar* prop;
-			prop = xmlGetProp(node,BAD_CAST PROP_NAME);
-			name = (const char*)prop;
-			xmlFree(prop);
-			prop = xmlGetProp(node,BAD_CAST PROP_RECORDID);
-			recordId = CUUID::Parse((const char*)prop);//Converter::stoi((const char*)prop);
-			xmlFree(prop);
+
+			if (xmlHasProp(node,BAD_CAST PROP_NAME))
+			{
+				prop = xmlGetProp(node,BAD_CAST PROP_NAME);
+				name = (const char*)prop;
+				xmlFree(prop);
+			}
+
+			if (xmlHasProp(node,BAD_CAST PROP_MODIFY_DATE))
+			{
+				prop = xmlGetProp(node,BAD_CAST PROP_MODIFY_DATE);
+				strtemp = (const char*)prop;
+				xmlFree(prop);
+				DateTime::TryParse(strtemp,modifyDate);
+			}
+
+			if (xmlHasProp(node,BAD_CAST PROP_CREATE_DATE))
+			{
+				prop = xmlGetProp(node,BAD_CAST PROP_CREATE_DATE);
+				strtemp = (const char*)prop;
+				xmlFree(prop);
+				DateTime::TryParse(strtemp,createDate);
+			}
+
+			if (xmlHasProp(node,BAD_CAST PROP_RECORDID))
+			{
+				prop = xmlGetProp(node,BAD_CAST PROP_RECORDID);
+				recordId = CUUID::Parse((const char*)prop);//Converter::stoi((const char*)prop);
+				xmlFree(prop);
+			}
 
 			FreeItems();
 			xmlNodePtr cur = node->children;

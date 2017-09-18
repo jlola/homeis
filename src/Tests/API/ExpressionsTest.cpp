@@ -32,7 +32,7 @@ void ExpressionsTest::SetUp()
 	std::vector<SSerPortConfig> serports;
 	serports.push_back(modbussim);
 
-	server = new HomeIsServer(serports,SERVER_PORT);
+	server = new HomeIsServer(serports,SERVER_PORT,false,"","");
 	server->Start(false);
 }
 

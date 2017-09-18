@@ -88,13 +88,11 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/libhttpserver-master/src}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/libhttpserver-master/src/httpserver}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/rapidjson}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/libs/libleaktracer/include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/gtest_src}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/libs/libcurl/include/curl}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/libs/libmodbus/libmodbus-3.1.4/src}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/libs/libdmalloc/include}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/homeisd/libs/gnutls/include}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/homeisd/libs/libmicrohttpd/include}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/libs/libmicrohttpd/include}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/libs/gnutls/include}&quot;"/>
 								</option>
 								<option id="gnu.cpp.compiler.option.preprocessor.def.100794621" name="Defined symbols (-D)" superClass="gnu.cpp.compiler.option.preprocessor.def" useByScannerDiscovery="false" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="HTTPSERVER_COMPILATION"/>
@@ -123,6 +121,7 @@
 									<listOptionValue builtIn="false" value="xml2"/>
 									<listOptionValue builtIn="false" value="rt"/>
 									<listOptionValue builtIn="false" value="config++"/>
+									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="z"/>
 									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="microhttpd"/>
 								</option>
 								<option id="gnu.cpp.link.option.paths.226678105" name="Library search path (-L)" superClass="gnu.cpp.link.option.paths" valueType="libPaths">
@@ -131,8 +130,8 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/libs/libusb/lib}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/libs/libsources/libxml2-2.8.0/lib}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/libs/libconfig/lib}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/libs/libsources/libmicrohttpd/lib}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/libs/libdmalloc/lib}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/libs/libmicrohttpd/lib}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/homeisd/libs/libz}&quot;"/>
 								</option>
 								<option id="gnu.cpp.link.option.flags.1653308680" name="Linker flags" superClass="gnu.cpp.link.option.flags" value="-march=armv7-a -rdynamic -funwind-tables" valueType="string"/>
 								<option id="gnu.cpp.link.option.debugging.prof.1615855711" name="Generate prof information (-p)" superClass="gnu.cpp.link.option.debugging.prof" value="false" valueType="boolean"/>
@@ -163,7 +162,7 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/libhttpserver-master/src/httpserver}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/linuxcs}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/homeisd/libs/libmicrohttpd/include}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/libs/libmicrohttpd/include}&quot;"/>
 								</option>
 								<option id="gnu.both.asm.option.flags.779682679" name="Assembler flags" superClass="gnu.both.asm.option.flags" value="" valueType="string"/>
 								<inputType id="cdt.managedbuild.tool.gnu.assembler.input.1757918674" superClass="cdt.managedbuild.tool.gnu.assembler.input"/>
@@ -352,7 +351,6 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/onewirelibrary/OneWire++/linkOW++}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/libs/libconfig/include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/libs/libsources/libxml2-2.8.0/include/libxml2}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/libs/libsources/libmicrohttpd/include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/libs/libusbcompat/include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/lua-5.2.1/src}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/onewirelibrary/OneWire++/deviceOW++}&quot;"/>
@@ -370,7 +368,7 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/libs/libcurl/include/curl}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/libs/libmodbus/libmodbus-3.1.4/src}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/FakeIt}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/homeisd/libs/libmicrohttpd/include}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/libs/libmicrohttpd/include}&quot;"/>
 								</option>
 								<option id="gnu.cpp.compiler.option.preprocessor.def.125684587" name="Defined symbols (-D)" superClass="gnu.cpp.compiler.option.preprocessor.def" useByScannerDiscovery="false" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="HTTPSERVER_COMPILATION"/>
@@ -400,16 +398,17 @@
 									<listOptionValue builtIn="false" value="rt"/>
 									<listOptionValue builtIn="false" value="config++"/>
 									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="microhttpd"/>
-									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="curl-gnutls"/>
+									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="curl"/>
+									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="z"/>
 								</option>
 								<option id="gnu.cpp.link.option.paths.1189923739" name="Library search path (-L)" superClass="gnu.cpp.link.option.paths" valueType="libPaths">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/libs/libusbcompat/lib}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/libs/libudev}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/libs/libusb/lib}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/homeisd/libs/libcurl/lib}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/libs/libsources/libxml2-2.8.0/lib}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/libs/libconfig/lib}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/libs/libsources/libmicrohttpd/lib}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/libs/libcurl/lib}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/homeisd/libs/libmicrohttpd/lib}&quot;"/>
 								</option>
 								<option id="gnu.cpp.link.option.flags.916643005" name="Linker flags" superClass="gnu.cpp.link.option.flags" value="-march=armv7-a -rdynamic -funwind-tables" valueType="string"/>
 								<option id="gnu.cpp.link.option.debugging.prof.1331268921" name="Generate prof information (-p)" superClass="gnu.cpp.link.option.debugging.prof" value="false" valueType="boolean"/>
@@ -417,34 +416,7 @@
 								<option id="gnu.cpp.link.option.debugging.codecov.163981063" name="Generate gcov information (-ftest-coverage -fprofile-arcs)" superClass="gnu.cpp.link.option.debugging.codecov" value="false" valueType="boolean"/>
 								<option id="gnu.cpp.link.option.nodeflibs.1630631983" name="Do not use default libraries (-nodefaultlibs)" superClass="gnu.cpp.link.option.nodeflibs" value="false" valueType="boolean"/>
 								<option id="gnu.cpp.link.option.shared.344359508" name="Shared (-shared)" superClass="gnu.cpp.link.option.shared" value="false" valueType="boolean"/>
-								<option id="gnu.cpp.link.option.userobjs.2026094708" name="Other objects" superClass="gnu.cpp.link.option.userobjs" valueType="userObjs">
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/libs/libcurl/lib/libcom_err.so.2}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/libs/libcurl/lib/libcom_err.so.2.1}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/libs/libcurl/lib/libffi.so.6}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/libs/libcurl/lib/libgcrypt.so.11}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/libs/libcurl/lib/libgmp.so.10}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/libs/libcurl/lib/libgnutls-deb0.so.28}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/libs/libcurl/lib/libgnutls.so.26}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/libs/libcurl/lib/libgpg-error.so.0}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/libs/libcurl/lib/libgssapi_krb5.so.2}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/libs/libcurl/lib/libhogweed.so.2}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/libs/libcurl/lib/libidn.so.11}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/libs/libcurl/lib/libk5crypto.so.3}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/libs/libcurl/lib/libkeyutils.so.1}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/libs/libcurl/lib/libkrb5.so.3}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/libs/libcurl/lib/libkrb5support.so.0}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/libs/libcurl/lib/liblber-2.4.so.2}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/libs/libcurl/lib/liblcms2.so.2}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/libs/libcurl/lib/libldap_r-2.4.so.2}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/libs/libcurl/lib/libnettle.so.4}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/libs/libcurl/lib/libp11-kit.so.0}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/libs/libcurl/lib/librtmp.so.1}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/libs/libcurl/lib/libsasl2.so.2}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/libs/libcurl/lib/libssh2.so.1}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/libs/libcurl/lib/libtasn1.so.3}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/libs/libcurl/lib/libtasn1.so.6}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/libs/libcurl/lib/libz.so.1}&quot;"/>
-								</option>
+								<option id="gnu.cpp.link.option.userobjs.2026094708" name="Other objects" superClass="gnu.cpp.link.option.userobjs"/>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.linker.input.900776491" superClass="cdt.managedbuild.tool.gnu.cpp.linker.input">
 									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
 									<additionalInput kind="additionalinput" paths="$(LIBS)"/>
@@ -468,7 +440,6 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/libhttpserver-master/src/httpserver}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/linuxcs}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/homeisd/libs/libmicrohttpd/include}&quot;"/>
 								</option>
 								<option id="gnu.both.asm.option.flags.1326500981" name="Assembler flags" superClass="gnu.both.asm.option.flags" value="" valueType="string"/>
 								<inputType id="cdt.managedbuild.tool.gnu.assembler.input.234410357" superClass="cdt.managedbuild.tool.gnu.assembler.input"/>

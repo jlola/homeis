@@ -23,7 +23,7 @@ ExpressionService::~ExpressionService(void)
 
 }
 
-void ExpressionService::render_GET(const http_request& req, http_response** res)
+const http_response ExpressionService::render_GET(const http_request& req)
 {
 	STACK
 	Document respjsondoc;
@@ -90,8 +90,8 @@ void ExpressionService::render_GET(const http_request& req, http_response** res)
 		respjsondoc.Accept(wr);
 		std::string json = buffer.GetString();
 		//*res = new http_string_response(json, 403, "application/json");
-		*res = new http_response(http_response_builder(json, 403,"application/json").string_response());
-		return;
+		http_response resp(http_response_builder(json, 403,"application/json").string_response());
+		return resp;
 	}
 
 	StringBuffer buffer;
@@ -99,7 +99,8 @@ void ExpressionService::render_GET(const http_request& req, http_response** res)
 	respjsondoc.Accept(wr);
 	std::string json = buffer.GetString();
 	//*res = new http_string_response(json, 200, "application/json");
-	*res = new http_response(http_response_builder(json, 200,"application/json").string_response());
+	http_response resp(http_response_builder(json, 200,"application/json").string_response());
+	return resp;
 }
 
 void ExpressionService::ExpressionsToJson(string strid, HisDevFolderRoot* root, Document & respjsondoc)
@@ -146,8 +147,17 @@ void ExpressionService::ExpressionToJson(HisBase* pParent, LuaExpression *pExpre
 	Value d(kObjectType);
 	string strvalue = pExpression->GetName();
 	Value jsonvalue;
+
 	jsonvalue.SetString(strvalue.c_str(),strvalue.length(),respjsondoc.GetAllocator());
 	d.AddMember("name",jsonvalue, respjsondoc.GetAllocator());
+
+	strvalue = pExpression->GetCreateDateTime().ToString();
+	jsonvalue.SetString(strvalue.c_str(),strvalue.length(),respjsondoc.GetAllocator());
+	d.AddMember("createtime",jsonvalue, respjsondoc.GetAllocator());
+
+	strvalue = pExpression->GetModifyDateTime().ToString();
+	jsonvalue.SetString(strvalue.c_str(),strvalue.length(),respjsondoc.GetAllocator());
+	d.AddMember("modifytime",jsonvalue, respjsondoc.GetAllocator());
 
 	strvalue = (const char*)pExpression->GetNodeName();
 	jsonvalue.SetString(strvalue.c_str(),strvalue.length(),respjsondoc.GetAllocator());
@@ -337,7 +347,7 @@ LuaExpression* ExpressionService::CreateOrUpdateExpression(string strJson,string
 	}
 }
 
-void ExpressionService::render_POST(const http_request& req, http_response** res)
+const http_response ExpressionService::render_POST(const http_request& req)
 {
 	STACK
 	std::string content = req.get_content();
@@ -359,24 +369,23 @@ void ExpressionService::render_POST(const http_request& req, http_response** res
 			std::string json = buffer.GetString();
 
 			//*res = new http_string_response(json, 200, "application/json");
-			*res = new http_response(http_response_builder(json, 200,"application/json").string_response());
-			return;
+			http_response resp(http_response_builder(json, 200,"application/json").string_response());
+			return resp;
 		}
 	}
 	else
 	{
 		string message = "Autentication error";
 		//*res = new http_string_response(message.c_str(), 401, "application/json");
-		*res = new http_response(http_response_builder(message, 401,"application/json").string_response());
-		return;
+		http_response resp(http_response_builder(message, 401,"application/json").string_response());
+		return resp;
 	}
 	//*res = new http_string_response(message.c_str(), 403, "application/json");
-	*res = new http_response(http_response_builder(message, 403,"application/json").string_response());
-
-
+	http_response resp(http_response_builder(message, 403,"application/json").string_response());
+	return resp;
 }
 
-void ExpressionService::render_PUT(const http_request& req, http_response** res)
+const http_response ExpressionService::render_PUT(const http_request& req)
 {
 	STACK
 	std::string content = req.get_content();
@@ -387,22 +396,23 @@ void ExpressionService::render_PUT(const http_request& req, http_response** res)
 		if (CreateOrUpdateExpression(content,message))
 		{
 			//*res = new http_string_response("", 200, "application/json");
-			*res = new http_response(http_response_builder("", 200,"application/json").string_response());
-			return;
+			http_response resp(http_response_builder("", 200,"application/json").string_response());
+			return resp;
 		}
 	}
 	else
 	{
 		message = "Autentication error";
 		//*res = new http_string_response(message.c_str(), 401, "application/json");
-		*res = new http_response(http_response_builder(message, 401,"application/json").string_response());
-		return;
+		http_response resp(http_response_builder(message, 401,"application/json").string_response());
+		return resp;
 	}
 	//*res = new http_string_response(message, 403, "application/json");
-	*res = new http_response(http_response_builder(message, 403,"application/json").string_response());
+	http_response resp(http_response_builder(message, 403,"application/json").string_response());
+	return resp;
 }
 
-void ExpressionService::render_DELETE(const http_request& req, http_response** res)
+const http_response ExpressionService::render_DELETE(const http_request& req)
 {
 	STACK
 	string message = "";
@@ -412,18 +422,19 @@ void ExpressionService::render_DELETE(const http_request& req, http_response** r
 		if (DeleteExpression(strid,message))
 		{
 			//*res = new http_string_response("OK", 200, "application/json");
-			*res = new http_response(http_response_builder("OK", 200,"application/json").string_response());
-			return;
+			http_response resp(http_response_builder("OK", 200,"application/json").string_response());
+			return resp;
 		}
 	}
 	else
 	{
 		message = "Autentication error";
 		//*res = new http_string_response(message.c_str(), 401, "application/json");
-		*res = new http_response(http_response_builder(message, 401,"application/json").string_response());
-		return;
+		http_response resp(http_response_builder(message, 401,"application/json").string_response());
+		return resp;
 	}
 	//*res = new http_string_response(message.c_str(), 403, "application/json");
-	*res = new http_response(http_response_builder(message, 403,"application/json").string_response());
+	http_response resp(http_response_builder(message, 403,"application/json").string_response());
+	return resp;
 }
 

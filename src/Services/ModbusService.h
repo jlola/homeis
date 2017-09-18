@@ -24,7 +24,8 @@ class ModbusService : public http_resource
 public:
 	ModbusService(ModbusManager* mm);
 	void render_GET(const http_request& req, http_response** res);
-	void render_PUT(const http_request& req, http_response** res);
+	const http_response render_GET(const http_request& req);
+	const http_response render_PUT(const http_request& req);
 	virtual ~ModbusService();
 };
 
