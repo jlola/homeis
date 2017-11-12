@@ -17,6 +17,18 @@ protected:
 public:
 	HisDevModbusTests();
 	virtual ~HisDevModbusTests();
+
+	template<class T>
+	uint16_t CountOfType(vector<T> values, EHisDevDirection direction)
+	{
+		uint8_t count = 0;
+		for(size_t i=0;i<values.size();i++)
+		{
+			if (values[i]->GetDirection()==direction)
+				count++;
+		}
+		return count;
+	}
 };
 
 } /* namespace AF */

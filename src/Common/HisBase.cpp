@@ -94,6 +94,19 @@ void HisBase::Save()
 	DoInternalSave(node);
 }
 
+bool HisBase::FindProcByName(HisBase* hisbase,void* args)
+{
+	string* name = static_cast<string*>(args);
+	if (hisbase->GetName()==*name)
+		return true;
+	return false;
+}
+
+HisBase* HisBase::FindByName(string name)
+{
+	return Find(FindProcByName,&name);
+}
+
 HisBase* HisBase::Find(CUUID id)
 {
 	Load();

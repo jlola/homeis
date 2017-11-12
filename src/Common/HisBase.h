@@ -43,6 +43,8 @@ class HisBase
 	vector<HisBase*> items;
 	DateTime modifyDate;
 	DateTime createDate;
+
+	static bool FindProcByName(HisBase* hisbase,void* args);
 public:
 	HisBase();
 	//HisBase(xmlNodePtr pnode,CUUID recordid);
@@ -62,6 +64,7 @@ public:
 	 */
 	HisBase* Find(CUUID id);
 
+	HisBase* FindByName(string name);
 
 	HisBase* Find(FindProc proc,void* args);
 	/*

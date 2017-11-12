@@ -13,8 +13,10 @@
 
 class ModbusSimulator : public IModbus
 {
+	uint16_t* registers;
 	SSerPortConfig config;
 public:
+	ModbusSimulator(SSerPortConfig config, uint16_t* & registers);
 	ModbusSimulator(SSerPortConfig config);
 
 	bool Init();

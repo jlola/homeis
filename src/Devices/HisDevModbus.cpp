@@ -220,7 +220,7 @@ void HisDevModbus::CreateOrValidOneWireHeader(bool addnew)
 		if (valuebase==NULL)
 		{
 			scantag = new HisDevValue<bool>(Converter::itos(address,10),EHisDevDirection::Write,EDataType::Bool,Converter::itos(OW_SCAN_PINNUMBER),false);
-			scantag->SetName("ScanOneWire");
+			scantag->SetName(SCAN_ONEWIRE_NAME);
 			Add(scantag);
 		}
 		WriteToDeviceRequestDelegate delegate = WriteToDeviceRequestDelegate::from_method<HisDevModbus, &HisDevModbus::WriteToDevice>(this);
