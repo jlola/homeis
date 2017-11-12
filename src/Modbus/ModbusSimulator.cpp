@@ -9,7 +9,7 @@
 #include <Modbus/ModbusSimulator.h>
 
 
-uint16_t registers[] = {
+uint16_t registers_default[] = {
 		6,		//0
 	    3,
 	    10,
@@ -111,9 +111,18 @@ uint16_t registers[] = {
 	    0,
 	    0};
 
-ModbusSimulator::ModbusSimulator(SSerPortConfig config)
+uint16_t* registers_defaulti = registers_default;
+
+ModbusSimulator::ModbusSimulator(SSerPortConfig config, uint16_t* & registers)
 {
+	this->registers = registers;
 	this->config = config;
+}
+
+ModbusSimulator::ModbusSimulator(SSerPortConfig config)
+	: ModbusSimulator(config,registers_defaulti)
+{
+
 }
 
 bool ModbusSimulator::Init()

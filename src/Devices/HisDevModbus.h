@@ -22,6 +22,8 @@
 #define PROP_CONNECTION_NAME BAD_CAST "ConnectionName"
 #define LOADTYPE_ONEWIRE "ONEWIRE"
 
+#define SCAN_ONEWIRE_NAME "ScanOneWire"
+
 #define OW_DEVICES_OFFSET	5
 #define OW_SCAN_OFFSET 		0
 #define OW_SCAN_PINNUMBER	100
