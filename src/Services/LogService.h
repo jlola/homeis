@@ -9,13 +9,15 @@
 #define SRC_SERVICES_LOGSERVICE_H_
 
 #include <httpserver.hpp>
+#include "HttpHeadersProvider.h"
 
 using namespace std;
 using namespace httpserver;
 
 class LogService : public http_resource {
+	IHttpHeadersProvider & httpHeadersProvider;
 public:
-	LogService();
+	LogService(IHttpHeadersProvider & httpHeadersProvider);
 	//void render_GET(const http_request&, http_response**);
 	const http_response render_GET(const http_request& req);
 	virtual ~LogService();

@@ -47,6 +47,7 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/onewirelibrary}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/libcrash-master}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/homeisd/libs/libmicrohttpd/include}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/homeisd/src/Services}&quot;"/>
 								</option>
 								<option id="gnu.c.compiler.option.preprocessor.def.symbols.304171922" name="Defined symbols (-D)" superClass="gnu.c.compiler.option.preprocessor.def.symbols" useByScannerDiscovery="false" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="HTTPSERVER_COMPILATION"/>
@@ -93,6 +94,7 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/libs/libmodbus/libmodbus-3.1.4/src}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/libs/libmicrohttpd/include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/libs/gnutls/include}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/Services}&quot;"/>
 								</option>
 								<option id="gnu.cpp.compiler.option.preprocessor.def.100794621" name="Defined symbols (-D)" superClass="gnu.cpp.compiler.option.preprocessor.def" useByScannerDiscovery="false" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="HTTPSERVER_COMPILATION"/>
@@ -163,6 +165,7 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/linuxcs}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/libs/libmicrohttpd/include}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/homeisd/src/Services}&quot;"/>
 								</option>
 								<option id="gnu.both.asm.option.flags.779682679" name="Assembler flags" superClass="gnu.both.asm.option.flags" value="" valueType="string"/>
 								<inputType id="cdt.managedbuild.tool.gnu.assembler.input.1757918674" superClass="cdt.managedbuild.tool.gnu.assembler.input"/>
@@ -186,6 +189,55 @@
 							<tool id="cdt.managedbuild.tool.gnu.cross.archiver.1846278686" name="Cross GCC Archiver" superClass="cdt.managedbuild.tool.gnu.cross.archiver.1446144075"/>
 							<tool errorParsers="org.eclipse.cdt.core.GASErrorParser" id="cdt.managedbuild.tool.gnu.cross.assembler.427680934" name="Cross GCC Assembler" superClass="cdt.managedbuild.tool.gnu.cross.assembler.1202731631">
 								<inputType id="cdt.managedbuild.tool.gnu.assembler.input.267029717" superClass="cdt.managedbuild.tool.gnu.assembler.input"/>
+							</tool>
+						</toolChain>
+					</folderInfo>
+					<folderInfo id="cdt.managedbuild.config.gnu.exe.debug.1454666133.2115687590" name="/" resourcePath="src/Devices/OneWire">
+						<toolChain id="cdt.managedbuild.toolchain.gnu.cross.base.898304050" name="Cross GCC" superClass="cdt.managedbuild.toolchain.gnu.cross.base" unusedChildren="">
+							<option id="cdt.managedbuild.option.gnu.cross.prefix.1070758115.760767581" name="Prefix" superClass="cdt.managedbuild.option.gnu.cross.prefix.1070758115"/>
+							<option id="cdt.managedbuild.option.gnu.cross.path.1033661255.508913962" name="Path" superClass="cdt.managedbuild.option.gnu.cross.path.1033661255"/>
+							<targetPlatform archList="all" binaryParser="org.eclipse.cdt.core.ELF" id="cdt.managedbuild.targetPlatform.gnu.cross" isAbstract="false" osList="all" superClass="cdt.managedbuild.targetPlatform.gnu.cross"/>
+							<tool id="cdt.managedbuild.tool.gnu.cross.c.compiler.1133526612" name="Cross GCC Compiler" superClass="cdt.managedbuild.tool.gnu.cross.c.compiler.1320566611">
+								<inputType id="cdt.managedbuild.tool.gnu.c.compiler.input.1748303923" superClass="cdt.managedbuild.tool.gnu.c.compiler.input"/>
+							</tool>
+							<tool id="cdt.managedbuild.tool.gnu.cross.cpp.compiler.450696763" name="Cross G++ Compiler" superClass="cdt.managedbuild.tool.gnu.cross.cpp.compiler.774094333">
+								<option id="gnu.cpp.compiler.option.include.paths.1053011006" name="Include paths (-I)" superClass="gnu.cpp.compiler.option.include.paths" valueType="includePath">
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/Helpers}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/Devices}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/onewirelibrary/OneWire++}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/onewirelibrary/OneWire++/threadOW++}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/onewirelibrary/OneWire++/componentOW++}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/onewirelibrary/OneWire++/linkOW++}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/libs/libconfig/include}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/libs/libsources/libxml2-2.8.0/include/libxml2}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/libs/libusbcompat/include}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/lua-5.2.1/src}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/onewirelibrary/OneWire++/deviceOW++}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/onewirelibrary/OneWire++/platformOW++}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/onewirelibrary/OneWire++/portOW++}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/libcrash-master}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/onewirelibrary}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/linuxcs}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/uuid}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/libhttpserver-master/src}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/libhttpserver-master/src/httpserver}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/rapidjson}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/gtest_src}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/libs/libcurl/include/curl}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/libs/libmodbus/libmodbus-3.1.4/src}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/libs/libmicrohttpd/include}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/libs/gnutls/include}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/homeisd/src/Devices/OneWire}&quot;"/>
+								</option>
+								<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.1974390106" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
+							</tool>
+							<tool id="cdt.managedbuild.tool.gnu.cross.c.linker.922550960" name="Cross GCC Linker" superClass="cdt.managedbuild.tool.gnu.cross.c.linker.951548800"/>
+							<tool id="cdt.managedbuild.tool.gnu.cross.cpp.linker.1894315636" name="Cross G++ Linker" superClass="cdt.managedbuild.tool.gnu.cross.cpp.linker.845265110"/>
+							<tool id="cdt.managedbuild.tool.gnu.cross.archiver.1985383084" name="Cross GCC Archiver" superClass="cdt.managedbuild.tool.gnu.cross.archiver.1446144075"/>
+							<tool id="cdt.managedbuild.tool.gnu.cross.assembler.1296388839" name="Cross GCC Assembler" superClass="cdt.managedbuild.tool.gnu.cross.assembler.1202731631">
+								<inputType id="cdt.managedbuild.tool.gnu.assembler.input.489178328" superClass="cdt.managedbuild.tool.gnu.assembler.input"/>
 							</tool>
 						</toolChain>
 					</folderInfo>
@@ -266,7 +318,7 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="gtest_src/gtest-all.cc|libs/libmodbus/libmodbus-3.1.4/tests|gtest_src/src|dis.cpp|libcrash-master|onewirelibrary/test_thread.cpp|onewirelibrary/test_temp.cpp|onewirelibrary/test_switch.cpp|onewirelibrary/test_net.cpp|onewirelibrary/test_msgLogging.cpp|onewirelibrary/test_lock.cpp|onewirelibrary/test_link.cpp|onewirelibrary/test_jalousie.cpp|onewirelibrary/test_ds2890.cpp|onewirelibrary/test_ds2413.cpp|onewirelibrary/test_ds2406.cpp|onewirelibrary/test_ds2405.cpp|onewirelibrary/main.cpp|onewirelibrary/helper.cpp|uuid/gen_uuid_nt.c|onewirelibrary/OneWire++/componentOW++|libhttpserver-master/examples|libhttpserver-master/test|libs/libsources/libxml2-2.8.0/share/doc|libs/libsources/libxml2-2.8.0/share/doc/libxml2-2.8.0/examples" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="src/Devices/OneWire|gtest_src/gtest-all.cc|libs/libmodbus/libmodbus-3.1.4/tests|gtest_src/src|dis.cpp|libcrash-master|onewirelibrary/test_thread.cpp|onewirelibrary/test_temp.cpp|onewirelibrary/test_switch.cpp|onewirelibrary/test_net.cpp|onewirelibrary/test_msgLogging.cpp|onewirelibrary/test_lock.cpp|onewirelibrary/test_link.cpp|onewirelibrary/test_jalousie.cpp|onewirelibrary/test_ds2890.cpp|onewirelibrary/test_ds2413.cpp|onewirelibrary/test_ds2406.cpp|onewirelibrary/test_ds2405.cpp|onewirelibrary/main.cpp|onewirelibrary/helper.cpp|uuid/gen_uuid_nt.c|onewirelibrary/OneWire++/componentOW++|libhttpserver-master/examples|libhttpserver-master/test|libs/libsources/libxml2-2.8.0/share/doc|libs/libsources/libxml2-2.8.0/share/doc/libxml2-2.8.0/examples" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
@@ -363,12 +415,12 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/libhttpserver-master/src}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/libhttpserver-master/src/httpserver}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/rapidjson}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/libs/libleaktracer/include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/gtest_src}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/libs/libcurl/include/curl}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/libs/libmodbus/libmodbus-3.1.4/src}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/FakeIt}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/libs/libmicrohttpd/include}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/Services}&quot;"/>
 								</option>
 								<option id="gnu.cpp.compiler.option.preprocessor.def.125684587" name="Defined symbols (-D)" superClass="gnu.cpp.compiler.option.preprocessor.def" useByScannerDiscovery="false" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="HTTPSERVER_COMPILATION"/>
@@ -466,6 +518,25 @@
 							</tool>
 						</toolChain>
 					</folderInfo>
+					<folderInfo id="cdt.managedbuild.config.gnu.exe.debug.1454666133.972773316.1442665498" name="/" resourcePath="src/Devices/OneWire">
+						<toolChain id="cdt.managedbuild.toolchain.gnu.cross.base.554422316" name="Cross GCC" superClass="cdt.managedbuild.toolchain.gnu.cross.base" unusedChildren="">
+							<option id="cdt.managedbuild.option.gnu.cross.prefix.1430918404.1425176991" name="Prefix" superClass="cdt.managedbuild.option.gnu.cross.prefix.1430918404"/>
+							<option id="cdt.managedbuild.option.gnu.cross.path.2094130637.1066479218" name="Path" superClass="cdt.managedbuild.option.gnu.cross.path.2094130637"/>
+							<targetPlatform archList="all" binaryParser="org.eclipse.cdt.core.ELF" id="cdt.managedbuild.targetPlatform.gnu.cross" isAbstract="false" osList="all" superClass="cdt.managedbuild.targetPlatform.gnu.cross"/>
+							<tool id="cdt.managedbuild.tool.gnu.cross.c.compiler.1344708340" name="Cross GCC Compiler" superClass="cdt.managedbuild.tool.gnu.cross.c.compiler.1321182098">
+								<inputType id="cdt.managedbuild.tool.gnu.c.compiler.input.929437494" superClass="cdt.managedbuild.tool.gnu.c.compiler.input"/>
+							</tool>
+							<tool id="cdt.managedbuild.tool.gnu.cross.cpp.compiler.1948838148" name="Cross G++ Compiler" superClass="cdt.managedbuild.tool.gnu.cross.cpp.compiler.383991396">
+								<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.918190589" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
+							</tool>
+							<tool id="cdt.managedbuild.tool.gnu.cross.c.linker.767714226" name="Cross GCC Linker" superClass="cdt.managedbuild.tool.gnu.cross.c.linker.415421516"/>
+							<tool id="cdt.managedbuild.tool.gnu.cross.cpp.linker.64204112" name="Cross G++ Linker" superClass="cdt.managedbuild.tool.gnu.cross.cpp.linker.1453544750"/>
+							<tool id="cdt.managedbuild.tool.gnu.cross.archiver.1772629438" name="Cross GCC Archiver" superClass="cdt.managedbuild.tool.gnu.cross.archiver.1281558689"/>
+							<tool id="cdt.managedbuild.tool.gnu.cross.assembler.664135483" name="Cross GCC Assembler" superClass="cdt.managedbuild.tool.gnu.cross.assembler.1189760715">
+								<inputType id="cdt.managedbuild.tool.gnu.assembler.input.1092343449" superClass="cdt.managedbuild.tool.gnu.assembler.input"/>
+							</tool>
+						</toolChain>
+					</folderInfo>
 					<folderInfo id="cdt.managedbuild.config.gnu.exe.debug.1454666133.972773316.libs/libconfig" name="/" resourcePath="libs/libconfig">
 						<toolChain id="cdt.managedbuild.toolchain.gnu.cross.base.1565916291" name="Cross GCC" superClass="cdt.managedbuild.toolchain.gnu.cross.base" unusedChildren="">
 							<option id="cdt.managedbuild.option.gnu.cross.prefix.1070758115.1029949268.1292563393" name="Prefix" superClass="cdt.managedbuild.option.gnu.cross.prefix.1070758115"/>
@@ -543,7 +614,7 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="libs/libmodbus/libmodbus-3.1.4/tests|src/homeis.cpp|gtest_src/src|dis.cpp|libcrash-master|onewirelibrary/test_thread.cpp|onewirelibrary/test_temp.cpp|onewirelibrary/test_switch.cpp|onewirelibrary/test_net.cpp|onewirelibrary/test_msgLogging.cpp|onewirelibrary/test_lock.cpp|onewirelibrary/test_link.cpp|onewirelibrary/test_jalousie.cpp|onewirelibrary/test_ds2890.cpp|onewirelibrary/test_ds2413.cpp|onewirelibrary/test_ds2406.cpp|onewirelibrary/test_ds2405.cpp|onewirelibrary/main.cpp|onewirelibrary/helper.cpp|uuid/gen_uuid_nt.c|onewirelibrary/OneWire++/componentOW++|libhttpserver-master/examples|libhttpserver-master/test|libs/libsources/libxml2-2.8.0/share/doc|libs/libsources/libxml2-2.8.0/share/doc/libxml2-2.8.0/examples" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="src/Devices/OneWire|libs/libmodbus/libmodbus-3.1.4/tests|src/homeis.cpp|gtest_src/src|dis.cpp|libcrash-master|onewirelibrary/test_thread.cpp|onewirelibrary/test_temp.cpp|onewirelibrary/test_switch.cpp|onewirelibrary/test_net.cpp|onewirelibrary/test_msgLogging.cpp|onewirelibrary/test_lock.cpp|onewirelibrary/test_link.cpp|onewirelibrary/test_jalousie.cpp|onewirelibrary/test_ds2890.cpp|onewirelibrary/test_ds2413.cpp|onewirelibrary/test_ds2406.cpp|onewirelibrary/test_ds2405.cpp|onewirelibrary/main.cpp|onewirelibrary/helper.cpp|uuid/gen_uuid_nt.c|onewirelibrary/OneWire++/componentOW++|libhttpserver-master/examples|libhttpserver-master/test|libs/libsources/libxml2-2.8.0/share/doc|libs/libsources/libxml2-2.8.0/share/doc/libxml2-2.8.0/examples" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>

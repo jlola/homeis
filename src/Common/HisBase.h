@@ -17,6 +17,7 @@
 #include "converter.h"
 #include "DateTime.h"
 #include "PoppyDebugTools.h"
+#include "IHisBase.h"
 
 using namespace rapidjson;
 using namespace std;
@@ -26,28 +27,24 @@ using namespace std;
 #define PROP_CREATE_DATE BAD_CAST "createdate"
 #define PROP_MODIFY_DATE BAD_CAST "modifydate"
 
-class HisBase;
-
-typedef bool FindProc(HisBase* hisbase,void* args);
 //template<typename T>
 //using FindProc = void (*)(GLRenderer*, const MotionEvent&, std::vector<T >);
 
-class HisBase
+class HisBase : public IHisBase
 {
-	HisBase* parent;
+	IHisBase* parent;
 	string name;
 	CUUID recordId;
 	xmlNodePtr node;
 	bool isnew;
 	bool isloaded;
-	vector<HisBase*> items;
+	vector<IHisBase*> items;
 	DateTime modifyDate;
 	DateTime createDate;
 
-	static bool FindProcByName(HisBase* hisbase,void* args);
+	static bool FindProcByName(IHisBase* hisbase,void* args);
 public:
 	HisBase();
-	//HisBase(xmlNodePtr pnode,CUUID recordid);
 	HisBase(xmlNodePtr pnode);
 
 protected:
@@ -56,23 +53,23 @@ protected:
 	virtual const xmlChar* GetNodeNameInternal() = 0;
 	void ClearIsNew();
 	void FreeItems();
-	vector<HisBase*> GetAllItems();
+	vector<IHisBase*> GetAllItems();
 public:
 	const xmlChar* GetNodeName();
 	/*
 	 * najde id ve vsech potomcich i vnorenych
 	 */
-	HisBase* Find(CUUID id);
+	IHisBase* Find(CUUID id);
 
-	HisBase* FindByName(string name);
+	IHisBase* FindByName(string name);
 
-	HisBase* Find(FindProc proc,void* args);
+	IHisBase* Find(FindProc proc,void* args);
 	/*
 	 * najde index Id v deckach v jedne urovni, kdyz nenajde nic -1
 	 */
 	int FindIndex(CUUID id);
-	void Add(HisBase *pitem);
-	virtual HisBase* Remove(CUUID puuid);
+	void Add(IHisBase *pitem);
+	virtual IHisBase* Remove(CUUID puuid);
 	DateTime GetModifyDateTime();
 	void SetModifyDateTime(DateTime modifyDate);
 	DateTime GetCreateDateTime();
@@ -84,9 +81,8 @@ public:
 	string GetName();
 	virtual void SetName(string pname);
 	virtual ~HisBase();
-	HisBase* GetParent();
-	void SetParent(HisBase* pParent);
-	//template<class T> void GetItems(/*vector<T*> & result*/);
+	IHisBase* GetParent();
+	void SetParent(IHisBase* pParent);
 	template<class T>
 	vector<T*> GetItems()
 	{

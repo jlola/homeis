@@ -17,7 +17,9 @@
 
 using namespace rapidjson;
 
-LogService::LogService() {
+LogService::LogService(IHttpHeadersProvider & httpHeadersProvider)
+	: httpHeadersProvider(httpHeadersProvider)
+{
 
 }
 
@@ -29,7 +31,7 @@ LogService::~LogService() {
 const http_response LogService::render_GET(const http_request& req)
 {
 	STACK
-
+	int response_code = MHD_HTTP_FORBIDDEN;
 	Document document;
 	document.SetObject();
 
@@ -55,8 +57,7 @@ const http_response LogService::render_GET(const http_request& req)
 		}
 		document.Accept(wr);
 		std::string json = buffer.GetString();
-		http_response response(http_response_builder(json, 200,"application/json").string_response());
-		return response;
+		response_code = MHD_HTTP_OK;
 	}
 	else
 	{
@@ -71,16 +72,19 @@ const http_response LogService::render_GET(const http_request& req)
 			std::string json = buffer.GetString();
 			vector<string> topics;
 			topics.push_back(json);
-			return http_response_builder(json, 200,"application/json").string_response();
+			response_code = MHD_HTTP_OK;
 		}
 		else
 		{
 			jsonvalue.SetString("Not exists",document.GetAllocator());
 			document.AddMember("Result",jsonvalue,document.GetAllocator());
-			std::string json = buffer.GetString();
-			http_response resp(http_response_builder(json, 400,"application/json").string_response());
-			return resp;
+			response_code = MHD_HTTP_NOT_FOUND;
 		}
 	}
+	std::string json = buffer.GetString();
+	http_response_builder response_builder(json, response_code,httpHeadersProvider.GetContentTypeAppJson());
+	httpHeadersProvider.AddHeaders(response_builder);
+	http_response resp(response_builder.string_response());
+	return resp;
 }
 

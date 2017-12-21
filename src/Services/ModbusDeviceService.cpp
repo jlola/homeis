@@ -13,9 +13,13 @@
 #include "Services/ModbusDeviceService.h"
 #include "StringBuilder.h"
 #include "converter.h"
+#include "microhttpd.h"
 
 
-ModbusDeviceService::ModbusDeviceService(HisDevices* devices,ModbusManager* mm)
+ModbusDeviceService::ModbusDeviceService(HisDevices* devices
+		,IModbusProvider* mm
+		,IHttpHeadersProvider & headersProvider)
+	: headersProvider(headersProvider)
 {
 	this->mm = mm;
 	this->devices = devices;
@@ -29,6 +33,7 @@ ModbusDeviceService::~ModbusDeviceService()
 const http_response ModbusDeviceService::render_GET(const http_request& req)
 {
 	STACK
+	int resonse_code = MHD_HTTP_FORBIDDEN;
 	Document document;
 	document.SetObject();
 
@@ -53,6 +58,7 @@ const http_response ModbusDeviceService::render_GET(const http_request& req)
 		document.SetObject();
 		jsonvalue.SetString("Success",document.GetAllocator());
 		document.AddMember("Result",jsonvalue,document.GetAllocator());
+		resonse_code = MHD_HTTP_OK;
 	}
 	else
 	{
@@ -67,6 +73,7 @@ const http_response ModbusDeviceService::render_GET(const http_request& req)
 			document.SetObject();
 			jsonvalue.SetString("Success",document.GetAllocator());
 			document.AddMember("Result",jsonvalue,document.GetAllocator());
+			resonse_code = MHD_HTTP_OK;
 		}
 		else
 		{
@@ -75,10 +82,14 @@ const http_response ModbusDeviceService::render_GET(const http_request& req)
 			document.AddMember("Result",jsonvalue,document.GetAllocator());
 			jsonvalue.SetString("Connector not found",document.GetAllocator());
 			document.AddMember("Message",jsonvalue,document.GetAllocator());
+			resonse_code = MHD_HTTP_NOT_FOUND;
 		}
+
 	}
 	document.Accept(wr);
 	std::string json = buffer.GetString();
-	http_response resp(http_response_builder(json, 200,"application/json").string_response());
+	http_response_builder response_builder(json, resonse_code,headersProvider.GetContentTypeAppJson());
+	headersProvider.AddHeaders(response_builder);
+	http_response resp(response_builder.string_response());
 	return resp;
 }

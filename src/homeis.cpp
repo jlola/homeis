@@ -46,7 +46,7 @@ extern "C" {
 int main(int argc, char **argv)
 {
 	Debug::DeathHandler dh;
-	bool dodaemonize = true;
+	bool debug = false;
 	bool printversion = false;
 
 	if (argc >= 2)
@@ -55,14 +55,14 @@ int main(int argc, char **argv)
 		{
 			if ( strcmp( argv[i], "DEBUG") == 0 )
 			{
-				dodaemonize = false;
+				debug = true;
 			}
 			if ( strcmp( argv[i], "-version") == 0 )
 			{
 				printversion = true;
 			}
 		}
-		if (dodaemonize && !printversion)
+		if (!debug && !printversion)
 		{
 			printf("Homeis was run with wrong arguments");
 			exit(1);
@@ -75,7 +75,7 @@ int main(int argc, char **argv)
 		return 0;
 	}
 
-	if (dodaemonize)
+	if (!debug)
 	{
 		string pid = StringBuilder::Format("/var/run/%s.pid",File::getexefile().c_str());
 		daemonize2(pid.c_str());
@@ -94,8 +94,7 @@ Home information system %d.%d.%8d\n\
 	HomeIsConfig config("homeis.cfg");
 	vector<SSerPortConfig> serports = config.GetSerialPorts();
 
-	HomeIsServer server(serports,config.GetServerPort(),config.UseHTTPS(),
-			config.HTTPSKey(),config.HTTPSCert());
+	HomeIsServer server(serports,config.GetServerPort(),config.GetAllowOrigin());
 
 	server.Start(true);
 	server.Stop();

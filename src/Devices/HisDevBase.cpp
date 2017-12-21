@@ -35,7 +35,11 @@ HisDevBase::~HisDevBase()
 }
 
 HisDevBase::HisDevBase() :
-		enabled(true),scanPeriodMs(10000),error(true),changed(false),needRefresh(false)
+		enabled(true),
+		scanPeriodMs(10000),
+		error(true),
+		changed(false),
+		needRefresh(false)
 {
 	STACK
 	refreshmutex = HisLock::CreateMutex();
@@ -45,12 +49,16 @@ HisDevBase::HisDevBase() :
 }
 
 HisDevBase::HisDevBase(xmlNodePtr node)
-	: HisBase::HisBase(node),scanPeriodMs(10000),error(true),changed(false),needRefresh(false)
+	: HisBase::HisBase(node),
+	enabled(true),
+	scanPeriodMs(10000),
+	error(true),
+	changed(false),
+	needRefresh(false)
 {
 	STACK
 	refreshmutex = HisLock::CreateMutex();
 	dataSource = EDataSource::Const;
-	enabled = false;
 	uint64_t curTimeUs = HisDateTime::timeval_to_usec(HisDateTime::Now());
 	nextScanTime = curTimeUs + (rand() % scanPeriodMs)*1000;
 }
@@ -126,7 +134,7 @@ void HisDevBase::RemoveExpression(IExpression* pExpression)
 }
 
 
-HisBase* HisDevBase::Remove(CUUID puuid)
+IHisBase* HisDevBase::Remove(CUUID puuid)
 {
 	return HisBase::Remove(puuid);
 }

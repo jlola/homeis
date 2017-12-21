@@ -8,12 +8,12 @@
 #ifndef HISDEVICES_H_
 #define HISDEVICES_H_
 
+#include <Modbus/IModbusProvider.h>
 #include "HisDevBase.h"
 #include "Common/CUUID.h"
 #include "Common/HisLock.h"
 #include <queue>          // std::queue
 #include "Devices/HisDevBase.h"
-#include "Modbus/ModbusManager.h"
 #include "Expressions/IExpressionRuntime.h"
 
 using namespace std;
@@ -21,29 +21,21 @@ using namespace std;
 class HisDevices {
 	xmlDocPtr doc;       /* document pointer */
 	string devicesFileName;
-	LOW_network *network;
 	std::vector<HisDevBase*> devices;
-	//LOW_thread_mutex  *__expressionMutex;  /**< Mutex for exclusive access. */
 	LOW_thread_mutex  *__devRefreshMutex;  /**< Mutex for exclusive access. */
 	queue<HisDevBase*> devqueue;
 	OnRefreshDelegate onRefreshdelegate;
-	ModbusManager* modbusManager;
+	IModbusProvider* modbusProvider;
 public:
-	HisDevices(string fileName,LOW_network *network ,ModbusManager* modbusManager);
+	HisDevices(string fileName,IModbusProvider* modbusProvider);
 	int Find(CUUID RecordId);
 	size_t Size();
 	void AddScanned();
 	void Add(HisDevBase *hisdev);
-	void Scan();
 	void Refresh();
-	int Find(LOW_deviceID id);
 	HisDevValueBase* FindValue(string address);
 	HisDevValueBase* FindValue(CUUID valueId);
 	~HisDevices();
-	//void SortByRecordId();
-	//void SortByNextScanTime();
-	//long GetNextDelay();
-	//long GetNextDelayTimeMS();
 	void AddToRefreshQueue(HisDevBase* hisDevBase);
 	int FindModbusDev(int addressId);
 	void Save();

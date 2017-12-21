@@ -8,6 +8,7 @@
 #include <stdio.h>
 #include <cerrno>
 #include "Logger.h"
+#include "StringBuilder.h"
 #include <Modbus/ModbusWrapper.h>
 
 Modbus::Modbus(SSerPortConfig config)
@@ -39,7 +40,9 @@ bool Modbus::Init()
 	//modbus_set_debug(ctx,1);
 
 	if (modbus_connect(ctx) == -1) {
-	    fprintf(stderr, "Connection failed: %s\n", modbus_strerror(errno));
+		string message = StringBuilder::Format("Connection failed: %s\n", modbus_strerror(errno));
+	    printf(message.c_str());
+	    CLogger::Error(message.c_str());
 	    modbus_free(ctx);
 	    return false;
 	}

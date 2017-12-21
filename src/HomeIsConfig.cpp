@@ -20,68 +20,20 @@ const char configFileDefault[] = "\
 \n\
 #Server port\n\
 Port=81;\n\
-\n\
-UseHttps=true;\n\
-#relative path to homeis dir\n\
-https_key=\"server.key\"\n\
-https_cert=\"server.crt\"\n\
-\n\
+AllowOrigin=\"\"\n\
 SerialPorts = (\
 		#{\n\
 		#Port=\"/dev/ttyUSB0\"		#name of port\n\
-		#Driver=\"Modbus\"	#driver: DS2480B or PassiveSerial\n\
+		#Driver=\"Modbus\"			#driver: modbus\n\
 		#Name=\"Main\"\n\
 		#},\
 		{\n\
 		Port=\"SimulatedPort\"		#name of port\n\
-		Driver=\"ModbusSimulator\"	#driver: DS2480B or PassiveSerial\n\
+		Driver=\"ModbusSimulator\"	#driver: ModbusSimulator\n\
 		Name=\"Simulator\"\n\
 		}\
 		);\n\
 ";
-
-
-bool HomeIsConfig::UseHTTPS()
-{
-	Setting& root = cfg.getRoot();
-	if (root.exists("SerialPorts"))
-	{
-		bool useHttps = false;
-		if (root.lookupValue("UseHttps",useHttps))
-		{
-			return useHttps;
-		}
-	}
-	return false;
-}
-
-string HomeIsConfig::HTTPSCert()
-{
-	Setting& root = cfg.getRoot();
-	if (root.exists("SerialPorts"))
-	{
-		string httpscert;
-		if (root.lookupValue("https_cert",httpscert))
-		{
-			return httpscert;
-		}
-	}
-	return "server.crt";
-}
-
-string HomeIsConfig::HTTPSKey()
-{
-	Setting& root = cfg.getRoot();
-	if (root.exists("SerialPorts"))
-	{
-		string httpskey;
-		if (root.lookupValue("https_key",httpskey))
-		{
-			return httpskey;
-		}
-	}
-	return "server.key";
-}
 
 HomeIsConfig::HomeIsConfig(string pfilename)
 {
@@ -116,23 +68,10 @@ HomeIsConfig::HomeIsConfig(string pfilename)
 	}
 	catch(const ParseException &pex)
 	{
-		CLogger::Error("Parse error at : %s - %d %s", pex.getFile(), pex.getLine(),pex.getError());
+		CLogger::Error("Parse error at : in file %s - at line: %d %s", pex.getFile(), pex.getLine(),pex.getError());
 		throw;
 	}
 }
-
-//string HomeIsConfig::GetPrinterGadgetCMD()
-//{
-//	string result;
-//	Setting& root = cfg.getRoot();
-//	if (!root.lookupValue("PrinterGadgetCMD",result))
-//	{
-//		CLogger::Info("Config file does not contains key: GetPrinterGadgetCMD will be used default wihthout parametters.");
-//		//idVendor=0x03f0 idProduct=0x3217 iSerialNum=2 iPNPstring=\"MFG:Hewlett-Packard;CMD:L,PML,MLC,POSTSCRIPT,PCLXL,PCL;MDL:HP P LaserJet 3050;CLS:PRINTER;DES:Hewlett-Packa LaserJet 3050EMEM:MEM=53MB;12.4.4DL:4d,4e,1;1;CMEMENT:RES=1200x1;\"
-//		result = "modprobe g_printer";
-//	}
-//	return result;
-//}
 
 vector<SSerPortConfig> HomeIsConfig::GetSerialPorts()
 {
@@ -161,6 +100,17 @@ vector<SSerPortConfig> HomeIsConfig::GetSerialPorts()
 	return serports;
 }
 
+string HomeIsConfig::GetAllowOrigin()
+{
+	string result = "";
+	Setting& root = cfg.getRoot();
+	if (root.lookupValue("AllowOrigin",result))
+	{
+		return result;
+	}
+	return "";
+}
+
 int HomeIsConfig::GetServerPort()
 {
 	int intresult = 0;
@@ -171,68 +121,6 @@ int HomeIsConfig::GetServerPort()
 	}
 	return 81;
 }
-
-//string HomeIsConfig::GetMountMassScript()
-//{
-//	string result;
-//	Setting& root = cfg.getRoot();
-//	//if (!root.lookupValue("MountMassScript",result))
-//	return result;
-//}
-//
-//string HomeIsConfig::GetMountFolderScript()
-//{
-//	string result;
-//	Setting& root = cfg.getRoot();
-////	if (!root.lookupValue("MountFolderScript",result))
-////		throw PrintServerException("Config file does not contains key: MountFolderScript");
-//	return result;
-//}
-//
-//string HomeIsConfig::GetUmountFolderScript()
-//{
-//	string result;
-//	Setting& root = cfg.getRoot();
-////	if (!root.lookupValue("UmountScript",result))
-////		throw PrintServerException("Config file does not contains key: UmountScript");
-//	return result;
-//}
-//
-//string HomeIsConfig::GetUmountMassScript()
-//{
-//	string result;
-//	Setting& root = cfg.getRoot();
-////	if (!root.lookupValue("UmountMassScript",result))
-////		throw PrintServerException("Config file does not contains key: UmountMassScript");
-//	return result;
-//}
-//
-//string HomeIsConfig::GetTargetDir()
-//{
-//	string result;
-//	Setting& root = cfg.getRoot();
-////	if (!root.lookupValue("TargetDir",result))
-////		throw PrintServerException("Config file does not contains key: TargetDir");
-//	return result;
-//}
-//
-//string HomeIsConfig::GetRefreshScript()
-//{
-//	string result;
-//	Setting& root = cfg.getRoot();
-////	if (!root.lookupValue("RefreshScript",result))
-////		throw PrintServerException("Config file does not contains key: RefreshScript");
-//	return result;
-//}
-//
-//string HomeIsConfig::GetFileStoragePath()
-//{
-//	string result;
-//	Setting& root = cfg.getRoot();
-////	if (!root.lookupValue("FileStorageName",result))
-////		throw PrintServerException("Config file does not contains key: FileStorageName");
-//	return result;
-//}
 
 HomeIsConfig::~HomeIsConfig()
 {

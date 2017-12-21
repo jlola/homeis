@@ -35,32 +35,11 @@ public:
 
 	virtual ~HomeIsConfig();
 
-//	string GetFileStoragePath();
-
 	int GetServerPort();
 
+	string GetAllowOrigin();
+
 	vector<SSerPortConfig> GetSerialPorts();
-
-	bool UseHTTPS();
-
-	string HTTPSKey();
-
-	string HTTPSCert();
-
-//	string GetMountMassScript();
-//
-//	string GetMountFolderScript();
-//
-//	string GetUmountFolderScript();
-//
-//	string GetUmountMassScript();
-//
-//	string GetRefreshScript();
-//
-//	string GetTargetDir();
-//
-//	string GetPrinterGadgetCMD();
-
 };
 
 #endif /* PRINTSERVERCONFIG_H_ */

@@ -12,9 +12,9 @@
 #include <libxml/parser.h>
 #include <libxml/tree.h>
 #include <map>
-#include "LOW_netSegment.h"
-#include "LOW_network.h"
-#include "LOW_device.h"
+//#include "LOW_netSegment.h"
+//#include "LOW_network.h"
+//#include "LOW_device.h"
 #include "logger.h"
 #include "EDataType.h"
 #include "ValueEventArgs.h"
@@ -70,7 +70,7 @@ protected:
 public:
 	HisDevBase();
 	virtual ~HisDevBase();
-	virtual HisBase* Remove(CUUID puuid);
+	virtual IHisBase* Remove(CUUID puuid);
 	void SetChanged();
 	void SetNextScanTime(uint64_t ms);
 	/*

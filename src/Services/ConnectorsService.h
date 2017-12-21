@@ -14,6 +14,7 @@
 #include "Devices/Folder/HisDevValueId.h"
 #include "VirtualDevices/HisDevVirtual.h"
 #include "HomeIsConfig.h"
+#include "HttpHeadersProvider.h"
 
 using namespace std;
 using namespace httpserver;
@@ -21,9 +22,10 @@ using namespace rapidjson;
 
 class ConnectorsService : public http_resource
 {
+	IHttpHeadersProvider & headersProvider;
 	vector<SSerPortConfig> & serports;
 public:
-	ConnectorsService(vector<SSerPortConfig> & pserports);
+	ConnectorsService(vector<SSerPortConfig> & pserports,IHttpHeadersProvider & headersProvider);
 	const http_response render_GET(const http_request& r);
 	virtual ~ConnectorsService();
 };

@@ -14,9 +14,9 @@
 #include "HisDevValue.h"
 #include "EItemType.h"
 #include "Helpers/StringBuilder.h"
-#include "HisDallas.h"
 #include "HisDevModbus.h"
 #include "PoppyDebugTools.h"
+#include "microhttpd.h"
 
 using namespace rapidjson;
 
@@ -26,8 +26,8 @@ const char json[] = "[{\"name\":\"Bečka horní\",\"id\":4,\"type\":1,\"value\":
                          {\"name\":\"Podlahový okruh\",\"id\":1,\"type\":1,\"value\":23}, \
                          {\"name\":\"Radiatorový okruh\",\"id\":3,\"type\":0,\"value\":45.4}]";
 
-DevicesService::DevicesService(HisDevices & dev,HisDevFolderRoot & folder) :
-		devices(dev),rootFolder(folder)
+DevicesService::DevicesService(HisDevices & dev,HisDevFolderRoot & folder, IHttpHeadersProvider & headersProvider) :
+		devices(dev),rootFolder(folder),headersProvider(headersProvider)
 {
 }
 
@@ -42,8 +42,8 @@ const http_response DevicesService::render_GET(const http_request& req)
 	Document respjsondoc;
 	respjsondoc.SetArray();
 	string path = req.get_path();
-	//CLogger::Info(path.c_str());
-	//Value a(kArrayType);
+	int response_code = MHD_HTTP_FORBIDDEN;
+
 	//devices/{devid}/devvalue/{valueid}
 	if (path.find("/api/devices")!=string::npos && path.find("devvalues")!=string::npos)
 	{
@@ -64,6 +64,7 @@ const http_response DevicesService::render_GET(const http_request& req)
 				DevValueToJson(respjsondoc,NULL,devvalue,respjsondoc);
 			}
 		}
+		response_code = MHD_HTTP_OK;
 	}
 	else if (path.find("/api/onewiredevices/folder")!=string::npos)
 	{
@@ -80,6 +81,7 @@ const http_response DevicesService::render_GET(const http_request& req)
 		}
 		//ToJson(folder,respjsondoc);
 		FillFolderDevicesToJson(folder,respjsondoc,devices);
+		response_code = MHD_HTTP_OK;
 	}
 	else if (path.find("/api/onewiredevices")!=string::npos ||
 			 path.find("/api/devices")!=string::npos)
@@ -107,14 +109,21 @@ const http_response DevicesService::render_GET(const http_request& req)
 
 			}
 		}
+		response_code = MHD_HTTP_OK;
+	}
+	else
+	{
+		response_code = MHD_HTTP_NOT_FOUND;
 	}
 
 	StringBuffer buffer;
 	PrettyWriter<StringBuffer> wr(buffer);
 	respjsondoc.Accept(wr);
 	std::string json = buffer.GetString();
-	//*res = new http_string_response(json, 200, "application/json");
-	http_response resp(http_response_builder(json, 200,"application/json").string_response());
+
+	http_response_builder response_builder(json, response_code,headersProvider.GetContentTypeAppJson());
+	headersProvider.AddHeaders(response_builder);
+	http_response resp(response_builder.string_response());
 	return resp;
 }
 
@@ -160,18 +169,6 @@ void DevicesService::FillDeviceToJson(Value & devjson, HisDevBase* dev,Document 
 	jsonvalue.SetBool(dev->IsEnabled());
 	devjson.AddMember("Enabled",jsonvalue,respjsondoc.GetAllocator());
 
-	HisDevDallas* devDallas = dynamic_cast<HisDevDallas*>(dev);
-	if (devDallas!=NULL)
-	{
-		strvalue = devDallas->GetId().getRomIDString();
-		jsonvalue.SetString(strvalue.c_str(),strvalue.length(),respjsondoc.GetAllocator());
-		devjson.AddMember("Address",jsonvalue,respjsondoc.GetAllocator());
-
-		//strvalue = Converter::itos(devDallas->GetScanPeriod());
-		//jsonvalue.SetString(strvalue.c_str(),strvalue.length(),respjsondoc.GetAllocator());
-		jsonvalue.SetUint(devDallas->GetScanPeriod());
-		devjson.AddMember("ScanPeriodMs",jsonvalue,respjsondoc.GetAllocator());
-	}
 	HisDevModbus* devModbus = dynamic_cast<HisDevModbus*>(dev);
 	if (devModbus!=NULL)
 	{
@@ -181,11 +178,6 @@ void DevicesService::FillDeviceToJson(Value & devjson, HisDevBase* dev,Document 
 
 		jsonvalue.SetString(devModbus->GetConnectionName().c_str(),devModbus->GetConnectionName().length(),respjsondoc.GetAllocator());
 		devjson.AddMember("ConnectionName",jsonvalue,respjsondoc.GetAllocator());
-
-		//strvalue = Converter::itos(devDallas->GetScanPeriod());
-		//jsonvalue.SetString(strvalue.c_str(),strvalue.length(),respjsondoc.GetAllocator());
-		//jsonvalue.SetUint(devDallas->GetScanPeriod());
-		//devjson.AddMember("ScanPeriodMs",jsonvalue,respjsondoc.GetAllocator());
 	}
 
 	HisDevVirtual* devVirtual = dynamic_cast<HisDevVirtual*>(dev);
@@ -280,6 +272,7 @@ const http_response DevicesService::render_POST(const http_request& req)
 	string path = req.get_path();
 
 	string message;
+	int response_code = 403;
 
 	Document respjsondoc;
 	respjsondoc.SetArray();
@@ -295,9 +288,7 @@ const http_response DevicesService::render_POST(const http_request& req)
 			{
 				if (UpdateDevValue(devvalue->GetRecordId(),content))
 				{
-					//*res = new http_string_response("", 200, "application/json");
-					http_response resp(http_response_builder("", 200,"application/json").string_response());
-					return resp;
+					response_code = 200;
 				}
 			}
 		}
@@ -318,27 +309,29 @@ const http_response DevicesService::render_POST(const http_request& req)
 				PrettyWriter<StringBuffer> wr(buffer);
 				respjsondoc.Accept(wr);
 				std::string json = buffer.GetString();
-				//*res = new http_string_response(json, 200, "application/json");
-				http_response resp(http_response_builder(json, 200,"application/json").string_response());
-				return resp;
+				response_code = 200;
+				message = json;
 			}
 		}
 	}
 	else
 	{
 		string message = "Authentication error";
-		//*res = new http_string_response(message.c_str(), 401, "application/json");
-		http_response resp(http_response_builder(message, 401,"application/json").string_response());
-		return resp;
+		response_code = 401;
 	}
-	//*res = new http_string_response("", 403, "application/json");
-	http_response resp(http_response_builder(message, 403,"application/json").string_response());
+
+	http_response_builder response_builder(message,response_code,headersProvider.GetContentTypeAppJson());
+	this->headersProvider.AddHeaders(response_builder);
+	http_response resp(response_builder.string_response());
+	return resp;
 }
 
 const http_response DevicesService::render_PUT(const http_request& req)
 {
 	std::string content = req.get_content();
 	string path = req.get_path();
+	string message;
+	int response_code = MHD_HTTP_FORBIDDEN;
 
 	if (req.get_user()=="a" && req.get_pass()=="a")
 	{
@@ -348,9 +341,8 @@ const http_response DevicesService::render_PUT(const http_request& req)
 			CUUID devValueId = CUUID::Parse(strDevValueId);
 			if (UpdateDevValue(devValueId,content))
 			{
-				//*res = new http_string_response("", 200, "application/json");
-				http_response resp(http_response_builder("", 200,"application/json").string_response());
-				return resp;
+				response_code = MHD_HTTP_OK;
+				message = "OK";
 			}
 		}
 		else if (path.find("/api/onewiredevices")!=string::npos)
@@ -358,79 +350,71 @@ const http_response DevicesService::render_PUT(const http_request& req)
 			string strDevId = req.get_arg("devid");
 			if (UpdateDevice(strDevId,content))
 			{
-				//*res = new http_string_response("", 200, "application/json");
-				http_response resp(http_response_builder("", 200,"application/json").string_response());
-				return resp;
+				message = "OK";
+				response_code = MHD_HTTP_OK;
 			}
 		}
 	}
 	else
 	{
-		string message = "Autentication error";
-		//*res = new http_string_response(message.c_str(), 401, "application/json");
-		http_response resp(http_response_builder(message, 401,"application/json").string_response());
-		return resp;
+		message = "Authentication error";
+		response_code = MHD_HTTP_UNAUTHORIZED;
 	}
 
-	//*res = new http_string_response("", 403, "application/json");
-	http_response resp(http_response_builder("", 403,"application/json").string_response());
+	http_response_builder response_builder(message, response_code,headersProvider.GetContentTypeAppJson());
+	headersProvider.AddHeaders(response_builder);
+	http_response resp(response_builder.string_response());
+	return resp;
 }
 
 const http_response DevicesService::render_DELETE(const http_request& req)
 {
 	std::string content = req.get_content();
 	string path = req.get_path();
+	int response_code = MHD_HTTP_FORBIDDEN;
 	string msg;
+
 	if (req.get_user()=="a" && req.get_pass()=="a")
 	{
 		if (path.find("/api/onewiredevices/folder")!=string::npos)
 		{
 			string strValueIdRecordId = req.get_arg("id");
 
-			if (DeleteValueId(strValueIdRecordId))
+			if (DeleteValueId(strValueIdRecordId,msg))
 			{
-				//*res = new http_string_response("", 200, "application/json");
-				http_response resp(http_response_builder("", 200,"application/json").string_response());
-				return resp;
+				msg = "OK";
+				response_code = MHD_HTTP_OK;
 			}
 		}
 		else if (path.find("/api/onewiredevices/devvalue")!=string::npos)
 		{
 			string strRecordId = req.get_arg("id");
-			msg = DeleteDevValue(strRecordId);
-			if (msg=="")
+			if (DeleteDevValue(strRecordId,msg))
 			{
-				//*res = new http_string_response("OK", 200, "application/json");
-				http_response resp(http_response_builder("OK", 200,"application/json").string_response());
-				return resp;
+				response_code = MHD_HTTP_OK;
+				msg = "OK";
 			}
 		}
 		else if (path.find("/api/onewiredevices")!=string::npos)
 		{
 			string strRecordId = req.get_arg("devid");
-			msg = DeleteDev(strRecordId);
-			if (msg=="")
+			if (DeleteDev(strRecordId,msg))
 			{
-				//*res = new http_string_response("OK", 200, "application/json");
-				http_response resp(http_response_builder("OK", 200,"application/json").string_response());
-				return resp;
+				response_code = MHD_HTTP_OK;
+				msg = "OK";
 			}
 		}
 	}
 	else
 	{
-		string message = "Autentication error";
-		//*res = new http_string_response(message.c_str(), 401, "application/json");
-		http_response resp(http_response_builder(message, 401,"application/json").string_response());
-		return resp;
+		msg = "Authentication error";
+		response_code = MHD_HTTP_UNAUTHORIZED;
 	}
 
 	Document respjsondoc;
-	//respjsondoc.SetArray();
 	respjsondoc.SetObject();
 	StringBuffer buffer;
 
-	//Value d(kObjectType);
 	Value jsonvalue;
 	jsonvalue.SetString(msg.c_str(),msg.length(),respjsondoc.GetAllocator());
 	respjsondoc.AddMember("message",jsonvalue, respjsondoc.GetAllocator());
@@ -438,20 +422,21 @@ const http_response DevicesService::render_DELETE(const http_request& req)
 	PrettyWriter<StringBuffer> wr(buffer);
 	respjsondoc.Accept(wr);
 	std::string json = buffer.GetString();
-	//*res = new http_string_response(json, 403, "application/json");
-	http_response resp(http_response_builder(json, 403,"application/json").string_response());
+	http_response_builder response_builder(json, response_code,headersProvider.GetContentTypeAppJson());
+	headersProvider.AddHeaders(response_builder);
+	http_response resp(response_builder.string_response());
 	return resp;
 }
 
-string DevicesService::DeleteDevValue(string strDevValueRecordId)
+bool DevicesService::DeleteDevValue(string strDevValueRecordId, string & msg)
 {
 	CUUID devValueId = CUUID::Parse(strDevValueRecordId);
 	HisDevValueBase* devValue = devices.FindValue(devValueId);
 	if (devValue==NULL)
 	{
-		string msg = StringBuilder::Format("OneWireDevicesService::DeleteDevValue | Doesn't exists");
+		msg += StringBuilder::Format("OneWireDevicesService::DeleteDevValue | Doesn't exists");
 		CLogger::Error(msg.c_str());
-		return msg;
+		return false;
 	}
 	HisDevBase* device = dynamic_cast<HisDevBase*>(devValue->GetParent());
 
@@ -461,14 +446,14 @@ string DevicesService::DeleteDevValue(string strDevValueRecordId)
 		HisDevFolder* folder = dynamic_cast<HisDevFolder*>(usedIn->GetParent());
 		if (folder!=NULL)
 		{
-			string msg = StringBuilder::Format("OneWireDevicesService::DeleteDevValue | Cant delete node %s used in folder %s",strDevValueRecordId.c_str(),folder->GetName().c_str());
+			msg += StringBuilder::Format("OneWireDevicesService::DeleteDevValue | Cant delete node %s used in folder %s",strDevValueRecordId.c_str(),folder->GetName().c_str());
 			CLogger::Error(msg.c_str());
-			return msg;
+			return false;
 		}
 	}
 	else
 	{
-		HisBase* devvalue = device->Remove(devValueId);
+		IHisBase* devvalue = device->Remove(devValueId);
 		if (devvalue!=NULL)
 		{
 			delete(devvalue);
@@ -477,15 +462,15 @@ string DevicesService::DeleteDevValue(string strDevValueRecordId)
 		}
 		else
 		{
-			string msg = StringBuilder::Format("OneWireDevicesService::DeleteDevValue | Error while delete.");
+			msg += StringBuilder::Format("OneWireDevicesService::DeleteDevValue | Error while delete.");
 			CLogger::Error(msg.c_str());
-			return msg;
+			return false;
 		}
 	}
-	return "";
+	return true;
 }
 
-string DevicesService::DeleteDev(string strDevValueRecordId)
+bool DevicesService::DeleteDev(string strDevValueRecordId, string & msg)
 {
 	CUUID devValueId = CUUID::Parse(strDevValueRecordId);
 	 int index = devices.Find(devValueId);
@@ -503,24 +488,24 @@ string DevicesService::DeleteDev(string strDevValueRecordId)
 				HisDevFolder* folder = dynamic_cast<HisDevFolder*>(usedIn->GetParent());
 				if (folder!=NULL)
 				{
-					string msg = StringBuilder::Format("OneWireDevicesService::DeleteDevice | Cant delete node %s used in folder %s",strDevValueRecordId.c_str(),folder->GetName().c_str());
+					msg += StringBuilder::Format("OneWireDevicesService::DeleteDevice | Cant delete node %s used in folder %s",strDevValueRecordId.c_str(),folder->GetName().c_str());
 					CLogger::Error(msg.c_str());
-					return msg;
+					return false;
 				}
 			}
 		}
 
 		devices.Delete(index);
 		devices.Save();
-		return "";
+		return true;
 	 }
 
-	string msg = StringBuilder::Format("OneWireDevicesService::DeleteDevice | Cant delete not existed dev");
+	msg = StringBuilder::Format("OneWireDevicesService::DeleteDevice | Can't delete not existed dev");
 	CLogger::Error(msg.c_str());
-	return msg;
+	return false;
 }
 
-bool DevicesService::DeleteValueId(string strValueId)
+bool DevicesService::DeleteValueId(string strValueId, string & message)
 {
 
 	CUUID valueIdRecordId = CUUID::Parse(strValueId);
@@ -533,6 +518,7 @@ bool DevicesService::DeleteValueId(string strValueId)
 		rootFolder.Save();
 		return true;
 	}
+	message = StringBuilder::Format("ValueId %s not found.",strValueId.c_str());
 	return false;
 }
 
@@ -723,28 +709,3 @@ bool DevicesService::UpdateDevValue(CUUID devValueId, string strjson)
 
 	return false;
 }
-
-//void OneWireDevicesService::handle( LogicalConnection* pClient, IncomingPacket* pRequest )
-//{
-//	WebsocketDataMessage& request = (WebsocketDataMessage&)(*pRequest);
-//	WebsocketClient& client = (WebsocketClient&) (*pClient);
-//
-//	Document document;	// Default template parameter uses UTF8 and MemoryPoolAllocator.
-//
-//	if (document.Parse<0>((char*)request.GetData().c_str()).HasParseError())//ParseInsitu<0>((char*)raw.c_str()).HasParseError())
-//			return;
-//
-//	WebsocketDataMessage response(eOneWireDevice);
-//
-//	if (document.HasMember("Command"))
-//	{
-//		std::string command = document["Command"].GetString();
-//		if (command == "OneWireDeviceList")
-//		{
-//			response.SetData(json);
-//		}
-//	}
-//
-//
-//	client.PushPacket(&response);
-//}

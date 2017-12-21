@@ -83,7 +83,7 @@ HisDevValueBase* HisDevVirtual::AddDevValue(EDataType ptype)
 void HisDevVirtual::DeleteDevValue(CUUID devValueId)
 {
 	STACK
-	HisBase* hisbase = Remove(devValueId);
+	IHisBase* hisbase = Remove(devValueId);
 	HisDevValueBase* devValue = dynamic_cast<HisDevValueBase*>(hisbase);
 	if (devValue!=NULL)
 	{

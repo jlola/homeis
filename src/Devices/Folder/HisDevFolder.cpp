@@ -18,34 +18,11 @@ HisDevFolder::HisDevFolder(xmlNodePtr pNode) :
 	Load();
 }
 
-//HisDevValueId *HisDevFolder::FindHisDevValueId(CUUID devValueId)
-//{
-//	Load();
-//
-//	vector<HisBase*> items = GetAllItems();
-//	for(size_t i=0;i<items.size();i++)
-//	{
-//		HisDevValueId* value = dynamic_cast<HisDevValueId*>(items[i]);
-//		if (value!=NULL)
-//		{
-//			if (devValueId == value->GetDeviceValueId()) return value;
-//		}
-//		HisDevFolder* folder = dynamic_cast<HisDevFolder*>(items[i]);
-//		if (folder!=NULL)
-//		{
-//			HisDevValueId* result = folder->FindValueId(devValueId);
-//			if (result) return result;
-//		}
-//	}
-//
-//	return NULL;
-//}
-
 HisDevValueId *HisDevFolder::FindValueId(CUUID valueId)
 {
 	Load();
 
-	vector<HisBase*> items = GetAllItems();
+	vector<IHisBase*> items = GetAllItems();
 	for(size_t i=0;i<items.size();i++)
 	{
 		HisDevValueId* value = dynamic_cast<HisDevValueId*>(items[i]);

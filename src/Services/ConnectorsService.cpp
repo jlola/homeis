@@ -9,9 +9,10 @@
 #include "stringbuffer.h"
 #include "filestream.h"	// wrapper of C stream for prettywriter as output
 #include <Services/ConnectorsService.h>
+#include "microhttpd.h"
 
-ConnectorsService::ConnectorsService(vector<SSerPortConfig> & pserports)
- : serports(pserports)
+ConnectorsService::ConnectorsService(vector<SSerPortConfig> & pserports, IHttpHeadersProvider & headersProvider)
+ : headersProvider(headersProvider), serports(pserports)
 {
 }
 
@@ -38,8 +39,9 @@ const http_response ConnectorsService::render_GET(const http_request& req)
 	PrettyWriter<StringBuffer> wr(buffer);
 	respjsondoc.Accept(wr);
 	std::string json = buffer.GetString();
-	//*res = new http_string_response(json, 200, "application/json");
-	http_response resp(http_response_builder(json, 200,"application/json").string_response());
+	http_response_builder response_builder(json, MHD_HTTP_OK,headersProvider.GetContentTypeAppJson());
+	headersProvider.AddHeaders(response_builder);
+	http_response resp(response_builder.string_response());
 	return resp;
 }
 

@@ -17,7 +17,7 @@ HisDevModbus::HisDevModbus(IModbus* connection,int address)
 	  typesdefs(NULL),
 	  sbinInputstypesdefsIndex(0),
 	  sbininputs(NULL),
-	  modbusManager(NULL),
+	  modbusProvider(NULL),
 	  sbinoutputs(NULL),
 	  sbinOutputstypesdefsIndex(0),
 	  refreshOutputs(false),
@@ -33,7 +33,7 @@ HisDevModbus::HisDevModbus(IModbus* connection,int address)
 	SetError(true);
 }
 
-HisDevModbus::HisDevModbus(xmlNodePtr node,ModbusManager* modbusManager)
+HisDevModbus::HisDevModbus(xmlNodePtr node,IModbusProvider* modbusProvider)
 	: HisDevBase::HisDevBase(node),
 	  data(NULL),
 	  size(0),
@@ -50,7 +50,7 @@ HisDevModbus::HisDevModbus(xmlNodePtr node,ModbusManager* modbusManager)
 	  scantag(NULL)
 {
 	refreshscanmutex = HisLock::CreateMutex();
-	this->modbusManager = modbusManager;
+	this->modbusProvider = modbusProvider;
 	this->connection = NULL;
 	this->address = 0;
 	SetError(true);
@@ -229,8 +229,6 @@ void HisDevModbus::CreateOrValidOneWireHeader(bool addnew)
 	}
 }
 
-
-
 void HisDevModbus::CreateOrValidOutputs(bool addnew)
 {
 	STACK
@@ -304,6 +302,7 @@ HisDevValueBase* HisDevModbus::FindValue(string pinNumber)
 
 void HisDevModbus::RefreshOutputs()
 {
+	refreshOutputs = false;
 	if (typesdefs==NULL || sbinoutputs==NULL) return;
 	bool resultok = false;
 
@@ -344,7 +343,6 @@ void HisDevModbus::RefreshOutputs()
 
 void HisDevModbus::DoInternalRefresh(bool alarm)
 {
-	//CLogger::Info("Start HisDevModbus::DoInternalRefresh");
 	HisLock lock(refreshscanmutex);
 	STACK
 
@@ -364,7 +362,6 @@ void HisDevModbus::DoInternalRefresh(bool alarm)
 	{
 		if (refreshOutputs)
 		{
-			refreshOutputs = false;
 			RefreshOutputs();
 		}
 
@@ -374,74 +371,83 @@ void HisDevModbus::DoInternalRefresh(bool alarm)
 			SetError(true);
 			return;
 		}
-
-		if (typesdefs==NULL)
+		else
 		{
-			CLogger::Info("Wrong data scanned. Var typesdefs is NULL.");
-			return;
-		}
-
-		if (scantag!=NULL)
-		{
-			uint16_t lscan = data[typesdefs[sowiretypesdefsIndex].OffsetOfType];
-			scantag->ReadedValueFromDevice(lscan,!modbusok);
-			if (!lscan && scanRequest)
+			if (typesdefs==NULL)
 			{
-				scanRequest = 0;
-				if (!this->Scan(true))
-				{
-					SetError(true);
-					return;
-				}
+				CLogger::Info("Wrong data scanned. Var typesdefs is NULL.");
+				return;
+			}
+
+			RefreshInputs(modbusok);
+			RefreshOneWire(modbusok);
+		}
+	}
+}
+
+void HisDevModbus::RefreshInputs(bool modbusok)
+{
+	STACK
+	for(size_t v=0;v<valuesInput.size();v++)
+	{
+		for(int i=0;i<typesdefs[sbinInputstypesdefsIndex].Count;i++)
+		{
+			int strpinno = Converter::stoi(valuesInput[v]->GetPinNumber());
+			if (strpinno==sbininputs[i].PinNumber)
+			{
+				bool readedrror = sbininputs[i].Quality == 1 ? false : true;
+				bool value = sbininputs[i].Value == 1 ? true : false;
+				valuesInput[v]->ReadedValueFromDevice(value,readedrror && !modbusok);
+				break;
 			}
 		}
+	}
+}
 
-		//STACK_VAL(DoInternalRefresh,"File: "+string(__FILE__)+",Line: "+Converter::itos(__LINE__))
-
-
-		for(size_t v=0;v<valuesInput.size();v++)
+void HisDevModbus::RefreshOneWire(bool modbusok)
+{
+	STACK
+	if (scantag!=NULL)
+	{
+		//uint16_t lscan = data[typesdefs[sowiretypesdefsIndex].OffsetOfType];
+		uint16_t lscan = owheader->scan;
+		scantag->ReadedValueFromDevice(lscan,!modbusok);
+		if (!lscan && scanRequest)
 		{
-			for(int i=0;i<typesdefs[sbinInputstypesdefsIndex].Count;i++)
+			scanRequest = 0;
+			if (!this->Scan(true))
 			{
-				int strpinno = Converter::stoi(valuesInput[v]->GetPinNumber());
-				if (strpinno==sbininputs[i].PinNumber)
+				SetError(true);
+				CLogger::Error("Error scan modbus field with address %d",this->address);
+				return;
+			}
+		}
+	}
+
+	vector<HisDevValue<double>*> ds18b20s = GetItems<HisDevValue<double>>();
+	for(size_t v=0;v<ds18b20s.size();v++)
+	{
+		if (sds18b20s!=NULL && modbusok && owheader->count>0)
+		{
+			for(int i=0;i<owheader->count;i++)
+			{
+				LOW_deviceID id(sds18b20s[i].id5678,sds18b20s[i].id1234);
+				string strid = id.getRomIDString();
+				string strpinno = ds18b20s[v]->GetPinNumber();
+				if (strpinno==strid)
 				{
-					bool readedrror = sbininputs[i].Quality == 1 ? false : true;
-					bool value = sbininputs[i].Value == 1 ? true : false;
-					valuesInput[v]->ReadedValueFromDevice(value,readedrror && !modbusok);
+					bool readedrror = sds18b20s[i].error == 1 ? false : true;
+					double value = (double)sds18b20s[i].temperature / 100.0;
+					ds18b20s[v]->ReadedValueFromDevice(value,readedrror);
 					break;
 				}
 			}
 		}
-
-		//STACK_VAL(DoInternalRefresh,"File: "+string(__FILE__)+",Line: "+Converter::itos(__LINE__))
-
-		vector<HisDevValue<double>*> ds18b20s = GetItems<HisDevValue<double>>();
-		for(size_t v=0;v<ds18b20s.size();v++)
+		else
 		{
-			if (sds18b20s!=NULL && modbusok && owheader->count>0)
-			{
-				for(int i=0;i<owheader->count;i++)
-				{
-					LOW_deviceID id(sds18b20s[i].id5678,sds18b20s[i].id1234);
-					string strid = id.getRomIDString();
-					string strpinno = ds18b20s[v]->GetPinNumber();
-					if (strpinno==strid)
-					{
-						bool readedrror = sds18b20s[i].error == 1 ? false : true;
-						double value = (double)sds18b20s[i].temperature / 100.0;
-						ds18b20s[v]->ReadedValueFromDevice(value,readedrror);
-						break;
-					}
-				}
-			}
-			else
-			{
-				ds18b20s[v]->ReadedValueFromDevice(ds18b20s[v]->GetValue(),true);
-			}
+			ds18b20s[v]->ReadedValueFromDevice(ds18b20s[v]->GetValue(),true);
 		}
 	}
-	//CLogger::Info("Stop HisDevModbus::DoInternalRefresh");
 }
 
 void HisDevModbus::DoInternalSave(xmlNodePtr & node)
@@ -475,7 +481,7 @@ void HisDevModbus::DoInternalLoad(xmlNodePtr & node)
 		prop = xmlGetProp(node,PROP_CONNECTION_NAME);
 		string strConnectionName = (const char*)prop;
 
-		connection = modbusManager->Find(strConnectionName);
+		connection = modbusProvider->Find(strConnectionName);
 
 		if (connection==NULL)
 		{
@@ -507,15 +513,6 @@ void HisDevModbus::DoInternalLoad(xmlNodePtr & node)
 				break;
 		}
 	}
-
-//	vector<HisDevValue<double>*> doubles = GetItems<HisDevValue<double>>();
-//	for(size_t i=0;i<doubles.size();i++)
-//	{
-//		if (doubles[i]->GetLoadType()==LOADTYPE_ONEWIRE)
-//		{
-//			ds18b20s.push_back(doubles[i]);
-//		}
-//	}
 }
 
 void HisDevModbus::OnError() {

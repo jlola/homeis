@@ -9,18 +9,13 @@
 #include <algorithm>    // std::sort
 #include <string>
 #include <vector>
+#include <unistd.h>
 
 #include <libxml/parser.h>
 #include <libxml/tree.h>
 #include <semaphore.h>
-#include "LOW_netSegment.h"
-#include "LOW_network.h"
-#include "LOW_device.h"
-#include "LOW_deviceFactory.h"
-
 #include "HisDevBase.h"
 #include "HisDevValue.h"
-#include "HisDallas.h"
 #include "HisDevFactory.h"
 #include "VirtualDevices/HisDevVirtual.h"
 #include "PoppyDebugTools.h"
@@ -28,20 +23,11 @@
 
 #include "HisDevices.h"
 
-
-void HisDevices::Scan()
+HisDevices::HisDevices(string fileName ,IModbusProvider* modbusProvider)
 {
-	STACK
-	network->searchDevices<LOW_device>(false);
-	AddScanned();
-}
-
-HisDevices::HisDevices(string fileName,LOW_network* pnetwork,ModbusManager* modbusManager)
-{
-	this->modbusManager = modbusManager;
+	this->modbusProvider = modbusProvider;
 	devicesFileName = fileName;
 	doc = NULL;
-	network=pnetwork;
 	this->__devRefreshMutex = HisLock::CreateMutex();
 	onRefreshdelegate = OnRefreshDelegate::from_method<HisDevices, &HisDevices::AddToRefreshQueue>(this);
 }
@@ -85,7 +71,6 @@ void HisDevices::Load()
 {
 	STACK
 	xmlNodePtr root_node = NULL;/* node pointers */
-	//xmlDtdPtr dtd = NULL;       /* DTD pointer */
 
 	LIBXML_TEST_VERSION;
 
@@ -96,7 +81,6 @@ void HisDevices::Load()
 			this->Delete(i);
 		}
 	}
-	//network->searchDevices<LOW_device>(false);
 
 	if (doc!=NULL)
 	{
@@ -132,7 +116,7 @@ void HisDevices::Load()
 	HisDevBase* newhisdev = NULL;
 
 	while (cur != NULL) {
-		LOW_device* dev = NULL;
+		//LOW_device* dev = NULL;
 
 		try
 		{
@@ -140,28 +124,11 @@ void HisDevices::Load()
 			{
 				if (HisDevModbus::Resolve(cur))
 				{
-					newhisdev = (HisDevBase*)new HisDevModbus(cur,modbusManager);
+					newhisdev = (HisDevBase*)new HisDevModbus(cur,modbusProvider);
 				}
 				else if (HisDevVirtual::IsInternal(cur))
 				{
 					newhisdev = (HisDevBase*)new HisDevVirtual(cur);
-				}
-				else
-				{
-					id = HisDevDallas::GetId(cur);
-					if (!network->ContainsDevice<LOW_device>(id))
-					{
-						cout << "Offline device: "+id.getRomIDString() + "\n";
-						CLogger::Info("Offline device: %s",id.getRomIDString().c_str());
-						dev = LOW_deviceFactory::new_SpecificDevice(*(network->getSegments()[0]),id);
-					}
-					else
-					{
-						CLogger::Info("Online device: %s",id.getRomIDString().c_str());
-						cout << "Online device:" << id.getRomIDString() + "\n";
-						dev = network->getDevice<LOW_device>(id);
-					}
-					newhisdev = HisDevFactory::Instance().Create(cur,dev);
 				}
 				if (newhisdev!=NULL)
 				{
@@ -170,11 +137,6 @@ void HisDevices::Load()
 					devices.push_back(newhisdev);
 				}
 			}
-		}
-		catch(LOW_netSegment::noDevice_error & ex)
-		{
-			cout << "Error id:"+id.getRomIDString();
-			CLogger::Info(string("No device error id: "+id.getRomIDString()).c_str());
 		}
 		catch(...)
 		{
@@ -201,37 +163,6 @@ void HisDevices::Add(HisDevBase *hisdev)
 	xmlAddChild(root_node,hisdev->GetNodePtr());
 	hisdev->OnRefresh = onRefreshdelegate;
 	devices.push_back(hisdev);
-}
-
-void HisDevices::AddScanned()
-{
-	STACK
-	std::vector<LOW_device*> lowdevices = network->getDevices<LOW_device>();
-	size_t found = lowdevices.size();
-	//create new devices
-	for(size_t i=0;i<found;i++)
-	{
-		LOW_device* pdev = lowdevices[i];
-		try
-		{
-			int finded = Find(pdev->getID());
-			if (finded<0)
-			{
-				CLogger::Info("Found new device: %s",pdev->getID().getRomIDString().c_str());
-				cout << "Found new device:" << pdev->getID().getRomIDString() + "\n";
-				HisDevDallas* hisdev = (HisDevDallas*)HisDevFactory::Instance().Create(pdev);
-				if (hisdev!=NULL)
-					Add(hisdev);
-				else
-					CLogger::Error("Unsupported family code: %i",pdev->getFamilyCode());
-			}
-		}
-		catch(...)
-		{
-			CLogger::Info("Error add scaned device");
-
-		}
-	}
 }
 
 size_t HisDevices::Size()
@@ -310,7 +241,6 @@ void HisDevices::Refresh()
 
 		}
 		usleep(1000);
-		//((string*)0x00)->size();
 	}
 }
 
@@ -325,22 +255,6 @@ int HisDevices::FindModbusDev(int addressId)
 				return i;
 		}
 	}
-	return -1;
-}
-
-int HisDevices::Find(LOW_deviceID pid)
-{
-	STACK
-	for(uint i=0;i<devices.size();i++)
-	{
-		HisDevDallas* dallas = dynamic_cast<HisDevDallas*>(devices[i]);
-		if (dallas!=NULL)
-		{
-			LOW_deviceID id =  dallas->GetId();
-			if (id==pid) return i;
-		}
-	}
-
 	return -1;
 }
 

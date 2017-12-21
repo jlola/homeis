@@ -13,9 +13,10 @@
 #include "StringBuilder.h"
 #include "PoppyDebugTools.h"
 #include "ExpressionsService.h"
+#include "microhttpd.h"
 
-FoldersService::FoldersService(HisDevices & dev,HisDevFolderRoot* proot) :
-	root(proot),devices(dev)
+FoldersService::FoldersService(HisDevices & dev,HisDevFolderRoot & root, IHttpHeadersProvider & headersProvider) :
+	root(root),devices(dev),headersProvider(headersProvider)
 {
 }
 
@@ -29,6 +30,7 @@ const http_response FoldersService::render_GET(const http_request& req)
 	STACK
 	Document respjsondoc;
 	respjsondoc.SetArray();
+	int response_code = MHD_HTTP_FORBIDDEN;
 
 	string strid = req.get_arg("id");
 	HisDevFolder* folder = NULL;
@@ -38,11 +40,11 @@ const http_response FoldersService::render_GET(const http_request& req)
 		try
 		{
 			CUUID id = CUUID::Parse(strid);
-			folder = dynamic_cast<HisDevFolder*>(root->GetFolder()->Find(id));
+			folder = dynamic_cast<HisDevFolder*>(root.GetFolder()->Find(id));
 		}
 		catch(...)
 		{
-			folder = root->GetFolder();
+			folder = root.GetFolder();
 		}
 	}
 	//vrati vsechny polozky ve slozce
@@ -53,6 +55,7 @@ const http_response FoldersService::render_GET(const http_request& req)
 			STACK_SECTION("/api/folder/allitems");
 			FoldersToJson(root,folder,respjsondoc,false);
 		}
+		response_code = MHD_HTTP_OK;
 	}
 	else if (path.find("/api/folders")!=string::npos)
 	{
@@ -61,6 +64,7 @@ const http_response FoldersService::render_GET(const http_request& req)
 			STACK_SECTION("/api/folders");
 			FoldersToJson(root,folder,respjsondoc,true);
 		}
+		response_code = MHD_HTTP_OK;
 	}
 	else if (path.find("/api/folder")!=string::npos)
 	{
@@ -69,19 +73,26 @@ const http_response FoldersService::render_GET(const http_request& req)
 		{
 			FolderToJson(root,folder->GetParent(), folder,respjsondoc);
 		}
+		response_code = MHD_HTTP_OK;
 	}
-
+	else
+	{
+		response_code = MHD_HTTP_NOT_FOUND;
+	}
 
 	StringBuffer buffer;
 	PrettyWriter<StringBuffer> wr(buffer);
 	respjsondoc.Accept(wr);
 	const std::string json(buffer.GetString());
-	//*res = new http_string_response(json, 200, "application/json");
-	http_response resp(http_response_builder(json, 200,"application/json").string_response());
+
+
+	http_response_builder response_builder(json, response_code,headersProvider.GetContentTypeAppJson());
+	headersProvider.AddHeaders(response_builder);
+	http_response resp(response_builder.string_response());
 	return resp;
 }
 
-void FoldersService::FolderToJson(HisDevFolderRoot* root,HisBase *pParentFolder, HisBase *pFolder, Document & respjsondoc)
+void FoldersService::FolderToJson(HisDevFolderRoot & root,IHisBase *pParentFolder, IHisBase *pFolder, Document & respjsondoc)
 {
 	STACK
 
@@ -119,7 +130,7 @@ void FoldersService::FolderToJson(HisDevFolderRoot* root,HisBase *pParentFolder,
 
 	if (pFolder->GetParent()!=NULL)
 	{
-		if (pFolder->GetParent()->GetRecordId()!=root->GetFolder()->GetRecordId())
+		if (pFolder->GetParent()->GetRecordId()!=root.GetFolder()->GetRecordId())
 		{
 			strvalue = pFolder->GetParent()->GetRecordId().ToString();
 			jsonvalue.SetString(strvalue.c_str(),strvalue.length(),respjsondoc.GetAllocator());
@@ -129,7 +140,7 @@ void FoldersService::FolderToJson(HisDevFolderRoot* root,HisBase *pParentFolder,
 	respjsondoc.PushBack(d, respjsondoc.GetAllocator());
 }
 
-void FoldersService::FoldersToJson(HisDevFolderRoot* root,HisDevFolder *parentFolder, Document & respjsondoc,bool foldersOnly)
+void FoldersService::FoldersToJson(HisDevFolderRoot & root,HisDevFolder *parentFolder, Document & respjsondoc,bool foldersOnly)
 {
 	STACK
 	vector<HisBase*> folders;
@@ -182,12 +193,12 @@ bool FoldersService::AddValueIdToFolder(string strFolderId, string strJson,strin
 		{
 			CUUID ValueId = valueBase->GetRecordId();
 			CUUID folderId = CUUID::Parse(strFolderId);
-			HisDevFolder* folder = dynamic_cast<HisDevFolder*>(root->GetFolder()->Find(folderId));
+			HisDevFolder* folder = dynamic_cast<HisDevFolder*>(root.GetFolder()->Find(folderId));
 			if (folder!=NULL)
 			{
 				HisDevValueId* valueId = new HisDevValueId(ValueId);
 				folder->Add(valueId);
-				root->Save();
+				root.Save();
 				return true;
 			}
 		}
@@ -202,31 +213,26 @@ bool FoldersService::AddValueIdToFolder(string strFolderId, string strJson,strin
 const http_response FoldersService::render_POST(const http_request& req)
 {
 	STACK
+	string message = "";
+	int response_code = MHD_HTTP_FORBIDDEN;
 	std::string content = req.get_content();
-	string message;
 
 	if (req.get_user()=="a" && req.get_pass()=="a")
 	{
-
-		//string address = req.get_arg("id");
-
 		if (CreateFolder(content,message))
 		{
-			//*res = new http_string_response("", 200, "application/json");
-			http_response resp(http_response_builder("", 200,"application/json").string_response());
-			return resp;
+			response_code = MHD_HTTP_OK;
 		}
 	}
 	else
 	{
 		message = "Autentication error";
-		//*res = new http_string_response(message.c_str(), 401, "application/json");
-		http_response resp(http_response_builder(message, 401,"application/json").string_response());
-		return resp;
+		response_code = MHD_HTTP_UNAUTHORIZED;
 	}
 
-	//*res = new http_string_response("", 403, "application/json");
-	http_response resp(http_response_builder(message, 403,"application/json").string_response());
+	http_response_builder responsebuilder(message, response_code,headersProvider.GetContentTypeAppJson());
+	headersProvider.AddHeaders(responsebuilder);
+	http_response resp(responsebuilder.string_response());
 	return resp;
 }
 
@@ -265,7 +271,7 @@ bool FoldersService::UpdateFolder(string strid, string strJson,string & message)
 			return false;
 		}
 
-		HisDevFolder* folder = dynamic_cast<HisDevFolder*>(root->GetFolder()->Find(id));
+		HisDevFolder* folder = dynamic_cast<HisDevFolder*>(root.GetFolder()->Find(id));
 
 		if (folder!=NULL)
 		{
@@ -278,7 +284,7 @@ bool FoldersService::UpdateFolder(string strid, string strJson,string & message)
 			HisDevFolder* parent = dynamic_cast<HisDevFolder*>(folder->GetParent());
 			if (parent->GetRecordId()!=parentid)
 			{
-				HisDevFolder* newparent = dynamic_cast<HisDevFolder*>(root->GetFolder()->Find(parentid));
+				HisDevFolder* newparent = dynamic_cast<HisDevFolder*>(root.GetFolder()->Find(parentid));
 				if (newparent)
 				{
 					changed = true;
@@ -287,7 +293,7 @@ bool FoldersService::UpdateFolder(string strid, string strJson,string & message)
 				}
 			}
 
-			if (changed) root->Save();
+			if (changed) root.Save();
 			return true;
 		}
 		return false;
@@ -326,12 +332,12 @@ bool FoldersService::CreateFolder(string strJson,string & message)
 		return false;
 	}
 
-	HisDevFolder* parent = dynamic_cast<HisDevFolder*>(root->GetFolder()->Find(parentid));
+	HisDevFolder* parent = dynamic_cast<HisDevFolder*>(root.GetFolder()->Find(parentid));
 	if (parent!=NULL)
 		parent->Add(newFolder);
 	else
-		root->GetFolder()->Add(newFolder);
-	root->Save();
+		root.GetFolder()->Add(newFolder);
+	root.Save();
 
 	return true;
 }
@@ -341,6 +347,8 @@ const http_response FoldersService::render_PUT(const http_request& req)
 {
 	STACK
 	string message;
+	int response_code = 403;
+
 	if (req.get_user()=="a" && req.get_pass()=="a")
 	{
 		string strid = req.get_arg("id");
@@ -353,23 +361,24 @@ const http_response FoldersService::render_PUT(const http_request& req)
 			//vytvori id datoveho bodu ve slozce
 			if (AddValueIdToFolder(strfolderid,content,message))
 			{
-				http_response resp(http_response_builder("", 200,"application/json").string_response());
-				return resp;
+				response_code = 200;
 			}
 		}
 		else if (UpdateFolder(strid,content,message))
 		{
-			http_response resp(http_response_builder("", 200,"application/json").string_response());
-			return resp;
+			response_code = 200;
 		}
 	}
 	else
 	{
 		message = "Autentication error";
-		http_response resp(http_response_builder(message, 401,"application/json").string_response());
-		return resp;
+		response_code = 401;
 	}
-	http_response resp(http_response_builder(message, 403,"application/json").string_response());
+
+
+	http_response_builder response_builder(message, response_code,headersProvider.GetContentTypeAppJson());
+	headersProvider.AddHeaders(response_builder);
+	http_response resp(response_builder.string_response());
 	return resp;
 }
 
@@ -386,7 +395,7 @@ string FoldersService::DeleteDevValue(string strDevValueRecordId)
 	}
 	HisDevBase* device = dynamic_cast<HisDevBase*>(devValue->GetParent());
 
-	HisDevValueId* usedIn = root->FindValueId(devValueId);
+	HisDevValueId* usedIn = root.FindValueId(devValueId);
 	if (usedIn!=NULL)
 	{
 		HisDevFolder* folder = dynamic_cast<HisDevFolder*>(usedIn->GetParent());
@@ -399,7 +408,7 @@ string FoldersService::DeleteDevValue(string strDevValueRecordId)
 	}
 	else
 	{
-		HisBase* devvalue = device->Remove(devValueId);
+		IHisBase* devvalue = device->Remove(devValueId);
 		if (devvalue!=NULL)
 		{
 			delete(devvalue);
@@ -418,34 +427,35 @@ string FoldersService::DeleteDevValue(string strDevValueRecordId)
 const http_response FoldersService::render_DELETE(const http_request& req)
 {
 	STACK
+	int response_code = MHD_HTTP_FORBIDDEN;
+	string message;
+
 	if (req.get_user()=="a" && req.get_pass()=="a")
 	{
 		string strid = req.get_arg("id");
 
 		CUUID id = CUUID::Parse(strid);
-		HisDevFolder* folder = dynamic_cast<HisDevFolder*>(root->GetFolder()->Find(id));
+		HisDevFolder* folder = dynamic_cast<HisDevFolder*>(root.GetFolder()->Find(id));
 
 		if (folder!=NULL)
 		{
 			HisDevFolder* parentfolder = dynamic_cast<HisDevFolder*>(folder->GetParent());
 			parentfolder->Remove(id);
 			delete(folder);
-			root->Save();
+			root.Save();
 
-			//*res = new http_string_response("", 200, "application/json");
-			http_response resp(http_response_builder("", 200,"application/json").string_response());
-			return resp;
+			response_code = MHD_HTTP_OK;
+			message = "OK";
 		}
 	}
 	else
 	{
-		string message = "Autentication error";
-		//*res = new http_string_response(message.c_str(), 401, "application/json");
-		http_response resp(http_response_builder(message, 401,"application/json").string_response());
-		return resp;
+		message = "Authentication error";
+		response_code = MHD_HTTP_UNAUTHORIZED;
 	}
 
-	//*res = new http_string_response("", 403, "application/json");
-	http_response resp(http_response_builder("", 403,"application/json").string_response());
+	http_response_builder response_builder(message,response_code,headersProvider.GetContentTypeAppJson());
+	headersProvider.AddHeaders(response_builder);
+	http_response resp(response_builder.string_response());
 	return resp;
 }

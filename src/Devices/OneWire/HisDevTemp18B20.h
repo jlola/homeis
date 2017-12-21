@@ -69,7 +69,7 @@ class HisDevTemp18B20 : public HisDevDallas
 
 	}
 
-	double GetDouble(uint16_t pValue)
+	public: static double GetDouble(uint16_t pValue)
 	{
 		STACK
 		uint8_t signedflag = pValue >> 12;

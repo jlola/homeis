@@ -17,7 +17,7 @@ HisDevFolderRoot::HisDevFolderRoot(string pfileName)
 	folder = NULL;
 }
 
-bool MFindProc(HisBase* hisbase,void* args)
+bool MFindProc(IHisBase* hisbase,void* args)
 {
 	CUUID* uuid = (CUUID*)args;
 	HisDevValueId* valueid = dynamic_cast<HisDevValueId*>(hisbase);
@@ -28,7 +28,7 @@ bool MFindProc(HisBase* hisbase,void* args)
 	return false;
 }
 
-bool FindExpressionProc(HisBase* hisbase,void* args)
+bool FindExpressionProc(IHisBase* hisbase,void* args)
 {
 	CUUID* uuid = (CUUID*)args;
 	IExpression* expression = dynamic_cast<IExpression*>(hisbase);
@@ -43,7 +43,7 @@ IExpression* HisDevFolderRoot::FindExpression(CUUID expressionId)
 {
 	if (this->folder!=NULL)
 	{
-		HisBase* expressionBase = folder->Find(FindExpressionProc,&expressionId);
+		IHisBase* expressionBase = folder->Find(FindExpressionProc,&expressionId);
 		return dynamic_cast<IExpression*>(expressionBase);
 	}
 	return NULL;
@@ -53,7 +53,7 @@ HisDevValueId* HisDevFolderRoot::FindValueId(CUUID devValueId)
 {
 	if (this->folder!=NULL)
 	{
-		HisBase* valueid = folder->Find(MFindProc,&devValueId);
+		IHisBase* valueid = folder->Find(MFindProc,&devValueId);
 		return dynamic_cast<HisDevValueId*>(valueid);
 	}
 	return NULL;

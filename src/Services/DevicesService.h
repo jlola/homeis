@@ -14,6 +14,7 @@
 #include "Devices/Folder/HisDevValueId.h"
 #include "VirtualDevices/HisDevVirtual.h"
 #include "HisDevices.h"
+#include "HttpHeadersProvider.h"
 
 using namespace std;
 using namespace httpserver;
@@ -23,16 +24,18 @@ class DevicesService : public http_resource
 {
 	HisDevices & devices;
 	HisDevFolderRoot & rootFolder;
+	IHttpHeadersProvider & headersProvider;
+
 	bool UpdateDevValue(CUUID devValueId, string strjson);
 	//bool SetForce(string address, string force);
 	HisDevValueBase* CreateVirtualDevValue(string strjson,string & message);
 	HisDevVirtual* CreateVirtualDevice(string strjson,string & message);
 	HisDevBase* UpdateDevice(string strjson,string strDevId);
-	bool DeleteValueId(string strValueId);
-	string DeleteDevValue(string strDevValueRecordId);
-	string DeleteDev(string strDevValueRecordId);
+	bool DeleteValueId(string strValueId, string & message);
+	bool DeleteDevValue(string strDevValueRecordId, string & msg);
+	bool DeleteDev(string strDevValueRecordId, string & msg);
 public:
-	DevicesService(HisDevices & dev,HisDevFolderRoot & folder);
+	DevicesService(HisDevices & dev,HisDevFolderRoot & folder, IHttpHeadersProvider & headersProvider);
 	~DevicesService(void);
 	static void FillFolderDevicesToJson(HisDevFolder* folder,Document & respjsondoc, HisDevices & dev);
 	const http_response render_GET(const http_request&);

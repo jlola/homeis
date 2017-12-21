@@ -12,6 +12,9 @@
 #define PROP_ID   	(const xmlChar *)"id"
 
 #include "HisDevBase.h"
+#include "LOW_device.h"
+#include "LOW_netSegment.h"
+#include "LOW_network.h"
 
 class HisDevDallas : public HisDevBase
 {

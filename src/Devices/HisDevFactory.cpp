@@ -19,16 +19,9 @@
 #include "EHisDevDirection.h"
 
 #include "HisDevBase.h"
-#include "HisDevTemp18B20.h"
-#include "HisDevIO2413.h"
 #include "Common/HisBase.h"
 #include "HisDevValue.h"
 #include "Expressions/LuaExpression.h"
-#include "LOWdevLCD.h"
-#include "HisDevLCD.h"
-#include "LOW_devDS2408.h"
-#include "HisDevIO2408.h"
-#include "HisDevIO2406.h"
 #include "HisDevFactory.h"
 
 
@@ -49,7 +42,6 @@ HisDevFactory HisDevFactory::instance;
 
 HisDevFactory & HisDevFactory::Instance()
 {
-	//if (HisDevFactory::factory==NULL) HisDevFactory::factory = new HisDevFactory();
 	return HisDevFactory::instance;
 }
 
@@ -81,46 +73,6 @@ HisBase *HisDevFactory::Create(xmlNodePtr node)
 		if (!xmlStrcmp(node->name,NODE_EXPRESSION))
 			return new LuaExpression(node,devices,expressionRuntime);
 		CLogger::Error("HisDevFactory::Create | Not implemented %s constructor.",node->name);
-	}
-	return NULL;
-}
-
-HisDevBase * HisDevFactory::Create(xmlNodePtr notptr,LOW_device* dev)
-{
-	LOW_deviceID id = HisDevDallas::GetId(notptr);
-	if (dev!=NULL)
-	{
-		switch(dev->getFamilyCode())
-		{
-			case LOW_devDS1820::familyCode:
-				return (HisDevBase*)new HisDevTemp18B20(notptr,(LOW_devDS1820*)dynamic_cast<LOW_devDS1820*>(dev));
-			case LOW_devDS2413::familyCode:
-				return (HisDevBase*)new HisDevIO2413(notptr,(LOW_devDS2413*)dynamic_cast<LOW_devDS2413*>(dev));
-			case LOW_devLCD::familyCode:
-				return (HisDevBase*)new HisDevLCD(notptr,(LOW_devLCD*)dynamic_cast<LOW_devLCD*>(dev));
-			case LOW_devDS2408::familyCode:
-				return (HisDevBase*)new HisDevIO2408(notptr,(LOW_devDS2408*)dynamic_cast<LOW_devDS2408*>(dev));
-			case LOW_devDS2406::familyCode:
-				return (HisDevBase*)new HisDevIO2406(notptr,(LOW_devDS2406*)dynamic_cast<LOW_devDS2406*>(dev));
-		}
-	}
-	return NULL;
-}
-
-HisDevBase * HisDevFactory::Create(LOW_device* dev)
-{
-	switch(dev->getFamilyCode())
-	{
-		case LOW_devDS1820::familyCode:
-			return (HisDevBase*)new HisDevTemp18B20((LOW_devDS1820*)dev);
-		case LOW_devDS2413::familyCode:
-			return (HisDevBase*)new HisDevIO2413((LOW_devDS2413*)dev);
-		case LOW_devLCD::familyCode:
-			return (HisDevBase*)new HisDevLCD((LOW_devLCD*)dev);
-		case LOW_devDS2408::familyCode:
-			return (HisDevBase*)new HisDevIO2408((LOW_devDS2408*)dynamic_cast<LOW_devDS2408*>(dev));
-		case LOW_devDS2406::familyCode:
-			return (HisDevBase*)new HisDevIO2406((LOW_devDS2406*)dynamic_cast<LOW_devDS2406*>(dev));
 	}
 	return NULL;
 }

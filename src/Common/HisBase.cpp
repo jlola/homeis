@@ -19,6 +19,13 @@ HisBase::HisBase()
 	name = "-------";
 }
 
+HisBase::HisBase(xmlNodePtr pnode)
+	: HisBase::HisBase()
+{
+	isnew = false;
+	node = pnode;
+}
+
 const xmlChar* HisBase::GetNodeName()
 {
 	return GetNodeNameInternal();
@@ -39,7 +46,7 @@ DateTime HisBase::GetCreateDateTime()
 	return createDate;
 }
 
-vector<HisBase*> HisBase::GetAllItems()
+vector<IHisBase*> HisBase::GetAllItems()
 {
 	return items;
 }
@@ -47,15 +54,6 @@ vector<HisBase*> HisBase::GetAllItems()
 void HisBase::ClearIsNew()
 {
 	isnew = false;
-}
-
-HisBase::HisBase(xmlNodePtr pnode)
-{
-	parent = NULL;
-	isloaded = false;
-	isnew = false;
-	name = "-------";
-	node = pnode;
 }
 
 void HisBase::Load()
@@ -94,7 +92,7 @@ void HisBase::Save()
 	DoInternalSave(node);
 }
 
-bool HisBase::FindProcByName(HisBase* hisbase,void* args)
+bool HisBase::FindProcByName(IHisBase* hisbase,void* args)
 {
 	string* name = static_cast<string*>(args);
 	if (hisbase->GetName()==*name)
@@ -102,39 +100,39 @@ bool HisBase::FindProcByName(HisBase* hisbase,void* args)
 	return false;
 }
 
-HisBase* HisBase::FindByName(string name)
+IHisBase* HisBase::FindByName(string name)
 {
 	return Find(FindProcByName,&name);
 }
 
-HisBase* HisBase::Find(CUUID id)
+IHisBase* HisBase::Find(CUUID id)
 {
 	Load();
 
 	for(size_t i=0;i<items.size();i++)
 	{
 		if (id == items[i]->GetRecordId()) return items[i];
-		HisBase* result = items[i]->Find(id);
+		IHisBase* result = items[i]->Find(id);
 		if (result) return result;
 	}
 	return NULL;
 }
 
 
-HisBase* HisBase::Find(FindProc proc,void* args)
+IHisBase* HisBase::Find(FindProc proc,void* args)
 {
 	Load();
 
 	for(size_t i=0;i<items.size();i++)
 	{
 		if (proc(items[i],args)) return items[i];
-		HisBase* result = items[i]->Find(proc,args);
+		IHisBase* result = items[i]->Find(proc,args);
 		if (result) return result;
 	}
 	return NULL;
 }
 
-void HisBase::Add(HisBase *pitem)
+void HisBase::Add(IHisBase *pitem)
 {
 	Load();
 
@@ -155,12 +153,12 @@ int HisBase::FindIndex(CUUID puuid)
 	return -1;
 }
 
-HisBase* HisBase::Remove(CUUID puuid)
+IHisBase* HisBase::Remove(CUUID puuid)
 {
 	int index = FindIndex(puuid);
 	if ( index >= 0 )
 	{
-		HisBase *item = items[index];
+		IHisBase *item = items[index];
 		xmlNodePtr child = item->GetNodePtr();
 		items.erase(items.begin()+index);
 		xmlUnlinkNode(child);
@@ -182,7 +180,7 @@ void HisBase::DoInternalSave(xmlNodePtr & node)
 
 	for(size_t i=0;i<items.size();i++)
 	{
-		HisBase* f = items[i];
+		IHisBase* f = items[i];
 		f->Save();
 	}
 }
@@ -190,8 +188,7 @@ void HisBase::DoInternalSave(xmlNodePtr & node)
 
 void HisBase::FreeItems()
 {
-	//HisDevFolder *pfolder = NULL;
-	//pokud uz neco naloudovany, chci to uvolnit
+	//if loaded i want release it
 	if ( items.size() > 0 )
 	{
 		for(int i=items.size()-1;i>=0;i--)
@@ -268,29 +265,6 @@ xmlNodePtr HisBase::GetNodePtr()
 	return node;
 }
 
-//void HisBase::SetNodePtr(xmlNodePtr pnode)
-//{
-//	if (pnode!=node)
-//	{
-//		//FreeValueNodes();
-//		xmlNodePtr cur = node->children;
-//		if (cur)
-//		{
-//			xmlNodePtr next;
-//			while(cur)
-//			{
-//				next = cur->next;
-//				xmlUnlinkNode(cur);
-//				xmlFreeNode(cur);
-//				cur = next;
-//			}
-//		}
-//		xmlFreeNode(node);
-//
-//		node = pnode;
-//	}
-//}
-
 string HisBase::GetName()
 {
 	return name;
@@ -306,12 +280,12 @@ CUUID HisBase::GetRecordId()
 	return recordId;
 }
 
-HisBase* HisBase::GetParent()
+IHisBase* HisBase::GetParent()
 {
 	return parent;
 }
 
-void HisBase::SetParent(HisBase* pParent)
+void HisBase::SetParent(IHisBase* pParent)
 {
 	parent = pParent;
 }

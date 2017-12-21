@@ -10,8 +10,8 @@
 
 #include <libxml/parser.h>
 #include <libxml/tree.h>
+#include <Modbus/IModbusProvider.h>
 #include "HisDevBase.h"
-#include "Modbus/ModbusManager.h"
 #include "Modbus/IModbus.h"
 #include "HisDevValue.h"
 #include "Common/HisLock.h"
@@ -91,7 +91,7 @@ class HisDevModbus : public HisDevBase
 	{
 		uint32_t id1234;
 		uint32_t id5678;
-		uint16_t temperature;
+		int16_t temperature;
 		uint16_t error;
 	} SDS18B20;
 
@@ -105,7 +105,7 @@ class HisDevModbus : public HisDevBase
 
 	uint16_t sbinInputstypesdefsIndex;
 	SBinInput* sbininputs;
-	ModbusManager* modbusManager;
+	IModbusProvider* modbusProvider;
 	SBinOutput* sbinoutputs;
 	uint16_t sbinOutputstypesdefsIndex;
 
@@ -125,15 +125,15 @@ class HisDevModbus : public HisDevBase
 
 	HisDevValue<bool>* scantag;
 
-
-
-
+	void RefreshOutputs();
+	void RefreshInputs(bool modbusok);
+	void RefreshOneWire(bool modbusok);
 	void CreateOrValidOneWireHeader(bool addnew);
 	void CreateOrValidOneWire(bool addnew);
 	void CreateOrValidInputs(bool addnew);
 	void CreateOrValidOutputs(bool addnew);
 	void ReleaseResources();
-	void RefreshOutputs();
+
 public:
 
 	void WriteToDevice(ValueChangedEventArgs args);
@@ -142,7 +142,7 @@ public:
 
 	HisDevModbus(IModbus* pdev,int address);
 
-	HisDevModbus(xmlNodePtr node,ModbusManager* modbusManager);
+	HisDevModbus(xmlNodePtr node,IModbusProvider* modbusManager);
 
 	bool Scan(bool addnew);
 

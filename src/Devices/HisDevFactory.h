@@ -9,8 +9,6 @@
 #define HISDEVFACTORY_H_
 
 #include "LOW_deviceID.h"
-#include "HisDevTemp18B20.h"
-#include "HisDevIO2413.h"
 #include "Devices/HisDevices.h"
 #include "Expressions/ExpressionRuntime.h"
 #include "Folder/HisDevFolderRoot.h"
@@ -37,10 +35,6 @@ public:
 	void SetExpressionRuntime(ExpressionRuntime *pExpressionRuntime);
 
 	HisBase *Create(xmlNodePtr node);
-
-	HisDevBase * Create(xmlNodePtr notptr,LOW_device* dev);
-
-	HisDevBase * Create(LOW_device* dev);
 };
 
 #endif /* HISDEVFACTORY_H_ */

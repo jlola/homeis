@@ -9,8 +9,10 @@
 #include "PoppyDebugTools.h"
 #include "StringBuilder.h"
 #include "Common/HisException.h"
+#include "microhttpd.h"
 
-ExpressionService::ExpressionService(HisDevFolderRoot* folder, IExpressionRuntime *pexpressionRuntime, HisDevices* pdevices)
+ExpressionService::ExpressionService(HisDevFolderRoot* folder, IExpressionRuntime *pexpressionRuntime, HisDevices* pdevices, IHttpHeadersProvider & headersProvider)
+	: headersProvider(headersProvider)
 {
 	STACK
 	devices = pdevices;
@@ -29,6 +31,8 @@ const http_response ExpressionService::render_GET(const http_request& req)
 	Document respjsondoc;
 	respjsondoc.SetArray();
 
+	string message;
+	int response_code = MHD_HTTP_FORBIDDEN;
 	string strid = req.get_arg("id");
 	string path = req.get_path();
 
@@ -52,6 +56,7 @@ const http_response ExpressionService::render_GET(const http_request& req)
 					throw HisException(expression->GetLastEvaluateError());
 				}
 			}
+			response_code = MHD_HTTP_OK;
 
 		}//load data for all expression in folder
 		else if (path.find("/api/expression/debuglog")!=string::npos)
@@ -70,36 +75,36 @@ const http_response ExpressionService::render_GET(const http_request& req)
 				else
 					throw HisException("Not found");
 			}
+			response_code = MHD_HTTP_OK;
 		}
 		else if (path.find("/api/expression/folder")!=string::npos)
 		{
 			ExpressionsToJson(strid , root, respjsondoc);
+			response_code = MHD_HTTP_OK;
+		}
+		else
+		{
+			response_code = MHD_HTTP_NOT_FOUND;
 		}
 	}
 	catch(HisException & ex)
 	{
-			//respjsondoc.SetArray();
 		respjsondoc.SetObject();
 		StringBuffer buffer;
 		string msg = ex.what();
 		Value jsonvalue;
 		jsonvalue.SetString(msg.c_str(),msg.length(),respjsondoc.GetAllocator());
 		respjsondoc.AddMember("message",jsonvalue, respjsondoc.GetAllocator());
-
-		PrettyWriter<StringBuffer> wr(buffer);
-		respjsondoc.Accept(wr);
-		std::string json = buffer.GetString();
-		//*res = new http_string_response(json, 403, "application/json");
-		http_response resp(http_response_builder(json, 403,"application/json").string_response());
-		return resp;
+		response_code = MHD_HTTP_FORBIDDEN;
 	}
 
 	StringBuffer buffer;
 	PrettyWriter<StringBuffer> wr(buffer);
 	respjsondoc.Accept(wr);
 	std::string json = buffer.GetString();
-	//*res = new http_string_response(json, 200, "application/json");
-	http_response resp(http_response_builder(json, 200,"application/json").string_response());
+	http_response_builder response_builder(json, response_code,headersProvider.GetContentTypeAppJson());
+	headersProvider.AddHeaders(response_builder);
+	http_response resp(response_builder.string_response());
 	return resp;
 }
 
@@ -141,7 +146,7 @@ void ExpressionService::ExpressionDebugLogToJson(LuaExpression *pExpression, Doc
 	}
 }
 
-void ExpressionService::ExpressionToJson(HisBase* pParent, LuaExpression *pExpression, Document & respjsondoc)
+void ExpressionService::ExpressionToJson(IHisBase* pParent, LuaExpression *pExpression, Document & respjsondoc)
 {
 	STACK
 	Value d(kObjectType);

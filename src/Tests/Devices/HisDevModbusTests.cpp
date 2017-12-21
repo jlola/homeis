@@ -133,7 +133,6 @@ HisDevModbusTests::HisDevModbusTests() {
 
 TEST_F(HisDevModbusTests,ScanTest)
 {
-
 	IModbus* modbus = new ModbusSimulator(modbussim,registersi);
 	HisDevModbus* devmodbus = new HisDevModbus(modbus,1);
 	devmodbus->Scan(true);
@@ -143,7 +142,7 @@ TEST_F(HisDevModbusTests,ScanTest)
 	ASSERT_EQ(count,3);
 	count = CountOfType<HisDevValue<bool>*>(values,EHisDevDirection::Write);
 	ASSERT_EQ(count,2);
-	HisBase* value = devmodbus->FindByName(SCAN_ONEWIRE_NAME);
+	IHisBase* value = devmodbus->FindByName(SCAN_ONEWIRE_NAME);
 	ASSERT_TRUE(value!=NULL);
 }
 

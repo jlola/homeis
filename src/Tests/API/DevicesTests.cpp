@@ -32,7 +32,7 @@ void DevicesTests::SetUp()
 	std::vector<SSerPortConfig> serports;
 	serports.push_back(modbussim);
 
-	server = new HomeIsServer(serports,SERVER_PORT,false,"","");
+	server = new HomeIsServer(serports,SERVER_PORT,"");
 	server->Start(false);
 }
 
