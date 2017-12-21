@@ -356,6 +356,7 @@ const http_response ExpressionService::render_POST(const http_request& req)
 {
 	STACK
 	std::string content = req.get_content();
+	int response_code = MHD_HTTP_FORBIDDEN;
 	string message = "";
 
 	if (req.get_user()=="a" && req.get_pass()=="a")
@@ -373,20 +374,18 @@ const http_response ExpressionService::render_POST(const http_request& req)
 			respjsondoc.Accept(wr);
 			std::string json = buffer.GetString();
 
-			//*res = new http_string_response(json, 200, "application/json");
-			http_response resp(http_response_builder(json, 200,"application/json").string_response());
-			return resp;
+			message = json;
+			response_code = MHD_HTTP_OK;
 		}
 	}
 	else
 	{
-		string message = "Autentication error";
-		//*res = new http_string_response(message.c_str(), 401, "application/json");
-		http_response resp(http_response_builder(message, 401,"application/json").string_response());
-		return resp;
+		string message = "Authentication error";
+		response_code = MHD_HTTP_UNAUTHORIZED;
 	}
-	//*res = new http_string_response(message.c_str(), 403, "application/json");
-	http_response resp(http_response_builder(message, 403,"application/json").string_response());
+	http_response_builder response_builder(message, response_code,headersProvider.GetContentTypeAppJson());
+	headersProvider.AddHeaders(response_builder);
+	http_response resp(response_builder.string_response());
 	return resp;
 }
 
@@ -394,52 +393,51 @@ const http_response ExpressionService::render_PUT(const http_request& req)
 {
 	STACK
 	std::string content = req.get_content();
+	int response_code = MHD_HTTP_FORBIDDEN;
 	string message = "";
 	if (req.get_user()=="a" && req.get_pass()=="a")
 	{
 
 		if (CreateOrUpdateExpression(content,message))
 		{
-			//*res = new http_string_response("", 200, "application/json");
-			http_response resp(http_response_builder("", 200,"application/json").string_response());
-			return resp;
+			response_code = MHD_HTTP_OK;
 		}
 	}
 	else
 	{
-		message = "Autentication error";
-		//*res = new http_string_response(message.c_str(), 401, "application/json");
-		http_response resp(http_response_builder(message, 401,"application/json").string_response());
-		return resp;
+		message = "Authentication error";
+		response_code = MHD_HTTP_UNAUTHORIZED;
 	}
-	//*res = new http_string_response(message, 403, "application/json");
-	http_response resp(http_response_builder(message, 403,"application/json").string_response());
+
+	http_response_builder response_builder(message, response_code,headersProvider.GetContentTypeAppJson());
+	headersProvider.AddHeaders(response_builder);
+	http_response resp(response_builder.string_response());
 	return resp;
 }
 
 const http_response ExpressionService::render_DELETE(const http_request& req)
 {
 	STACK
+	int response_code = MHD_HTTP_FORBIDDEN;
 	string message = "";
 	if (req.get_user()=="a" && req.get_pass()=="a")
 	{
 		string strid = req.get_arg("id");
 		if (DeleteExpression(strid,message))
 		{
-			//*res = new http_string_response("OK", 200, "application/json");
-			http_response resp(http_response_builder("OK", 200,"application/json").string_response());
-			return resp;
+			response_code = MHD_HTTP_OK;
+			message = "OK";
 		}
 	}
 	else
 	{
-		message = "Autentication error";
-		//*res = new http_string_response(message.c_str(), 401, "application/json");
-		http_response resp(http_response_builder(message, 401,"application/json").string_response());
-		return resp;
+		message = "Authentication error";
+		response_code = MHD_HTTP_UNAUTHORIZED;
 	}
-	//*res = new http_string_response(message.c_str(), 403, "application/json");
-	http_response resp(http_response_builder(message, 403,"application/json").string_response());
+
+	http_response_builder response_builder(message, response_code,headersProvider.GetContentTypeAppJson());
+	headersProvider.AddHeaders(response_builder);
+	http_response resp(response_builder.string_response());
 	return resp;
 }
 
