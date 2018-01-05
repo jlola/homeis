@@ -326,7 +326,7 @@ class Stack{
 
 	public: static Stack* Get(){
 		static CRITICAL_SECTION _csLock;
-		PushFramework::ScopedLock lock(_csLock);
+		ScopedLock lock(_csLock);
 		static map<pthread_t,Stack*> threadspec;
 		//static uint32_t threadspecsize=0;
 		pthread_t threadid = pthread_self();

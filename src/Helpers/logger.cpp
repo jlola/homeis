@@ -25,7 +25,6 @@
 #include "logger.h"
 
 using namespace std;
-using namespace PushFramework;
 #define BUFFER_SIZE 2048
 
 CLogger logger;

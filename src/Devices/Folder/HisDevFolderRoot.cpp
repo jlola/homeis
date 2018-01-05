@@ -10,7 +10,8 @@
 #include "HisDevFolderRoot.h"
 
 
-HisDevFolderRoot::HisDevFolderRoot(string pfileName)
+HisDevFolderRoot::HisDevFolderRoot(string pfileName,IHisDevFactory* factory) :
+	factory(factory)
 {
 	doc = NULL;
 	fileName = pfileName;
@@ -88,14 +89,14 @@ void HisDevFolderRoot::Load()
 	root_node = xmlDocGetRootElement(doc);
 	if (root_node==NULL)
 	{
-		folder = new HisDevFolder("root");
+		folder = new HisDevFolder("root",factory);
 		root_node = folder->GetNodePtr();
 		xmlDocSetRootElement(doc,root_node);
 		Save();
 	}
 	else
 	{
-		folder = new HisDevFolder(root_node);
+		folder = new HisDevFolder(root_node,factory);
 	}
 
 	folder->Load();
@@ -124,7 +125,7 @@ void HisDevFolderRoot::Save()
 HisDevFolder* HisDevFolderRoot::GetFolder()
 {
 	if (folder==NULL) Load();
-	if (folder==NULL) folder = new HisDevFolder("root");
+	if (folder==NULL) folder = new HisDevFolder("root",factory);
 	return folder;
 }
 

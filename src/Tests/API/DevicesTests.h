@@ -15,10 +15,12 @@ class DevicesTests : public testing::Test
 protected:
 	SSerPortConfig modbussim;
 	HomeIsServer* server;
+	IModbusProvider* modbusProvider;
 	Client client;
 public:
 	DevicesTests();
 	void SetUp();
+	void TearDown();
 	virtual ~DevicesTests();
 };
 

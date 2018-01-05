@@ -1,5 +1,4 @@
 #include "linuxcs.h"
-#include <pthread.h>
 
 BOOL EnterCriticalSection(LPCRITICAL_SECTION lpCriticalSection)
 {

@@ -34,8 +34,8 @@ protected:
 public:
 	//int Find(CUUID id);
 	//HisDevFolder* Find(CUUID id);
-	HisDevFolder(string name);
-	HisDevFolder(xmlNodePtr pNode);
+	HisDevFolder(string name,IHisDevFactory* factory);
+	HisDevFolder(xmlNodePtr pNode,IHisDevFactory* factory);
 
 	//najde vazebni objekt podle HisDevValue::RecordId
 	HisDevValueId *FindValueId(CUUID valueId);

@@ -18,6 +18,7 @@ class IModbus
 
 public:
 	virtual bool Init()=0;
+	virtual string GetDriverName()=0;
 	virtual string GetName()=0;
 	virtual string GetPort()=0;
 	virtual bool setBitInput(uint16_t address,uint16_t index, uint16_t state)=0;

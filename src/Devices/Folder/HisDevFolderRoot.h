@@ -21,6 +21,7 @@ using namespace std;
 
 class HisDevFolderRoot
 {
+	IHisDevFactory* factory;
 	HisDevFolder* folder;
 	string fileName;
 	xmlDocPtr doc;
@@ -30,7 +31,7 @@ public:
 	HisDevValueId* FindValueId(CUUID devValueId);
 	IExpression* FindExpression(CUUID expressionId);
 	HisDevFolder *GetFolder();
-	HisDevFolderRoot(string ppath);
+	HisDevFolderRoot(string ppath,IHisDevFactory* factory);
 	~HisDevFolderRoot();
 };
 

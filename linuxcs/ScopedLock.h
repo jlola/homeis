@@ -21,11 +21,7 @@
 #ifndef ScopedLock__INCLUDED
 #define ScopedLock__INCLUDED
 
-#pragma once
-
-namespace PushFramework
-{
-
+#include "linuxcs.h"
 
 class ScopedLock
 {
@@ -45,6 +41,6 @@ private:
     CRITICAL_SECTION& csLock;
 };
 
-}
+
 #endif // ScopedLock__INCLUDED
 

@@ -42,6 +42,7 @@ extern "C" {
 #include <stdlib.h>
 #include <execinfo.h>
 #include <cxxabi.h>
+#include "ModbusProvider.h"
 
 int main(int argc, char **argv)
 {
@@ -93,8 +94,8 @@ Home information system %d.%d.%8d\n\
 
 	HomeIsConfig config("homeis.cfg");
 	vector<SSerPortConfig> serports = config.GetSerialPorts();
-
-	HomeIsServer server(serports,config.GetServerPort(),config.GetAllowOrigin());
+	ModbusProvider provider(serports);
+	HomeIsServer server(provider,config.GetServerPort(),config.GetAllowOrigin());
 
 	server.Start(true);
 	server.Stop();

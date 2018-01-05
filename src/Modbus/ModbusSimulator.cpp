@@ -113,6 +113,13 @@ uint16_t registers_default[] = {
 
 uint16_t* registers_defaulti = registers_default;
 
+string ModbusSimulator::DriverName = "modbussimulator";
+
+string ModbusSimulator::GetDriverName()
+{
+	return ModbusSimulator::DriverName;
+}
+
 ModbusSimulator::ModbusSimulator(SSerPortConfig config, uint16_t* & registers)
 {
 	this->registers = registers;

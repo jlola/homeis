@@ -15,6 +15,7 @@
 #include "HisDevices.h"
 #include "HisDevModbus.h"
 #include "HttpHeadersProvider.h"
+#include "IHisDevFactory.h"
 
 using namespace std;
 using namespace httpserver;
@@ -24,10 +25,12 @@ class ModbusDeviceService : public http_resource {
 	IHttpHeadersProvider & headersProvider;
 	HisDevices *devices;
 	IModbusProvider* mm;
+	IHisDevFactory* factory;
 public:
 	ModbusDeviceService(HisDevices *devices
 			,IModbusProvider* mm
-			,IHttpHeadersProvider & headersProvider);
+			,IHttpHeadersProvider & headersProvider
+			,IHisDevFactory* factory);
 	virtual ~ModbusDeviceService();
 	const http_response render_GET(const http_request& req);
 };

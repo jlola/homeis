@@ -22,19 +22,16 @@
 #include "EHisDevDirection.h"
 #include "PoppyDebugTools.h"
 #include "HisDevBase.h"
-#include "LOW_portSerial.h"
+#include "HisException.h"
 
-//const xmlChar *HisDevBase::GetNodeNameInternal()
-//{
-//	return KEY_DEVICENODE;
-//}
 
 HisDevBase::~HisDevBase()
 {
 
 }
 
-HisDevBase::HisDevBase() :
+HisDevBase::HisDevBase(IHisDevFactory* factory) :
+		HisBase::HisBase(factory),
 		enabled(true),
 		scanPeriodMs(10000),
 		error(true),
@@ -42,14 +39,13 @@ HisDevBase::HisDevBase() :
 		needRefresh(false)
 {
 	STACK
-	refreshmutex = HisLock::CreateMutex();
 	dataSource = EDataSource::Const;
 	uint64_t curTimeUs = HisDateTime::timeval_to_usec(HisDateTime::Now());
 	nextScanTime = curTimeUs + (rand() % scanPeriodMs)*1000;
 }
 
-HisDevBase::HisDevBase(xmlNodePtr node)
-	: HisBase::HisBase(node),
+HisDevBase::HisDevBase(xmlNodePtr node,IHisDevFactory* factory)
+	: HisBase::HisBase(node,factory),
 	enabled(true),
 	scanPeriodMs(10000),
 	error(true),
@@ -57,7 +53,6 @@ HisDevBase::HisDevBase(xmlNodePtr node)
 	needRefresh(false)
 {
 	STACK
-	refreshmutex = HisLock::CreateMutex();
 	dataSource = EDataSource::Const;
 	uint64_t curTimeUs = HisDateTime::timeval_to_usec(HisDateTime::Now());
 	nextScanTime = curTimeUs + (rand() % scanPeriodMs)*1000;
@@ -101,6 +96,9 @@ void HisDevBase::SetError(bool perror)
 	}
 }
 
+/*
+ *	Throws refresh request outside object. Is used by Devices to force refresh from thread.
+ */
 void HisDevBase::NeedRefresh()
 {
 	//STACK
@@ -143,9 +141,6 @@ void HisDevBase::Refresh(bool alarm)
 {
 	STACK
 
-	HisLock lock(refreshmutex);
-
-
 	uint64_t curTimeUs = HisDateTime::timeval_to_usec(HisDateTime::Now());
 	if (curTimeUs >= nextScanTime || needRefresh || alarm)
 	{
@@ -156,19 +151,16 @@ void HisDevBase::Refresh(bool alarm)
 		{
 			DoInternalRefresh(alarm);
 		}
-		catch(LOW_portSerial::portSerial_error & ex)
-		{
-			OnError();
-		}
-		catch(LOW_exception & ex)
+		catch(HisException & ex)
 		{
 			string msg = "Error in %s name: %s | error: %s\nStack trace: " + Stack::GetTraceString();
-			CLogger::Error( msg.c_str(), GetNodeName(), GetName().c_str(), ex.message.c_str());
+			CLogger::Error( msg.c_str(), GetNodeName(), GetName().c_str(), ex.what());
 			OnError();
 		}
 		catch(...)
 		{
 			CLogger::Error("HisDevBase::Refresh | Unexpected error");
+			OnError();
 		}
 	}
 }

@@ -21,29 +21,35 @@ ModbusProvider::ModbusProvider(vector<SSerPortConfig> & serports)
 	}
 }
 
+
 IModbus* ModbusProvider::CreateDriver(SSerPortConfig serport)
 {
 	std::string driverType = Converter::strtolower((serport.Driver));
 	IModbus* m = NULL;
 
-	if (driverType=="modbus")
+	if (driverType==Modbus::DriverName)
 	{
 		m = new Modbus(serport);
 	}
-	else if (driverType=="modbussimulator")
+	else if (driverType==ModbusSimulator::DriverName)
 	{
 		m = new ModbusSimulator(serport);
 	}
 	else
 	{
 		string message = StringBuilder::Format("Unsupported driver type %s",driverType.c_str());
-		throw HisException(message);
+		throw HisException(message, __FILE__, __LINE__);
 	}
 
 	if (!m->Init())
-		throw HisException(StringBuilder::Format("Init of driver %s failed.",serport.Name.c_str()));
+		throw HisException(StringBuilder::Format("Init of driver %s failed.",serport.Name.c_str()),__FILE__, __LINE__);
 
 	return m;
+}
+
+vector<IModbus*> & ModbusProvider::GetConnectors()
+{
+	return connectors;
 }
 
 void ModbusProvider::Add(IModbus* connector)

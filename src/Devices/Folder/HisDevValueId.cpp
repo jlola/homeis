@@ -28,13 +28,14 @@ void HisDevValueId::DoInternalLoad(xmlNodePtr & node)
 	deviceValueId = CUUID::Parse(strid);
 }
 
-HisDevValueId::HisDevValueId(CUUID pDeviceValueId)
+HisDevValueId::HisDevValueId(CUUID pDeviceValueId,IHisDevFactory* factory) :
+	HisBase::HisBase(factory)
 {
 	deviceValueId = pDeviceValueId;
 }
 
-HisDevValueId::HisDevValueId(xmlNodePtr pNode) :
-		HisBase::HisBase(pNode)
+HisDevValueId::HisDevValueId(xmlNodePtr pNode,IHisDevFactory* factory) :
+		HisBase::HisBase(pNode,factory)
 {
 
 }

@@ -28,17 +28,16 @@ HisDevices::HisDevices(string fileName ,IModbusProvider* modbusProvider)
 	this->modbusProvider = modbusProvider;
 	devicesFileName = fileName;
 	doc = NULL;
-	this->__devRefreshMutex = HisLock::CreateMutex();
 	onRefreshdelegate = OnRefreshDelegate::from_method<HisDevices, &HisDevices::AddToRefreshQueue>(this);
 }
 
 void HisDevices::AddToRefreshQueue(HisDevBase* hisDevBase)
 {
 	STACK
-	__devRefreshMutex->lock();
+	refreshMutex.Lock();
 	//CLogger::Info("Add %s to refresh queue." ,hisDevBase->GetName().c_str());
 	devqueue.push(hisDevBase);
-	__devRefreshMutex->unlock();
+	refreshMutex.Unlock();
 }
 
 HisDevBase *HisDevices::operator[](unsigned int i)
@@ -67,7 +66,7 @@ HisDevices::~HisDevices()
 	xmlCleanupParser();
 }
 
-void HisDevices::Load()
+void HisDevices::Load(IHisDevFactory* factory)
 {
 	STACK
 	xmlNodePtr root_node = NULL;/* node pointers */
@@ -124,11 +123,11 @@ void HisDevices::Load()
 			{
 				if (HisDevModbus::Resolve(cur))
 				{
-					newhisdev = (HisDevBase*)new HisDevModbus(cur,modbusProvider);
+					newhisdev = (HisDevBase*)new HisDevModbus(cur,modbusProvider,factory);
 				}
 				else if (HisDevVirtual::IsInternal(cur))
 				{
-					newhisdev = (HisDevBase*)new HisDevVirtual(cur);
+					newhisdev = (HisDevBase*)new HisDevVirtual(cur,factory);
 				}
 				if (newhisdev!=NULL)
 				{
@@ -231,10 +230,10 @@ void HisDevices::Refresh()
 
 		while (devqueue.size()>0)
 		{
-			__devRefreshMutex->lock();
+			refreshMutex.Lock();
 			dev = devqueue.front();
 			devqueue.pop();
-			__devRefreshMutex->unlock();
+			refreshMutex.Unlock();
 			//CLogger::Info("Refresh from queue: %s" ,dev->GetName().c_str());
 			if (dev->IsEnabled())
 				dev->Refresh(false);

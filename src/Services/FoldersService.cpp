@@ -15,8 +15,8 @@
 #include "ExpressionsService.h"
 #include "microhttpd.h"
 
-FoldersService::FoldersService(HisDevices & dev,HisDevFolderRoot & root, IHttpHeadersProvider & headersProvider) :
-	root(root),devices(dev),headersProvider(headersProvider)
+FoldersService::FoldersService(HisDevices & dev,HisDevFolderRoot & root, IHttpHeadersProvider & headersProvider,IHisDevFactory* factory) :
+	root(root),devices(dev),headersProvider(headersProvider),factory(factory)
 {
 }
 
@@ -72,8 +72,13 @@ const http_response FoldersService::render_GET(const http_request& req)
 		if (folder!=NULL)
 		{
 			FolderToJson(root,folder->GetParent(), folder,respjsondoc);
+			response_code = MHD_HTTP_OK;
 		}
-		response_code = MHD_HTTP_OK;
+		else
+		{
+			response_code = MHD_HTTP_BAD_REQUEST;
+		}
+
 	}
 	else
 	{
@@ -196,7 +201,7 @@ bool FoldersService::AddValueIdToFolder(string strFolderId, string strJson,strin
 			HisDevFolder* folder = dynamic_cast<HisDevFolder*>(root.GetFolder()->Find(folderId));
 			if (folder!=NULL)
 			{
-				HisDevValueId* valueId = new HisDevValueId(ValueId);
+				HisDevValueId* valueId = new HisDevValueId(ValueId,factory);
 				folder->Add(valueId);
 				root.Save();
 				return true;
@@ -324,7 +329,7 @@ bool FoldersService::CreateFolder(string strJson,string & message)
 	if (document.HasMember("name") && document["name"].IsString())
 	{
 		string name = document["name"].GetString();
-		newFolder = new HisDevFolder(name);
+		newFolder = new HisDevFolder(name,factory);
 	}
 	else
 	{

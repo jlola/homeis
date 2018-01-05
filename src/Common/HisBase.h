@@ -18,6 +18,7 @@
 #include "DateTime.h"
 #include "PoppyDebugTools.h"
 #include "IHisBase.h"
+#include "IHisDevFactory.h"
 
 using namespace rapidjson;
 using namespace std;
@@ -41,11 +42,12 @@ class HisBase : public IHisBase
 	vector<IHisBase*> items;
 	DateTime modifyDate;
 	DateTime createDate;
+	IHisDevFactory* factory;
 
 	static bool FindProcByName(IHisBase* hisbase,void* args);
 public:
-	HisBase();
-	HisBase(xmlNodePtr pnode);
+	HisBase(IHisDevFactory* factory);
+	HisBase(xmlNodePtr pnode, IHisDevFactory* factory);
 
 protected:
 	virtual void DoInternalSave(xmlNodePtr & node);
@@ -55,6 +57,7 @@ protected:
 	void FreeItems();
 	vector<IHisBase*> GetAllItems();
 public:
+	IHisDevFactory* GetFactory();
 	const xmlChar* GetNodeName();
 	/*
 	 * najde id ve vsech potomcich i vnorenych

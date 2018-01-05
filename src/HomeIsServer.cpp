@@ -27,8 +27,6 @@
 #include "Expressions/LuaExpression.h"
 
 
-#include "HisDevFactory.h"
-#include "LOWdevLCD.h"
 #include "HomeIsServer.h"
 #include "HttpHeadersProvider.h"
 
@@ -63,11 +61,26 @@ void  HomeIsServer::AddModbus(IModbus* m)
 	modbusProvider.Add(m);
 }
 
-HomeIsServer::HomeIsServer(vector<SSerPortConfig> & pserports,int TcpPort, string allowOrigin) :
-		headersProvider(allowOrigin),devruntime(NULL),rootFolder(NULL),expressionRuntime(NULL),
-		cw(create_webserver(TcpPort)),devs(NULL),modbusProvider(pserports),serports(pserports),
-		fc(NULL),owds(NULL),foldersService(NULL),expressionService(NULL), modbusDevService(NULL),
-		modbusservice(NULL), connectorsService(NULL),logservice(NULL)
+HomeIsServer::HomeIsServer(IModbusProvider & modbusprovider,
+		int TcpPort,
+		string allowOrigin) :
+		factory(NULL),
+		headersProvider(allowOrigin),
+		devruntime(NULL),
+		rootFolder(NULL),
+		expressionRuntime(NULL),
+		cw(create_webserver(TcpPort)),
+		devs(NULL),
+		modbusProvider(modbusprovider),
+		//serports(pserports),
+		fc(NULL),
+		owds(NULL),
+		foldersService(NULL),
+		expressionService(NULL),
+		modbusDevService(NULL),
+		modbusservice(NULL),
+		connectorsService(NULL),
+		logservice(NULL)
 {
 	ws_i = new webserver(cw);
 }
@@ -75,12 +88,12 @@ HomeIsServer::HomeIsServer(vector<SSerPortConfig> & pserports,int TcpPort, strin
 void HomeIsServer::InitWebServer(bool blocking)
 {
 	fc = new FileController();
-	owds = new DevicesService(*devs,*rootFolder, headersProvider);
-	foldersService = new FoldersService(*devs,*rootFolder,headersProvider);
-	expressionService = new ExpressionService(rootFolder,expressionRuntime, devs, headersProvider);
-	modbusDevService = new ModbusDeviceService(devs,&modbusProvider,headersProvider);
+	owds = new DevicesService(*devs,*rootFolder, headersProvider,factory);
+	foldersService = new FoldersService(*devs,*rootFolder,headersProvider,factory);
+	expressionService = new ExpressionService(rootFolder,expressionRuntime, devs, headersProvider,factory);
+	modbusDevService = new ModbusDeviceService(devs,&modbusProvider,headersProvider,factory);
 	modbusservice = new ModbusService(&modbusProvider,headersProvider);
-	connectorsService = new ConnectorsService(serports, headersProvider);
+	connectorsService = new ConnectorsService(modbusProvider, headersProvider);
 	logservice = new LogService(headersProvider);
 
 	//ws_i = cw;
@@ -123,18 +136,16 @@ void HomeIsServer::InitWebServer(bool blocking)
 bool HomeIsServer::InitHisDevices()
 {
 	expressionRuntime = new ExpressionRuntime();
+
 	devs = new HisDevices(File::getexepath() + "/devices.xml",&modbusProvider);
-	devs->Load();
-	HisDevFactory::Instance().SetDevices(devs);
 
-	HisDevFactory::Instance().SetExpressionRuntime(expressionRuntime);
+	factory = new HisDevFactory(expressionRuntime,devs);
+	devs->Load(factory);
 
-	rootFolder = new HisDevFolderRoot(File::getexepath() + "/folders.xml");
+	rootFolder = new HisDevFolderRoot(File::getexepath() + "/folders.xml",factory);
 	rootFolder->Load();
-	HisDevFactory::Instance().SetRooFolder(rootFolder);
 
 	devruntime = new HisDevRuntime(*devs);
-
 	expressionRuntime->Start();
 	devruntime->Start();
 	return true;

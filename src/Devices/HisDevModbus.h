@@ -16,39 +16,43 @@
 #include "HisDevValue.h"
 #include "Common/HisLock.h"
 #include "LOW_deviceID.h"
+#include "ModbusHandlers.h"
+#include "IHisDevFactory.h"
+
 
 #define DEVMODBUS BAD_CAST	"DevModbus"
 #define PROP_ADDRESS BAD_CAST "Address"
 #define PROP_CONNECTION_NAME BAD_CAST "ConnectionName"
-#define LOADTYPE_ONEWIRE "ONEWIRE"
 
-#define SCAN_ONEWIRE_NAME "ScanOneWire"
+typedef enum : uint16_t
+{
+	None,
+	BinInputs,
+	BinOutputs,
+	AInputs,
+	AOutputs,
+	DS18B20Temp
+} ETypes;
 
-#define OW_DEVICES_OFFSET	5
-#define OW_SCAN_OFFSET 		0
-#define OW_SCAN_PINNUMBER	100
+typedef enum : uint16_t
+{
+	ReadCoil=1,
+	ReadDiscreteInput=2,
+	ReadHoldingRegisters=3,
+	ReadInputRegisters=4,
+	WriteCoil=5
+} EModbusFunc;
+
+typedef struct
+{
+	ETypes Type;
+	uint16_t Count;
+	uint16_t OffsetOfType;
+	EModbusFunc Func;
+} STypedef;
 
 class HisDevModbus : public HisDevBase
 {
-	typedef enum : uint16_t
-	{
-		None,
-		BinInputs,
-		BinOutputs,
-		AInputs,
-		AOutputs,
-		DS18B20
-	} ETypes;
-
-	typedef enum : uint16_t
-	{
-		ReadCoil=1,
-		ReadDiscreteInput=2,
-		ReadHoldingRegisters=3,
-		ReadInputRegisters=4,
-		WriteCoil=5
-	} EModbusFunc;
-
 	typedef struct {
 		uint16_t ModbusAddress;
 		uint16_t CountOfTypes;
@@ -57,45 +61,7 @@ class HisDevModbus : public HisDevBase
 		uint16_t lastIndex;
 	} SHeader;
 
-	typedef struct
-	{
-		ETypes Type;
-		uint16_t Count;
-		uint16_t OffsetOfType;
-		EModbusFunc Func;
-	} STypedef;
-
-	typedef struct
-	{
-		uint16_t PinNumber:8;
-		uint16_t Value:1;
-		uint16_t Quality:1;
-		uint16_t Latch:1;
-		uint16_t LatchDirection:1;
-	} SBinInput;
-
-	typedef struct
-	{
-		uint16_t PinNumber:8;
-		uint16_t Value:1;
-		uint16_t Quality:1;
-	} SBinOutput;
-
-	typedef struct
-	{
-		uint16_t scan;
-		uint16_t count;
-	} SOWHeader;
-
-	typedef struct
-	{
-		uint32_t id1234;
-		uint32_t id5678;
-		int16_t temperature;
-		uint16_t error;
-	} SDS18B20;
-
-	LOW_thread_mutex  *refreshscanmutex;  /**< Mutex for exclusive access. */
+	LPCRITICAL_SECTION refreshscanmutex;  /**< Mutex for exclusive access. */
 
 	SHeader header;
 	uint16_t* 	data;
@@ -103,46 +69,29 @@ class HisDevModbus : public HisDevBase
 
 	STypedef* typesdefs;
 
-	uint16_t sbinInputstypesdefsIndex;
-	SBinInput* sbininputs;
 	IModbusProvider* modbusProvider;
-	SBinOutput* sbinoutputs;
-	uint16_t sbinOutputstypesdefsIndex;
 
 	bool refreshOutputs;
 	int scanRequest;
 
-	SOWHeader* owheader;
-	uint16_t sowiretypesdefsIndex;
-	SDS18B20* sds18b20s;
-
-
 	IModbus* connection;
 	int address;
-	vector<HisDevValue<bool>*> valuesOutput;
-	vector<HisDevValue<bool>*> valuesInput;
-	//vector<HisDevValue<double>*> ds18b20s;
+	ModbusHandlers handlers;
 
-	HisDevValue<bool>* scantag;
-
-	void RefreshOutputs();
-	void RefreshInputs(bool modbusok);
-	void RefreshOneWire(bool modbusok);
-	void CreateOrValidOneWireHeader(bool addnew);
-	void CreateOrValidOneWire(bool addnew);
-	void CreateOrValidInputs(bool addnew);
-	void CreateOrValidOutputs(bool addnew);
 	void ReleaseResources();
 
 public:
+	bool GetData(uint16_t* & data, uint8_t & length);
+
+	bool GetTypeDef(ETypes type,STypedef & stypedef);
 
 	void WriteToDevice(ValueChangedEventArgs args);
 
 	static bool Resolve(xmlNodePtr pnode);
 
-	HisDevModbus(IModbus* pdev,int address);
+	HisDevModbus(IModbus* pdev,int address,IHisDevFactory* factory);
 
-	HisDevModbus(xmlNodePtr node,IModbusProvider* modbusManager);
+	HisDevModbus(xmlNodePtr node,IModbusProvider* modbusManager,IHisDevFactory* factory);
 
 	bool Scan(bool addnew);
 
@@ -150,7 +99,9 @@ public:
 
 	int GetAddress();
 
-	std::string GetConnectionName();
+	bool setHolding(uint16_t index, uint16_t val);
+
+	IModbus* GetModbus();
 
 	virtual const xmlChar* GetNodeNameInternal();
 

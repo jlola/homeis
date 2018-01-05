@@ -11,8 +11,6 @@
 #include <vector>
 #include <pthread.h>
 
-#include "LOW_thread_mutex.h"
-#include "LOW_thread_Factory.h"
 #include "IExpression.h"
 #include "HisDevBase.h"
 #include "IExpressionRuntime.h"
@@ -27,12 +25,12 @@ class ExpressionRuntime : public IExpressionRuntime
 	bool running;
 	vector<IExpression*> expressions;
 	queue<IExpression*> exqueue;
-	LOW_thread_mutex  *__expressionEvaluateMutex;  /**< Mutex for exclusive access. */
+	LPCRITICAL_SECTION expressionsToEvalMutex;  /**< Mutex for exclusive access. */
 	static void* ThreadFunction(void* obj);
 public:
 	int Find(IExpression* expression);
 	ExpressionRuntime();
-	LOW_thread_mutex  *__expressionMutex;  /**< Mutex for exclusive access. */
+	LPCRITICAL_SECTION __addremoveMutex;  /**< Mutex for exclusive access. */
 	void AddToEvaluateQueue(HisDevBase* hisDevBase);
 	void Add(IExpression* pExpression);
 	void Remove(IExpression* pExpression);

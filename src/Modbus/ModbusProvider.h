@@ -13,7 +13,6 @@
 #include <string.h>
 #include "HomeIsConfig.h"
 #include "IModbusProvider.h"
-#include "IModbus.h"
 
 using namespace std;
 
@@ -25,6 +24,7 @@ private:
 public:
 	ModbusProvider(vector<SSerPortConfig> & serports);
 	IModbus* Find(string name);
+	vector<IModbus*> & GetConnectors();
 	virtual ~ModbusProvider();
 	void Add(IModbus* connector);
 };

@@ -17,6 +17,7 @@
 #include "Devices/HisDevices.h"
 #include "Devices/ValueEventArgs.h"
 #include "IExpressionRuntime.h"
+#include "IHisDevFactory.h"
 
 #define luac_c
 #define LUA_CORE
@@ -48,8 +49,8 @@ public:
 	static LuaExpression* ActualExpression;
 private:
 	vector<string> logs;
-	LOW_thread_mutex* mutex;
-	LOW_thread_mutex* evaluateMutex;
+	LPCRITICAL_SECTION setRunningMutex;
+	LPCRITICAL_SECTION evaluateMutex;
 	IExpressionRuntime *expressionRuntime;
 	bool inEvalFunc;
 	uint64_t nextTime;
@@ -87,8 +88,8 @@ public:
 	CUUID GetRecordId();
 	static int delays;
 	string GetLastEvaluateError();
-	LuaExpression(HisDevFolder* folder,HisDevices* hisDevices, string expressionName,IExpressionRuntime *pExpressionRuntime);
-	LuaExpression(xmlNodePtr pnode,HisDevices* hisDevices,IExpressionRuntime *pExpressionRuntime);
+	LuaExpression(HisDevFolder* folder,HisDevices* hisDevices, string expressionName,IExpressionRuntime *pExpressionRuntime,IHisDevFactory* factory);
+	LuaExpression(xmlNodePtr pnode,HisDevices* hisDevices,IExpressionRuntime *pExpressionRuntime,IHisDevFactory* factory);
 	void DebugLog(string ln);
 	void ReloadValues();
 	string GetFileName(string pFileName);

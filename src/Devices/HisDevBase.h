@@ -27,6 +27,7 @@
 
 #include "Common/HisBase.h"
 #include "Expressions/IExpression.h"
+#include "IHisDevFactory.h"
 
 using namespace std;
 
@@ -51,12 +52,11 @@ class HisDevBase : public HisBase
 	EDataSource dataSource;
 	bool error;
 	bool changed;
-	LOW_thread_mutex* refreshmutex;
 	vector<IExpression*> expressions;
 protected:
 	bool needRefresh;
-	HisDevBase(xmlNodePtr node,CUUID recordid);
-	HisDevBase(xmlNodePtr node);
+	HisDevBase(IHisDevFactory* factory);
+	HisDevBase(xmlNodePtr node,IHisDevFactory* factory);
 	virtual void DoInternalSave(xmlNodePtr & node);
 	virtual void DoInternalLoad(xmlNodePtr & node);
 	virtual void DoInternalRefresh(bool alarm)=0;
@@ -64,9 +64,6 @@ protected:
 	//const xmlChar* GetNodeNameInternal();
 	bool GetError();
 	void SetError(bool perror);
-
-
-
 public:
 	HisDevBase();
 	virtual ~HisDevBase();

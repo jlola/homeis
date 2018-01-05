@@ -18,7 +18,15 @@
 #include "Helpers/StringBuilder.h"
 #include "HisDevValue.h"
 
-HisDevValueBase::HisDevValueBase(std::string pdevaddr, EHisDevDirection direct, EDataType pdatatype,string ppinNumber)
+using namespace std;
+
+HisDevValueBase::HisDevValueBase(std::string pdevaddr,
+	EHisDevDirection direct,
+	EDataType pdatatype,
+	string ppinNumber,
+	string loadType,
+	IHisDevFactory* factory) :
+	HisBase::HisBase(factory)
 {
 	pinNumber = ppinNumber;
 	direction = direct;
@@ -28,8 +36,8 @@ HisDevValueBase::HisDevValueBase(std::string pdevaddr, EHisDevDirection direct, 
 	allowForceOutput = false;
 }
 
-HisDevValueBase::HisDevValueBase(xmlNodePtr pnode) :
-	HisBase::HisBase(pnode)
+HisDevValueBase::HisDevValueBase(xmlNodePtr pnode, IHisDevFactory* factory) :
+	HisBase::HisBase(pnode,factory)
 {
 	pinNumber = "";
 	direction = EHisDevDirection::Read;
@@ -48,7 +56,8 @@ void HisDevValueBase::SetForceOutput(bool force)
 	allowForceOutput = force;
 }
 
-HisDevValueBase::HisDevValueBase(HisDevValueBase & src)
+HisDevValueBase::HisDevValueBase(HisDevValueBase & src,IHisDevFactory* factory) :
+	HisBase::HisBase(factory)
 {
 	//pinname = src.pinname;
 	devaddr = src.devaddr;
@@ -56,6 +65,7 @@ HisDevValueBase::HisDevValueBase(HisDevValueBase & src)
 	direction = src.direction;
 	datatype = src.datatype;
 	deviceError = src.deviceError;
+	loadtype = src.loadtype;
 	allowForceOutput = false;
 }
 
@@ -64,7 +74,7 @@ void HisDevValueBase::SetError()
 	this->deviceError = true;
 }
 
-HisDevValueBase* HisDevValueBase::Create(xmlNodePtr pNode)
+HisDevValueBase* HisDevValueBase::Create(xmlNodePtr pNode,IHisDevFactory* factory)
 {
 	STACK
 	EDataType datatype;
@@ -78,16 +88,16 @@ HisDevValueBase* HisDevValueBase::Create(xmlNodePtr pNode)
 		switch(datatype)
 		{
 			case EDataType::Bool:
-				return new HisDevValue<bool>(pNode,false);
+				return new HisDevValue<bool>(pNode,false,factory);
 			case EDataType::Double:
-				return new HisDevValue<double>(pNode,0);
+				return new HisDevValue<double>(pNode,0,factory);
 			case EDataType::Int:
-				return new HisDevValue<int>(pNode,0);
+				return new HisDevValue<int>(pNode,0,factory);
 			case EDataType::String:
-				return new HisDevValue<string>(pNode,string(""));
+				return new HisDevValue<string>(pNode,string(""),factory);
 			case EDataType::Uint:
-				return new HisDevValue<uint32_t>(pNode,0);
-			case EDataType::Unknown:
+				return new HisDevValue<uint32_t>(pNode,0,factory);
+			default:
 				return NULL;
 		}
 	}
@@ -331,7 +341,7 @@ bool HisDevValueBase::ForceStringValue(string strvalue, bool checkChange)
 					value->ForceValue(val);
 				return true;
 			}
-			case EDataType::Unknown:
+			default:
 				return false;
 		}
 		return false;
@@ -387,7 +397,7 @@ std::string HisDevValueBase::GetStringValue()
 			s << value->GetValue();
 			return s.str();
 		}
-		case EDataType::Unknown:
+		default:
 			return "";
 	}
 	return "";

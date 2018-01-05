@@ -12,6 +12,7 @@
 #include "fakeit.hpp"
 #include "Modbus/ModbusSimulator.h"
 #include "HisDevModbus.h"
+#include "OneWireHandler.h"
 #include <Tests/Devices/HisDevModbusTests.h>
 
 using namespace fakeit;
@@ -134,7 +135,7 @@ HisDevModbusTests::HisDevModbusTests() {
 TEST_F(HisDevModbusTests,ScanTest)
 {
 	IModbus* modbus = new ModbusSimulator(modbussim,registersi);
-	HisDevModbus* devmodbus = new HisDevModbus(modbus,1);
+	HisDevModbus* devmodbus = new HisDevModbus(modbus,1,NULL);
 	devmodbus->Scan(true);
 
 	vector<HisDevValue<bool>*> values = devmodbus->GetItems<HisDevValue<bool>>();

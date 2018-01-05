@@ -19,16 +19,17 @@ using namespace std;
 
 class Modbus : public IModbus
 {
-	LOW_thread_mutex  *modbusmutex;  /**< Mutex for exclusive access. */
+	LPCRITICAL_SECTION modbusmutex;  /**< Mutex for exclusive access. */
 	SSerPortConfig config;
 	modbus_t *ctx;
 	int SetSlave(uint16_t address);
 public:
-
+	static string DriverName;
 	Modbus(SSerPortConfig config);
 	bool Init();
 	string GetName();
 	string GetPort();
+	string GetDriverName();
 
 	bool setBitInput(uint16_t address,uint16_t index, uint16_t state);
 	bool getBitInput(uint16_t address,uint16_t index,bool & bit);

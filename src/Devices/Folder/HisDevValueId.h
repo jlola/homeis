@@ -21,8 +21,8 @@ protected:
 	virtual void DoInternalSave(xmlNodePtr & node);
 	virtual void DoInternalLoad(xmlNodePtr & node);
 public:
-	HisDevValueId(CUUID pDeviceValueId);
-	HisDevValueId(xmlNodePtr pNode);
+	HisDevValueId(CUUID pDeviceValueId,IHisDevFactory* factory);
+	HisDevValueId(xmlNodePtr pNode,IHisDevFactory* factory);
 	CUUID GetDeviceValueId();
 	void SetDeviceValueId(CUUID deviceValueId);
 

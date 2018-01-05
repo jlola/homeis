@@ -15,12 +15,13 @@
 #include "homeis.h"
 #include "gtest/gtest.h"
 #include "TestsSupport/Client.h"
-#include <Tests/API/ExpressionsTest.h>
+#include "Tests/API/ExpressionsTest.h"
+#include "ModbusProvider.h"
 
 namespace AF {
 
 ExpressionsTest::ExpressionsTest():
-	client(SERVER_NAME,SERVER_PORT),server(NULL)
+	client(SERVER_NAME,SERVER_PORT),server(NULL),modbusprovider(NULL)
 {
 }
 
@@ -31,8 +32,8 @@ void ExpressionsTest::SetUp()
 	modbussim.Port = "";
 	std::vector<SSerPortConfig> serports;
 	serports.push_back(modbussim);
-
-	server = new HomeIsServer(serports,SERVER_PORT,"");
+	modbusprovider = new ModbusProvider(serports);
+	server = new HomeIsServer(*modbusprovider,SERVER_PORT,"");
 	server->Start(false);
 }
 
@@ -57,9 +58,7 @@ TEST_F(ExpressionsTest,CreateExpressionTest)
 	long http_code = 0;
 	CURLcode cresp = client.Put(reqest,json,response,http_code);
 	ASSERT_EQ(cresp, CURLE_OK);
-	if (http_code!=200)
-		CLogger::Error("CreateExpressionTest:%s",response.c_str());
-	ASSERT_EQ(http_code, 200);
+	ASSERT_EQ(http_code, MHD_HTTP_OK);
 	string exprefile = StringBuilder::Format("%s/Expressions/%s.lua",File::getexepath().c_str(),"newExpression");
 	ASSERT_EQ(File::Exists(exprefile), true);
 	if (File::Exists(exprefile))
@@ -67,8 +66,8 @@ TEST_F(ExpressionsTest,CreateExpressionTest)
 }
 
 
-
-ExpressionsTest::~ExpressionsTest() {
+void ExpressionsTest::TearDown()
+{
 	string foldersfile = StringBuilder::Format("%s/folders.xml",File::getexepath().c_str());
 	if (File::Exists(foldersfile))
 		File::Delete(foldersfile);
@@ -79,6 +78,11 @@ ExpressionsTest::~ExpressionsTest() {
 	server->Stop();
 	delete(server);
 
+	delete modbusprovider;
+	modbusprovider = NULL;
+}
+
+ExpressionsTest::~ExpressionsTest() {
 }
 } /* namespace AF */
 

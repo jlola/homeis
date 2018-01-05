@@ -11,6 +11,8 @@
 #include "StringBuilder.h"
 #include <Modbus/ModbusWrapper.h>
 
+string Modbus::DriverName = "modbus";
+
 Modbus::Modbus(SSerPortConfig config)
 : modbusmutex(NULL),ctx(NULL)
 {
@@ -21,6 +23,11 @@ Modbus::Modbus(SSerPortConfig config)
 string Modbus::GetPort()
 {
 	return config.Port;
+}
+
+string Modbus::GetDriverName()
+{
+	return Modbus::DriverName;
 }
 
 string Modbus::GetName()
@@ -74,7 +81,7 @@ int Modbus::SetSlave(uint16_t address)
 }
 
 bool Modbus::setBitInput(uint16_t address,uint16_t index, uint16_t state) {
-	modbusmutex->lock();
+	HisLock lock(modbusmutex);
 	int status = SetSlave(address);
 	if (status == 0)
 	{
@@ -84,12 +91,11 @@ bool Modbus::setBitInput(uint16_t address,uint16_t index, uint16_t state) {
 			CLogger::Error("Error setBitInput: %d, error: %s",address,modbus_strerror(errno));
 		}
 	}
-	modbusmutex->unlock();
 	return status < 0 ? false : true;
 }
 
 bool Modbus::getBitInput(uint16_t address,uint16_t index,bool & bit){
-	modbusmutex->lock();
+	HisLock lock(modbusmutex);
 	int status = SetSlave(address);
 	if (status==0)
 	{
@@ -101,11 +107,11 @@ bool Modbus::getBitInput(uint16_t address,uint16_t index,bool & bit){
 			CLogger::Error("Error getBitInput: %d, error: %s",address,modbus_strerror(errno));
 		}
 	}
-	modbusmutex->unlock();
 	return status < 0 ? false : true;
 }
 
 bool Modbus::getShortInput(uint16_t address,uint16_t index,uint16_t & input){
+	HisLock lock(modbusmutex);
 	int status = SetSlave(address);
 	if (status == 0)
 	{
@@ -117,12 +123,11 @@ bool Modbus::getShortInput(uint16_t address,uint16_t index,uint16_t & input){
 			CLogger::Error("Error getShortInput: %d, error: %s",address,modbus_strerror(errno));
 		}
 	}
-	modbusmutex->unlock();
 	return status < 0 ? false : true;
 }
 
 bool Modbus::setCoil(uint16_t address,uint16_t index, uint16_t state){
-	modbusmutex->lock();
+	HisLock lock(modbusmutex);
 	int status = SetSlave(address);
 	if (status==0)
 	{
@@ -132,12 +137,11 @@ bool Modbus::setCoil(uint16_t address,uint16_t index, uint16_t state){
 			CLogger::Error("Error setCoil: %d, error: %s",address,modbus_strerror(errno));
 		}
 	}
-	modbusmutex->unlock();
 	return status < 0 ? false : true;
 }
 
 bool Modbus::getCoil(uint16_t address,uint16_t index,bool & coil){
-	modbusmutex->lock();
+	HisLock lock(modbusmutex);
 	int status = SetSlave(address);
 	if (status==0)
 	{
@@ -149,12 +153,11 @@ bool Modbus::getCoil(uint16_t address,uint16_t index,bool & coil){
 			CLogger::Error("Error getCoil: %d, error: %s",address,modbus_strerror(errno));
 		}
 	}
-	modbusmutex->unlock();
 	return status < 0 ? false : true;
 }
 
 bool Modbus::setHolding(uint16_t address,uint16_t index, uint16_t val){
-	modbusmutex->lock();
+	HisLock lock(modbusmutex);
 	int status = SetSlave(address);
 	if (status==0)
 	{
@@ -164,12 +167,11 @@ bool Modbus::setHolding(uint16_t address,uint16_t index, uint16_t val){
 			CLogger::Error("Error setHolding: %d, error: %s",address,modbus_strerror(errno));
 		}
 	}
-	modbusmutex->unlock();
 	return status < 0 ? false : true;
 }
 
 bool Modbus::getHolding(uint16_t address,uint16_t index,uint16_t* holding){
-	modbusmutex->lock();
+	HisLock lock(modbusmutex);
 	int status = SetSlave(address);
 	if (status==0)
 	{
@@ -183,13 +185,12 @@ bool Modbus::getHolding(uint16_t address,uint16_t index,uint16_t* holding){
 		}
 		*holding = dest[0];
 	}
-	modbusmutex->unlock();
 	return status < 0 ? false : true;
 }
 
 bool Modbus::getHoldings(uint16_t address,uint16_t offset,uint16_t count,uint16_t* target)
 {
-	modbusmutex->lock();
+	HisLock lock(modbusmutex);
 	int status = SetSlave(address);
 	if (status==0)
 	{
@@ -201,6 +202,5 @@ bool Modbus::getHoldings(uint16_t address,uint16_t offset,uint16_t count,uint16_
 			CLogger::Error("Error getHoldings: %d, error: %s",address,modbus_strerror(errno));
 		}
 	}
-	modbusmutex->unlock();
 	return status < 0 ? false : true;
 }

@@ -28,13 +28,14 @@ void HisExpressionIdHolder::DoInternalLoad(xmlNodePtr & node)
 	expressionId = CUUID::Parse(strid);
 }
 
-HisExpressionIdHolder::HisExpressionIdHolder(CUUID pExpressionId)
+HisExpressionIdHolder::HisExpressionIdHolder(CUUID pExpressionId,IHisDevFactory* factory) :
+	HisBase::HisBase(factory)
 {
 	expressionId = pExpressionId;
 }
 
-HisExpressionIdHolder::HisExpressionIdHolder(xmlNodePtr pNode) :
-		HisBase::HisBase(pNode)
+HisExpressionIdHolder::HisExpressionIdHolder(xmlNodePtr pNode,IHisDevFactory* factory) :
+	HisBase::HisBase(pNode,factory)
 {
 
 }

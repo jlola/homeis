@@ -26,11 +26,12 @@
 
 
 
-HisDevFactory::HisDevFactory()
+HisDevFactory::HisDevFactory(IExpressionRuntime *expressionRuntime,
+		HisDevices* devices
+		)
 {
-	devices = NULL;
-	rootFolder = NULL;
-	expressionRuntime = NULL;
+	this->devices = devices;
+	this->expressionRuntime = expressionRuntime;
 }
 
 HisDevFactory::~HisDevFactory()
@@ -38,40 +39,25 @@ HisDevFactory::~HisDevFactory()
 
 }
 
-HisDevFactory HisDevFactory::instance;
+//HisDevFactory HisDevFactory::instance;
 
-HisDevFactory & HisDevFactory::Instance()
-{
-	return HisDevFactory::instance;
-}
+//IHisDevFactory & HisDevFactory::Instance()
+//{
+//	return HisDevFactory::instance;
+//}
 
-void HisDevFactory::SetExpressionRuntime(ExpressionRuntime *pExpressionRuntime)
-{
-	expressionRuntime = pExpressionRuntime;
-}
-
-void HisDevFactory::SetDevices(HisDevices* pdevices)
-{
-	devices = pdevices;
-}
-
-void HisDevFactory::SetRooFolder(HisDevFolderRoot* proot)
-{
-	rootFolder = proot;
-}
-
-HisBase *HisDevFactory::Create(xmlNodePtr node)
+IHisBase *HisDevFactory::Create(xmlNodePtr node)
 {
 	if (node->type==XML_ELEMENT_NODE)
 	{
 		if (!xmlStrcmp(node->name,NODE_VALUEID))
-			return new HisDevValueId(node);
+			return new HisDevValueId(node,this);
 		if (!xmlStrcmp(node->name,NODE_FODLER))
-			return new HisDevFolder(node);
+			return new HisDevFolder(node,this);
 		if (!xmlStrcmp(node->name,NODE_VALUE))
-			return HisDevValueBase::Create(node);
+			return HisDevValueBase::Create(node,this);
 		if (!xmlStrcmp(node->name,NODE_EXPRESSION))
-			return new LuaExpression(node,devices,expressionRuntime);
+			return new LuaExpression(node,devices,expressionRuntime,this);
 		CLogger::Error("HisDevFactory::Create | Not implemented %s constructor.",node->name);
 	}
 	return NULL;

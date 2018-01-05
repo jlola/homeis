@@ -48,6 +48,7 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/libcrash-master}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/homeisd/libs/libmicrohttpd/include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/homeisd/src/Services}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/homeisd/src/Common}&quot;"/>
 								</option>
 								<option id="gnu.c.compiler.option.preprocessor.def.symbols.304171922" name="Defined symbols (-D)" superClass="gnu.c.compiler.option.preprocessor.def.symbols" useByScannerDiscovery="false" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="HTTPSERVER_COMPILATION"/>
@@ -68,33 +69,36 @@
 							<tool command="g++" commandLinePattern="${COMMAND} ${FLAGS} ${OUTPUT_FLAG} ${OUTPUT_PREFIX}${OUTPUT} ${INPUTS}" errorParsers="org.eclipse.cdt.core.GCCErrorParser" id="cdt.managedbuild.tool.gnu.cross.cpp.compiler.774094333" name="Cross G++ Compiler" superClass="cdt.managedbuild.tool.gnu.cross.cpp.compiler">
 								<option id="gnu.cpp.compiler.option.include.paths.1618131780" name="Include paths (-I)" superClass="gnu.cpp.compiler.option.include.paths" useByScannerDiscovery="false" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/Helpers}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/Devices}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/linuxcs}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/onewirelibrary}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/onewirelibrary/OneWire++}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/onewirelibrary/OneWire++/threadOW++}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/onewirelibrary/OneWire++/componentOW++}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/onewirelibrary/OneWire++/linkOW++}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/libs/libconfig/include}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/libs/libsources/libxml2-2.8.0/include/libxml2}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/libs/libusbcompat/include}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/lua-5.2.1/src}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/onewirelibrary/OneWire++/deviceOW++}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/onewirelibrary/OneWire++/platformOW++}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/onewirelibrary/OneWire++/portOW++}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/libcrash-master}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/onewirelibrary}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/linuxcs}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/uuid}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/libhttpserver-master/src}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/libhttpserver-master/src/httpserver}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/rapidjson}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/gtest_src}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/libhttpserver-master/src}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/libs/libconfig/include}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/libs/libsources/libxml2-2.8.0/include/libxml2}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/libs/libusbcompat/include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/libs/libcurl/include/curl}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/libs/libmodbus/libmodbus-3.1.4/src}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/libs/libmicrohttpd/include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/libs/gnutls/include}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/rapidjson}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/uuid}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/libcrash-master}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/lua-5.2.1/src}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/gtest_src}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/Devices}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/Helpers}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/Services}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/Common}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/Devices/Handlers}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/Modbus}&quot;"/>
 								</option>
 								<option id="gnu.cpp.compiler.option.preprocessor.def.100794621" name="Defined symbols (-D)" superClass="gnu.cpp.compiler.option.preprocessor.def" useByScannerDiscovery="false" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="HTTPSERVER_COMPILATION"/>
@@ -166,6 +170,7 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/libs/libmicrohttpd/include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/homeisd/src/Services}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/homeisd/src/Common}&quot;"/>
 								</option>
 								<option id="gnu.both.asm.option.flags.779682679" name="Assembler flags" superClass="gnu.both.asm.option.flags" value="" valueType="string"/>
 								<inputType id="cdt.managedbuild.tool.gnu.assembler.input.1757918674" superClass="cdt.managedbuild.tool.gnu.assembler.input"/>
@@ -421,6 +426,9 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/FakeIt}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/libs/libmicrohttpd/include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/Services}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/Common}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/Devices/Handlers}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/Modbus}&quot;"/>
 								</option>
 								<option id="gnu.cpp.compiler.option.preprocessor.def.125684587" name="Defined symbols (-D)" superClass="gnu.cpp.compiler.option.preprocessor.def" useByScannerDiscovery="false" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="HTTPSERVER_COMPILATION"/>
@@ -444,8 +452,6 @@
 								<option id="gnu.cpp.link.option.libs.1505464801" name="Libraries (-l)" superClass="gnu.cpp.link.option.libs" valueType="libs">
 									<listOptionValue builtIn="false" value="pthread"/>
 									<listOptionValue builtIn="false" value="dl"/>
-									<listOptionValue builtIn="false" value="usb-1.0"/>
-									<listOptionValue builtIn="false" value="usb"/>
 									<listOptionValue builtIn="false" value="xml2"/>
 									<listOptionValue builtIn="false" value="rt"/>
 									<listOptionValue builtIn="false" value="config++"/>
@@ -454,9 +460,7 @@
 									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="z"/>
 								</option>
 								<option id="gnu.cpp.link.option.paths.1189923739" name="Library search path (-L)" superClass="gnu.cpp.link.option.paths" valueType="libPaths">
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/libs/libusbcompat/lib}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/libs/libudev}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/libs/libusb/lib}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/homeisd/libs/libcurl/lib}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/libs/libsources/libxml2-2.8.0/lib}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/libs/libconfig/lib}&quot;"/>
@@ -614,7 +618,7 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="src/Devices/OneWire|libs/libmodbus/libmodbus-3.1.4/tests|src/homeis.cpp|gtest_src/src|dis.cpp|libcrash-master|onewirelibrary/test_thread.cpp|onewirelibrary/test_temp.cpp|onewirelibrary/test_switch.cpp|onewirelibrary/test_net.cpp|onewirelibrary/test_msgLogging.cpp|onewirelibrary/test_lock.cpp|onewirelibrary/test_link.cpp|onewirelibrary/test_jalousie.cpp|onewirelibrary/test_ds2890.cpp|onewirelibrary/test_ds2413.cpp|onewirelibrary/test_ds2406.cpp|onewirelibrary/test_ds2405.cpp|onewirelibrary/main.cpp|onewirelibrary/helper.cpp|uuid/gen_uuid_nt.c|onewirelibrary/OneWire++/componentOW++|libhttpserver-master/examples|libhttpserver-master/test|libs/libsources/libxml2-2.8.0/share/doc|libs/libsources/libxml2-2.8.0/share/doc/libxml2-2.8.0/examples" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="onewirelibrary|src/Devices/OneWire|libs/libmodbus/libmodbus-3.1.4/tests|src/homeis.cpp|gtest_src/src|dis.cpp|libcrash-master|onewirelibrary/test_thread.cpp|onewirelibrary/test_temp.cpp|onewirelibrary/test_switch.cpp|onewirelibrary/test_net.cpp|onewirelibrary/test_msgLogging.cpp|onewirelibrary/test_lock.cpp|onewirelibrary/test_link.cpp|onewirelibrary/test_jalousie.cpp|onewirelibrary/test_ds2890.cpp|onewirelibrary/test_ds2413.cpp|onewirelibrary/test_ds2406.cpp|onewirelibrary/test_ds2405.cpp|onewirelibrary/main.cpp|onewirelibrary/helper.cpp|uuid/gen_uuid_nt.c|onewirelibrary/OneWire++/componentOW++|libhttpserver-master/examples|libhttpserver-master/test|libs/libsources/libxml2-2.8.0/share/doc|libs/libsources/libxml2-2.8.0/share/doc/libxml2-2.8.0/examples" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>

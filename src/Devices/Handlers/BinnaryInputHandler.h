@@ -8,9 +8,34 @@
 #ifndef SRC_DEVICES_HANDLERS_BINNARYINPUTHANDLER_H_
 #define SRC_DEVICES_HANDLERS_BINNARYINPUTHANDLER_H_
 
-class BinnaryInputHandler {
+#include "HisDevModbus.h"
+#include "IModbusHandler.h"
+
+class BinnaryInputHandler : public IModbusHandler
+{
+	typedef struct
+	{
+		uint16_t PinNumber:8;
+		uint16_t Value:1;
+		uint16_t Quality:1;
+		uint16_t Latch:1;
+		uint16_t LatchDirection:1;
+	} SBinInput;
+
+
+	static string LoadType;
+	STypedef stypedef;
+	SBinInput* sbininputs;
+	vector<HisDevValue<bool>*> valuesInput;
+	HisDevModbus* dev;
+	IHisDevFactory* factory;
 public:
-	BinnaryInputHandler();
+	BinnaryInputHandler(HisDevModbus* devModbus,IHisDevFactory* factory);
+	void CreateOrValidInputs(bool addnew);
+	bool Scan(bool addnew);
+	void RefreshOutputs();
+	void Refresh(bool modbusSuccess);
+	void Load();
 	virtual ~BinnaryInputHandler();
 };
 

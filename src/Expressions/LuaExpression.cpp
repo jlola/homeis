@@ -36,11 +36,10 @@
 
 LuaExpression* LuaExpression::ActualExpression=NULL;
 
-LuaExpression::LuaExpression(xmlNodePtr pnode,HisDevices* hisDevices,IExpressionRuntime *pExpressionRuntime) :
-	HisBase(pnode),started(false)
+LuaExpression::LuaExpression(xmlNodePtr pnode,HisDevices* hisDevices,IExpressionRuntime *pExpressionRuntime,IHisDevFactory* factory) :
+	HisBase(pnode,factory),started(false)
 {
 	STACK
-	mutex = HisLock::CreateMutex();
 	evaluateMutex = HisLock::CreateMutex();
 	expressionRuntime = pExpressionRuntime;
 	devices = hisDevices;
@@ -54,12 +53,11 @@ LuaExpression::LuaExpression(xmlNodePtr pnode,HisDevices* hisDevices,IExpression
 	folder = NULL;
 }
 
-LuaExpression::LuaExpression(HisDevFolder* pfolder,HisDevices* hisDevices, string expressionName,IExpressionRuntime *pExpressionRuntime) :
-	HisBase(),started(false)
+LuaExpression::LuaExpression(HisDevFolder* pfolder,HisDevices* hisDevices, string expressionName,IExpressionRuntime *pExpressionRuntime, IHisDevFactory* factory) :
+	HisBase(factory),started(false)
 {
 	STACK
 	CreateFolder();
-	mutex = HisLock::CreateMutex();
 	evaluateMutex = HisLock::CreateMutex();
 	expressionRuntime = pExpressionRuntime;
 	inEvalFunc = false;
@@ -68,7 +66,7 @@ LuaExpression::LuaExpression(HisDevFolder* pfolder,HisDevices* hisDevices, strin
 	if (pfolder==NULL)
 	{
 		CLogger::Fatal("LuaExpression | Constructor can not be called with empty folder");
-		throw HisException("LuaExpression | Constructor can not be called with empty folder");
+		throw HisException("LuaExpression | Constructor can not be called with empty folder",__FILE__, __LINE__);
 	}
 	folder = pfolder;
 	devices = hisDevices;
@@ -91,7 +89,7 @@ void LuaExpression::SetName(string name)
 	{
 		if (!ExistsName(name))
 			HisBase::SetName(name);
-		else throw HisException("Expression name: " + name + "already exists");
+		else throw HisException("Expression name: " + name + "already exists",__FILE__, __LINE__);
 	}
 }
 
@@ -108,7 +106,7 @@ vector<string> LuaExpression::GetLogs()
 void LuaExpression::SetRunning(bool blRunning)
 {
 	STACK
-	HisLock lock(mutex);
+	HisLock lock(setRunningMutex);
 
 	if (runningAllowed!=blRunning || !started)
 	{

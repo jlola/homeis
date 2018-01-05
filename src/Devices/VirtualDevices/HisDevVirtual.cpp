@@ -9,13 +9,15 @@
 #include "PoppyDebugTools.h"
 #include "HisDevVirtual.h"
 
+string HisDevVirtual::LoadType = "HisDevVirtual";
 
-HisDevVirtual::HisDevVirtual()
+HisDevVirtual::HisDevVirtual(IHisDevFactory* factory) :
+	HisDevBase::HisDevBase(factory)
 {
 }
 
-HisDevVirtual::HisDevVirtual(xmlNodePtr node)
-	: HisDevBase::HisDevBase(node)
+HisDevVirtual::HisDevVirtual(xmlNodePtr node,IHisDevFactory* factory)
+	: HisDevBase::HisDevBase(node,factory)
 {
 }
 
@@ -44,22 +46,23 @@ HisDevValueBase* HisDevVirtual::CreateHisDevValue(string address,EHisDevDirectio
 	//string pinNo = Converter::itos(ppinNo);
 	STACK
 	HisDevValueBase* result = NULL;
+	IHisDevFactory* factory = GetFactory();
 	switch(ptype)
 	{
 		case EDataType::Bool:
-			result = new HisDevValue<bool>(address, EHisDevDirection::ReadWrite, ptype, pinNo,false);
+			result = new HisDevValue<bool>(address, EHisDevDirection::ReadWrite, ptype, pinNo,false,LoadType,factory);
 			break;
 		case EDataType::Double:
-			result = new HisDevValue<double>(address, EHisDevDirection::ReadWrite, ptype, pinNo,0);
+			result = new HisDevValue<double>(address, EHisDevDirection::ReadWrite, ptype, pinNo,0,LoadType,factory);
 			break;
 		case EDataType::Int:
-			result = new HisDevValue<int>(address, EHisDevDirection::ReadWrite, ptype, pinNo,0);
+			result = new HisDevValue<int>(address, EHisDevDirection::ReadWrite, ptype, pinNo,0,LoadType,factory);
 			break;
 		case EDataType::String:
-			result = new HisDevValue<string>(address, EHisDevDirection::ReadWrite, ptype, pinNo,string(""));
+			result = new HisDevValue<string>(address, EHisDevDirection::ReadWrite, ptype, pinNo,string(""),LoadType,factory);
 			break;
 		case EDataType::Uint:
-			result = new HisDevValue<unsigned int>(address, EHisDevDirection::ReadWrite, ptype, pinNo,0);
+			result = new HisDevValue<unsigned int>(address, EHisDevDirection::ReadWrite, ptype, pinNo,0,LoadType,factory);
 			break;
 		case EDataType::Unknown:
 			return result;

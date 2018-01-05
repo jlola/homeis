@@ -8,7 +8,8 @@
 #include "HisBase.h"
 #include "HisDevFactory.h"
 
-HisBase::HisBase()
+HisBase::HisBase(IHisDevFactory* factory)
+	: factory(factory)
 {
 	createDate = DateTime::Now();
 	modifyDate = createDate;
@@ -19,11 +20,16 @@ HisBase::HisBase()
 	name = "-------";
 }
 
-HisBase::HisBase(xmlNodePtr pnode)
-	: HisBase::HisBase()
+HisBase::HisBase(xmlNodePtr pnode, IHisDevFactory* factory)
+	: HisBase::HisBase(factory)
 {
 	isnew = false;
 	node = pnode;
+}
+
+IHisDevFactory* HisBase::GetFactory()
+{
+	return factory;
 }
 
 const xmlChar* HisBase::GetNodeName()
@@ -242,11 +248,11 @@ void HisBase::DoInternalLoad(xmlNodePtr & node)
 			FreeItems();
 			xmlNodePtr cur = node->children;
 			xmlNodePtr next;
-			HisBase *pitem = NULL;
+			IHisBase *pitem = NULL;
 			while(cur)
 			{
 				next = cur->next;
-				pitem = HisDevFactory::Instance().Create(cur);
+				pitem = factory->Create(cur);
 				if (pitem!=NULL)
 				{
 					pitem->SetParent(this);

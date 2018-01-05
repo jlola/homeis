@@ -21,8 +21,8 @@ protected:
 	virtual void DoInternalSave(xmlNodePtr & node);
 	virtual void DoInternalLoad(xmlNodePtr & node);
 public:
-	HisExpressionIdHolder(CUUID pExpressionId);
-	HisExpressionIdHolder(xmlNodePtr pNode);
+	HisExpressionIdHolder(CUUID pExpressionId,IHisDevFactory* factory);
+	HisExpressionIdHolder(xmlNodePtr pNode,IHisDevFactory* factory);
 	CUUID GetExpressionId();
 	void SetExpressionId(CUUID expressionId);
 };

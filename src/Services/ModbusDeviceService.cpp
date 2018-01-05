@@ -18,8 +18,9 @@
 
 ModbusDeviceService::ModbusDeviceService(HisDevices* devices
 		,IModbusProvider* mm
-		,IHttpHeadersProvider & headersProvider)
-	: headersProvider(headersProvider)
+		,IHttpHeadersProvider & headersProvider,
+		IHisDevFactory* factory)
+	: headersProvider(headersProvider),factory(factory)
 {
 	this->mm = mm;
 	this->devices = devices;
@@ -65,7 +66,7 @@ const http_response ModbusDeviceService::render_GET(const http_request& req)
 		IModbus* m = mm->Find(connector);
 		if (m!=NULL)
 		{
-			HisDevModbus* dev = new HisDevModbus(m,address);
+			HisDevModbus* dev = new HisDevModbus(m,address,factory);
 			dev->Scan(true);
 			devices->Add(dev);
 			devices->Save();

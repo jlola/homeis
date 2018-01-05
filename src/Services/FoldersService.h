@@ -26,8 +26,9 @@ class FoldersService : public http_resource
 	HisDevFolderRoot & root;
 	HisDevices & devices;
 	IHttpHeadersProvider & headersProvider;
+	IHisDevFactory* factory;
 public:
-	FoldersService(HisDevices & dev,HisDevFolderRoot & proot, IHttpHeadersProvider & headersProvider);
+	FoldersService(HisDevices & dev,HisDevFolderRoot & proot, IHttpHeadersProvider & headersProvider,IHisDevFactory* factory);
 	~FoldersService(void);
 	const http_response render_GET(const http_request& req);
 	const http_response render_POST(const http_request& req);

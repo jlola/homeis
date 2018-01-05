@@ -22,21 +22,20 @@ extern "C" {
 ExpressionRuntime::ExpressionRuntime() : thread(0)
 {
 	STACK
-	this->__expressionMutex = HisLock::CreateMutex();
-	__expressionEvaluateMutex = HisLock::CreateMutex();
+	this->__addremoveMutex = HisLock::CreateMutex();
+	expressionsToEvalMutex = HisLock::CreateMutex();
 	running = false;
 }
 
 void ExpressionRuntime::AddToEvaluateQueue(HisDevBase* hisDevBase)
 {
-	__expressionEvaluateMutex->lock();
+	HisLock lock(expressionsToEvalMutex);
 	vector<IExpression*> expressionsToEval = hisDevBase->GetExpressions();
 	for (size_t i=0;i<expressionsToEval.size();i++)
 	{
 		exqueue.push(expressionsToEval[i]);
 		CLogger::Info("Added to evaluate %s to expresseionqueue",expressionsToEval[i]->GetName().c_str());
 	}
-	__expressionEvaluateMutex->unlock();
 }
 
 void ExpressionRuntime::Evaluate()
@@ -48,10 +47,10 @@ void ExpressionRuntime::Evaluate()
 	{
 		while(!exqueue.empty())
 		{
-			__expressionEvaluateMutex->lock();
+			HisLock lock(expressionsToEvalMutex);
 			expr = exqueue.front();
 			exqueue.pop();
-			__expressionEvaluateMutex->unlock();
+			lock.Unlock();
 
 			CLogger::Info("Start queued expression evaluate %s",expr->GetName().c_str());
 			expr->Evaluate();
@@ -96,7 +95,7 @@ void* ExpressionRuntime::ThreadFunction(void* obj)
 void ExpressionRuntime::Add(IExpression* pExpression)
 {
 	STACK
-	HisLock lock(this->__expressionMutex);
+	HisLock lock(this->__addremoveMutex);
 	int index = Find(pExpression);
 	if (index<0)
 	{
@@ -107,7 +106,7 @@ void ExpressionRuntime::Add(IExpression* pExpression)
 void ExpressionRuntime::Remove(IExpression* pExpression)
 {
 	STACK
-	HisLock lock(this->__expressionMutex);
+	HisLock lock(this->__addremoveMutex);
 
 	int index = Find(pExpression);
 	if (index>=0)

@@ -7,13 +7,14 @@
 
 #include "HisDevFolder.h"
 
-HisDevFolder::HisDevFolder(string pname)
+HisDevFolder::HisDevFolder(string pname,IHisDevFactory* factory)
+	: HisBase::HisBase(factory)
 {
 	SetName(pname);
 }
 
-HisDevFolder::HisDevFolder(xmlNodePtr pNode) :
-		HisBase::HisBase(pNode)
+HisDevFolder::HisDevFolder(xmlNodePtr pNode,IHisDevFactory* factory) :
+		HisBase::HisBase(pNode,factory)
 {
 	Load();
 }

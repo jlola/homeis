@@ -16,12 +16,16 @@ class ModbusSimulator : public IModbus
 	uint16_t* registers;
 	SSerPortConfig config;
 public:
+
+	static string DriverName;
+
 	ModbusSimulator(SSerPortConfig config, uint16_t* & registers);
 	ModbusSimulator(SSerPortConfig config);
 
 	bool Init();
 	string GetName();
 	string GetPort();
+	string GetDriverName();
 	bool setBitInput(uint16_t address,uint16_t index, uint16_t state);
 	bool getBitInput(uint16_t address,uint16_t index,bool & bit);
 

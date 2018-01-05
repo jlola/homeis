@@ -5,7 +5,7 @@
  *      Author: root
  */
 
-#include <Services/DevicesService.h>
+#include "Services/DevicesService.h"
 #include "HisDevices.h"
 #include "document.h"		// rapidjson's DOM-style API
 #include "prettywriter.h"
@@ -26,8 +26,11 @@ const char json[] = "[{\"name\":\"Bečka horní\",\"id\":4,\"type\":1,\"value\":
                          {\"name\":\"Podlahový okruh\",\"id\":1,\"type\":1,\"value\":23}, \
                          {\"name\":\"Radiatorový okruh\",\"id\":3,\"type\":0,\"value\":45.4}]";
 
-DevicesService::DevicesService(HisDevices & dev,HisDevFolderRoot & folder, IHttpHeadersProvider & headersProvider) :
-		devices(dev),rootFolder(folder),headersProvider(headersProvider)
+DevicesService::DevicesService(HisDevices & dev,HisDevFolderRoot & folder, IHttpHeadersProvider & headersProvider, IHisDevFactory* factory) :
+		devices(dev),
+		rootFolder(folder),
+		headersProvider(headersProvider),
+		factory(factory)
 {
 }
 
@@ -176,7 +179,15 @@ void DevicesService::FillDeviceToJson(Value & devjson, HisDevBase* dev,Document 
 		jsonvalue.SetString(strvalue.c_str(),strvalue.length(),respjsondoc.GetAllocator());
 		devjson.AddMember("Address",jsonvalue,respjsondoc.GetAllocator());
 
-		jsonvalue.SetString(devModbus->GetConnectionName().c_str(),devModbus->GetConnectionName().length(),respjsondoc.GetAllocator());
+		IModbus* modbusDriver = devModbus->GetModbus();
+		if (modbusDriver!=NULL)
+		{
+			jsonvalue.SetString(modbusDriver->GetName().c_str(),modbusDriver->GetName().length(),respjsondoc.GetAllocator());
+		}
+		else
+		{
+			jsonvalue.Clear();
+		}
 		devjson.AddMember("ConnectionName",jsonvalue,respjsondoc.GetAllocator());
 	}
 
@@ -532,7 +543,7 @@ HisDevVirtual* DevicesService::CreateVirtualDevice(string strjson,string & messa
 	HisDevVirtual* virtualdev = NULL;
 	if (document.HasMember("Name") && document["Name"].IsString())
 	{
-		virtualdev = new HisDevVirtual();
+		virtualdev = new HisDevVirtual(factory);
 		virtualdev->SetName(document["Name"].GetString());
 	}
 	else

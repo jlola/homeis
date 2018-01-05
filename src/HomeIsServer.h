@@ -10,7 +10,7 @@
 
 #include <string>
 #include <httpserver.hpp>
-#include <Modbus/ModbusProvider.h>
+#include "ModbusProvider.h"
 #include "Devices/Folder/HisDevFolderRoot.h"
 #include "Expressions/ExpressionRuntime.h"
 #include "HomeIsConfig.h"
@@ -26,12 +26,14 @@
 #include "Services/ModbusService.h"
 #include "Services/ConnectorsService.h"
 #include "Services/LogService.h"
+#include "HisDevFactory.h"
 
 using namespace httpserver;
 using namespace std;
 
 class HomeIsServer
 {
+	HisDevFactory* factory;
 	//LOW_network  oneWireNet;
 	HttpHeadersProvider headersProvider;
 	HisDevRuntime* devruntime;
@@ -39,8 +41,8 @@ class HomeIsServer
 	ExpressionRuntime* expressionRuntime;
 	create_webserver cw;
 	HisDevices* devs;
-	ModbusProvider modbusProvider;
-	vector<SSerPortConfig> & serports;
+	IModbusProvider & modbusProvider;
+	//vector<SSerPortConfig> & serports;
 	webserver* ws_i;
 
 	FileController* fc;
@@ -57,7 +59,7 @@ class HomeIsServer
 	bool InitHisDevices();
 	void InitWebServer(bool blocking);
 public:
-	HomeIsServer(vector<SSerPortConfig> & serports,int tcpPort, string allowOrigin);
+	HomeIsServer(IModbusProvider & modbusprovider,int tcpPort, string allowOrigin);
 	void AddModbus(IModbus* m);
 	void Start(bool blocking);
 	void Stop();

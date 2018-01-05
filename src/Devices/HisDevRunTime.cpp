@@ -10,7 +10,6 @@
 #include <libxml/tree.h>
 #include "srutil/event/event.hpp"
 #include "srutil/delegate/delegate.hpp"
-#include "LOW_network.h"
 #include "EHisDevDirection.h"
 #include "HisDevBase.h"
 #include "ValueEventArgs.h"

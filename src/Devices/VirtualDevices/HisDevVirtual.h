@@ -22,9 +22,11 @@ protected:
 	virtual void DoInternalSave(xmlNodePtr & node);
 
 public:
-	HisDevVirtual();
+	static string LoadType;
 
-	HisDevVirtual(xmlNodePtr node);
+	HisDevVirtual(IHisDevFactory* factory);
+
+	HisDevVirtual(xmlNodePtr node,IHisDevFactory* factory);
 
 	const xmlChar* GetNodeNameInternal();
 

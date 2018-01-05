@@ -10,10 +10,12 @@
 
 class IModbusHandler
 {
-private:
-	IModbusHandler();
 public:
-	virtual ~IModbusHandler();
+	virtual bool Scan(bool addnew)=0;
+	virtual void RefreshOutputs()=0;
+	virtual void Refresh(bool modbusSuccess)=0;
+	virtual void Load()=0;
+	virtual ~IModbusHandler() {	}
 };
 
 #endif /* SRC_DEVICES_HANDLERS_IMODBUSHANDLER_H_ */

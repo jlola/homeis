@@ -29,12 +29,13 @@ class ExpressionService : public http_resource
 {
 private:
 	IHttpHeadersProvider & headersProvider;
+	IHisDevFactory* factory;
 	HisDevFolderRoot* root;
 	HisDevices* devices;
 	IExpressionRuntime *expressionRuntime;
 	LuaExpression* CreateOrUpdateExpression(string strJson,string & message);
 public:
-	ExpressionService(HisDevFolderRoot* folder,IExpressionRuntime *pexpressionRuntime, HisDevices* pdevices, IHttpHeadersProvider & headersProvider);
+	ExpressionService(HisDevFolderRoot* folder,IExpressionRuntime *pexpressionRuntime, HisDevices* pdevices, IHttpHeadersProvider & headersProvider,IHisDevFactory* factory);
 	~ExpressionService(void);
 	bool DeleteExpression(string strid,string & message);
 	static void ExpressionToJson(IHisBase* pParent,LuaExpression *pExpression, Document & respjsondoc);

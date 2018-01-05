@@ -32,7 +32,13 @@
 #ifndef _LINUX_CRITICAL_SECTION_
 #define _LINUX_CRITICAL_SECTION_
 
+#pragma once
+
+extern "C" {
+
 #include <pthread.h>
+
+}
 
 
 #ifndef BOOL
@@ -55,7 +61,6 @@ BOOL TryEnterCriticalSection(LPCRITICAL_SECTION lpCriticalSection);
 BOOL LeaveCriticalSection(LPCRITICAL_SECTION lpCriticalSection);
 BOOL InitializeCriticalSection(LPCRITICAL_SECTION lpCriticalSection);
 BOOL DeleteCriticalSection(LPCRITICAL_SECTION lpCriticalSection);
-
 
 
 #endif

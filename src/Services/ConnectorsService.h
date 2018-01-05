@@ -15,6 +15,7 @@
 #include "VirtualDevices/HisDevVirtual.h"
 #include "HomeIsConfig.h"
 #include "HttpHeadersProvider.h"
+#include "IModbusProvider.h"
 
 using namespace std;
 using namespace httpserver;
@@ -23,9 +24,10 @@ using namespace rapidjson;
 class ConnectorsService : public http_resource
 {
 	IHttpHeadersProvider & headersProvider;
-	vector<SSerPortConfig> & serports;
+	//vector<SSerPortConfig> & serports;
+	IModbusProvider & provider;
 public:
-	ConnectorsService(vector<SSerPortConfig> & pserports,IHttpHeadersProvider & headersProvider);
+	ConnectorsService(IModbusProvider & provider,IHttpHeadersProvider & headersProvider);
 	const http_response render_GET(const http_request& r);
 	virtual ~ConnectorsService();
 };

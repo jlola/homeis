@@ -23,6 +23,8 @@
 #include "Common/HisBase.h"
 #include "PoppyDebugTools.h"
 
+using namespace std;
+
 #define NODE_VALUE BAD_CAST "value"
 #define PAR_PINNO BAD_CAST "pinno"
 #define PAR_PINNAME BAD_CAST"pinname"
@@ -71,11 +73,11 @@ protected:
 	virtual const xmlChar* GetNodeNameInternal();
 public:	WriteToDeviceRequestDelegate delegateWrite;
 public:
-	HisDevValueBase(std::string pdevname, EHisDevDirection direct, EDataType pdatatype,string ppinNumber);
+	HisDevValueBase(std::string pdevname, EHisDevDirection direct, EDataType pdatatype,string ppinNumber,string loadType,IHisDevFactory* factory);
 
-	HisDevValueBase(xmlNodePtr pnode);
+	HisDevValueBase(xmlNodePtr pnode,IHisDevFactory* factory);
 
-	HisDevValueBase(HisDevValueBase & src);
+	HisDevValueBase(HisDevValueBase & src,IHisDevFactory* factory);
 
 	void FireOnValueChanged(ValueChangedEventArgs args);
 
@@ -123,7 +125,7 @@ public:
 
 	void SetError();
 
-	static HisDevValueBase* Create(xmlNodePtr pNode);
+	static HisDevValueBase* Create(xmlNodePtr pNode,IHisDevFactory* factory);
 };
 
 template<class T>
@@ -147,20 +149,20 @@ public:
 	 * dircet - direction
 	 * pinnumer - unicat number of pin
 	 * */
-	HisDevValue(std::string addr, EHisDevDirection direct, EDataType pdatatype,string pPinNumber,T defaultValue) :
-		HisDevValueBase::HisDevValueBase(addr, direct, pdatatype,pPinNumber),value(defaultValue),oldValue(defaultValue)
+	HisDevValue(std::string addr, EHisDevDirection direct, EDataType pdatatype,string pPinNumber,T defaultValue,string loadType,IHisDevFactory* factory) :
+		HisDevValueBase::HisDevValueBase(addr, direct, pdatatype,pPinNumber,loadType,factory),value(defaultValue),oldValue(defaultValue)
 	{
 
 	}
 
-	HisDevValue(std::string addr, EHisDevDirection direct, EDataType pdatatype,int pPinNumber,T defaultValue) :
-		HisDevValue::HisDevValue(addr, direct, pdatatype, Converter::itos(pPinNumber),defaultValue)
+	HisDevValue(std::string addr, EHisDevDirection direct, EDataType pdatatype,int pPinNumber,T defaultValue,string loadType,IHisDevFactory* factory) :
+		HisDevValue::HisDevValue(addr, direct, pdatatype, Converter::itos(pPinNumber),defaultValue,loadType,factory)
 	{
 
 	}
 
-	HisDevValue(xmlNodePtr pnode,T defaultValue) :
-		HisDevValueBase::HisDevValueBase(pnode),value(defaultValue),oldValue(defaultValue)
+	HisDevValue(xmlNodePtr pnode,T defaultValue,IHisDevFactory* factory) :
+		HisDevValueBase::HisDevValueBase(pnode,factory),value(defaultValue),oldValue(defaultValue)
 	{
 	}
 

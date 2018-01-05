@@ -13,10 +13,12 @@
 
 #define MAX_BUFFER 5000
 
+using namespace std;
+
 class StringBuilder
 {
 public:
-	static std::string Format ( const char *fmt, ... )
+	static string Format ( const char *fmt, ... )
 	{
 	    char textString[MAX_BUFFER] = {'\0'};
 

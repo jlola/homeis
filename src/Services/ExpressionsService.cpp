@@ -11,8 +11,8 @@
 #include "Common/HisException.h"
 #include "microhttpd.h"
 
-ExpressionService::ExpressionService(HisDevFolderRoot* folder, IExpressionRuntime *pexpressionRuntime, HisDevices* pdevices, IHttpHeadersProvider & headersProvider)
-	: headersProvider(headersProvider)
+ExpressionService::ExpressionService(HisDevFolderRoot* folder, IExpressionRuntime *pexpressionRuntime, HisDevices* pdevices, IHttpHeadersProvider & headersProvider,IHisDevFactory* factory)
+	: headersProvider(headersProvider),factory(factory)
 {
 	STACK
 	devices = pdevices;
@@ -53,7 +53,7 @@ const http_response ExpressionService::render_GET(const http_request& req)
 			{
 				if (!expression->ForceEvaluate())
 				{
-					throw HisException(expression->GetLastEvaluateError());
+					throw HisException(expression->GetLastEvaluateError(),__FILE__, __LINE__);
 				}
 			}
 			response_code = MHD_HTTP_OK;
@@ -73,7 +73,7 @@ const http_response ExpressionService::render_GET(const http_request& req)
 					ExpressionDebugLogToJson(expression,respjsondoc);
 				}
 				else
-					throw HisException("Not found");
+					throw HisException("Not found",__FILE__, __LINE__);
 			}
 			response_code = MHD_HTTP_OK;
 		}
@@ -281,7 +281,7 @@ LuaExpression* ExpressionService::CreateOrUpdateExpression(string strJson,string
 			}
 			else
 			{
-				expressionObj = new LuaExpression(parent,devices,name,expressionRuntime );
+				expressionObj = new LuaExpression(parent,devices,name,expressionRuntime,factory );
 				parent->Add(expressionObj);
 				saveReq = true;
 			}

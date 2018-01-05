@@ -18,9 +18,11 @@ protected:
 	SSerPortConfig modbussim;
 	Client client;
 	HomeIsServer* server;
+	IModbusProvider* modbusprovider;
 public:
 	ExpressionsTest();
 	void SetUp();
+	void TearDown();
 	virtual ~ExpressionsTest();
 };
 

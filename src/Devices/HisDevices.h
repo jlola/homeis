@@ -15,6 +15,7 @@
 #include <queue>          // std::queue
 #include "Devices/HisDevBase.h"
 #include "Expressions/IExpressionRuntime.h"
+#include "IHisDevFactory.h"
 
 using namespace std;
 
@@ -22,7 +23,7 @@ class HisDevices {
 	xmlDocPtr doc;       /* document pointer */
 	string devicesFileName;
 	std::vector<HisDevBase*> devices;
-	LOW_thread_mutex  *__devRefreshMutex;  /**< Mutex for exclusive access. */
+	HisLock refreshMutex;
 	queue<HisDevBase*> devqueue;
 	OnRefreshDelegate onRefreshdelegate;
 	IModbusProvider* modbusProvider;
@@ -39,7 +40,7 @@ public:
 	void AddToRefreshQueue(HisDevBase* hisDevBase);
 	int FindModbusDev(int addressId);
 	void Save();
-	void Load();
+	void Load(IHisDevFactory* factory);
 	void Delete(uint16_t index);
 	HisDevBase *operator[](unsigned int i);
 };
