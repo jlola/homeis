@@ -48,6 +48,7 @@ HisDevFactory::~HisDevFactory()
 
 IHisBase *HisDevFactory::Create(xmlNodePtr node)
 {
+	ILogger & logger = CLogger::GetLogger();
 	if (node->type==XML_ELEMENT_NODE)
 	{
 		if (!xmlStrcmp(node->name,NODE_VALUEID))
@@ -55,10 +56,10 @@ IHisBase *HisDevFactory::Create(xmlNodePtr node)
 		if (!xmlStrcmp(node->name,NODE_FODLER))
 			return new HisDevFolder(node,this);
 		if (!xmlStrcmp(node->name,NODE_VALUE))
-			return HisDevValueBase::Create(node,this);
+			return HisDevValueBase::Create(node,this,NULL);
 		if (!xmlStrcmp(node->name,NODE_EXPRESSION))
 			return new LuaExpression(node,devices,expressionRuntime,this);
-		CLogger::Error("HisDevFactory::Create | Not implemented %s constructor.",node->name);
+		logger.Error("HisDevFactory::Create | Not implemented %s constructor.",node->name);
 	}
 	return NULL;
 }

@@ -7,10 +7,13 @@
 
 #include "HisBase.h"
 #include "HisDevFactory.h"
+#include "HisException.h"
 
 HisBase::HisBase(IHisDevFactory* factory)
 	: factory(factory)
 {
+	if (factory==NULL)
+		throw ArgumentNullException("factory");
 	createDate = DateTime::Now();
 	modifyDate = createDate;
 	isnew = true;

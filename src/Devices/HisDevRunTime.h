@@ -10,11 +10,11 @@
 
 #include <pthread.h>
 #include "HisDevices.h"
-
+#include "logger.h"
 
 class HisDevRuntime
 {
-
+	ILogger & logger;
 	HisDevices & devices;
 	pthread_t thread;
 	bool running;

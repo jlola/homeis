@@ -18,7 +18,6 @@
 
 #include "HisDevices.h"
 #include "File.h"
-#include "logger.h"
 #include "Tags/TagBase.h"
 
 //#include "EDataType.h"
@@ -34,7 +33,7 @@ bool HomeIsServer::Init(bool blocking)
 {
 	if (!InitHisDevices())
 	{
-		CLogger::Error("Error init HisDevices");
+		logger.Error("Error init HisDevices");
 		return false;
 	}
 
@@ -45,7 +44,7 @@ bool HomeIsServer::Init(bool blocking)
 
 void HomeIsServer::Stop()
 {
-	CLogger::Info("Stop server");
+	logger.Info("Stop server");
 	devruntime->Stop();
 	expressionRuntime->Stop();
 	ws_i->stop();
@@ -64,6 +63,7 @@ void  HomeIsServer::AddModbus(IModbus* m)
 HomeIsServer::HomeIsServer(IModbusProvider & modbusprovider,
 		int TcpPort,
 		string allowOrigin) :
+		logger(CLogger::GetLogger()),
 		factory(NULL),
 		headersProvider(allowOrigin),
 		devruntime(NULL),
@@ -102,6 +102,9 @@ void HomeIsServer::InitWebServer(bool blocking)
 
 	ws_i->register_resource(string("api/logs"), logservice, true);
 	ws_i->register_resource(string("api/logs/{log}"), logservice, true);
+	//ws_i->register_resource(string("api/logs/loglevel"), logservice, true);
+	ws_i->register_resource(string("api/logs/loglevel/{level}"), logservice, true);
+
 	ws_i->register_resource(string("api/onewiredevices"), owds, true);
 	ws_i->register_resource(string("api/devices"), owds, true);
 	ws_i->register_resource(string("api/onewiredevices/{devid}"), owds, true);
@@ -129,7 +132,7 @@ void HomeIsServer::InitWebServer(bool blocking)
 	///{connectorname}/{devaddress}/{baseaddress}/{count}
 	ws_i->register_resource(string("api/modbus/registers/{connectorname}/{devaddress}/{baseaddress}/{value}"),modbusservice,true);
 	ws_i->register_resource(string("api/connectors"),connectorsService, true);
-	CLogger::Info("Start webserver with %s blocking", blocking ? "enabled" : "disabled");
+	logger.Info("Start webserver with %s blocking", blocking ? "enabled" : "disabled");
 	ws_i->start(blocking);
 }
 

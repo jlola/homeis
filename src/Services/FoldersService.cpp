@@ -16,13 +16,29 @@
 #include "microhttpd.h"
 
 FoldersService::FoldersService(HisDevices & dev,HisDevFolderRoot & root, IHttpHeadersProvider & headersProvider,IHisDevFactory* factory) :
-	root(root),devices(dev),headersProvider(headersProvider),factory(factory)
+	logger(CLogger::GetLogger()),
+	root(root),
+	devices(dev),
+	headersProvider(headersProvider),
+	factory(factory)
 {
 }
 
 FoldersService::~FoldersService(void)
 {
 
+}
+
+const http_response FoldersService::render_OPTIONS(const http_request& req)
+{
+	int response_code = MHD_HTTP_OK;
+	string message = "";
+	http_response_builder response_builder(message,response_code,headersProvider.GetContentTypeAppJson());
+	this->headersProvider.AddHeaders(response_builder);
+	response_builder = response_builder.with_header("Access-Control-Allow-Methods","POST, PUT");
+	response_builder = response_builder.with_header("Access-Control-Allow-Headers","authorization,content-type");
+	http_response resp(response_builder.string_response());
+	return resp;
 }
 
 const http_response FoldersService::render_GET(const http_request& req)
@@ -395,7 +411,7 @@ string FoldersService::DeleteDevValue(string strDevValueRecordId)
 	if (devValue==NULL)
 	{
 		string msg = StringBuilder::Format("OneWireDevicesService::DeleteDevValue | Doesn't exists");
-		CLogger::Error(msg.c_str());
+		logger.Error(msg.c_str());
 		return msg;
 	}
 	HisDevBase* device = dynamic_cast<HisDevBase*>(devValue->GetParent());
@@ -407,7 +423,7 @@ string FoldersService::DeleteDevValue(string strDevValueRecordId)
 		if (folder!=NULL)
 		{
 			string msg = StringBuilder::Format("OneWireDevicesService::DeleteDevValue | Cant delete node %s used in folder %s",strDevValueRecordId.c_str(),folder->GetName().c_str());
-			CLogger::Error(msg.c_str());
+			logger.Error(msg.c_str());
 			return msg;
 		}
 	}
@@ -422,7 +438,7 @@ string FoldersService::DeleteDevValue(string strDevValueRecordId)
 		else
 		{
 			string msg = StringBuilder::Format("OneWireDevicesService::DeleteDevValue | Error while delete.");
-			CLogger::Error(msg.c_str());
+			logger.Error(msg.c_str());
 			return msg;
 		}
 	}

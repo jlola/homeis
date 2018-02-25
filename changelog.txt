@@ -3,4 +3,5 @@
  		 - added enabled property to device
 20170521 - create nameofpid.pid where nameofpid is executable name
 20171204 - fixed negative temperature
-20171221 - added option allow origin 
+20171221 - added option allow origin
+20180119 - added ScanPeriodMs to device 

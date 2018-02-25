@@ -13,14 +13,13 @@
 
 string BinnaryOutputHandler::LoadType = "BinnaryOutputHandler";
 
-BinnaryOutputHandler::BinnaryOutputHandler(HisDevModbus* devModbus, IHisDevFactory* factory)
-	: count(0),devModbus(devModbus),sbinoutputs(NULL),factory(factory) {
+BinnaryOutputHandler::BinnaryOutputHandler(IHisDevModbus* devModbus, IHisDevFactory* factory)
+	: count(0),devModbus(devModbus),sbinoutputs(NULL),factory(factory)
+{
 	if (devModbus==NULL)
-	{
-		string message = StringBuilder::Format("NULL value of  devModbus Line: %s, Value: %d.", __FILE__, __LINE__);
-		CLogger::Error(message.c_str());
-		throw HisException(message,__FILE__,__LINE__);
-	}
+		throw ArgumentNullException(string("devModbus"));
+	if (factory==NULL)
+		throw ArgumentNullException(string("factory"));
 }
 
 void BinnaryOutputHandler::RefreshOutputs()
@@ -48,12 +47,12 @@ void BinnaryOutputHandler::RefreshOutputs()
 void BinnaryOutputHandler::Load()
 {
 	STACK
-	vector<HisDevValue<bool>*> values = devModbus->GetItems<HisDevValue<bool>>();
+	vector<HisDevValue<bool>*> values = devModbus->GetBoolItems();
 
 	for(size_t i=0;i<values.size();i++)
 	{
 		HisDevValue<bool> *value = values[i];
-
+		value->SetWriteHandler(devModbus);
 		if (value->GetLoadType()==LoadType)
 			valuesOutput.push_back(value);
 		else
@@ -109,12 +108,22 @@ void BinnaryOutputHandler::CreateOrValidOutputs(bool addnew)
 		{
 			if (output == NULL)
 			{
-				output = new HisDevValue<bool>(Converter::itos(devModbus->GetAddress(),10),EHisDevDirection::Write,EDataType::Bool,soutput.PinNumber,false,LoadType,factory);
+				output = new HisDevValue<bool>(
+						Converter::itos(devModbus->GetAddress(),10),
+						EHisDevDirection::Write,
+						EDataType::Bool,
+						soutput.PinNumber,
+						false,
+						LoadType,
+						factory,
+						devModbus);
+				output->SetName(StringBuilder::Format("BinaryOutput%d",soutput.PinNumber));
 				devModbus->Add(output);
-				valuesOutput.push_back(output);
 			}
-			WriteToDeviceRequestDelegate delegate = WriteToDeviceRequestDelegate::from_method<HisDevModbus, &HisDevModbus::WriteToDevice>(devModbus);
-			output->delegateWrite = delegate;
+			valuesOutput.push_back(output);
+			output->SetWriteHandler(devModbus);
+			//WriteToDeviceRequestDelegate delegate = WriteToDeviceRequestDelegate::from_method<HisDevModbus, &HisDevModbus::WriteToDevice>(devModbus);
+			//output->delegateWrite = delegate;
 			output->ReadedValueFromDevice(soutput.Value,false);
 		}
 	}

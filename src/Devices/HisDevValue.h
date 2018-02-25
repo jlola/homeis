@@ -22,6 +22,7 @@
 #include "ValueEventArgs.h"
 #include "Common/HisBase.h"
 #include "PoppyDebugTools.h"
+#include "IWriteToDevice.h"
 
 using namespace std;
 
@@ -42,25 +43,25 @@ typedef srutil::delegate<void (ValueChangedEventArgs)> OnEditDelegate;
  typedef srutil::delegate1<void, ValueChangedEventArgs> OnValueChangedDelegate;
 #endif
 
-#ifdef SRUTIL_DELEGATE_PREFERRED_SYNTAX
-typedef srutil::delegate<void (ValueChangedEventArgs)> OnEditDelegate;
-#else
- typedef srutil::delegate1<void,ValueChangedEventArgs> WriteToDeviceRequestDelegate;
-#endif
+//#ifdef SRUTIL_DELEGATE_PREFERRED_SYNTAX
+//typedef srutil::delegate<void (ValueChangedEventArgs)> OnEditDelegate;
+//#else
+// typedef srutil::delegate1<void,ValueChangedEventArgs> WriteToDeviceRequestDelegate;
+//#endif
 
  template<class T> class HisDevValue;
 
 class HisDevValueBase : public HisBase
 {
+	 ILogger & logger;
 	string addressName;
 	string pinNumber;
 	EHisDevDirection direction;
 	EDataType datatype;
-	OnValueChangedDelegate ValueChanged;
 	std::string loadtype;
 	map<void*,OnValueChangedDelegate> delegatesMap;
-
 protected:
+	IWriteToDevice* devHandler;
 	DateTime valueChangeTime;
 	std::string unit;
 	//std::string pinname;
@@ -71,13 +72,25 @@ protected:
 	virtual void DoInternalSave(xmlNodePtr & node);
 	virtual void DoInternalLoad(xmlNodePtr & node);
 	virtual const xmlChar* GetNodeNameInternal();
-public:	WriteToDeviceRequestDelegate delegateWrite;
+//public:	WriteToDeviceRequestDelegate delegateWrite;
 public:
-	HisDevValueBase(std::string pdevname, EHisDevDirection direct, EDataType pdatatype,string ppinNumber,string loadType,IHisDevFactory* factory);
+	HisDevValueBase(std::string pdevname,
+			EHisDevDirection direct,
+			EDataType pdatatype,
+			string ppinNumber,
+			string loadType,
+			IHisDevFactory* factory,
+			IWriteToDevice* devHandler);
 
-	HisDevValueBase(xmlNodePtr pnode,IHisDevFactory* factory);
+	HisDevValueBase(xmlNodePtr pnode,
+			IHisDevFactory* factory,
+			IWriteToDevice* devHandler);
 
-	HisDevValueBase(HisDevValueBase & src,IHisDevFactory* factory);
+	HisDevValueBase(HisDevValueBase & src,
+			IHisDevFactory* factory,
+			IWriteToDevice* devHandler);
+
+	void SetWriteHandler(IWriteToDevice* handler);
 
 	void FireOnValueChanged(ValueChangedEventArgs args);
 
@@ -125,7 +138,9 @@ public:
 
 	void SetError();
 
-	static HisDevValueBase* Create(xmlNodePtr pNode,IHisDevFactory* factory);
+	static HisDevValueBase* Create(xmlNodePtr pNode,
+			IHisDevFactory* factory,
+			IWriteToDevice* handler);
 };
 
 template<class T>
@@ -149,20 +164,57 @@ public:
 	 * dircet - direction
 	 * pinnumer - unicat number of pin
 	 * */
-	HisDevValue(std::string addr, EHisDevDirection direct, EDataType pdatatype,string pPinNumber,T defaultValue,string loadType,IHisDevFactory* factory) :
-		HisDevValueBase::HisDevValueBase(addr, direct, pdatatype,pPinNumber,loadType,factory),value(defaultValue),oldValue(defaultValue)
+	HisDevValue(std::string addr,
+			EHisDevDirection direct,
+			EDataType pdatatype,
+			string pPinNumber,
+			T defaultValue,
+			string loadType,
+			IHisDevFactory* factory,
+			IWriteToDevice* devHandler
+			) :
+		HisDevValueBase::HisDevValueBase(
+				addr,
+				direct,
+				pdatatype,
+				pPinNumber,
+				loadType,
+				factory,
+				devHandler),
+				value(defaultValue),
+				oldValue(defaultValue)
 	{
 
 	}
 
-	HisDevValue(std::string addr, EHisDevDirection direct, EDataType pdatatype,int pPinNumber,T defaultValue,string loadType,IHisDevFactory* factory) :
-		HisDevValue::HisDevValue(addr, direct, pdatatype, Converter::itos(pPinNumber),defaultValue,loadType,factory)
+	HisDevValue(std::string addr,
+			EHisDevDirection direct,
+			EDataType pdatatype,
+			int pPinNumber,
+			T defaultValue,
+			string loadType,
+			IHisDevFactory* factory,
+			IWriteToDevice* devHandler) :
+		HisDevValue::HisDevValue(
+				addr,
+				direct,
+				pdatatype,
+				Converter::itos(pPinNumber),
+				defaultValue,
+				loadType,
+				factory,
+				devHandler)
 	{
 
 	}
 
-	HisDevValue(xmlNodePtr pnode,T defaultValue,IHisDevFactory* factory) :
-		HisDevValueBase::HisDevValueBase(pnode,factory),value(defaultValue),oldValue(defaultValue)
+	HisDevValue(xmlNodePtr pnode,
+			T defaultValue,
+			IHisDevFactory* factory,
+			IWriteToDevice* devHandler) :
+		HisDevValueBase::HisDevValueBase(pnode,factory,devHandler),
+		value(defaultValue),
+		oldValue(defaultValue)
 	{
 	}
 
@@ -198,7 +250,7 @@ public:
 			{
 				extvalue = pValue;
 				ValueChangedEventArgs args(this);
-				if (delegateWrite) delegateWrite(args);
+				if (devHandler!=NULL) devHandler->WriteToDevice(args);
 			}
 		}
 	}
@@ -216,7 +268,7 @@ public:
 			if (GetDirection()==EHisDevDirection::Write || GetDirection()==EHisDevDirection::ReadWrite)
 			{
 				ValueChangedEventArgs args(this);
-				if (delegateWrite) delegateWrite(args);
+				if (devHandler!=NULL) devHandler->WriteToDevice(args);
 			}
 			else
 			{

@@ -10,7 +10,6 @@
 
 #include "Common/HisLock.h"
 #include "ExpressionRuntime.h"
-#include "Helpers/logger.h"
 #include "PoppyDebugTools.h"
 
 extern "C" {
@@ -19,7 +18,9 @@ extern "C" {
 
 }
 
-ExpressionRuntime::ExpressionRuntime() : thread(0)
+ExpressionRuntime::ExpressionRuntime() :
+		logger(CLogger::GetLogger()),
+		thread(0)
 {
 	STACK
 	this->__addremoveMutex = HisLock::CreateMutex();
@@ -34,7 +35,7 @@ void ExpressionRuntime::AddToEvaluateQueue(HisDevBase* hisDevBase)
 	for (size_t i=0;i<expressionsToEval.size();i++)
 	{
 		exqueue.push(expressionsToEval[i]);
-		CLogger::Info("Added to evaluate %s to expresseionqueue",expressionsToEval[i]->GetName().c_str());
+		logger.Info("Added to evaluate %s to expresseionqueue",expressionsToEval[i]->GetName().c_str());
 	}
 }
 
@@ -52,9 +53,9 @@ void ExpressionRuntime::Evaluate()
 			exqueue.pop();
 			lock.Unlock();
 
-			CLogger::Info("Start queued expression evaluate %s",expr->GetName().c_str());
+			logger.Info("Start queued expression evaluate %s",expr->GetName().c_str());
 			expr->Evaluate();
-			CLogger::Info("Stop queued expression evaluate %s",expr->GetName().c_str());
+			logger.Info("Stop queued expression evaluate %s",expr->GetName().c_str());
 		}
 
 		//int* test = 0x00;
@@ -70,7 +71,8 @@ void* ExpressionRuntime::ThreadFunction(void* obj)
 	STACK
 	//set_signal_handler("/home/linaro/homeis/dis");
 	ExpressionRuntime* runtime = (ExpressionRuntime*)obj;
-	CLogger::Info("Strat thread ExpressionRuntime::ThreadFunction with threadid: %ul",pthread_self());
+	ILogger & logger = runtime->logger;
+	logger.Info("Strat thread ExpressionRuntime::ThreadFunction with threadid: %ul",pthread_self());
 
 	while(runtime->running)
 	{
@@ -80,12 +82,12 @@ void* ExpressionRuntime::ThreadFunction(void* obj)
 		}
 		catch(std::exception & ex)
 		{
-			CLogger::Error("ExpressionRuntime::ThreadFunction exception. Error: %s",ex.what());
+			logger.Error("ExpressionRuntime::ThreadFunction exception. Error: %s",ex.what());
 		}
 		catch(...)
 		{
 			string msg = Stack::GetTraceString();
-			CLogger::Error("ExpressionRuntime::ThreadFunction unexpected error. Stack: %s",msg.c_str());
+			logger.Error("ExpressionRuntime::ThreadFunction unexpected error. Stack: %s",msg.c_str());
 		}
 	}
 
@@ -140,7 +142,7 @@ void ExpressionRuntime::Start()
 	int s = pthread_attr_init(&attr);
    if (s != 0)
 	   //handle_error_en(s, "pthread_attr_init");
-	   CLogger::Error("pthread_attr_init");
+	   logger.Error("pthread_attr_init");
 
 
 	running = true;

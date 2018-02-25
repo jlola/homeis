@@ -16,10 +16,12 @@
 #include "Devices/HisDevBase.h"
 #include "Expressions/IExpressionRuntime.h"
 #include "IHisDevFactory.h"
+#include "logger.h"
 
 using namespace std;
 
 class HisDevices {
+	ILogger & logger;
 	xmlDocPtr doc;       /* document pointer */
 	string devicesFileName;
 	std::vector<HisDevBase*> devices;

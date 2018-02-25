@@ -16,6 +16,7 @@
 #include "HisDevices.h"
 #include "HttpHeadersProvider.h"
 #include "IHisDevFactory.h"
+#include "logger.h"
 
 using namespace std;
 using namespace httpserver;
@@ -23,6 +24,7 @@ using namespace rapidjson;
 
 class DevicesService : public http_resource
 {
+	ILogger & logger;
 	HisDevices & devices;
 	HisDevFolderRoot & rootFolder;
 	IHttpHeadersProvider & headersProvider;
@@ -40,6 +42,7 @@ public:
 	DevicesService(HisDevices & dev,HisDevFolderRoot & folder, IHttpHeadersProvider & headersProvider,IHisDevFactory* factory);
 	~DevicesService(void);
 	static void FillFolderDevicesToJson(HisDevFolder* folder,Document & respjsondoc, HisDevices & dev);
+	const http_response render_OPTIONS(const http_request& req);
 	const http_response render_GET(const http_request&);
 	const http_response render_POST(const http_request& r);
 	const http_response render_PUT(const http_request& req);

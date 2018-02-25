@@ -11,6 +11,7 @@
 #include <string>
 #include <libxml/parser.h>
 #include <libxml/tree.h>
+#include "logger.h"
 #include "Expressions/IExpression.h"
 #include "Common/HisBase.h"
 #include "Devices/Folder/HisDevFolder.h"
@@ -48,6 +49,7 @@ class LuaExpression : public HisBase, public IExpression
 public:
 	static LuaExpression* ActualExpression;
 private:
+	ILogger & logger;
 	vector<string> logs;
 	LPCRITICAL_SECTION setRunningMutex;
 	LPCRITICAL_SECTION evaluateMutex;

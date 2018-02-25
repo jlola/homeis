@@ -18,7 +18,8 @@
 using namespace rapidjson;
 
 LogService::LogService(IHttpHeadersProvider & httpHeadersProvider)
-	: httpHeadersProvider(httpHeadersProvider)
+	: logger(CLogger::GetLogger()),
+	httpHeadersProvider(httpHeadersProvider)
 {
 
 }
@@ -27,7 +28,6 @@ LogService::~LogService() {
 
 }
 
-//void LogService::render_GET(const http_request& req, http_response** res)
 const http_response LogService::render_GET(const http_request& req)
 {
 	STACK
@@ -39,9 +39,17 @@ const http_response LogService::render_GET(const http_request& req)
 	PrettyWriter<StringBuffer> wr(buffer);
 	Value jsonvalue;
 	jsonvalue.SetObject();
-	string logname = req.get_arg("log");
 
-	if (logname.length()<=0)
+	string path_api = req.get_path_piece(0);
+	string path_log = req.get_path_piece(1);
+	string path_filename = req.get_path_piece(2);
+	string path_loglevel = req.get_path_piece(2);
+
+	if (path_loglevel=="loglevel")
+	{
+
+	}
+	else if (path_loglevel=="")
 	{
 		string logpath = StringBuilder::Format("%s/Log",File::getexepath().c_str());
 		vector<std::string> list = Directory::GetFileList(logpath.c_str());
@@ -62,12 +70,12 @@ const http_response LogService::render_GET(const http_request& req)
 	else
 	{
 		document.SetObject();
-		string logpath = StringBuilder::Format("%s/Log/%s",File::getexepath().c_str(),logname.c_str());
+		string logpath = StringBuilder::Format("%s/Log/%s",File::getexepath().c_str(),path_filename.c_str());
 		if (File::Exists(logpath))
 		{
 			string content = File::ReadWholeFile(logpath);
 			jsonvalue.SetString(content.c_str(),document.GetAllocator());
-			document.AddMember(logname.c_str(),jsonvalue,document.GetAllocator());
+			document.AddMember(path_filename.c_str(),jsonvalue,document.GetAllocator());
 			document.Accept(wr);
 			std::string json = buffer.GetString();
 			vector<string> topics;

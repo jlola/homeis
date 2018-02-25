@@ -14,9 +14,9 @@
 #include "srutil/event/event.hpp"
 #include "srutil/delegate/delegate.hpp"
 #include "ValueEventArgs.h"
-#include "logger.h"
 #include "Helpers/StringBuilder.h"
 #include "HisDevValue.h"
+#include "Base64.h"
 
 using namespace std;
 
@@ -25,9 +25,13 @@ HisDevValueBase::HisDevValueBase(std::string pdevaddr,
 	EDataType pdatatype,
 	string ppinNumber,
 	string loadType,
-	IHisDevFactory* factory) :
-	HisBase::HisBase(factory)
+	IHisDevFactory* factory,
+	IWriteToDevice* devHandler) :
+	HisBase::HisBase(factory),
+	logger(CLogger::GetLogger()),
+	devHandler(devHandler)
 {
+	loadtype = loadType;
 	pinNumber = ppinNumber;
 	direction = direct;
 	datatype = pdatatype;
@@ -36,8 +40,12 @@ HisDevValueBase::HisDevValueBase(std::string pdevaddr,
 	allowForceOutput = false;
 }
 
-HisDevValueBase::HisDevValueBase(xmlNodePtr pnode, IHisDevFactory* factory) :
-	HisBase::HisBase(pnode,factory)
+HisDevValueBase::HisDevValueBase(xmlNodePtr pnode,
+		IHisDevFactory* factory,
+		IWriteToDevice* devHandler) :
+	HisBase::HisBase(pnode,factory),
+	logger(CLogger::GetLogger()),
+	devHandler(devHandler)
 {
 	pinNumber = "";
 	direction = EHisDevDirection::Read;
@@ -56,8 +64,12 @@ void HisDevValueBase::SetForceOutput(bool force)
 	allowForceOutput = force;
 }
 
-HisDevValueBase::HisDevValueBase(HisDevValueBase & src,IHisDevFactory* factory) :
-	HisBase::HisBase(factory)
+HisDevValueBase::HisDevValueBase(HisDevValueBase & src,
+		IHisDevFactory* factory,
+		IWriteToDevice* devHandler) :
+	HisBase::HisBase(factory),
+	logger(CLogger::GetLogger()),
+	devHandler(devHandler)
 {
 	//pinname = src.pinname;
 	devaddr = src.devaddr;
@@ -69,12 +81,19 @@ HisDevValueBase::HisDevValueBase(HisDevValueBase & src,IHisDevFactory* factory) 
 	allowForceOutput = false;
 }
 
+void HisDevValueBase::SetWriteHandler(IWriteToDevice* devHandler)
+{
+	this->devHandler = devHandler;
+}
+
 void HisDevValueBase::SetError()
 {
 	this->deviceError = true;
 }
 
-HisDevValueBase* HisDevValueBase::Create(xmlNodePtr pNode,IHisDevFactory* factory)
+HisDevValueBase* HisDevValueBase::Create(xmlNodePtr pNode,
+		IHisDevFactory* factory,
+		IWriteToDevice* handler)
 {
 	STACK
 	EDataType datatype;
@@ -88,15 +107,15 @@ HisDevValueBase* HisDevValueBase::Create(xmlNodePtr pNode,IHisDevFactory* factor
 		switch(datatype)
 		{
 			case EDataType::Bool:
-				return new HisDevValue<bool>(pNode,false,factory);
+				return new HisDevValue<bool>(pNode,false,factory,handler);
 			case EDataType::Double:
-				return new HisDevValue<double>(pNode,0,factory);
+				return new HisDevValue<double>(pNode,0,factory,handler);
 			case EDataType::Int:
-				return new HisDevValue<int>(pNode,0,factory);
+				return new HisDevValue<int>(pNode,0,factory,handler);
 			case EDataType::String:
-				return new HisDevValue<string>(pNode,string(""),factory);
+				return new HisDevValue<string>(pNode,string(""),factory,handler);
 			case EDataType::Uint:
-				return new HisDevValue<uint32_t>(pNode,0,factory);
+				return new HisDevValue<uint32_t>(pNode,0,factory,handler);
 			default:
 				return NULL;
 		}
@@ -107,13 +126,14 @@ HisDevValueBase* HisDevValueBase::Create(xmlNodePtr pNode,IHisDevFactory* factor
 void HisDevValueBase::DoInternalSave(xmlNodePtr & node)
 {
 	HisBase::DoInternalSave(node);
+	Base64 b64;
 
 	if (node != NULL)
 	{
 		//xmlSetProp(node,PAR_PINNAME,(xmlChar*)pinname.c_str());
 		xmlSetProp(node,PAR_LOADTYPE,(xmlChar*)loadtype.c_str());
 		xmlSetProp(node,PAR_PINNO,(xmlChar*)pinNumber.c_str());
-		xmlSetProp(node,PAR_VALUE,(xmlChar*)GetStringValue().c_str());
+		xmlSetProp(node,PAR_VALUE,(xmlChar*) b64.b64encode(GetStringValue()).c_str());
 		xmlSetProp(node,PAR_DATATYPE,(xmlChar*)Converter::itos(datatype).c_str());
 		xmlSetProp(node,PAR_DEV_ADDR,(xmlChar*)devaddr.c_str());
 		xmlSetProp(node,PAR_UNIT,(xmlChar*)unit.c_str());
@@ -179,9 +199,12 @@ void HisDevValueBase::DoInternalLoad(xmlNodePtr & node)
 		string strval = (char*)prop;
 		xmlFree(prop);
 
+		Base64 b64;
+		string strvaldecoded = b64.b64decode(strval);
+
 		bool oldallowforceOutput = allowForceOutput;
 		this->allowForceOutput = true;
-		this->ForceStringValue(strval,false);
+		this->ForceStringValue(strvaldecoded,false);
 		allowForceOutput = oldallowforceOutput;
 	}
 }
@@ -213,7 +236,7 @@ void HisDevValueBase::Register(OnValueChangedDelegate delegate, void* owner)
 	ret = delegatesMap.insert(std::pair<void*,OnValueChangedDelegate>(owner,delegate));
 	if (ret.second==false)
 	{
-		CLogger::Error("Delegate already added HisDevBase");
+		logger.Error("Delegate already added HisDevBase");
 	}
 	//size_t size = delegatesMap.size();
 }
@@ -311,7 +334,7 @@ bool HisDevValueBase::ForceStringValue(string strvalue, bool checkChange)
 				}
 				else
 				{
-					CLogger::Error("Error write bool to value: Incorrect format");
+					logger.Error("Error write bool to value: Incorrect format");
 				}
 				return false;
 			}
@@ -348,7 +371,7 @@ bool HisDevValueBase::ForceStringValue(string strvalue, bool checkChange)
 	}
 	catch(...)
 	{
-		CLogger::Error(string("HisDevValue::ForceStringValue | Error set value: " + strvalue).c_str());
+		logger.Error(string("HisDevValue::ForceStringValue | Error set value: " + strvalue).c_str());
 	}
 	return false;
 }

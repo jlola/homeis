@@ -15,11 +15,13 @@
 #include "HisDevBase.h"
 #include "IExpressionRuntime.h"
 #include <queue>          // std::queue
+#include "logger.h"
 
 using namespace std;
 
 class ExpressionRuntime : public IExpressionRuntime
 {
+	ILogger & logger;
 	pthread_attr_t attr;
 	pthread_t thread;
 	bool running;

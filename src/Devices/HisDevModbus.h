@@ -16,42 +16,18 @@
 #include "HisDevValue.h"
 #include "Common/HisLock.h"
 #include "LOW_deviceID.h"
-#include "ModbusHandlers.h"
+#include "IModbusHandler.h"
 #include "IHisDevFactory.h"
+#include "IHisDevModbus.h"
 
 
 #define DEVMODBUS BAD_CAST	"DevModbus"
 #define PROP_ADDRESS BAD_CAST "Address"
 #define PROP_CONNECTION_NAME BAD_CAST "ConnectionName"
 
-typedef enum : uint16_t
-{
-	None,
-	BinInputs,
-	BinOutputs,
-	AInputs,
-	AOutputs,
-	DS18B20Temp
-} ETypes;
 
-typedef enum : uint16_t
-{
-	ReadCoil=1,
-	ReadDiscreteInput=2,
-	ReadHoldingRegisters=3,
-	ReadInputRegisters=4,
-	WriteCoil=5
-} EModbusFunc;
 
-typedef struct
-{
-	ETypes Type;
-	uint16_t Count;
-	uint16_t OffsetOfType;
-	EModbusFunc Func;
-} STypedef;
-
-class HisDevModbus : public HisDevBase
+class HisDevModbus : public HisDevBase, public IHisDevModbus
 {
 	typedef struct {
 		uint16_t ModbusAddress;
@@ -60,6 +36,8 @@ class HisDevModbus : public HisDevBase
 		uint16_t ResetReg;
 		uint16_t lastIndex;
 	} SHeader;
+
+	ILogger & logger;
 
 	LPCRITICAL_SECTION refreshscanmutex;  /**< Mutex for exclusive access. */
 
@@ -76,11 +54,20 @@ class HisDevModbus : public HisDevBase
 
 	IModbus* connection;
 	int address;
-	ModbusHandlers handlers;
+	IModbusHandler* handlers;
 
 	void ReleaseResources();
 
 public:
+
+	void Add(IHisBase *pitem);
+
+	vector<HisDevValue<double>*> GetDoubleItems();
+
+	vector<HisDevValue<bool>*> GetBoolItems();
+
+	HisDevValueBase* FindValue(string pinNumber,string handlerType);
+
 	bool GetData(uint16_t* & data, uint8_t & length);
 
 	bool GetTypeDef(ETypes type,STypedef & stypedef);
@@ -96,6 +83,8 @@ public:
 	bool Scan(bool addnew);
 
 	HisDevValueBase* FindValue(string pinNumber);
+
+	HisDevValueBase* FindLoadType(string loadType);
 
 	int GetAddress();
 

@@ -46,6 +46,7 @@ typedef srutil::delegate<void ()> OnRefreshDelegate;
 
 class HisDevBase : public HisBase
 {
+	ILogger & logger;
 	bool enabled;
 	uint64_t scanPeriodMs;
 	volatile uint64_t nextScanTime;

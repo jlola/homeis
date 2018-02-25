@@ -7,6 +7,7 @@
 
 #include "HisLock.h"
 #include "logger.h"
+#include "HisException.h"
 
 BOOL EnterCriticalSection(LPCRITICAL_SECTION lpCriticalSection)
 {
@@ -83,6 +84,8 @@ BOOL DeleteCriticalSection(LPCRITICAL_SECTION lpCriticalSection)
 HisLock::HisLock(LPCRITICAL_SECTION & csLock) :
 	selfCreated(false),csLock(csLock)
 {
+	if (csLock==NULL)
+		throw ArgumentNullException("csLock");
 	::EnterCriticalSection(this->csLock);
 }
 
@@ -113,6 +116,8 @@ void HisLock::Lock()
 
 void HisLock::Unlock()
 {
+	if (csLock==NULL)
+		throw ArgumentNullException("csLock");
 	::LeaveCriticalSection(csLock);
 }
 

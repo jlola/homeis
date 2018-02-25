@@ -11,11 +11,12 @@
 #include <libxml/parser.h>
 #include <libxml/tree.h>
 #include "Common/CUUID.h"
+#include "IWriteToDevice.h"
 
 #define INTERNAL (xmlChar*)"internal"
 #include "Devices/HisDevBase.h"
 
-class HisDevVirtual : public HisDevBase
+class HisDevVirtual : public HisDevBase, IWriteToDevice
 {
 protected:
 	virtual void DoInternalLoad(xmlNodePtr & node);

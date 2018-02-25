@@ -12,6 +12,7 @@
 #include <string.h>
 #include <libxml/parser.h>
 #include <libxml/tree.h>
+#include "logger.h"
 #include "Common/CUUID.h"
 #include "Common/HisBase.h"
 #include "Devices/Folder/HisDevFolder.h"
@@ -21,6 +22,7 @@ using namespace std;
 
 class HisDevFolderRoot
 {
+	ILogger & logger;
 	IHisDevFactory* factory;
 	HisDevFolder* folder;
 	string fileName;

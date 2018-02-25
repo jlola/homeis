@@ -71,7 +71,7 @@ public:
 	 * najde index Id v deckach v jedne urovni, kdyz nenajde nic -1
 	 */
 	int FindIndex(CUUID id);
-	void Add(IHisBase *pitem);
+	virtual void Add(IHisBase *pitem);
 	virtual IHisBase* Remove(CUUID puuid);
 	DateTime GetModifyDateTime();
 	void SetModifyDateTime(DateTime modifyDate);

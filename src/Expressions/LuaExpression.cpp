@@ -14,7 +14,6 @@
 
 #include "Helpers/File.h"
 #include "Helpers/Directory.h"
-#include "Helpers/logger.h"
 #include "Helpers/StringBuilder.h"
 #include "Helpers/HisDateTime.h"
 #include "Common/HisException.h"
@@ -36,10 +35,29 @@
 
 LuaExpression* LuaExpression::ActualExpression=NULL;
 
-LuaExpression::LuaExpression(xmlNodePtr pnode,HisDevices* hisDevices,IExpressionRuntime *pExpressionRuntime,IHisDevFactory* factory) :
-	HisBase(pnode,factory),started(false)
+LuaExpression::LuaExpression(xmlNodePtr pnode,
+		HisDevices* hisDevices,
+		IExpressionRuntime *pExpressionRuntime,
+		IHisDevFactory* factory) :
+	HisBase(pnode,factory),
+	logger(CLogger::GetLogger()),
+	started(false)
 {
 	STACK
+
+	if (hisDevices==NULL)
+	{
+		throw ArgumentNullException("hisDevices");
+	}
+	if (pExpressionRuntime==NULL)
+	{
+		throw ArgumentNullException("pExpressionRuntime");
+	}
+	if (factory==NULL)
+	{
+		throw ArgumentNullException("factory");
+	}
+	setRunningMutex = HisLock::CreateMutex();
 	evaluateMutex = HisLock::CreateMutex();
 	expressionRuntime = pExpressionRuntime;
 	devices = hisDevices;
@@ -53,21 +71,42 @@ LuaExpression::LuaExpression(xmlNodePtr pnode,HisDevices* hisDevices,IExpression
 	folder = NULL;
 }
 
-LuaExpression::LuaExpression(HisDevFolder* pfolder,HisDevices* hisDevices, string expressionName,IExpressionRuntime *pExpressionRuntime, IHisDevFactory* factory) :
-	HisBase(factory),started(false)
+LuaExpression::LuaExpression(HisDevFolder* pfolder,
+		HisDevices* hisDevices,
+		string expressionName,
+		IExpressionRuntime *pExpressionRuntime,
+		IHisDevFactory* factory) :
+	HisBase(factory),
+	logger(CLogger::GetLogger()),
+	started(false)
 {
 	STACK
+	if (pfolder==NULL)
+	{
+		logger.Error("LuaExpression | Constructor can not be called with empty folder");
+		throw ArgumentNullException("pfolder");
+	}
+	if (hisDevices==NULL)
+	{
+		throw ArgumentNullException("hisDevices");
+	}
+	if (pExpressionRuntime==NULL)
+	{
+		throw ArgumentNullException("pExpressionRuntime");
+	}
+	if (factory==NULL)
+	{
+		throw ArgumentNullException("factory");
+	}
+
 	CreateFolder();
+	setRunningMutex = HisLock::CreateMutex();
 	evaluateMutex = HisLock::CreateMutex();
 	expressionRuntime = pExpressionRuntime;
 	inEvalFunc = false;
 	nextTime = 0;
 	runningAllowed = false;
-	if (pfolder==NULL)
-	{
-		CLogger::Fatal("LuaExpression | Constructor can not be called with empty folder");
-		throw HisException("LuaExpression | Constructor can not be called with empty folder",__FILE__, __LINE__);
-	}
+
 	folder = pfolder;
 	devices = hisDevices;
 	SetName(expressionName);
@@ -177,7 +216,7 @@ void LuaExpression::SaveExpressionToFile()
 	if (fp == NULL) {
 		string file = this->GetName()+".lua";
 		printf("I couldn't open %s for writing.\n",file.c_str());
-		CLogger::Error("I couldn't open %s for writing.\n",file.c_str());
+		logger.Error("I couldn't open %s for writing.\n",file.c_str());
 		return;
 	}
 
@@ -490,7 +529,7 @@ int lua_debuglog(lua_State* L) {
 	        	{
 	        		string arg = lua_tostring(L, i);
 	        		LuaExpression::ActualExpression->DebugLog(arg);
-	        		CLogger::Info("Expr. | %s",arg.c_str());
+	        		CLogger::GetLogger().Info("Expr. | %s",arg.c_str());
 	        	}
 
 	        }
@@ -508,7 +547,7 @@ int lua_log(lua_State* L) {
         if (lua_isstring(L, i)) {
             /* Pop the next arg using lua_tostring(L, i) and do your print */
         	//printf(lua_tostring(L,i));
-        	CLogger::Info(lua_tostring(L,i));
+        	CLogger::GetLogger().Info(lua_tostring(L,i));
         }
         else {
         /* Do something with non-strings if you like */
@@ -584,7 +623,7 @@ bool LuaExpression::Evaluate()
 			if (newEvaluateError!=lastEvaluateError)
 			{
 				lastEvaluateError = newEvaluateError;
-				CLogger::Error(lastEvaluateError.c_str());
+				logger.Error(lastEvaluateError.c_str());
 			}
 			//throw HisException(lastEvaluateError);
 			inEvalFunc = false;
@@ -658,7 +697,7 @@ bool LuaExpression::Evaluate()
 					if (newEvaluateError != lastEvaluateError)
 					{
 						lastEvaluateError = newEvaluateError;
-						CLogger::Error(lastEvaluateError.c_str());
+						logger.Error(lastEvaluateError.c_str());
 					}
 					lua_close(L);
 				}
@@ -685,7 +724,7 @@ void LuaExpression::DebugLog(string ln)
 {
 	STACK
 
-	string msg = CLogger::getStrTime();
+	string msg = DateTime::Now().ToString();
 	msg += " | ";
 	msg += ln;
 	logs.push_back(msg);

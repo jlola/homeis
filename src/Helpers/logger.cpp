@@ -27,20 +27,42 @@
 using namespace std;
 #define BUFFER_SIZE 2048
 
-CLogger logger;
-
-CRITICAL_SECTION CLogger::cs;
+static CLogger logger;
 
 CLogger::CLogger()
 {
-	InitializeCriticalSection(&CLogger::cs);
+	logLevel = ELogLevel::ELogLevelTrace;
+	InitializeCriticalSection(&cs);
 }
 
-void CLogger::Info(const FILE * stream)
+ILogger & CLogger::GetLogger()
 {
-	stringstream strstream;
-	strstream << stream;
-	Info(strstream.str().c_str());
+	return logger;
+}
+
+void CLogger::SetLogLevel(ELogLevel level)
+{
+	Info("Set LogLevel=%s",LogLevelToString(level).c_str());
+	logLevel = level;
+}
+
+string CLogger::LogLevelToString(ELogLevel logLevel)
+{
+	switch(logLevel)
+	{
+	case ELogLevelError:
+		return "Error";
+	case ELogLevelInfo:
+		return "Info";
+	case ELogLevelTrace:
+	default:
+		return "Trace";
+	}
+}
+
+ELogLevel CLogger::GetLogLevel()
+{
+	return logLevel;
 }
 
 std::string CLogger::getStrTime()
@@ -75,7 +97,7 @@ std::string CLogger::getStrDate()
   loctime = localtime(&tv.tv_sec);
 
   sprintf(tmpStr,"%04d%02d%02d",loctime->tm_year+1900,loctime->tm_mon+1,loctime->tm_mday);
-  //fprintfMulti( inExtraStream, inStdStream, "%s [%d]: ", tmpStr, LOW_platformMisc::getThreadID());
+
   line = tmpStr;
 
   return line;
@@ -107,61 +129,52 @@ void CLogger::WriteToFile(string subDir,string file,string line)
 	fclose(fp);
 }
 
-void CLogger::Info(const char * text, ...)
+void CLogger::Log(string type, const char * text, va_list args)
 {
-	ScopedLock lock(CLogger::cs);
-
-	va_list args;
-	va_start (args, text);
-	Info(text,args);
-	va_end (args);
-}
-
-void CLogger::Info(const char * text, va_list args)
-{
-	//ScopedLock lock(CLogger::cs);
+	ScopedLock lock(cs);
 
 	char buffer[BUFFER_SIZE];
 	vsnprintf (buffer,sizeof(buffer),text,args);
 
 	string line = getStrTime();
-	line += " | ";
+	line += "|" + type;
+	line += "|";
 	line += buffer;
 	line += "\n";
-	WriteToFile("Log","info"+  getStrDate() + ".txt",line);
+	WriteToFile("Log","homeisLog"+  getStrDate() + ".txt",line);
+}
+
+void CLogger::Info(const char * text, ...)
+{
+	if (logLevel>=ELogLevel::ELogLevelInfo)
+	{
+		va_list args;
+		va_start (args, text);
+		logger.Log("INFO",text,args);
+		va_end (args);
+	}
+}
+
+void CLogger::Trace(const char * text, ...)
+{
+	STACK
+	if (logLevel>=ELogLevel::ELogLevelTrace)
+	{
+		va_list args;
+		va_start (args, text);
+		logger.Log("TRACE",text,args);
+		va_end (args);
+	}
 }
 
 void CLogger::Error(const char * text, ...)
 {
 	STACK
-	ScopedLock lock(CLogger::cs);
-
-	char buffer[BUFFER_SIZE];
-	va_list args;
-	va_start (args, text);
-	vsnprintf (buffer,sizeof(buffer),text,args);
-	va_end (args);
-
-	string line = getStrTime();
-	line += " | ";
-	line += buffer;
-	line += "\n";
-	WriteToFile("Log","info"+  getStrDate() + ".txt",line);
-}
-
-void CLogger::Fatal(const char * text, ...)
-{
-	ScopedLock lock(CLogger::cs);
-
-	char buffer[BUFFER_SIZE];
-	va_list args;
-	va_start (args, text);
-	vsnprintf (buffer,sizeof(buffer),text,args);
-	va_end (args);
-
-	string line = getStrTime();
-	line += " | ";
-	line += buffer;
-	line += "\n";
-	WriteToFile("Log","info.txt",line);
+	if (logLevel>=ELogLevel::ELogLevelError)
+	{
+		va_list args;
+		va_start (args, text);
+		logger.Log("ERROR",text,args);
+		va_end (args);
+	}
 }

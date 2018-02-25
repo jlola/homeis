@@ -38,11 +38,11 @@ IModbus* ModbusProvider::CreateDriver(SSerPortConfig serport)
 	else
 	{
 		string message = StringBuilder::Format("Unsupported driver type %s",driverType.c_str());
-		throw HisException(message, __FILE__, __LINE__);
+		throw Exception(message);
 	}
 
 	if (!m->Init())
-		throw HisException(StringBuilder::Format("Init of driver %s failed.",serport.Name.c_str()),__FILE__, __LINE__);
+		throw Exception(StringBuilder::Format("Init of driver %s failed.",serport.Name.c_str()));
 
 	return m;
 }

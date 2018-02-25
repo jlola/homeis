@@ -49,7 +49,7 @@ vector<string> Directory::GetFileList(string dir)
 	if((dp = opendir(dir.c_str())) == NULL)
 	{
 		string log = StringBuilder::Format("Error( %d ) opening %s ",errno,dir.c_str());
-		CLogger::Info(log.c_str());
+		CLogger::GetLogger().Info(log.c_str());
 		return files;
 	}
 

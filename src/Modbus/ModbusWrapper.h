@@ -14,6 +14,7 @@
 #include <vector>
 #include "Common/HisLock.h"
 #include "HomeIsConfig.h"
+#include "Logger.h"
 
 using namespace std;
 
@@ -23,6 +24,7 @@ class Modbus : public IModbus
 	SSerPortConfig config;
 	modbus_t *ctx;
 	int SetSlave(uint16_t address);
+	ILogger & logger;
 public:
 	static string DriverName;
 	Modbus(SSerPortConfig config);

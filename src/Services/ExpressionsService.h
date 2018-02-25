@@ -41,6 +41,7 @@ public:
 	static void ExpressionToJson(IHisBase* pParent,LuaExpression *pExpression, Document & respjsondoc);
 	static void ExpressionsToJson(string strid, HisDevFolderRoot* root, Document & respjsondoc);
 	static void ExpressionDebugLogToJson(LuaExpression *pExpression, Document & respjsondoc);
+	const http_response render_OPTIONS(const http_request& req);
 	const http_response render_GET(const http_request& r);
 	const http_response render_POST(const http_request& r);
 	const http_response render_PUT(const http_request& req);

@@ -10,11 +10,13 @@
 
 #include <httpserver.hpp>
 #include "HttpHeadersProvider.h"
+#include "logger.h"
 
 using namespace std;
 using namespace httpserver;
 
 class LogService : public http_resource {
+	ILogger & logger;
 	IHttpHeadersProvider & httpHeadersProvider;
 public:
 	LogService(IHttpHeadersProvider & httpHeadersProvider);

@@ -5,17 +5,21 @@
  *      Author: pc
  */
 
-#include <RFIDHandler.h>
+#include "RFIDHandler.h"
+#include "StringBuilder.h"
+#include "HisException.h"
 
 string RFIDHandler::LoadType = "RFIDHandler";
 
-RFIDHandler::RFIDHandler(HisDevModbus* devModbus,IHisDevFactory* factory) {
+RFIDHandler::RFIDHandler(IHisDevModbus* devModbus,IHisDevFactory* factory) {
 	if (devModbus==NULL)
-	{
-		string message = StringBuilder::Format("NULL value of  devModbus Line: %s, Value: %d.", __FILE__, __LINE__);
-		CLogger::Error(message.c_str());
-		throw HisException(message,__FILE__,__LINE__);
-	}
+		throw ArgumentNullException(string("devModbus"));
+	if (factory==NULL)
+		throw ArgumentNullException(string("factory"));
+
+	this->srfidregs = NULL;
+	this->newDataFlag = NULL;
+	this->rfiddataflag = NULL;
 	this->dev = devModbus;
 	this->factory = factory;
 }
@@ -24,12 +28,12 @@ bool RFIDHandler::Scan(bool addnew)
 {
 	STACK
 
-	if (dev->GetTypeDef(ETypes::BinInputs,stypedef))
+	if (dev->GetTypeDef(ETypes::RFID,stypedef))
 	{
 		uint16_t* data;
 		uint8_t size;
 		dev->GetData(data,size);
-		//sbininputs = reinterpret_cast<SBinInput*>(&data[stypedef.OffsetOfType]);
+		srfidregs = reinterpret_cast<SRFIDRegs*>(&data[stypedef.OffsetOfType]);
 		CreateOrValidTags(addnew);
 	}
 
@@ -38,51 +42,80 @@ bool RFIDHandler::Scan(bool addnew)
 
 void RFIDHandler::CreateOrValidTags(bool addnew)
 {
-	for(int i=0;i<stypedef.Count;i++)
+	HisDevValueBase* valuebase = dev->FindValue(NEWDATAFLAG,LoadType);
+	newDataFlag = dynamic_cast<HisDevValue<bool>*>(valuebase);
+	if (newDataFlag!=NULL || addnew)
 	{
-//		SBinInput sinput = sbininputs[i];
-//		HisDevValueBase* valuebase = dev->FindValue(Converter::itos(sinput.PinNumber));
-//		HisDevValue<bool>* input = NULL;
-//		input = dynamic_cast<HisDevValue<bool>*>(valuebase);
-//		if ((input==NULL && addnew) || input!=NULL)
-//		{
-//			if (input==NULL)
-//			{
-//				input = new HisDevValue<bool>(Converter::itos(dev->GetAddress(),10),
-//						EHisDevDirection::Read,
-//						EDataType::Bool,
-//						Converter::itos(sinput.PinNumber),
-//						false,
-//						LoadType,
-//						factory);
-//				dev->Add(input);
-//			}
-//			input->SetValue(sinput.Value);
-//			valuesInput.push_back(input);
-//		}
+		if (newDataFlag==NULL)
+		{
+			newDataFlag = new HisDevValue<bool>(Converter::itos(dev->GetAddress(),10),
+					EHisDevDirection::ReadWrite,
+					EDataType::Bool,
+					NEWDATAFLAG,
+					false,
+					LoadType,
+					factory,
+					dev);
+			newDataFlag->SetName("NewRFIDDataFlag");
+			dev->Add(newDataFlag);
+		}
+		newDataFlag->SetValue(srfidregs->NewDataFlag ? true : false);
+	}
+
+	HisDevValueBase* rfiddatabase = dev->FindValue(RFIDDATATAG,LoadType);
+	rfiddataflag = dynamic_cast<HisDevValue<string>*>(rfiddatabase);
+	if (rfiddataflag!=NULL || addnew)
+	{
+		if (rfiddataflag==NULL)
+		{
+			rfiddataflag = new HisDevValue<string>(Converter::itos(dev->GetAddress(),10),
+					EHisDevDirection::Read,
+					EDataType::String,
+					RFIDDATATAG,
+					"",
+					LoadType,
+					factory,
+					dev);
+			rfiddataflag->SetName("RFIDData");
+			dev->Add(rfiddataflag);
+		}
+		string data = (const char*)srfidregs->buffer;
+		rfiddataflag->SetValue(data);
 	}
 }
 
 void RFIDHandler::RefreshOutputs()
 {
-
+	STACK
+	if (newDataFlag!=NULL && srfidregs!=NULL)
+	{
+		bool value = newDataFlag->GetValue();
+		uint16_t regvalue = srfidregs->NewDataFlag = value ? 1 : 0;
+		bool success = dev->setHolding(stypedef.OffsetOfType+NEWDATAFLAG_OFFSET, regvalue);
+		newDataFlag->ReadedValueFromDevice(value,!success);
+	}
 }
 
 void RFIDHandler::Refresh(bool modbusSuccess)
 {
-
+	if (newDataFlag!=NULL && srfidregs!=NULL)
+	{
+		newDataFlag->ReadedValueFromDevice(srfidregs->NewDataFlag ? true : false,!modbusSuccess);
+		rfiddataflag->ReadedValueFromDevice((const char*)srfidregs->buffer,!modbusSuccess);
+	}
 }
 
 void RFIDHandler::Load()
 {
-	vector<HisDevValue<uint>*> values = dev->GetItems<HisDevValue<uint>>();
-
-	for(size_t i=0;i<values.size();i++)
+	HisDevValueBase* value = dev->FindValue(RFIDDATATAG,LoadType);
+	if (value!=NULL)
 	{
-		HisDevValue<uint> *value = values[i];
-
-		if (value->GetLoadType()==LoadType)
-			values.push_back(value);
+		rfiddataflag = dynamic_cast<HisDevValue<string>*>(value);
+	}
+	value = dev->FindValue(NEWDATAFLAG,LoadType);
+	if (value!=NULL)
+	{
+		newDataFlag = dynamic_cast<HisDevValue<bool>*>(value);
 	}
 }
 

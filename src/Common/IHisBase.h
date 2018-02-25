@@ -9,7 +9,8 @@
 #define SRC_COMMON_IHISBASE_H_
 
 #include <string>
-
+#include <libxml/parser.h>
+#include <libxml/tree.h>
 #include "DateTime.h"
 #include "CUUID.h"
 

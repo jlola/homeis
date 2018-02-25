@@ -8,7 +8,7 @@
 #ifndef SRC_DEVICES_HANDLERS_BINNARYINPUTHANDLER_H_
 #define SRC_DEVICES_HANDLERS_BINNARYINPUTHANDLER_H_
 
-#include "HisDevModbus.h"
+#include "IHisDevModbus.h"
 #include "IModbusHandler.h"
 
 class BinnaryInputHandler : public IModbusHandler
@@ -27,10 +27,10 @@ class BinnaryInputHandler : public IModbusHandler
 	STypedef stypedef;
 	SBinInput* sbininputs;
 	vector<HisDevValue<bool>*> valuesInput;
-	HisDevModbus* dev;
+	IHisDevModbus* dev;
 	IHisDevFactory* factory;
 public:
-	BinnaryInputHandler(HisDevModbus* devModbus,IHisDevFactory* factory);
+	BinnaryInputHandler(IHisDevModbus* devModbus,IHisDevFactory* factory);
 	void CreateOrValidInputs(bool addnew);
 	bool Scan(bool addnew);
 	void RefreshOutputs();

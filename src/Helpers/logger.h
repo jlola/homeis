@@ -10,23 +10,31 @@
 
 #include <string>
 #include "linuxcs.h"
+#include "ILogger.h"
 
 using namespace std;
 
-class CLogger
+
+
+
+class CLogger : public ILogger
 {
 private:
-	static CRITICAL_SECTION cs;
-	static void WriteToFile(string subDir,string file,string line);
-	static std::string getStrDate();
+	ELogLevel logLevel;
+	CRITICAL_SECTION cs;
+	void WriteToFile(string subDir,string file,string line);
+	std::string getStrDate();
+	void Log(string type, const char * text, va_list args);
+	std::string getStrTime();
+	string LogLevelToString(ELogLevel logLevel);
 public:
-	static std::string getStrTime();
 	CLogger();
-	static void Info(const FILE * stream);
-	static void Info(const char * text, ...);
-	static void Info(const char * text, va_list args);
-	static void Fatal(const char * text, ...);
-	static void Error(const char * text, ...);
+	void SetLogLevel(ELogLevel level);
+	ELogLevel GetLogLevel();
+	static ILogger & GetLogger();
+	void Info(const char * text, ...);
+	void Trace(const char * text, ...);
+	void Error(const char * text, ...);
 };
 
 #endif /* HELPERS_H_ */

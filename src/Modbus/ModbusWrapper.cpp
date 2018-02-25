@@ -7,14 +7,15 @@
 
 #include <stdio.h>
 #include <cerrno>
-#include "Logger.h"
+#include "linuxcs.h"
 #include "StringBuilder.h"
 #include <Modbus/ModbusWrapper.h>
 
+using namespace std;
 string Modbus::DriverName = "modbus";
 
 Modbus::Modbus(SSerPortConfig config)
-: modbusmutex(NULL),ctx(NULL)
+: modbusmutex(NULL),ctx(NULL),logger(CLogger::GetLogger())
 {
 	modbusmutex = HisLock::CreateMutex();
 	this->config = config;
@@ -40,7 +41,7 @@ bool Modbus::Init()
 	ctx = modbus_new_rtu(config.Port.c_str(),115200,'N',8,1);
 	if (ctx == NULL) {
 		fprintf(stderr, "Unable to create the libmodbus context\n");
-		CLogger::Error("Unable to create the libmodbus context %s\n",config.Port.c_str());
+		logger.Error("Unable to create the libmodbus context %s\n",config.Port.c_str());
 		return false;
 	}
 
@@ -49,7 +50,7 @@ bool Modbus::Init()
 	if (modbus_connect(ctx) == -1) {
 		string message = StringBuilder::Format("Connection failed: %s\n", modbus_strerror(errno));
 	    printf(message.c_str());
-	    CLogger::Error(message.c_str());
+	    logger.Error(message.c_str());
 	    modbus_free(ctx);
 	    return false;
 	}
@@ -75,7 +76,7 @@ int Modbus::SetSlave(uint16_t address)
 	int status = modbus_set_slave(ctx,address);
 	if (status == -1) {
 		fprintf(stderr, "Set slave: %s\n", modbus_strerror(errno));
-		CLogger::Error("Error set slave: %d, error: %s",address,modbus_strerror(errno));
+		logger.Error("Error set slave: %d, error: %s",address,modbus_strerror(errno));
 	}
 	return status;
 }
@@ -88,7 +89,7 @@ bool Modbus::setBitInput(uint16_t address,uint16_t index, uint16_t state) {
 		status = modbus_write_bit(ctx,index,state?TRUE:FALSE);
 		if (status < 0) {
 			fprintf(stderr, "Error setBitInput: %s\n", modbus_strerror(errno));
-			CLogger::Error("Error setBitInput: %d, error: %s",address,modbus_strerror(errno));
+			logger.Error("Error setBitInput: %d, error: %s",address,modbus_strerror(errno));
 		}
 	}
 	return status < 0 ? false : true;
@@ -104,7 +105,7 @@ bool Modbus::getBitInput(uint16_t address,uint16_t index,bool & bit){
 		delete[] dest;
 		if (status == -1) {
 			fprintf(stderr, "Error getBitInput: %s\n", modbus_strerror(errno));
-			CLogger::Error("Error getBitInput: %d, error: %s",address,modbus_strerror(errno));
+			logger.Error("Error getBitInput: %d, error: %s",address,modbus_strerror(errno));
 		}
 	}
 	return status < 0 ? false : true;
@@ -120,7 +121,7 @@ bool Modbus::getShortInput(uint16_t address,uint16_t index,uint16_t & input){
 		delete[] dest;
 		if (status == -1) {
 			fprintf(stderr, " Error getShortInput: %s\n", modbus_strerror(errno));
-			CLogger::Error("Error getShortInput: %d, error: %s",address,modbus_strerror(errno));
+			logger.Error("Error getShortInput: %d, error: %s",address,modbus_strerror(errno));
 		}
 	}
 	return status < 0 ? false : true;
@@ -134,7 +135,7 @@ bool Modbus::setCoil(uint16_t address,uint16_t index, uint16_t state){
 		status = modbus_write_bit(ctx,index,state?TRUE:FALSE);
 		if (status == -1) {
 			fprintf(stderr, "Error setCoil: %s\n", modbus_strerror(errno));
-			CLogger::Error("Error setCoil: %d, error: %s",address,modbus_strerror(errno));
+			logger.Error("Error setCoil: %d, error: %s",address,modbus_strerror(errno));
 		}
 	}
 	return status < 0 ? false : true;
@@ -150,7 +151,7 @@ bool Modbus::getCoil(uint16_t address,uint16_t index,bool & coil){
 		delete[] dest;
 		if (status == -1) {
 			fprintf(stderr, "Error getCoil: %s\n", modbus_strerror(errno));
-			CLogger::Error("Error getCoil: %d, error: %s",address,modbus_strerror(errno));
+			logger.Error("Error getCoil: %d, error: %s",address,modbus_strerror(errno));
 		}
 	}
 	return status < 0 ? false : true;
@@ -164,7 +165,7 @@ bool Modbus::setHolding(uint16_t address,uint16_t index, uint16_t val){
 		status = modbus_write_register(ctx,index,val);
 		if (status == -1) {
 			fprintf(stderr, "Error setHolding: %s\n", modbus_strerror(errno));
-			CLogger::Error("Error setHolding: %d, error: %s",address,modbus_strerror(errno));
+			logger.Error("Error setHolding: %d, error: %s",address,modbus_strerror(errno));
 		}
 	}
 	return status < 0 ? false : true;
@@ -181,7 +182,7 @@ bool Modbus::getHolding(uint16_t address,uint16_t index,uint16_t* holding){
 			modbus_set_error_recovery(ctx, MODBUS_ERROR_RECOVERY_PROTOCOL);
 			modbus_set_error_recovery(ctx, MODBUS_ERROR_RECOVERY_LINK );
 			fprintf(stderr, "Error getHolding: %s\n", modbus_strerror(errno));
-			CLogger::Error("Error getHolding: %d, error: %s",address,modbus_strerror(errno));
+			logger.Error("Error getHolding: %d, error: %s",address,modbus_strerror(errno));
 		}
 		*holding = dest[0];
 	}
@@ -199,7 +200,7 @@ bool Modbus::getHoldings(uint16_t address,uint16_t offset,uint16_t count,uint16_
 			modbus_set_error_recovery(ctx,(modbus_error_recovery_mode)( MODBUS_ERROR_RECOVERY_PROTOCOL | MODBUS_ERROR_RECOVERY_LINK));
 			//modbus_set_error_recovery(ctx, MODBUS_ERROR_RECOVERY_LINK );
 			fprintf(stderr, "Error getHoldings: %s\n", modbus_strerror(errno));
-			CLogger::Error("Error getHoldings: %d, error: %s",address,modbus_strerror(errno));
+			logger.Error("Error getHoldings: %d, error: %s",address,modbus_strerror(errno));
 		}
 	}
 	return status < 0 ? false : true;

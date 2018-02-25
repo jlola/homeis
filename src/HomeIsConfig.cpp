@@ -10,7 +10,6 @@
 #include <fstream>      // std::ifstream
 #include <sstream>
 #include <vector>
-#include "Helpers/logger.h"
 #include "HomeIsConfig.h"
 
 
@@ -31,11 +30,13 @@ SerialPorts = (\
 		Port=\"SimulatedPort\"		#name of port\n\
 		Driver=\"ModbusSimulator\"	#driver: ModbusSimulator\n\
 		Name=\"Simulator\"\n\
-		}\
+		}\n\
 		);\n\
+		LogLevel=\"Info\"				# Error,Info,Trace\n\
 ";
 
-HomeIsConfig::HomeIsConfig(string pfilename)
+HomeIsConfig::HomeIsConfig(string pfilename) :
+	logger(CLogger::GetLogger())
 {
 	filename = pfilename;
 
@@ -46,11 +47,11 @@ HomeIsConfig::HomeIsConfig(string pfilename)
 		//if (File::Exists(configFilePath)) File::Delete(configFilePath);
 		if (!File::Exists(configFilePath))
 		{
-			CLogger::Info("File %s not exists and will be created with default params",configFilePath.c_str());
+			logger.Info("File %s not exists and will be created with default params",configFilePath.c_str());
 
 			FILE* fp = fopen(configFilePath.c_str(), "w+");
 			if (fp == NULL) {
-				CLogger::Error("I couldn't open %s for writing.\n",configFilePath.c_str());
+				logger.Error("I couldn't open %s for writing.\n",configFilePath.c_str());
 				return;
 			}
 
@@ -63,12 +64,12 @@ HomeIsConfig::HomeIsConfig(string pfilename)
 	}
 	catch(const FileIOException &fioex)
 	{
-		CLogger::Error("I/O error while reading file. %s", fioex.what());
+		logger.Error("I/O error while reading file. %s", fioex.what());
 		throw;
 	}
 	catch(const ParseException &pex)
 	{
-		CLogger::Error("Parse error at : in file %s - at line: %d %s", pex.getFile(), pex.getLine(),pex.getError());
+		logger.Error("Parse error at : in file %s - at line: %d %s", pex.getFile(), pex.getLine(),pex.getError());
 		throw;
 	}
 }
@@ -98,6 +99,22 @@ vector<SSerPortConfig> HomeIsConfig::GetSerialPorts()
 		}
 	}
 	return serports;
+}
+
+ELogLevel HomeIsConfig::GetLogLevel()
+{
+	string result = "";
+	Setting& root = cfg.getRoot();
+	if (root.lookupValue("LogLevel",result))
+	{
+		if (result=="Info")
+			return ELogLevelInfo;
+		else if (result=="Error")
+			return ELogLevelError;
+		else if (result=="Trace")
+			return ELogLevelTrace;
+	}
+	return ELogLevelTrace;
 }
 
 string HomeIsConfig::GetAllowOrigin()

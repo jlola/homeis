@@ -9,13 +9,11 @@
 
 #include "gtest/gtest.h"
 #include <stdint.h>
-#include "fakeit.hpp"
 #include "Modbus/ModbusSimulator.h"
 #include "HisDevModbus.h"
 #include "OneWireHandler.h"
 #include <Tests/Devices/HisDevModbusTests.h>
 
-using namespace fakeit;
 
 namespace AF {
 
@@ -124,18 +122,52 @@ uint16_t registers[] = {
 uint16_t* registersi = (uint16_t*)registers;
 
 HisDevModbusTests::HisDevModbusTests() {
-	// TODO Auto-generated constructor stub
+	modbus = NULL;
 	modbussim.Driver = "modbussimulator";
 	modbussim.Name = "modbussimulator";
 	modbussim.Port = "";
-	std::vector<SSerPortConfig> serports;
+}
 
+void HisDevModbusTests::SetUp()
+{
+	modbus = new ModbusSimulator(modbussim,registersi);
+
+	When(Method(hisDevFactoryMock,Create)).AlwaysReturn(NULL);
+	hisDevFactory = &hisDevFactoryMock.get();
+}
+
+
+TEST_F(HisDevModbusTests,Resolve_PASS)
+{
+	HisDevModbus* devmodbus = new HisDevModbus(modbus,1,hisDevFactory);
+	xmlNode node;
+	node.name = DEVMODBUS;
+	xmlNodePtr nodeptr = &node;
+	bool result = devmodbus->Resolve(nodeptr);
+	ASSERT_TRUE(result);
+	delete devmodbus;
+	devmodbus = NULL;
+}
+
+TEST_F(HisDevModbusTests,Resolve_FAIL)
+{
+	HisDevModbus* devmodbus = new HisDevModbus(modbus,1,hisDevFactory);
+	xmlNode node;
+	node.name = BAD_CAST "wrongname";
+	xmlNodePtr nodeptr = &node;
+	bool result = devmodbus->Resolve(nodeptr);
+	ASSERT_FALSE(result);
+	delete devmodbus;
+	devmodbus = NULL;
 }
 
 TEST_F(HisDevModbusTests,ScanTest)
 {
 	IModbus* modbus = new ModbusSimulator(modbussim,registersi);
-	HisDevModbus* devmodbus = new HisDevModbus(modbus,1,NULL);
+	Mock<IHisDevFactory> hisDevFactoryMock;
+	When(Method(hisDevFactoryMock,Create)).AlwaysReturn(NULL);
+	IHisDevFactory &hisDevFactory = hisDevFactoryMock.get();
+	HisDevModbus* devmodbus = new HisDevModbus(modbus,1,&hisDevFactory);
 	devmodbus->Scan(true);
 
 	vector<HisDevValue<bool>*> values = devmodbus->GetItems<HisDevValue<bool>>();

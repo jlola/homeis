@@ -31,6 +31,7 @@ HisDevBase::~HisDevBase()
 }
 
 HisDevBase::HisDevBase(IHisDevFactory* factory) :
+		logger(CLogger::GetLogger()),
 		HisBase::HisBase(factory),
 		enabled(true),
 		scanPeriodMs(10000),
@@ -45,7 +46,8 @@ HisDevBase::HisDevBase(IHisDevFactory* factory) :
 }
 
 HisDevBase::HisDevBase(xmlNodePtr node,IHisDevFactory* factory)
-	: HisBase::HisBase(node,factory),
+	: logger(CLogger::GetLogger()),
+	HisBase::HisBase(node,factory),
 	enabled(true),
 	scanPeriodMs(10000),
 	error(true),
@@ -154,12 +156,12 @@ void HisDevBase::Refresh(bool alarm)
 		catch(HisException & ex)
 		{
 			string msg = "Error in %s name: %s | error: %s\nStack trace: " + Stack::GetTraceString();
-			CLogger::Error( msg.c_str(), GetNodeName(), GetName().c_str(), ex.what());
+			logger.Error( msg.c_str(), GetNodeName(), GetName().c_str(), ex.what());
 			OnError();
 		}
 		catch(...)
 		{
-			CLogger::Error("HisDevBase::Refresh | Unexpected error");
+			logger.Error("HisDevBase::Refresh | Unexpected error");
 			OnError();
 		}
 	}

@@ -6,10 +6,11 @@
  */
 
 #include "BinnaryInputHandler.h"
+#include "StringBuilder.h"
 
 string BinnaryInputHandler::LoadType = "BinnaryInputHandler";
 
-BinnaryInputHandler::BinnaryInputHandler(HisDevModbus* dev,IHisDevFactory* factory)
+BinnaryInputHandler::BinnaryInputHandler(IHisDevModbus* dev,IHisDevFactory* factory)
 	: factory(factory)
 {
 	sbininputs = NULL;
@@ -31,7 +32,7 @@ bool BinnaryInputHandler::Scan(bool addnew)
 
 void BinnaryInputHandler::Load()
 {
-	vector<HisDevValue<bool>*> values = dev->GetItems<HisDevValue<bool>>();
+	vector<HisDevValue<bool>*> values = dev->GetBoolItems();
 
 	for(size_t i=0;i<values.size();i++)
 	{
@@ -72,7 +73,10 @@ void BinnaryInputHandler::CreateOrValidInputs(bool addnew)
 						Converter::itos(sinput.PinNumber),
 						false,
 						LoadType,
-						factory);
+						factory,
+						dev);
+				input->SetName(StringBuilder::Format("BinaryInput%d",sinput.PinNumber));
+				input->SetAddressName(StringBuilder::Format("BinaryInput%d",sinput.PinNumber));
 				dev->Add(input);
 			}
 			input->SetValue(sinput.Value);

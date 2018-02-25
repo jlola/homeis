@@ -26,7 +26,11 @@ const char json[] = "[{\"name\":\"Bečka horní\",\"id\":4,\"type\":1,\"value\":
                          {\"name\":\"Podlahový okruh\",\"id\":1,\"type\":1,\"value\":23}, \
                          {\"name\":\"Radiatorový okruh\",\"id\":3,\"type\":0,\"value\":45.4}]";
 
-DevicesService::DevicesService(HisDevices & dev,HisDevFolderRoot & folder, IHttpHeadersProvider & headersProvider, IHisDevFactory* factory) :
+DevicesService::DevicesService(HisDevices & dev,
+		HisDevFolderRoot & folder,
+		IHttpHeadersProvider & headersProvider,
+		IHisDevFactory* factory) :
+		logger(CLogger::GetLogger()),
 		devices(dev),
 		rootFolder(folder),
 		headersProvider(headersProvider),
@@ -48,7 +52,9 @@ const http_response DevicesService::render_GET(const http_request& req)
 	int response_code = MHD_HTTP_FORBIDDEN;
 
 	//devices/{devid}/devvalue/{valueid}
-	if (path.find("/api/devices")!=string::npos && path.find("devvalues")!=string::npos)
+	if ((path.find("/api/devices")!=string::npos ||
+		path.find("/api/onewiredevices")!=string::npos) &&
+			path.find("devvalue")!=string::npos)
 	{
 		string strdevid = req.get_arg("devid");
 		string strvalueid = req.get_arg("valueid");
@@ -69,7 +75,8 @@ const http_response DevicesService::render_GET(const http_request& req)
 		}
 		response_code = MHD_HTTP_OK;
 	}
-	else if (path.find("/api/onewiredevices/folder")!=string::npos)
+	else if (path.find("/api/onewiredevices/folder")!=string::npos ||
+			 path.find("/api/devices/folder")!=string::npos)
 	{
 		string strFolderId = req.get_arg("id");
 		HisDevFolder* folder = NULL;
@@ -167,6 +174,8 @@ void DevicesService::FillDeviceToJson(Value & devjson, HisDevBase* dev,Document 
 	jsonvalue.SetString(strvalue.c_str(),strvalue.length(),respjsondoc.GetAllocator());
 	devjson.AddMember("Id",jsonvalue,respjsondoc.GetAllocator());
 
+	jsonvalue.SetUint(dev->GetScanPeriod());
+	devjson.AddMember("ScanPeriodMs",jsonvalue,respjsondoc.GetAllocator());
 
 	jsonvalue.SetString(strvalue.c_str(),strvalue.length(),respjsondoc.GetAllocator());
 	jsonvalue.SetBool(dev->IsEnabled());
@@ -283,7 +292,7 @@ const http_response DevicesService::render_POST(const http_request& req)
 	string path = req.get_path();
 
 	string message;
-	int response_code = 403;
+	int response_code = MHD_HTTP_FORBIDDEN;
 
 	Document respjsondoc;
 	respjsondoc.SetArray();
@@ -292,18 +301,20 @@ const http_response DevicesService::render_POST(const http_request& req)
 
 	if (req.get_user()=="a" && req.get_pass()=="a")
 	{
-		if (path.find("/api/onewiredevices/devvalue")!=string::npos)
+		if (path.find("/api/onewiredevices/devvalue")!=string::npos ||
+			path.find("/api/devices/devvalue")!=string::npos)
 		{
 			HisDevValueBase* devvalue = CreateVirtualDevValue(content,message);
 			if (devvalue!=NULL)
 			{
 				if (UpdateDevValue(devvalue->GetRecordId(),content))
 				{
-					response_code = 200;
+					response_code = MHD_HTTP_OK;
 				}
 			}
 		}
-		else if (path.find("/api/onewiredevices")!=string::npos)
+		else if (path.find("/api/onewiredevices")!=string::npos ||
+				 path.find("/api/devices")!=string::npos)
 		{
 			HisDevVirtual* vritualdev = CreateVirtualDevice(content,message);
 			if (vritualdev!=NULL)
@@ -320,7 +331,7 @@ const http_response DevicesService::render_POST(const http_request& req)
 				PrettyWriter<StringBuffer> wr(buffer);
 				respjsondoc.Accept(wr);
 				std::string json = buffer.GetString();
-				response_code = 200;
+				response_code = MHD_HTTP_OK;
 				message = json;
 			}
 		}
@@ -328,11 +339,23 @@ const http_response DevicesService::render_POST(const http_request& req)
 	else
 	{
 		string message = "Authentication error";
-		response_code = 401;
+		response_code = MHD_HTTP_UNAUTHORIZED;
 	}
 
 	http_response_builder response_builder(message,response_code,headersProvider.GetContentTypeAppJson());
 	this->headersProvider.AddHeaders(response_builder);
+	http_response resp(response_builder.string_response());
+	return resp;
+}
+
+const http_response DevicesService::render_OPTIONS(const http_request& req)
+{
+	int response_code = MHD_HTTP_OK;
+	string message = "";
+	http_response_builder response_builder(message,response_code,headersProvider.GetContentTypeAppJson());
+	this->headersProvider.AddHeaders(response_builder);
+	response_builder = response_builder.with_header("Access-Control-Allow-Methods","POST, PUT");
+	response_builder = response_builder.with_header("Access-Control-Allow-Headers","authorization,content-type");
 	http_response resp(response_builder.string_response());
 	return resp;
 }
@@ -346,7 +369,8 @@ const http_response DevicesService::render_PUT(const http_request& req)
 
 	if (req.get_user()=="a" && req.get_pass()=="a")
 	{
-		if (path.find("/api/onewiredevices/devvalue")!=string::npos)
+		if (path.find("/api/onewiredevices/devvalue")!=string::npos ||
+		    path.find("/api/devices/devvalue")!=string::npos)
 		{
 			string strDevValueId = req.get_arg("id");
 			CUUID devValueId = CUUID::Parse(strDevValueId);
@@ -356,7 +380,8 @@ const http_response DevicesService::render_PUT(const http_request& req)
 				message = "OK";
 			}
 		}
-		else if (path.find("/api/onewiredevices")!=string::npos)
+		else if (path.find("/api/onewiredevices")!=string::npos ||
+				 path.find("/api/devices")!=string::npos)
 		{
 			string strDevId = req.get_arg("devid");
 			if (UpdateDevice(strDevId,content))
@@ -446,7 +471,7 @@ bool DevicesService::DeleteDevValue(string strDevValueRecordId, string & msg)
 	if (devValue==NULL)
 	{
 		msg += StringBuilder::Format("OneWireDevicesService::DeleteDevValue | Doesn't exists");
-		CLogger::Error(msg.c_str());
+		logger.Error(msg.c_str());
 		return false;
 	}
 	HisDevBase* device = dynamic_cast<HisDevBase*>(devValue->GetParent());
@@ -458,7 +483,7 @@ bool DevicesService::DeleteDevValue(string strDevValueRecordId, string & msg)
 		if (folder!=NULL)
 		{
 			msg += StringBuilder::Format("OneWireDevicesService::DeleteDevValue | Cant delete node %s used in folder %s",strDevValueRecordId.c_str(),folder->GetName().c_str());
-			CLogger::Error(msg.c_str());
+			logger.Error(msg.c_str());
 			return false;
 		}
 	}
@@ -474,7 +499,7 @@ bool DevicesService::DeleteDevValue(string strDevValueRecordId, string & msg)
 		else
 		{
 			msg += StringBuilder::Format("OneWireDevicesService::DeleteDevValue | Error while delete.");
-			CLogger::Error(msg.c_str());
+			logger.Error(msg.c_str());
 			return false;
 		}
 	}
@@ -500,7 +525,7 @@ bool DevicesService::DeleteDev(string strDevValueRecordId, string & msg)
 				if (folder!=NULL)
 				{
 					msg += StringBuilder::Format("OneWireDevicesService::DeleteDevice | Cant delete node %s used in folder %s",strDevValueRecordId.c_str(),folder->GetName().c_str());
-					CLogger::Error(msg.c_str());
+					logger.Error(msg.c_str());
 					return false;
 				}
 			}
@@ -512,7 +537,7 @@ bool DevicesService::DeleteDev(string strDevValueRecordId, string & msg)
 	 }
 
 	msg = StringBuilder::Format("OneWireDevicesService::DeleteDevice | Can't delete not existed dev");
-	CLogger::Error(msg.c_str());
+	logger.Error(msg.c_str());
 	return false;
 }
 
@@ -709,7 +734,7 @@ bool DevicesService::UpdateDevValue(CUUID devValueId, string strjson)
 			}
 			else
 			{
-				CLogger::Error("Try to write not writable deviceValue");
+				logger.Error("Try to write not writable deviceValue");
 			}
 		}
 

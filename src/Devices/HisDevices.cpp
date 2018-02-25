@@ -20,10 +20,11 @@
 #include "VirtualDevices/HisDevVirtual.h"
 #include "PoppyDebugTools.h"
 #include "HisDevModbus.h"
-
+#include "logger.h"
 #include "HisDevices.h"
 
 HisDevices::HisDevices(string fileName ,IModbusProvider* modbusProvider)
+ : logger(CLogger::GetLogger())
 {
 	this->modbusProvider = modbusProvider;
 	devicesFileName = fileName;
@@ -34,10 +35,14 @@ HisDevices::HisDevices(string fileName ,IModbusProvider* modbusProvider)
 void HisDevices::AddToRefreshQueue(HisDevBase* hisDevBase)
 {
 	STACK
+	logger.Trace("AddToRefreshQueue before refreshMutex.Lock()");
 	refreshMutex.Lock();
-	//CLogger::Info("Add %s to refresh queue." ,hisDevBase->GetName().c_str());
+	logger.Trace("AddToRefreshQueue after refreshMutex.Lock()");
+	logger.Trace("AddToRefreshQueue Add %s to refresh queue." ,hisDevBase->GetName().c_str());
 	devqueue.push(hisDevBase);
+	logger.Trace("AddToRefreshQueue before refreshMutex.Unlock()");
 	refreshMutex.Unlock();
+	logger.Trace("AddToRefreshQueue after refreshMutex.Unlock()");
 }
 
 HisDevBase *HisDevices::operator[](unsigned int i)
@@ -142,7 +147,7 @@ void HisDevices::Load(IHisDevFactory* factory)
 			string message = "General error on element: ";
 			message += (const char*)cur->name;
 			cout <<  message;
-			CLogger::Info(message.c_str());
+			logger.Info(message.c_str());
 		}
 
 		cur = cur->next;
@@ -230,11 +235,15 @@ void HisDevices::Refresh()
 
 		while (devqueue.size()>0)
 		{
+			logger.Trace("Refresh before refreshMutex.Lock()");
 			refreshMutex.Lock();
+			logger.Trace("Refresh after refreshMutex.Lock()");
 			dev = devqueue.front();
 			devqueue.pop();
+			logger.Trace("Refresh before refreshMutex.Unlock()");
 			refreshMutex.Unlock();
-			//CLogger::Info("Refresh from queue: %s" ,dev->GetName().c_str());
+			logger.Trace("Refresh after refreshMutex.Unlock()");
+			logger.Trace("Refresh from queue: %s" ,dev->GetName().c_str());
 			if (dev->IsEnabled())
 				dev->Refresh(false);
 
@@ -280,7 +289,7 @@ void HisDevices::Save()
 
 	if (result<0)
 	{
-		CLogger::Error("Error while writing devices.xml");
+		logger.Error("Error while writing devices.xml");
 		throw std::domain_error("Error while writing devices.xml");
 	}
 }

@@ -61,7 +61,7 @@ LOW_deviceIDRaw::LOW_deviceIDRaw( uint32_t inHighInt, uint32_t inLowInt)
 LOW_deviceIDRaw::LOW_deviceIDRaw( const byteVec_t &inRomID)
 {
   if ( inRomID.size() != sizeof( romID) )
-    throw HisException("Byte vector length does not match", __FILE__, __LINE__);
+    throw Exception(string("Byte vector length does not match"));
     
   for( unsigned int a=0; a<sizeof( romID); a++)
     romID[a] = inRomID[a];

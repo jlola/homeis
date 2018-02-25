@@ -25,6 +25,18 @@ ExpressionService::~ExpressionService(void)
 
 }
 
+const http_response ExpressionService::render_OPTIONS(const http_request& req)
+{
+	int response_code = MHD_HTTP_OK;
+	string message = "";
+	http_response_builder response_builder(message,response_code,headersProvider.GetContentTypeAppJson());
+	this->headersProvider.AddHeaders(response_builder);
+	response_builder = response_builder.with_header("Access-Control-Allow-Methods","POST, PUT");
+	response_builder = response_builder.with_header("Access-Control-Allow-Headers","authorization,content-type");
+	http_response resp(response_builder.string_response());
+	return resp;
+}
+
 const http_response ExpressionService::render_GET(const http_request& req)
 {
 	STACK

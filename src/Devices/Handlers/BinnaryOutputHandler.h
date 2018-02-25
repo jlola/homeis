@@ -9,7 +9,7 @@
 #define SRC_DEVICES_HANDLERS_BINNARYOUTPUTHANDLER_H_
 
 #include <vector>
-#include "HisDevModbus.h"
+#include "IHisDevModbus.h"
 #include "IModbusHandler.h"
 #include "IHisBase.h"
 
@@ -29,12 +29,12 @@ class BinnaryOutputHandler : public IModbusHandler
 	vector<HisDevValue<bool>*> valuesOutput;
 	int count;
 	STypedef stypedef;
-	HisDevModbus* devModbus;
+	IHisDevModbus* devModbus;
 	SBinOutput* sbinoutputs;
 	IHisDevFactory* factory;
 public:
 	static string LoadType;
-	BinnaryOutputHandler(HisDevModbus* devModbus,IHisDevFactory* factory);
+	BinnaryOutputHandler(IHisDevModbus* devModbus,IHisDevFactory* factory);
 	bool Scan(bool addnew);
 	void RefreshOutputs();
 	void Refresh(bool modbusSuccess);

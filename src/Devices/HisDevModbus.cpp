@@ -9,19 +9,21 @@
 #include "Modbus/IModbus.h"
 #include "StringBuilder.h"
 #include "HisDevModbus.h"
+#include "ModbusHandlers.h"
 
 using namespace std;
 
 HisDevModbus::HisDevModbus(IModbus* connection,int address,IHisDevFactory* factory)
-	: HisDevBase::HisDevBase(factory),
+	: logger(CLogger::GetLogger()),
+	  HisDevBase::HisDevBase(factory),
 	  data(NULL),
 	  size(0),
 	  typesdefs(NULL),
 	  modbusProvider(NULL),
 	  refreshOutputs(false),
-	  scanRequest(0),
-	  handlers(this,factory)
+	  scanRequest(0)
 {
+	handlers = new ModbusHandlers(this,factory);
 	refreshscanmutex = HisLock::CreateMutex();
 	this->connection = connection;
 	this->address = address;
@@ -30,18 +32,24 @@ HisDevModbus::HisDevModbus(IModbus* connection,int address,IHisDevFactory* facto
 
 HisDevModbus::HisDevModbus(xmlNodePtr node,IModbusProvider* modbusProvider,IHisDevFactory* factory)
 	: HisDevBase::HisDevBase(node,factory),
+	  logger(CLogger::GetLogger()),
 	  data(NULL),
 	  size(0),
 	  typesdefs(NULL),
 	  refreshOutputs(false),
-	  scanRequest(0),
-	  handlers(this,factory)
+	  scanRequest(0)
 {
+	handlers = new ModbusHandlers(this,factory);
 	refreshscanmutex = HisLock::CreateMutex();
 	this->modbusProvider = modbusProvider;
 	this->connection = NULL;
 	this->address = 0;
 	SetError(true);
+}
+
+void HisDevModbus::Add(IHisBase *pitem)
+{
+	HisBase::Add(pitem);
 }
 
 bool HisDevModbus::Resolve(xmlNodePtr pnode)
@@ -101,6 +109,15 @@ bool HisDevModbus::GetTypeDef(ETypes type,STypedef & stypedef)
 	}
 	return false;
 }
+vector<HisDevValue<double>*> HisDevModbus::GetDoubleItems()
+{
+	return GetItems<HisDevValue<double>>();
+}
+
+vector<HisDevValue<bool>*> HisDevModbus::GetBoolItems()
+{
+	return GetItems<HisDevValue<bool>>();
+}
 
 bool HisDevModbus::Scan(bool addnew)
 {
@@ -122,7 +139,7 @@ bool HisDevModbus::Scan(bool addnew)
 		if (connection->getHoldings(address,0,size,data))
 		{
 			STACK_VAL(Scan,"File: "+string(__FILE__)+",Line: "+Converter::itos(__LINE__))
-			handlers.Scan(addnew);
+			handlers->Scan(addnew);
 		}
 		else
 		{
@@ -176,6 +193,28 @@ HisDevValueBase* HisDevModbus::FindValue(string pinNumber)
 	return NULL;
 }
 
+HisDevValueBase* HisDevModbus::FindValue(string pinNumber,string loadType)
+{
+	vector<HisDevValueBase*> values = GetItems<HisDevValueBase>();
+	for(size_t i = 0; i< values.size(); i++)
+	{
+		if (values[i]->GetPinNumber()==pinNumber && values[i]->GetLoadType()==loadType)
+			return values[i];
+	}
+	return NULL;
+}
+
+HisDevValueBase* HisDevModbus::FindLoadType(string loadType)
+{
+	vector<HisDevValueBase*> values = GetItems<HisDevValueBase>();
+	for(size_t i = 0; i< values.size(); i++)
+	{
+		if (values[i]->GetLoadType()==loadType)
+			return values[i];
+	}
+	return NULL;
+}
+
 void HisDevModbus::DoInternalRefresh(bool alarm)
 {
 	STACK
@@ -185,7 +224,7 @@ void HisDevModbus::DoInternalRefresh(bool alarm)
 		if (Scan(false))
 		{
 			//set outputs
-			handlers.RefreshOutputs();
+			handlers->RefreshOutputs();
 		}
 		else
 		{
@@ -196,7 +235,8 @@ void HisDevModbus::DoInternalRefresh(bool alarm)
 	{
 		if (refreshOutputs)
 		{
-			handlers.RefreshOutputs();
+			refreshOutputs = false;
+			handlers->RefreshOutputs();
 		}
 
 		bool modbusok = connection->getHoldings(address,0,size,data);
@@ -209,11 +249,11 @@ void HisDevModbus::DoInternalRefresh(bool alarm)
 		{
 			if (typesdefs==NULL)
 			{
-				CLogger::Info("Wrong data scanned. Var typesdefs is NULL.");
+				logger.Info("Wrong data scanned. Var typesdefs is NULL.");
 				return;
 			}
 
-			handlers.Refresh(modbusok);
+			handlers->Refresh(modbusok);
 		}
 	}
 }
@@ -253,7 +293,7 @@ void HisDevModbus::DoInternalLoad(xmlNodePtr & node)
 
 		if (connection==NULL)
 		{
-			CLogger::Error("HisDevModbus::Load | Name: %s Connection: %s not found",
+			logger.Error("HisDevModbus::Load | Name: %s Connection: %s not found",
 					GetName().c_str(),strConnectionName.c_str());
 		}
 
@@ -261,7 +301,7 @@ void HisDevModbus::DoInternalLoad(xmlNodePtr & node)
 		prop = NULL;
 	}
 
-	handlers.Load();
+	handlers->Load();
 }
 
 void HisDevModbus::OnError() {
@@ -270,5 +310,7 @@ void HisDevModbus::OnError() {
 
 
 HisDevModbus::~HisDevModbus() {
+	delete handlers;
+	handlers = NULL;
 }
 

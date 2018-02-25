@@ -10,6 +10,7 @@
 
 #include "converter.h"
 
+
 class HisException : public std::exception
 {
    std::string s;
@@ -24,5 +25,9 @@ public:
    ~HisException() throw () {} // Updated
    const char* what() const throw() { return s.c_str(); }
 };
+
+#define Exception(name) HisException(name,__FILE__,__LINE__)
+
+#define ArgumentNullException(name) HisException("ArgumentNullException of " + std::string(name),__FILE__,__LINE__)
 
 #endif /* HISEXCEPTION_H_ */

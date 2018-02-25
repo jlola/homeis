@@ -12,6 +12,7 @@
 #include "File.h"
 #include <libconfig.h++>
 #include <vector>
+#include "logger.h"
 
 using namespace std;
 using namespace libconfig;
@@ -25,7 +26,7 @@ struct SSerPortConfig
 
 class HomeIsConfig
 {
-
+	ILogger & logger;
 	string filename;
 	Config cfg;
 
@@ -36,6 +37,8 @@ public:
 	virtual ~HomeIsConfig();
 
 	int GetServerPort();
+
+	ELogLevel GetLogLevel();
 
 	string GetAllowOrigin();
 

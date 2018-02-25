@@ -17,7 +17,10 @@
 #include "HisDevRunTime.h"
 
 HisDevRuntime::HisDevRuntime(HisDevices & pdevices) :
-	devices(pdevices),thread(0),running(false)
+	logger(CLogger::GetLogger()),
+	devices(pdevices),
+	thread(0),
+	running(false)
 {
 }
 
@@ -26,13 +29,14 @@ void* HisDevRuntime::ThreadFunction(void* obj)
 	STACK
 	HisDevRuntime* runtime = (HisDevRuntime*)obj;
 
-	CLogger::Info("Strat thread HisDevRuntime::ThreadFunction with threadid: %ul",pthread_self());
+	runtime->logger.Info("Strat thread HisDevRuntime::ThreadFunction with threadid: %ul",pthread_self());
 
 	while(runtime->running)
 	{
 		runtime->devices.Refresh();
 	}
 
+	runtime->logger.Info("End thread HisDevRuntime::ThreadFunction with threadid: %ul",pthread_self());
 	return NULL;
 }
 

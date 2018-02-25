@@ -6,13 +6,14 @@
  *      Author: root
  */
 
-#include "Helpers/logger.h"
 #include "HisDevFolderRoot.h"
 
 
 HisDevFolderRoot::HisDevFolderRoot(string pfileName,IHisDevFactory* factory) :
+	logger(CLogger::GetLogger()),
 	factory(factory)
 {
+
 	doc = NULL;
 	fileName = pfileName;
 	folder = NULL;
@@ -110,7 +111,7 @@ void HisDevFolderRoot::Save()
 
 	if (result<0)
 	{
-		CLogger::Error("Error while writing folders.xml");
+		logger.Error("Error while writing folders.xml");
 		throw std::domain_error("Error while writing folders.xml");
 	}
 

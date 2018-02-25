@@ -8,6 +8,7 @@
 #ifndef STRINGBUILDER_H_
 #define STRINGBUILDER_H_
 
+#include <string>
 #include <string.h>
 #include <stdarg.h>
 

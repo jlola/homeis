@@ -14,7 +14,7 @@
 
 class HisDevModbus;
 
-class ModbusHandlers : IModbusHandler
+class ModbusHandlers : public IModbusHandler
 {
 	HisDevModbus* dev;
 	vector<IModbusHandler*> handlers;

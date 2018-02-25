@@ -118,7 +118,7 @@ namespace Safe {
 
   /// @brief Reentrant printing to stderr.
   INLINE void print2stderr(const char *msg, size_t len = 0) {
-	  CLogger::Info(msg);
+	  CLogger::GetLogger().Info(msg);
     if (len > 0) {
       checked(write(STDERR_FILENO, msg, len));
     } else {
@@ -340,7 +340,7 @@ void* DeathHandler::MallocHook(size_t size,
 void DeathHandler::SignalHandler(int sig, void * /* info */, void *secret) {
 	std::string stackTrace = Stack::GetTraceString();
 	    //you can print or log the stack trace here
-	    CLogger::Error(stackTrace.c_str());
+	    CLogger::GetLogger().Error(stackTrace.c_str());
   // Stop all other running threads by forking
   pid_t forkedPid = fork();
   if (forkedPid != 0) {

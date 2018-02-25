@@ -18,6 +18,7 @@
 #include "HisDevRunTime.h"
 #include <algorithm>
 
+#include "logger.h"
 #include "HomeIsServer.h"
 #include "Services/FileController.h"
 #include "Services/FoldersService.h"
@@ -33,6 +34,7 @@ using namespace std;
 
 class HomeIsServer
 {
+	ILogger & logger;
 	HisDevFactory* factory;
 	//LOW_network  oneWireNet;
 	HttpHeadersProvider headersProvider;

@@ -89,10 +89,13 @@ int main(int argc, char **argv)
 Home information system %d.%d.%8d\n\
 ---------------------------------------\n\
 ";
+	ILogger & logger = CLogger::GetLogger();
 	//printf(infomsg);
-	CLogger::Info(infomsg,VERSION_MAIN,VERSION_SEC,VERSION_BUILD);
+	logger.Info(infomsg,VERSION_MAIN,VERSION_SEC,VERSION_BUILD);
 
 	HomeIsConfig config("homeis.cfg");
+
+	logger.SetLogLevel(config.GetLogLevel());
 	vector<SSerPortConfig> serports = config.GetSerialPorts();
 	ModbusProvider provider(serports);
 	HomeIsServer server(provider,config.GetServerPort(),config.GetAllowOrigin());

@@ -10,7 +10,8 @@
 
 #include "IModbusHandler.h"
 #include "HisDevValue.h"
-#include "HisDevModbus.h"
+#include "IHisDevModbus.h"
+#include "logger.h"
 
 #define OW_DEVICES_OFFSET	5
 #define OW_SCAN_OFFSET 		0
@@ -34,13 +35,14 @@ class OneWireHandler : public IModbusHandler
 		uint16_t error;
 	} SDS18B20;
 
+	ILogger & logger;
 	HisDevValue<bool>* scantag;
 	STypedef stypedef;
 	SOWHeader* owheader;
 	uint16_t sowiretypesdefsIndex;
 	SDS18B20* sds18b20s;
 
-	HisDevModbus* devModbus;
+	IHisDevModbus* devModbus;
 	bool scanRequest;
 	IHisDevFactory* factory;
 
@@ -51,7 +53,7 @@ public:
 
 	static string LoadType;
 
-	OneWireHandler(HisDevModbus* devModbus,IHisDevFactory* factory);
+	OneWireHandler(IHisDevModbus* devModbus,IHisDevFactory* factory);
 
 	void RefreshOutputs();
 
