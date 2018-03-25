@@ -36,6 +36,7 @@ public:
 	static string LoadType;
 	BinnaryOutputHandler(IHisDevModbus* devModbus,IHisDevFactory* factory);
 	bool Scan(bool addnew);
+	bool Remove(CUUID id);
 	void RefreshOutputs();
 	void Refresh(bool modbusSuccess);
 	void Load();

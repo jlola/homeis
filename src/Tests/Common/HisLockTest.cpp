@@ -31,11 +31,11 @@ TEST_F(HisLockTests,HisLockTest_LockedThreadThenUnlocked)
 {
 	HisLock lock(mutex);
 	Start();
-	sleep(1);
+	usleep(10000);
 	ASSERT_TRUE(begin);
 	ASSERT_FALSE(end);
 	lock.Unlock();
-	sleep(1);
+	usleep(10000);
 	ASSERT_TRUE(end);
 	Stop();
 }
@@ -43,7 +43,7 @@ TEST_F(HisLockTests,HisLockTest_LockedThreadThenUnlocked)
 TEST_F(HisLockTests,HisLockTest_NotLockedThreadNotBlock)
 {
 	Start();
-	sleep(1);
+	usleep(10000);
 	ASSERT_TRUE(begin);
 	ASSERT_TRUE(end);
 	Stop();

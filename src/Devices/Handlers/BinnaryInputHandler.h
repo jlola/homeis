@@ -31,6 +31,7 @@ class BinnaryInputHandler : public IModbusHandler
 	IHisDevFactory* factory;
 public:
 	BinnaryInputHandler(IHisDevModbus* devModbus,IHisDevFactory* factory);
+	bool Remove(CUUID id);
 	void CreateOrValidInputs(bool addnew);
 	bool Scan(bool addnew);
 	void RefreshOutputs();

@@ -41,6 +41,16 @@ void ModbusHandlers::Load()
 	}
 }
 
+bool ModbusHandlers::Remove(CUUID id)
+{
+	for(size_t i=0;i<handlers.size();i++)
+	{
+		if (handlers[i]->Remove(id))
+			return true;
+	}
+	return false;
+}
+
 bool ModbusHandlers::Scan(bool addnew)
 {
 	STACK

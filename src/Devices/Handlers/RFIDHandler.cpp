@@ -28,9 +28,9 @@ bool RFIDHandler::Scan(bool addnew)
 {
 	STACK
 
-	if (dev->GetTypeDef(ETypes::RFID,stypedef))
+	if (dev->GetTypeDef(ETypes::RFID,&stypedef))
 	{
-		uint16_t* data;
+		uint16_t** data;
 		uint8_t size;
 		dev->GetData(data,size);
 		srfidregs = reinterpret_cast<SRFIDRegs*>(&data[stypedef.OffsetOfType]);
@@ -38,6 +38,21 @@ bool RFIDHandler::Scan(bool addnew)
 	}
 
 	return true;
+}
+
+bool RFIDHandler::Remove(CUUID id)
+{
+	if (rfiddataflag!=NULL && rfiddataflag->GetRecordId()==id)
+	{
+		rfiddataflag = NULL;
+		return true;
+	}
+	if (newDataFlag!=NULL && newDataFlag->GetRecordId()==id)
+	{
+		newDataFlag = NULL;
+		return true;
+	}
+	return false;
 }
 
 void RFIDHandler::CreateOrValidTags(bool addnew)
@@ -98,10 +113,16 @@ void RFIDHandler::RefreshOutputs()
 
 void RFIDHandler::Refresh(bool modbusSuccess)
 {
-	if (newDataFlag!=NULL && srfidregs!=NULL)
+	if ( srfidregs != NULL )
 	{
-		newDataFlag->ReadedValueFromDevice(srfidregs->NewDataFlag ? true : false,!modbusSuccess);
-		rfiddataflag->ReadedValueFromDevice((const char*)srfidregs->buffer,!modbusSuccess);
+		if (newDataFlag!=NULL)
+		{
+			newDataFlag->ReadedValueFromDevice(srfidregs->NewDataFlag ? true : false,!modbusSuccess);
+		}
+		if (rfiddataflag!=NULL)
+		{
+			rfiddataflag->ReadedValueFromDevice((const char*)srfidregs->buffer,!modbusSuccess);
+		}
 	}
 }
 

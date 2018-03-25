@@ -52,6 +52,15 @@ void HisDevModbus::Add(IHisBase *pitem)
 	HisBase::Add(pitem);
 }
 
+IHisBase* HisDevModbus::Remove(CUUID puuid)
+{
+	HisLock lock(refreshscanmutex);
+
+	if (handlers->Remove(puuid))
+		return HisBase::Remove(puuid);
+	return NULL;
+}
+
 bool HisDevModbus::Resolve(xmlNodePtr pnode)
 {
 	STACK
@@ -92,7 +101,7 @@ void HisDevModbus::ReleaseResources()
 	typesdefs = NULL;
 }
 
-bool HisDevModbus::GetTypeDef(ETypes type,STypedef & stypedef)
+bool HisDevModbus::GetTypeDef(ETypes type,STypedef * stypedef)
 {
 	if (header.CountOfTypes>0)
 	{
@@ -102,7 +111,7 @@ bool HisDevModbus::GetTypeDef(ETypes type,STypedef & stypedef)
 		{
 			if (typesdefs[i].Type==type)
 			{
-				stypedef = typesdefs[i];
+				*stypedef = typesdefs[i];
 				return true;
 			}
 		}
@@ -160,11 +169,11 @@ IModbus* HisDevModbus::GetModbus()
 	return connection;
 }
 
-bool HisDevModbus::GetData(uint16_t* & data, uint8_t & length)
+bool HisDevModbus::GetData(uint16_t** data, uint8_t & length)
 {
 	if (data!=NULL)
 	{
-		data = this->data;
+		*data = this->data;
 		length = this->header.lastIndex+1;
 		return true;
 	}
@@ -218,6 +227,8 @@ HisDevValueBase* HisDevModbus::FindLoadType(string loadType)
 void HisDevModbus::DoInternalRefresh(bool alarm)
 {
 	STACK
+
+	HisLock lock(refreshscanmutex);
 
 	if (GetError() || data==NULL)
 	{

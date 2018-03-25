@@ -50,9 +50,9 @@ public:
 
 	virtual void Add(IHisBase *pitem)=0;
 
-	virtual bool GetTypeDef(ETypes type,STypedef & stypedef)=0;
+	virtual bool GetTypeDef(ETypes type,STypedef * stypedef)=0;
 
-	virtual bool GetData(uint16_t* & data, uint8_t & length)=0;
+	virtual bool GetData(uint16_t** data, uint8_t & length)=0;
 
 	virtual HisDevValueBase* FindValue(string pinNumber)=0;
 

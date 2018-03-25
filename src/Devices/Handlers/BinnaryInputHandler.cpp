@@ -19,11 +19,11 @@ BinnaryInputHandler::BinnaryInputHandler(IHisDevModbus* dev,IHisDevFactory* fact
 
 bool BinnaryInputHandler::Scan(bool addnew)
 {
-	if (dev->GetTypeDef(ETypes::BinInputs,stypedef))
+	if (dev->GetTypeDef(ETypes::BinInputs,&stypedef))
 	{
-		uint16_t* data;
+		uint16_t* data = NULL;
 		uint8_t size;
-		dev->GetData(data,size);
+		dev->GetData(&data,size);
 		sbininputs = reinterpret_cast<SBinInput*>(&data[stypedef.OffsetOfType]);
 		CreateOrValidInputs(addnew);
 	}
@@ -83,6 +83,28 @@ void BinnaryInputHandler::CreateOrValidInputs(bool addnew)
 			valuesInput.push_back(input);
 		}
 	}
+}
+
+bool BinnaryInputHandler::Remove(CUUID id)
+{
+	if (valuesInput.size()>0)
+	{
+		size_t index=-1;
+		for(size_t v=0;v<valuesInput.size();v++)
+		{
+			if (valuesInput[v]->GetRecordId()==id)
+			{
+				index = v;
+				break;
+			}
+		}
+		if (index>=0)
+		{
+			valuesInput.erase(valuesInput.begin() + index);
+			return true;
+		}
+	}
+	return false;
 }
 
 void BinnaryInputHandler::RefreshOutputs()

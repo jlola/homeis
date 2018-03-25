@@ -122,6 +122,7 @@ uint16_t registers[] = {
 uint16_t* registersi = (uint16_t*)registers;
 
 HisDevModbusTests::HisDevModbusTests() {
+	hisDevFactory = NULL;
 	modbus = NULL;
 	modbussim.Driver = "modbussimulator";
 	modbussim.Name = "modbussimulator";

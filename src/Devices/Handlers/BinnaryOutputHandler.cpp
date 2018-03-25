@@ -82,15 +82,37 @@ void BinnaryOutputHandler::Refresh(bool modbusSuccess)
 bool BinnaryOutputHandler::Scan(bool addnew)
 {
 	STACK
-	if (devModbus->GetTypeDef(ETypes::BinOutputs,stypedef))
+	if (devModbus->GetTypeDef(ETypes::BinOutputs,&stypedef))
 	{
 		uint16_t* data;
 		uint8_t size;
-		devModbus->GetData(data,size);
+		devModbus->GetData(&data,size);
 		sbinoutputs = reinterpret_cast<SBinOutput*>(&data[stypedef.OffsetOfType]);
 		CreateOrValidOutputs(addnew);
 	}
 	return true;
+}
+
+bool BinnaryOutputHandler::Remove(CUUID id)
+{
+	if (valuesOutput.size()>0)
+	{
+		size_t index=-1;
+		for(size_t v=0;v<valuesOutput.size();v++)
+		{
+			if (valuesOutput[v]->GetRecordId()==id)
+			{
+				index = v;
+				break;
+			}
+		}
+		if (index>=0)
+		{
+			valuesOutput.erase(valuesOutput.begin() + index);
+			return true;
+		}
+	}
+	return false;
 }
 
 void BinnaryOutputHandler::CreateOrValidOutputs(bool addnew)

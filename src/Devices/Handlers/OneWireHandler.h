@@ -21,6 +21,7 @@
 
 class OneWireHandler : public IModbusHandler
 {
+public:
 	typedef struct
 	{
 		uint16_t scan;
@@ -34,7 +35,7 @@ class OneWireHandler : public IModbusHandler
 		int16_t temperature;
 		uint16_t error;
 	} SDS18B20;
-
+private:
 	ILogger & logger;
 	HisDevValue<bool>* scantag;
 	STypedef stypedef;
@@ -54,6 +55,8 @@ public:
 	static string LoadType;
 
 	OneWireHandler(IHisDevModbus* devModbus,IHisDevFactory* factory);
+
+	bool Remove(CUUID id);
 
 	void RefreshOutputs();
 

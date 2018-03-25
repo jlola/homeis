@@ -56,11 +56,12 @@ void OneWireHandler::Load()
 bool OneWireHandler::Scan(bool addnew)
 {
 	STACK
-	if (devModbus->GetTypeDef(ETypes::DS18B20Temp,stypedef))
+	if (devModbus->GetTypeDef(ETypes::DS18B20Temp,&stypedef))
 	{
-		uint16_t* data;
+		uint16_t* data=NULL;
 		uint8_t size;
-		devModbus->GetData(data,size);
+		devModbus->GetData(&data,size);
+
 		owheader = reinterpret_cast<SOWHeader*>(&data[stypedef.OffsetOfType]);
 		CreateOrValidOneWireHeader(addnew);
 		logger.Info(StringBuilder::Format("Scanned %d ds18b20",owheader->count).c_str());
@@ -70,6 +71,16 @@ bool OneWireHandler::Scan(bool addnew)
 			CreateOrValidOneWire(addnew);
 			return true;
 		}
+	}
+	return false;
+}
+
+bool OneWireHandler::Remove(CUUID id)
+{
+	if (scantag!=NULL && scantag->GetRecordId()==id)
+	{
+		scantag = NULL;
+		return true;
 	}
 	return false;
 }
@@ -159,14 +170,17 @@ void OneWireHandler::Refresh(bool modbusSuccess)
 
 	//uint16_t lscan = data[typesdefs[sowiretypesdefsIndex].OffsetOfType];
 	uint16_t owscan = owheader->scan;
-	scantag->ReadedValueFromDevice(owscan,!modbusSuccess);
-	if (!owscan && scanRequest)
+	if (scantag!=NULL)
 	{
-		scanRequest = 0;
-		if (!this->Scan(true))
+		scantag->ReadedValueFromDevice(owscan,!modbusSuccess);
+		if (!owscan && scanRequest)
 		{
-			logger.Error("Error scan modbus field with address %d",devModbus->GetAddress());
-			return;
+			scanRequest = 0;
+			if (!this->Scan(true))
+			{
+				logger.Error("Error scan modbus field with address %d",devModbus->GetAddress());
+				return;
+			}
 		}
 	}
 
@@ -197,6 +211,6 @@ void OneWireHandler::Refresh(bool modbusSuccess)
 }
 
 OneWireHandler::~OneWireHandler() {
-	// TODO Auto-generated destructor stub
+
 }
 

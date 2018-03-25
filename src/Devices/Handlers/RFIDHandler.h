@@ -34,7 +34,7 @@ class RFIDHandler : public IModbusHandler {
 	void CreateOrValidTags(bool addnew);
 public:
 	RFIDHandler(IHisDevModbus* devModbus,IHisDevFactory* factory);
-
+	bool Remove(CUUID id);
 	bool Scan(bool addnew);
 	void RefreshOutputs();
 	void Refresh(bool modbusSuccess);

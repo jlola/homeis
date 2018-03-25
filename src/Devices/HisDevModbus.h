@@ -39,6 +39,7 @@ class HisDevModbus : public HisDevBase, public IHisDevModbus
 
 	ILogger & logger;
 
+
 	LPCRITICAL_SECTION refreshscanmutex;  /**< Mutex for exclusive access. */
 
 	SHeader header;
@@ -62,15 +63,17 @@ public:
 
 	void Add(IHisBase *pitem);
 
+	IHisBase* Remove(CUUID puuid);
+
 	vector<HisDevValue<double>*> GetDoubleItems();
 
 	vector<HisDevValue<bool>*> GetBoolItems();
 
 	HisDevValueBase* FindValue(string pinNumber,string handlerType);
 
-	bool GetData(uint16_t* & data, uint8_t & length);
+	bool GetData(uint16_t** data, uint8_t & length);
 
-	bool GetTypeDef(ETypes type,STypedef & stypedef);
+	bool GetTypeDef(ETypes type,STypedef * stypedef);
 
 	void WriteToDevice(ValueChangedEventArgs args);
 

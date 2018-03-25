@@ -19,6 +19,7 @@ class ModbusHandlers : public IModbusHandler
 	HisDevModbus* dev;
 	vector<IModbusHandler*> handlers;
 public:
+	bool Remove(CUUID id);
 	ModbusHandlers(HisDevModbus* dev,IHisDevFactory* factory);
 	bool Scan(bool addnew);
 	void RefreshOutputs();
