@@ -64,6 +64,9 @@ HisDevValueBase* HisDevVirtual::CreateHisDevValue(string address,EHisDevDirectio
 		case EDataType::Uint:
 			result = new HisDevValue<unsigned int>(address, EHisDevDirection::ReadWrite, ptype, pinNo,0,LoadType,factory,this);
 			break;
+		case EDataType::Email:
+			break;
+		case EDataType::Enum:
 		case EDataType::Unknown:
 			return result;
 	}

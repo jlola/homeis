@@ -86,11 +86,14 @@ bool BinnaryOutputHandler::Scan(bool addnew)
 	{
 		uint16_t* data;
 		uint8_t size;
-		devModbus->GetData(&data,size);
-		sbinoutputs = reinterpret_cast<SBinOutput*>(&data[stypedef.OffsetOfType]);
-		CreateOrValidOutputs(addnew);
+		if (devModbus->GetData(data,size))
+		{
+			sbinoutputs = reinterpret_cast<SBinOutput*>(&data[stypedef.OffsetOfType]);
+			CreateOrValidOutputs(addnew);
+			return true;
+		}
 	}
-	return true;
+	return false;
 }
 
 bool BinnaryOutputHandler::Remove(CUUID id)

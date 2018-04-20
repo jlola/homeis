@@ -389,10 +389,15 @@ const http_response ExpressionService::render_POST(const http_request& req)
 			message = json;
 			response_code = MHD_HTTP_OK;
 		}
+		else
+		{
+			message = headersProvider.GetErrorMessageJson("Not found");
+			response_code = MHD_HTTP_NOT_FOUND;
+		}
 	}
 	else
 	{
-		string message = "Authentication error";
+		message = headersProvider.GetErrorMessageJson("Authentication error");
 		response_code = MHD_HTTP_UNAUTHORIZED;
 	}
 	http_response_builder response_builder(message, response_code,headersProvider.GetContentTypeAppJson());
@@ -414,10 +419,14 @@ const http_response ExpressionService::render_PUT(const http_request& req)
 		{
 			response_code = MHD_HTTP_OK;
 		}
+		else
+		{
+			message = headersProvider.GetErrorMessageJson(message);
+		}
 	}
 	else
 	{
-		message = "Authentication error";
+		message = headersProvider.GetErrorMessageJson("Authentication error");
 		response_code = MHD_HTTP_UNAUTHORIZED;
 	}
 
@@ -440,10 +449,14 @@ const http_response ExpressionService::render_DELETE(const http_request& req)
 			response_code = MHD_HTTP_OK;
 			message = "OK";
 		}
+		else
+		{
+			message = headersProvider.GetErrorMessageJson(message);
+		}
 	}
 	else
 	{
-		message = "Authentication error";
+		message = headersProvider.GetErrorMessageJson("Authentication error");
 		response_code = MHD_HTTP_UNAUTHORIZED;
 	}
 

@@ -18,6 +18,7 @@ class IHttpHeadersProvider
 public:
 	virtual http_response_builder& AddHeaders(http_response_builder & responseBuilder)=0;
 	virtual string GetContentTypeAppJson()=0;
+	virtual string GetErrorMessageJson(string message)=0;
 	virtual ~IHttpHeadersProvider(){}
 };
 

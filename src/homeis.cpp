@@ -19,20 +19,14 @@
 #include "Devices/Folder/HisDevFolderRoot.h"
 #include "StringBuilder.h"
 #include "Helpers/File.h"
-
-//#include "homeis/Expressions/LuaExpression.h"
 #include "death_handler.h"
 #include "linuxservice.h"
 #include "Version.h"
 
 #define luac_c
 #define LUA_CORE
-//#define lua_c
 extern "C" {
 
-//#include "lua.h"                                /* Always include this when calling Lua */
-//#include "lauxlib.h"                            /* Always include this when calling Lua */
-//#include "lualib.h"                             /* Always include this when calling Lua */
 
 }
 #include <signal.h>

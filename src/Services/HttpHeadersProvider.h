@@ -22,6 +22,8 @@ public:
 	http_response_builder& AddHeaders(http_response_builder & responseBuilder);
 	string GetContentTypeAppJson();
 
+	string GetErrorMessageJson(string message);
+
 	virtual ~HttpHeadersProvider();
 };
 

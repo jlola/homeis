@@ -23,9 +23,12 @@ bool BinnaryInputHandler::Scan(bool addnew)
 	{
 		uint16_t* data = NULL;
 		uint8_t size;
-		dev->GetData(&data,size);
-		sbininputs = reinterpret_cast<SBinInput*>(&data[stypedef.OffsetOfType]);
-		CreateOrValidInputs(addnew);
+		if (dev->GetData(data,size))
+		{
+			sbininputs = reinterpret_cast<SBinInput*>(&data[stypedef.OffsetOfType]);
+			CreateOrValidInputs(addnew);
+			return true;
+		}
 	}
 	return false;
 }

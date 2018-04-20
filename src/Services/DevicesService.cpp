@@ -49,10 +49,27 @@ const http_response DevicesService::render_GET(const http_request& req)
 	Document respjsondoc;
 	respjsondoc.SetArray();
 	string path = req.get_path();
+	logger.Info("DevicesService::render_GET: %s.",path.c_str());
+
 	int response_code = MHD_HTTP_FORBIDDEN;
 
-	//devices/{devid}/devvalue/{valueid}
-	if ((path.find("/api/devices")!=string::npos ||
+	if (path.find("/api/devices/devvalue")!=string::npos)
+	{
+		string strvalueid = req.get_arg("valueid");
+		CUUID valueid = CUUID::Parse(strvalueid);
+		HisDevValueBase* tag = devices.FindValue(valueid);
+		if (tag != NULL)
+		{
+			respjsondoc.SetObject();
+			DevValueToJson(respjsondoc,NULL,tag,respjsondoc);
+			response_code = MHD_HTTP_OK;
+		}
+		else
+		{
+			response_code = MHD_HTTP_NOT_FOUND;
+		}
+	} //devices/{devid}/devvalue/{valueid}
+	else if ((path.find("/api/devices")!=string::npos ||
 		path.find("/api/onewiredevices")!=string::npos) &&
 			path.find("devvalue")!=string::npos)
 	{
@@ -72,8 +89,12 @@ const http_response DevicesService::render_GET(const http_request& req)
 			{
 				DevValueToJson(respjsondoc,NULL,devvalue,respjsondoc);
 			}
+			response_code = MHD_HTTP_OK;
 		}
-		response_code = MHD_HTTP_OK;
+		else
+		{
+			response_code = MHD_HTTP_NOT_FOUND;
+		}
 	}
 	else if (path.find("/api/onewiredevices/folder")!=string::npos ||
 			 path.find("/api/devices/folder")!=string::npos)
@@ -312,6 +333,11 @@ const http_response DevicesService::render_POST(const http_request& req)
 					response_code = MHD_HTTP_OK;
 				}
 			}
+			else
+			{
+				message = headersProvider.GetErrorMessageJson("Not found");
+				response_code = MHD_HTTP_NOT_FOUND;
+			}
 		}
 		else if (path.find("/api/onewiredevices")!=string::npos ||
 				 path.find("/api/devices")!=string::npos)
@@ -334,11 +360,16 @@ const http_response DevicesService::render_POST(const http_request& req)
 				response_code = MHD_HTTP_OK;
 				message = json;
 			}
+			else
+			{
+				message = headersProvider.GetErrorMessageJson("Not found");
+				response_code = MHD_HTTP_NOT_FOUND;
+			}
 		}
 	}
 	else
 	{
-		string message = "Authentication error";
+		string message = headersProvider.GetErrorMessageJson("Authentication error");
 		response_code = MHD_HTTP_UNAUTHORIZED;
 	}
 
@@ -372,7 +403,7 @@ const http_response DevicesService::render_PUT(const http_request& req)
 		if (path.find("/api/onewiredevices/devvalue")!=string::npos ||
 		    path.find("/api/devices/devvalue")!=string::npos)
 		{
-			string strDevValueId = req.get_arg("id");
+			string strDevValueId = req.get_arg("valueid");
 			CUUID devValueId = CUUID::Parse(strDevValueId);
 			if (UpdateDevValue(devValueId,content))
 			{
@@ -393,7 +424,7 @@ const http_response DevicesService::render_PUT(const http_request& req)
 	}
 	else
 	{
-		message = "Authentication error";
+		message = headersProvider.GetErrorMessageJson("Authentication error");
 		response_code = MHD_HTTP_UNAUTHORIZED;
 	}
 
@@ -585,9 +616,9 @@ HisDevValueBase* DevicesService::CreateVirtualDevValue(string strjson,string & m
 	if (document.Parse<0>((char*)strjson.c_str()).HasParseError())
 		return NULL;
 
-	if (document.HasMember("parentid"))
+	if (document.HasMember("parentId"))
 	{
-		string strparentid = document["parentid"].GetString();
+		string strparentid = document["parentId"].GetString();
 		CUUID parentid = CUUID::Parse(strparentid);
 
 		int index = devices.Find(parentid);

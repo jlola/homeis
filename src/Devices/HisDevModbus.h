@@ -71,7 +71,7 @@ public:
 
 	HisDevValueBase* FindValue(string pinNumber,string handlerType);
 
-	bool GetData(uint16_t** data, uint8_t & length);
+	bool GetData(uint16_t* & data, uint8_t & length);
 
 	bool GetTypeDef(ETypes type,STypedef * stypedef);
 

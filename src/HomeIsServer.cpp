@@ -29,6 +29,8 @@
 #include "HomeIsServer.h"
 #include "HttpHeadersProvider.h"
 
+#include "HisException.h"
+
 bool HomeIsServer::Init(bool blocking)
 {
 	if (!InitHisDevices())
@@ -87,6 +89,16 @@ HomeIsServer::HomeIsServer(IModbusProvider & modbusprovider,
 
 void HomeIsServer::InitWebServer(bool blocking)
 {
+	STACK
+	if (devs==NULL)
+		throw ArgumentNullException("devs");
+	if (factory==NULL)
+		throw ArgumentNullException("factory");
+	if (expressionRuntime==NULL)
+		throw ArgumentNullException("expressionRuntime");
+	if (rootFolder==NULL)
+		throw ArgumentNullException("rootFolder");
+
 	fc = new FileController();
 	owds = new DevicesService(*devs,*rootFolder, headersProvider,factory);
 	foldersService = new FoldersService(*devs,*rootFolder,headersProvider,factory);
@@ -108,8 +120,9 @@ void HomeIsServer::InitWebServer(bool blocking)
 	ws_i->register_resource(string("api/onewiredevices"), owds, true);
 	ws_i->register_resource(string("api/devices"), owds, true);
 	ws_i->register_resource(string("api/onewiredevices/{devid}"), owds, true);
+	ws_i->register_resource(string("api/onewiredevices/devvalue/{valueid}"), owds, true);
+	ws_i->register_resource(string("api/devices/devvalue/{valueid}"), owds, true);
 	ws_i->register_resource(string("api/devices/{devid}"), owds, true);
-	ws_i->register_resource(string("api/onewiredevices/devvalue/{id}"), owds, true);
 	ws_i->register_resource(string("api/devices/{devid}/devvalues/{valueid}"),owds,true);
 	ws_i->register_resource(string("api/onewiredevices/folder/{id}"), owds, true);
 

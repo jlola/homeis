@@ -5,3 +5,4 @@
 20171204 - fixed negative temperature
 20171221 - added option allow origin
 20180119 - added ScanPeriodMs to device 
+20180327 - added RFID support

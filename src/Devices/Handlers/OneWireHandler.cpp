@@ -60,16 +60,17 @@ bool OneWireHandler::Scan(bool addnew)
 	{
 		uint16_t* data=NULL;
 		uint8_t size;
-		devModbus->GetData(&data,size);
-
-		owheader = reinterpret_cast<SOWHeader*>(&data[stypedef.OffsetOfType]);
-		CreateOrValidOneWireHeader(addnew);
-		logger.Info(StringBuilder::Format("Scanned %d ds18b20",owheader->count).c_str());
-		if (owheader->count>0)
+		if (devModbus->GetData(data,size))
 		{
-			sds18b20s = reinterpret_cast<SDS18B20*>(&data[stypedef.OffsetOfType+OW_DEVICES_OFFSET]);
-			CreateOrValidOneWire(addnew);
-			return true;
+			owheader = reinterpret_cast<SOWHeader*>(&data[stypedef.OffsetOfType]);
+			CreateOrValidOneWireHeader(addnew);
+			logger.Info(StringBuilder::Format("Scanned dev address: %d and found: %d ds18b20",devModbus->GetAddress(), owheader->count).c_str());
+			if (owheader->count>0)
+			{
+				sds18b20s = reinterpret_cast<SDS18B20*>(&data[stypedef.OffsetOfType+OW_DEVICES_OFFSET]);
+				CreateOrValidOneWire(addnew);
+				return true;
+			}
 		}
 	}
 	return false;
@@ -175,7 +176,7 @@ void OneWireHandler::Refresh(bool modbusSuccess)
 		scantag->ReadedValueFromDevice(owscan,!modbusSuccess);
 		if (!owscan && scanRequest)
 		{
-			scanRequest = 0;
+			scanRequest = false;
 			if (!this->Scan(true))
 			{
 				logger.Error("Error scan modbus field with address %d",devModbus->GetAddress());

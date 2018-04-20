@@ -148,7 +148,10 @@ bool HisDevModbus::Scan(bool addnew)
 		if (connection->getHoldings(address,0,size,data))
 		{
 			STACK_VAL(Scan,"File: "+string(__FILE__)+",Line: "+Converter::itos(__LINE__))
-			handlers->Scan(addnew);
+			if (handlers->Scan(addnew))
+			{
+				CLogger::GetLogger().Info(StringBuilder::Format("Dev %s: Scan was not success",this->GetAddress()).c_str());
+			}
 		}
 		else
 		{
@@ -169,11 +172,11 @@ IModbus* HisDevModbus::GetModbus()
 	return connection;
 }
 
-bool HisDevModbus::GetData(uint16_t** data, uint8_t & length)
+bool HisDevModbus::GetData(uint16_t* & data, uint8_t & length)
 {
-	if (data!=NULL)
+	if (this->data!=NULL)
 	{
-		*data = this->data;
+		data = this->data;
 		length = this->header.lastIndex+1;
 		return true;
 	}
@@ -185,6 +188,7 @@ void HisDevModbus::WriteToDevice(ValueChangedEventArgs args)
 	if (args.GetValue()->GetDirection()==EHisDevDirection::ReadWrite ||
 		args.GetValue()->GetDirection()==EHisDevDirection::Write)
 	{
+		logger.Trace("Dev %d WriteToDevice method called from %s",GetAddress(),args.GetValue()->GetName().c_str());
 		refreshOutputs = true;
 	}
 	SetChanged();
@@ -258,6 +262,10 @@ void HisDevModbus::DoInternalRefresh(bool alarm)
 		}
 		else
 		{
+			SHeader* h = (SHeader*)data;
+			header.lastIndex = h->lastIndex;
+			size = header.lastIndex+1;
+
 			if (typesdefs==NULL)
 			{
 				logger.Info("Wrong data scanned. Var typesdefs is NULL.");

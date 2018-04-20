@@ -30,14 +30,17 @@ bool RFIDHandler::Scan(bool addnew)
 
 	if (dev->GetTypeDef(ETypes::RFID,&stypedef))
 	{
-		uint16_t** data;
+		uint16_t* data;
 		uint8_t size;
-		dev->GetData(data,size);
-		srfidregs = reinterpret_cast<SRFIDRegs*>(&data[stypedef.OffsetOfType]);
-		CreateOrValidTags(addnew);
+		if (dev->GetData(data,size))
+		{
+			srfidregs = reinterpret_cast<SRFIDRegs*>(&data[stypedef.OffsetOfType]);
+			CreateOrValidTags(addnew);
+			return true;
+		}
 	}
 
-	return true;
+	return false;
 }
 
 bool RFIDHandler::Remove(CUUID id)

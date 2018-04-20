@@ -44,11 +44,7 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/libhttpserver-master/src/httpserver}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/linuxcs}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/rapidjson}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/onewirelibrary}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/libcrash-master}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/homeisd/libs/libmicrohttpd/include}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/homeisd/src/Services}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/homeisd/src/Common}&quot;"/>
 								</option>
 								<option id="gnu.c.compiler.option.preprocessor.def.symbols.304171922" name="Defined symbols (-D)" superClass="gnu.c.compiler.option.preprocessor.def.symbols" useByScannerDiscovery="false" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="HTTPSERVER_COMPILATION"/>
@@ -70,14 +66,6 @@
 								<option id="gnu.cpp.compiler.option.include.paths.1618131780" name="Include paths (-I)" superClass="gnu.cpp.compiler.option.include.paths" useByScannerDiscovery="false" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/linuxcs}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/onewirelibrary}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/onewirelibrary/OneWire++}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/onewirelibrary/OneWire++/threadOW++}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/onewirelibrary/OneWire++/componentOW++}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/onewirelibrary/OneWire++/linkOW++}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/onewirelibrary/OneWire++/deviceOW++}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/onewirelibrary/OneWire++/platformOW++}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/onewirelibrary/OneWire++/portOW++}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/libhttpserver-master/src/httpserver}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/libhttpserver-master/src}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/libs/libconfig/include}&quot;"/>
@@ -129,6 +117,7 @@
 									<listOptionValue builtIn="false" value="config++"/>
 									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="z"/>
 									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="microhttpd"/>
+									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="curl"/>
 								</option>
 								<option id="gnu.cpp.link.option.paths.226678105" name="Library search path (-L)" superClass="gnu.cpp.link.option.paths" useByScannerDiscovery="false" valueType="libPaths">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/libs/libusbcompat/lib}&quot;"/>
@@ -138,6 +127,7 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/libs/libconfig/lib}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/libs/libmicrohttpd/lib}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/libs/libz}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/libs/libcurl/lib}&quot;"/>
 								</option>
 								<option id="gnu.cpp.link.option.flags.1653308680" name="Linker flags" superClass="gnu.cpp.link.option.flags" useByScannerDiscovery="false" value="-march=armv7-a -rdynamic -funwind-tables" valueType="string"/>
 								<option id="gnu.cpp.link.option.debugging.prof.1615855711" name="Generate prof information (-p)" superClass="gnu.cpp.link.option.debugging.prof" useByScannerDiscovery="false" value="false" valueType="boolean"/>
@@ -155,7 +145,6 @@
 							<tool command="as" commandLinePattern="${COMMAND} ${FLAGS} ${OUTPUT_FLAG} ${OUTPUT_PREFIX}${OUTPUT} ${INPUTS}" errorParsers="org.eclipse.cdt.core.GASErrorParser" id="cdt.managedbuild.tool.gnu.cross.assembler.1202731631" name="Cross GCC Assembler" superClass="cdt.managedbuild.tool.gnu.cross.assembler">
 								<option id="gnu.both.asm.option.include.paths.1580647521" name="Include paths (-I)" superClass="gnu.both.asm.option.include.paths" useByScannerDiscovery="false" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/onewirelibrary}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/libs/libconfig/include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/Helpers}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/Devices}&quot;"/>
@@ -169,8 +158,6 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/linuxcs}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/libs/libmicrohttpd/include}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/homeisd/src/Services}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/homeisd/src/Common}&quot;"/>
 								</option>
 								<option id="gnu.both.asm.option.flags.779682679" name="Assembler flags" superClass="gnu.both.asm.option.flags" useByScannerDiscovery="false" value="" valueType="string"/>
 								<inputType id="cdt.managedbuild.tool.gnu.assembler.input.1757918674" superClass="cdt.managedbuild.tool.gnu.assembler.input"/>
