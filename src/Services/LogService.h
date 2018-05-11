@@ -11,6 +11,8 @@
 #include <httpserver.hpp>
 #include "HttpHeadersProvider.h"
 #include "logger.h"
+#include "File.h"
+#include "Directory.h"
 
 using namespace std;
 using namespace httpserver;
@@ -18,6 +20,8 @@ using namespace httpserver;
 class LogService : public http_resource {
 	ILogger & logger;
 	IHttpHeadersProvider & httpHeadersProvider;
+	File file;
+	Directory directory;
 public:
 	LogService(IHttpHeadersProvider & httpHeadersProvider);
 	//void render_GET(const http_request&, http_response**);

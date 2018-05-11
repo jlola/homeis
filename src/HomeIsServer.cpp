@@ -15,6 +15,7 @@
 #include <stdio.h>
 #include <Services/DevicesService.h>
 #include <unistd.h>
+#include "IEmailSender.h"
 
 #include "HisDevices.h"
 #include "File.h"
@@ -63,6 +64,7 @@ void  HomeIsServer::AddModbus(IModbus* m)
 }
 
 HomeIsServer::HomeIsServer(IModbusProvider & modbusprovider,
+		IEmailSender* emailSender,
 		int TcpPort,
 		string allowOrigin) :
 		logger(CLogger::GetLogger()),
@@ -82,7 +84,8 @@ HomeIsServer::HomeIsServer(IModbusProvider & modbusprovider,
 		modbusDevService(NULL),
 		modbusservice(NULL),
 		connectorsService(NULL),
-		logservice(NULL)
+		logservice(NULL),
+		emailSender(emailSender)
 {
 	ws_i = new webserver(cw);
 }
@@ -152,13 +155,12 @@ void HomeIsServer::InitWebServer(bool blocking)
 bool HomeIsServer::InitHisDevices()
 {
 	expressionRuntime = new ExpressionRuntime();
+	devs = new HisDevices(file.getexepath() + "/devices.xml",&modbusProvider);
 
-	devs = new HisDevices(File::getexepath() + "/devices.xml",&modbusProvider);
-
-	factory = new HisDevFactory(expressionRuntime,devs);
+	factory = new HisDevFactory(expressionRuntime,devs,emailSender,&file,&directory);
 	devs->Load(factory);
 
-	rootFolder = new HisDevFolderRoot(File::getexepath() + "/folders.xml",factory);
+	rootFolder = new HisDevFolderRoot(file.getexepath() + "/folders.xml",factory);
 	rootFolder->Load();
 
 	devruntime = new HisDevRuntime(*devs);

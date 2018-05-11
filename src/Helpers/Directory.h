@@ -10,14 +10,16 @@
 
 #include <vector>
 
+#include "IDirectory.h"
+
 using namespace std;
 
-class Directory
+class Directory : public IDirectory
 {
 public:
-	static bool Exists(string path);
-	static bool Create(string path);
-	static vector<string> GetFileList(string dir);
+	bool Exists(string path);
+	bool Create(string path);
+	vector<string> GetFileList(string dir);
 };
 
 #endif /* DIRECTORY_H_ */

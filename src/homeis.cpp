@@ -37,6 +37,8 @@ extern "C" {
 #include <execinfo.h>
 #include <cxxabi.h>
 #include "ModbusProvider.h"
+#include "EmailSender.h"
+
 
 int main(int argc, char **argv)
 {
@@ -87,12 +89,14 @@ Home information system %d.%d.%8d\n\
 	//printf(infomsg);
 	logger.Info(infomsg,VERSION_MAIN,VERSION_SEC,VERSION_BUILD);
 
-	HomeIsConfig config("homeis.cfg");
+	HomeIsConfig config("homeis.cfg",true);
 
 	logger.SetLogLevel(config.GetLogLevel());
 	vector<SSerPortConfig> serports = config.GetSerialPorts();
+	SSmtpSettings smtpsetttings = config.GetSmtpSettings();
 	ModbusProvider provider(serports);
-	HomeIsServer server(provider,config.GetServerPort(),config.GetAllowOrigin());
+	EmailSender esender(smtpsetttings);
+	HomeIsServer server(provider,&esender,config.GetServerPort(),config.GetAllowOrigin());
 
 	server.Start(true);
 	server.Stop();

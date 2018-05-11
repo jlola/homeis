@@ -17,22 +17,29 @@
 using namespace std;
 using namespace libconfig;
 
-struct SSerPortConfig
+typedef struct
 {
 	string Port;
 	string Name;
 	string Driver;
-};
+} SSerPortConfig;
+
+typedef struct
+{
+	string SMTP;
+	string UserName;
+	string Password;
+} SSmtpSettings;
 
 class HomeIsConfig
 {
 	ILogger & logger;
-	string filename;
 	Config cfg;
 
-public:
+	string GetOrCreateFilePath(string filename);
 
-	HomeIsConfig(string name);
+public:
+	HomeIsConfig(string text, bool isFile);
 
 	virtual ~HomeIsConfig();
 
@@ -41,6 +48,8 @@ public:
 	ELogLevel GetLogLevel();
 
 	string GetAllowOrigin();
+
+	SSmtpSettings GetSmtpSettings();
 
 	vector<SSerPortConfig> GetSerialPorts();
 };

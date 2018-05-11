@@ -11,7 +11,9 @@
 #include <sstream>
 #include <vector>
 #include "HomeIsConfig.h"
-
+#include "HisException.h"
+#include "StringBuilder.h"
+#include "File.h"
 
 using namespace std;
 
@@ -32,35 +34,27 @@ SerialPorts = (\
 		Name=\"Simulator\"\n\
 		}\n\
 		);\n\
-		LogLevel=\"Info\"				# Error,Info,Trace\n\
+LogLevel=\"Info\"				# Error,Info,Trace\n\
+\n\
+SmtpServer=\"smtp.seznam.cz\"\n\
+SmtpUserName=\"\"\n\
+SmtpPassword=\"\"\
 ";
 
-HomeIsConfig::HomeIsConfig(string pfilename) :
+HomeIsConfig::HomeIsConfig(string text, bool isFileName) :
 	logger(CLogger::GetLogger())
 {
-	filename = pfilename;
-
 	// Read the file. If there is an error, report it and exit.
 	try
 	{
-		string configFilePath = File::getexepath() + "/" + filename;
-		//if (File::Exists(configFilePath)) File::Delete(configFilePath);
-		if (!File::Exists(configFilePath))
+		if (isFileName)
 		{
-			logger.Info("File %s not exists and will be created with default params",configFilePath.c_str());
-
-			FILE* fp = fopen(configFilePath.c_str(), "w+");
-			if (fp == NULL) {
-				logger.Error("I couldn't open %s for writing.\n",configFilePath.c_str());
-				return;
-			}
-
-			fprintf(fp,configFileDefault);
-
-			fclose(fp);
+			cfg.readFile(GetOrCreateFilePath(text).c_str());
 		}
-
-		cfg.readFile(configFilePath.c_str());
+		else
+		{
+			cfg.readString(text);
+		}
 	}
 	catch(const FileIOException &fioex)
 	{
@@ -72,6 +66,28 @@ HomeIsConfig::HomeIsConfig(string pfilename) :
 		logger.Error("Parse error at : in file %s - at line: %d %s", pex.getFile(), pex.getLine(),pex.getError());
 		throw;
 	}
+}
+
+string HomeIsConfig::GetOrCreateFilePath(string filename)
+{
+	File file;
+	string configFilePath = file.getexepath() + "/" + filename;
+	//if (File::Exists(configFilePath)) File::Delete(configFilePath);
+	if (!file.Exists(configFilePath))
+	{
+		logger.Info("File %s not exists and will be created with default params",configFilePath.c_str());
+
+		FILE* fp = fopen(configFilePath.c_str(), "w+");
+		if (fp == NULL) {
+			logger.Error("I couldn't open %s for writing.\n",configFilePath.c_str());
+			throw Exception(StringBuilder::Format("I couldn't open %s for writing.\n").c_str());
+		}
+
+		fprintf(fp,configFileDefault);
+
+		fclose(fp);
+	}
+	return configFilePath;
 }
 
 vector<SSerPortConfig> HomeIsConfig::GetSerialPorts()
@@ -128,6 +144,16 @@ string HomeIsConfig::GetAllowOrigin()
 	return "";
 }
 
+SSmtpSettings HomeIsConfig::GetSmtpSettings()
+{
+	SSmtpSettings result;
+	Setting& root = cfg.getRoot();
+	root.lookupValue("SmtpServer",result.SMTP);
+	root.lookupValue("SmtpPassword",result.Password);
+	root.lookupValue("SmtpUserName",result.UserName);
+	return result;
+}
+
 int HomeIsConfig::GetServerPort()
 {
 	int intresult = 0;
@@ -141,6 +167,5 @@ int HomeIsConfig::GetServerPort()
 
 HomeIsConfig::~HomeIsConfig()
 {
-
 }
 

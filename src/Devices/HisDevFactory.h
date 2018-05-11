@@ -12,21 +12,33 @@
 #include "Expressions/ExpressionRuntime.h"
 #include "Folder/HisDevFolderRoot.h"
 #include "IHisDevFactory.h"
+#include "IDirectory.h"
 
 class HisDevFactory : public IHisDevFactory
 {
 private:
-	//static HisDevFactory instance;
+	IDirectory* directory;
+	IFile* file;
 	HisDevices* devices;
 	IExpressionRuntime* expressionRuntime;
+	IEmailSender* emailSender;
 
 	virtual ~HisDevFactory();
 
 public:
 	HisDevFactory(IExpressionRuntime *expressionRuntime,
-				HisDevices* devices);
+				HisDevices* devices,
+				IEmailSender* emailSender,
+				IFile* file,
+				IDirectory* directory);
 
 	IHisBase* Create(xmlNodePtr node);
+
+	IEmailSender* GetEmailSender();
+
+	IFile *GetFile();
+
+	IDirectory* GetDirectory();
 };
 
 #endif /* HISDEVFACTORY_H_ */

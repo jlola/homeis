@@ -9,15 +9,16 @@
 #define FILE_H_
 
 #include <string>
+#include "IFile.h"
 
-class File
+class File : public IFile
 {
 public:
-	static bool Exists(std::string fileName);
-	static std::string getexepath();
-	static bool Delete(std::string fileName);
-	static std::string ReadWholeFile(std::string filePath);
-	static std::string getexefile();
+	bool Exists(std::string fileName);
+	std::string getexepath();
+	bool Delete(std::string fileName);
+	std::string ReadWholeFile(std::string filePath);
+	std::string getexefile();
 };
 
 #endif /* FILE_H_ */

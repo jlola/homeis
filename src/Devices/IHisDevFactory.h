@@ -12,11 +12,20 @@
 #include <libxml/tree.h>
 #include "IHisBase.h"
 #include "IWriteToDevice.h"
+#include "IEmailSender.h"
+#include "IFile.h"
+#include "IDirectory.h"
 
 class IHisDevFactory
 {
 public:
+	virtual IDirectory *GetDirectory()=0;
+
+	virtual IFile *GetFile()=0;
+
 	virtual IHisBase *Create(xmlNodePtr node)=0;
+
+	virtual IEmailSender* GetEmailSender()=0;
 
 	virtual ~IHisDevFactory(){}
 };

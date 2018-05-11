@@ -71,28 +71,28 @@ LuaExpression::LuaExpression(xmlNodePtr pnode,
 	folder = NULL;
 }
 
-LuaExpression::LuaExpression(HisDevFolder* pfolder,
-		HisDevices* hisDevices,
+LuaExpression::LuaExpression(HisDevFolder* folder,
+		HisDevices* devices,
 		string expressionName,
-		IExpressionRuntime *pExpressionRuntime,
+		IExpressionRuntime *expressionRuntime,
 		IHisDevFactory* factory) :
 	HisBase(factory),
 	logger(CLogger::GetLogger()),
 	started(false)
 {
 	STACK
-	if (pfolder==NULL)
+	if (folder==NULL)
 	{
 		logger.Error("LuaExpression | Constructor can not be called with empty folder");
-		throw ArgumentNullException("pfolder");
+		throw ArgumentNullException("folder");
 	}
-	if (hisDevices==NULL)
+	if (devices==NULL)
 	{
-		throw ArgumentNullException("hisDevices");
+		throw ArgumentNullException("devices");
 	}
-	if (pExpressionRuntime==NULL)
+	if (expressionRuntime==NULL)
 	{
-		throw ArgumentNullException("pExpressionRuntime");
+		throw ArgumentNullException("expressionRuntime");
 	}
 	if (factory==NULL)
 	{
@@ -102,14 +102,15 @@ LuaExpression::LuaExpression(HisDevFolder* pfolder,
 	CreateFolder();
 	setRunningMutex = HisLock::CreateMutex();
 	evaluateMutex = HisLock::CreateMutex();
-	expressionRuntime = pExpressionRuntime;
+	this->expressionRuntime = expressionRuntime;
 	inEvalFunc = false;
 	nextTime = 0;
 	runningAllowed = false;
 
-	folder = pfolder;
-	devices = hisDevices;
+	this->folder = folder;
+	this->devices = devices;
 	SetName(expressionName);
+	SetParent(folder);
 	running = false;
 	L = NULL;
 	cL = NULL;
@@ -196,10 +197,10 @@ string LuaExpression::GetExpression()
 void LuaExpression::CreateFolder()
 {
 	STACK
-	std::string dir = File::getexepath() + "/"+ EXPRESSION_FOLDER;
-	if (!Directory::Exists(dir))
+	std::string dir = GetFactory()->GetFile()->getexepath() + "/"+ EXPRESSION_FOLDER;
+	if (!GetFactory()->GetDirectory()->Exists(dir))
 	{
-		Directory::Create(dir);
+		GetFactory()->GetDirectory()->Create(dir);
 	}
 }
 
@@ -209,8 +210,8 @@ void LuaExpression::SaveExpressionToFile()
 
 	if (oldName!=GetName())
 	{
-		if (File::Exists(GetFileName(oldName)))
-			File::Delete(GetFileName(oldName));
+		if (GetFactory()->GetFile()->Exists(GetFileName(oldName)))
+			GetFactory()->GetFile()->Delete(GetFileName(oldName));
 	}
 	FILE* fp = fopen(GetFileName(GetName()).c_str(), "w+");
 	if (fp == NULL) {
@@ -228,7 +229,7 @@ void LuaExpression::SaveExpressionToFile()
 void LuaExpression::LoadExpressionFromFile()
 {
 	STACK
-	if (File::Exists(GetFileName(GetName())))
+	if (GetFactory()->GetFile()->Exists(GetFileName(GetName())))
 	{
 		std::ifstream in(GetFileName(GetName()));
 
@@ -247,7 +248,7 @@ string LuaExpression::GetFileName(string pFileName)
 
 string LuaExpression::GetLuaFilesPath()
 {
-	return File::getexepath() + "/"+ EXPRESSION_FOLDER;
+	return GetFactory()->GetFile()->getexepath() + "/"+ EXPRESSION_FOLDER;
 }
 
 bool LuaExpression::ExistsName(string pName)
@@ -255,7 +256,7 @@ bool LuaExpression::ExistsName(string pName)
 	STACK
 	string path;
 	path = GetFileName(pName);
-	return File::Exists(path);
+	return GetFactory()->GetFile()->Exists(path);
 }
 
 bool LuaExpression::IsInExpressionDevices(HisDevBase* pdev)
@@ -370,6 +371,7 @@ void LuaExpression::GetGlobals(lua_State* L)
 					value->SetValue(number);
 					break;
 				}
+				case EDataType::Email:
 				case EDataType::String:
 				{
 					STACK_BLOCK("String")
@@ -391,6 +393,7 @@ void LuaExpression::GetGlobals(lua_State* L)
 					value->SetValue(lua_toboolean(L,-1));
 					break;
 				}
+
 				case EDataType::Unknown:
 					break;
 			}
@@ -447,6 +450,7 @@ void LuaExpression::SetGlobals(lua_State* L)
 				lua_setglobal(L, errvalue.c_str());
 				break;
 			}
+			case EDataType::Email:
 			case EDataType::String:
 			{
 				//STACK_SECTION("String")
@@ -505,7 +509,7 @@ void LuaExpression::open_libs(lua_State *L)
 string LuaExpression::GetLuaCodeInFuncion(string funcName, string luaCodeFilePath)
 {
 	STACK
-	string code = File::ReadWholeFile(luaCodeFilePath);
+	string code = GetFactory()->GetFile()->ReadWholeFile(luaCodeFilePath);
 	return "function " + funcName +"() \
 			" + code + " \
 			end" ;
@@ -581,7 +585,6 @@ bool LuaExpression::Evaluate()
 	LuaExpression::ActualExpression = this;
 
 	this->ReloadValues();
-	//STACK_VAL("ExpressionName", GetName().c_str())
 	if (!ExistsName(GetName()))
 	{
 		inEvalFunc = false;
@@ -590,33 +593,23 @@ bool LuaExpression::Evaluate()
 
 	if (!running && runningAllowed)
 	{
-		//STACK_SECTION("!running")
-		//lastEvaluateError.clear();
 		LuaExpression::delays = -1;
 		nextTime = 0;
 		/* initialize Lua */
 		L = luaL_newstate();                        /* Create Lua state variable */
-		//STACK_SECTION("luaL_openlibs")
 		/* load Lua base libraries */
 		luaL_openlibs(L);
-		//STACK_SECTION("lua_register")
 		lua_register(L, "sleep", lua_sleep);
 		lua_register(L, "delay", lua_sleep);
 		lua_register(L, "log", lua_log);
 		lua_register(L, "debuglog", lua_debuglog);
-		//STACK_SECTION("GetLuaCodeInFuncion")
 
 		string path = GetLuaFilesPath()+"/?.lua";
 		this->setLuaPath(L,path.c_str());
 		/* add code to function */
 		string code = GetLuaCodeInFuncion("runExpression",GetFileName(GetName()));
 
-		//STACK_SECTION("SetGlobals")
-		/* set golabl variables */
-		//SetGlobals(L);
-
 		/* load string and check syntax */
-		//STACK_SECTION("luaL_dostring")
 		if (luaL_dostring(L,code.c_str()))
 		{
 			string newEvaluateError = StringBuilder::Format("Error load Lua script: %s\n",lua_tostring(L, -1));
@@ -625,7 +618,6 @@ bool LuaExpression::Evaluate()
 				lastEvaluateError = newEvaluateError;
 				logger.Error(lastEvaluateError.c_str());
 			}
-			//throw HisException(lastEvaluateError);
 			inEvalFunc = false;
 			return false;
 		}
@@ -633,19 +625,7 @@ bool LuaExpression::Evaluate()
 		/* load func name to top stack */
 		lua_getglobal(L,"runExpression");
 
-		//STACK_SECTION("SetGlobals")
-		/* set golabl variables */
-		//GetGlobals(L);
-
 		running = true;
-
-		//call function
-//		if (lua_pcall(L, 0, 0, 0))
-//		{
-//			lastEvaluateError = StringBuilder::Format("Error running Lua script: %s",  lua_tostring(L, -1));
-//			CLogger::Error(lastEvaluateError.c_str());    /* Error out if Lua file has an error */
-//			throw HisException(lastEvaluateError);
-//		}
 	}
 
 	if (running)
@@ -823,5 +803,5 @@ LuaExpression::~LuaExpression()
 {
 	STACK
 	//SetRunning(false);
-	File::Delete(GetFileName(GetName()));
+	GetFactory()->GetFile()->Delete(GetFileName(GetName()));
 }

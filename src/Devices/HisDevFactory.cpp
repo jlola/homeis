@@ -27,11 +27,17 @@
 
 
 HisDevFactory::HisDevFactory(IExpressionRuntime *expressionRuntime,
-		HisDevices* devices
+		HisDevices* devices,
+		IEmailSender* emailSender,
+		IFile* file,
+		IDirectory* directory
 		)
 {
+	this->directory = directory;
+	this->file = file;
 	this->devices = devices;
 	this->expressionRuntime = expressionRuntime;
+	this->emailSender = emailSender;
 }
 
 HisDevFactory::~HisDevFactory()
@@ -39,12 +45,20 @@ HisDevFactory::~HisDevFactory()
 
 }
 
-//HisDevFactory HisDevFactory::instance;
+IEmailSender* HisDevFactory::GetEmailSender()
+{
+	return emailSender;
+}
 
-//IHisDevFactory & HisDevFactory::Instance()
-//{
-//	return HisDevFactory::instance;
-//}
+IDirectory* HisDevFactory::GetDirectory()
+{
+	return directory;
+}
+
+IFile *HisDevFactory::GetFile()
+{
+	return file;
+}
 
 IHisBase *HisDevFactory::Create(xmlNodePtr node)
 {

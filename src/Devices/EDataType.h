@@ -17,8 +17,9 @@ typedef enum  {
 	Double = 2,
 	String = 3,
 	Bool = 4,
-	Enum = 5,
-	Email = 6
+	Email = 5,
+	Enum = 6,
+
 } EDataType;
 
 

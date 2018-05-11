@@ -103,20 +103,20 @@ std::string CLogger::getStrDate()
   return line;
 }
 
-void CLogger::WriteToFile(string subDir,string file,string line)
+void CLogger::WriteToFile(string subDir,string filestr,string line)
 {
-	string path = File::getexepath();
+	string path = file.getexepath();
 	path += "/" + subDir;
 
-	if (!Directory::Exists(path)) {
-	    Directory::Create(path);
+	if (!directory.Exists(path)) {
+	    directory.Create(path);
 	}
 
-	path += "/" + file;
+	path += "/" + filestr;
 
 	FILE* fp = fopen(path.c_str(), "a");
 	if (fp == NULL) {
-	 printf("I couldn't open %s for writing.\n",file.c_str());
+	 printf("I couldn't open %s for writing.\n",filestr.c_str());
 	 return;
 	}
 

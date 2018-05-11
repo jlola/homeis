@@ -14,6 +14,7 @@
 #include "Helpers/File.h"
 #include "Helpers/StringBuilder.h"
 #include <vector>
+#include "File.h"
 
 using namespace rapidjson;
 
@@ -51,8 +52,8 @@ const http_response LogService::render_GET(const http_request& req)
 	}
 	else if (path_loglevel=="")
 	{
-		string logpath = StringBuilder::Format("%s/Log",File::getexepath().c_str());
-		vector<std::string> list = Directory::GetFileList(logpath.c_str());
+		string logpath = StringBuilder::Format("%s/Log",file.getexepath().c_str());
+		vector<std::string> list = directory.GetFileList(logpath.c_str());
 		std::sort (list.begin(), list.end());
 		document.SetArray();
 
@@ -70,10 +71,10 @@ const http_response LogService::render_GET(const http_request& req)
 	else
 	{
 		document.SetObject();
-		string logpath = StringBuilder::Format("%s/Log/%s",File::getexepath().c_str(),path_filename.c_str());
-		if (File::Exists(logpath))
+		string logpath = StringBuilder::Format("%s/Log/%s",file.getexepath().c_str(),path_filename.c_str());
+		if (file.Exists(logpath))
 		{
-			string content = File::ReadWholeFile(logpath);
+			string content = file.ReadWholeFile(logpath);
 			jsonvalue.SetString(content.c_str(),document.GetAllocator());
 			document.AddMember(path_filename.c_str(),jsonvalue,document.GetAllocator());
 			document.Accept(wr);

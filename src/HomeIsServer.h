@@ -18,6 +18,7 @@
 #include "HisDevRunTime.h"
 #include <algorithm>
 
+#include "IEmailSender.h"
 #include "logger.h"
 #include "HomeIsServer.h"
 #include "Services/FileController.h"
@@ -27,6 +28,8 @@
 #include "Services/ModbusService.h"
 #include "Services/ConnectorsService.h"
 #include "Services/LogService.h"
+#include "File.h"
+#include "Directory.h"
 #include "HisDevFactory.h"
 
 using namespace httpserver;
@@ -34,6 +37,8 @@ using namespace std;
 
 class HomeIsServer
 {
+	Directory directory;
+	File file;
 	ILogger & logger;
 	HisDevFactory* factory;
 	//LOW_network  oneWireNet;
@@ -55,13 +60,17 @@ class HomeIsServer
 	ModbusService* modbusservice;
 	ConnectorsService* connectorsService;
 	LogService* logservice;
+	IEmailSender* emailSender;
 
 	//bool InitOneWireLib(vector<SSerPortConfig> & pserports);
 	bool Init(bool blocking);
 	bool InitHisDevices();
 	void InitWebServer(bool blocking);
 public:
-	HomeIsServer(IModbusProvider & modbusprovider,int tcpPort, string allowOrigin);
+	HomeIsServer(IModbusProvider & modbusprovider,
+			IEmailSender* emailSender,
+			int tcpPort,
+			string allowOrigin);
 	void AddModbus(IModbus* m);
 	void Start(bool blocking);
 	void Stop();

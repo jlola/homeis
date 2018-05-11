@@ -11,7 +11,8 @@
 #include <string>
 #include "linuxcs.h"
 #include "ILogger.h"
-
+#include "File.h"
+#include "Directory.h"
 using namespace std;
 
 
@@ -20,6 +21,8 @@ using namespace std;
 class CLogger : public ILogger
 {
 private:
+	Directory directory;
+	File file;
 	ELogLevel logLevel;
 	CRITICAL_SECTION cs;
 	void WriteToFile(string subDir,string file,string line);
