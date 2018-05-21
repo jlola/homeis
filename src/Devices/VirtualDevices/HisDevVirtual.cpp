@@ -7,6 +7,8 @@
 
 #include "HisDevBase.h"
 #include "PoppyDebugTools.h"
+#include "HisException.h"
+#include "HisDevValueEmail.h"
 #include "HisDevVirtual.h"
 
 string HisDevVirtual::LoadType = "HisDevVirtual";
@@ -74,14 +76,16 @@ HisDevValueBase* HisDevVirtual::CreateHisDevValue(string address,EHisDevDirectio
 	return result;
 }
 
-HisDevValueBase* HisDevVirtual::AddDevValue(EDataType ptype)
+HisDevValueBase* HisDevVirtual::AddDevValue(EDataType type)
 {
 	STACK
+	if (type==EDataType::Email)
+		throw Exception("Tag dataType Email should not be created by AddDevValue");
 	std::string strid = this->GetRecordId().ToString();
 	vector<HisDevValueBase*> values = GetItems<HisDevValueBase>();
 	//WriteToDeviceRequestDelegate delegate = WriteToDeviceRequestDelegate::from_method<HisDevVirtual, &HisDevVirtual::WriteToDevice>(this);
-	HisDevValueBase* value = CreateHisDevValue(strid, EHisDevDirection::ReadWrite, ptype, values.size());
-	value->SetWriteHandler(this);
+	HisDevValueBase* value = CreateHisDevValue(strid, EHisDevDirection::ReadWrite, type, values.size());
+	value->SetDevice(this);
 	value->Load();
 	Add(value);
 	return value;
@@ -118,7 +122,7 @@ void HisDevVirtual::DoInternalLoad(xmlNodePtr & node)
 
 	for(size_t i=0;i<values.size();i++)
 	{
-		values[i]->SetWriteHandler(this);
+		values[i]->SetDevice(this);
 	}
 }
 

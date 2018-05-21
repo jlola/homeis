@@ -9,6 +9,7 @@
 #define HISDEVVALUEID_H_
 
 #include "Common/HisBase.h"
+#include "HisDevValueBase.h"
 
 #define NODE_VALUEID BAD_CAST "valueid"
 #define PROP_DEVVALID BAD_CAST "DeviceValueId"
@@ -21,7 +22,7 @@ protected:
 	virtual void DoInternalSave(xmlNodePtr & node);
 	virtual void DoInternalLoad(xmlNodePtr & node);
 public:
-	HisDevValueId(CUUID pDeviceValueId,IHisDevFactory* factory);
+	HisDevValueId(HisDevValueBase* deviceValue,IHisDevFactory* factory);
 	HisDevValueId(xmlNodePtr pNode,IHisDevFactory* factory);
 	CUUID GetDeviceValueId();
 	void SetDeviceValueId(CUUID deviceValueId);

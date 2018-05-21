@@ -36,7 +36,7 @@ void OneWireHandler::Load()
 	for(size_t i=0;i<values.size();i++)
 	{
 		HisDevValue<bool> *value = values[i];
-		value->SetWriteHandler(devModbus);
+		value->SetDevice(devModbus);
 		switch(value->GetDirection())
 		{
 			case EHisDevDirection::ReadWrite:

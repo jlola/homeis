@@ -5,6 +5,8 @@
  *      Author: pc
  */
 
+#ifdef HOMEISTEST
+
 #include "StringBuilder.h"
 #include "StringBuilderTests.h"
 
@@ -22,3 +24,4 @@ TEST_F(StringBuilderTests,StringBuilderTests_split_merge_success)
 StringBuilderTests::~StringBuilderTests() {
 }
 
+#endif

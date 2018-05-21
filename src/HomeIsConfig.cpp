@@ -151,6 +151,16 @@ SSmtpSettings HomeIsConfig::GetSmtpSettings()
 	root.lookupValue("SmtpServer",result.SMTP);
 	root.lookupValue("SmtpPassword",result.Password);
 	root.lookupValue("SmtpUserName",result.UserName);
+	ILogger & logger = CLogger::GetLogger();
+	if (result.SMTP.length()<=0)
+	{
+		logger.Info("SmtpServer is not configured. Email sender is disabled.");
+	}
+	else
+	{
+		logger.Info("SmtpServer: %s",result.SMTP.c_str());
+		logger.Info("SmtpUserName: %s",result.UserName.c_str());
+	}
 	return result;
 }
 

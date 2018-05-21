@@ -53,7 +53,7 @@ class HisDevValueBase : public HisBase
 	std::string loadtype;
 	map<void*,OnValueChangedDelegate> delegatesMap;
 protected:
-	IWriteToDevice* devHandler;
+	IWriteToDevice* deviceWriter;
 	DateTime valueChangeTime;
 	std::string unit;
 	//std::string pinname;
@@ -82,7 +82,7 @@ public:
 			IHisDevFactory* factory,
 			IWriteToDevice* devHandler);
 
-	void SetWriteHandler(IWriteToDevice* handler);
+	void SetDevice(IWriteToDevice* handler);
 
 	void FireOnValueChanged(ValueChangedEventArgs args);
 

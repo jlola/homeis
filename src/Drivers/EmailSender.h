@@ -27,8 +27,8 @@ class EmailSender : public IEmailSender {
 public:
 	EmailSender(string smtp,string username,string password);
 	EmailSender(SSmtpSettings settings);
-	bool Send(string fromaddr,vector<string> toaddr, string subject, string body);
-	static vector<string> CreatePayLoad(string fromaddr,vector<string> toaddr, string subject, string body);
+	bool Send(string fromaddr,string toaddr, string subject, string body);
+	static vector<string> CreatePayLoad(string fromaddr,string toaddr, string subject, string body);
 	static size_t payload_source(void *ptr, size_t size, size_t nmemb, void *userp);
 	virtual ~EmailSender();
 };

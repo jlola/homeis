@@ -718,36 +718,6 @@ void LuaExpression::OnValueChaned(ValueChangedEventArgs args)
 	//Evaluate();
 }
 
-void LuaExpression::StartListening()
-{
-//	HisDevFolder* folder = dynamic_cast<HisDevFolder*>(GetParent());
-//	if (folder!=NULL)
-//	{
-//		vector<HisDevValueId*> ids = folder->GetItems<HisDevValueId>();
-//		for(size_t i=0;i<ids.size();i++)
-//		{
-//			HisDevValueBase* value = devices->FindValue(ids[i]->GetDeviceValueId());
-//			OnValueChangedDelegate delegate = OnValueChangedDelegate::from_method<LuaExpression, &LuaExpression::OnValueChaned>(this);
-//			value->Register(delegate,this);
-//		}
-//
-//	}
-}
-
-void LuaExpression::StopListening()
-{
-//	HisDevFolder* folder = dynamic_cast<HisDevFolder*>(GetParent());
-//	if (folder!=NULL)
-//	{
-//		vector<HisDevValueId*> ids = folder->GetItems<HisDevValueId>();
-//		for(size_t i=0;i<ids.size();i++)
-//		{
-//			HisDevValueBase* value = devices->FindValue(ids[i]->GetDeviceValueId());
-//			value->UnRegister(this);
-//		}
-//	}
-}
-
 void LuaExpression::DoInternalSave(xmlNodePtr & node)
 {
 	STACK

@@ -8,7 +8,7 @@
 #ifdef HOMEISTEST
 
 #include <vector>
-#include "Tests/TestConfig.h"
+#include "TestConfig.h"
 #include "HomeIsConfig.h"
 #include "HomeIsServer.h"
 #include "StringBuilder.h"

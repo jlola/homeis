@@ -9,6 +9,8 @@
 #include "DateTime.h"
 #include "CUUID.h"
 #include "EmailSender.h"
+#include "ILogger.h"
+#include "logger.h"
 
 EmailSender::EmailSender(SSmtpSettings settings)
 	: EmailSender::EmailSender(settings.SMTP,settings.UserName,settings.Password)
@@ -42,12 +44,12 @@ size_t EmailSender::payload_source(void *ptr, size_t size, size_t nmemb, void *u
   return 0;
 }
 
-vector<string> EmailSender::CreatePayLoad(string fromaddr,vector<string> toaddr, string subject, string body)
+vector<string> EmailSender::CreatePayLoad(string fromaddr,string toaddr, string subject, string body)
 {
 	vector<string> result;
 	CUUID uuid;
 	result.push_back(StringBuilder::Format("Date: %s\r\n",DateTime::Now().ToString().c_str()));
-	result.push_back(StringBuilder::Format("To:  %s \r\n",StringBuilder::join(toaddr,";").c_str()));
+	result.push_back(StringBuilder::Format("To:  %s \r\n",toaddr.c_str()));
 	result.push_back(StringBuilder::Format("From: %s \r\n",fromaddr.c_str()));
 	result.push_back(StringBuilder::Format("Message-ID: <%s@seznam.cz>\r\n",uuid.ToString().c_str()));
 	result.push_back(StringBuilder::Format("Subject: %s\r\n",subject.c_str()));
@@ -57,8 +59,10 @@ vector<string> EmailSender::CreatePayLoad(string fromaddr,vector<string> toaddr,
 	return result;
 }
 
-bool EmailSender::Send(string fromaddr,vector<string> toaddr, string subject, string body)
+bool EmailSender::Send(string fromaddr,string toaddr, string subject, string body)
 {
+	if (smtp.length()>0)
+	{
 	  CURL *curl;
 	  CURLcode res = CURLE_OK;
 	  curl_slist *recipients = NULL;
@@ -88,8 +92,9 @@ bool EmailSender::Send(string fromaddr,vector<string> toaddr, string subject, st
 	    /* Add two recipients, in this particular case they correspond to the
 	     * To: and Cc: addressees in the header, but they could be any kind of
 	     * recipient. */
-	    for(size_t i=0;i<toaddr.size();i++)
-	    	recipients = curl_slist_append(recipients, toaddr[i].c_str());
+	    vector<string> toaddrvector = StringBuilder::split(toaddr,';');
+	    for(size_t i=0;i<toaddrvector.size();i++)
+	    	recipients = curl_slist_append(recipients, toaddrvector[i].c_str());
 	    //recipients = curl_slist_append(recipients, CC_ADDR);
 	    curl_easy_setopt(curl, CURLOPT_MAIL_RCPT, recipients);
 
@@ -108,7 +113,9 @@ bool EmailSender::Send(string fromaddr,vector<string> toaddr, string subject, st
 	    {
 	      fprintf(stderr, "curl_easy_perform() failed: %s\n",
 	              curl_easy_strerror(res));
-
+	      CLogger::GetLogger().Info("curl_easy_perform() failed: %s\n",
+	    		  curl_easy_strerror(res));
+	      CLogger::GetLogger().Error("Email wasn't sent. FromAddr: %s, ToAddr: %s, Body: %s",fromaddr.c_str(),toaddr.c_str(),body.c_str());
 	    }
 	    /* Free the list of recipients */
 	    curl_slist_free_all(recipients);
@@ -123,9 +130,16 @@ bool EmailSender::Send(string fromaddr,vector<string> toaddr, string subject, st
 	     */
 	    curl_easy_cleanup(curl);
 
+	    CLogger::GetLogger().Info("Email was successfully sent. FromAddr: %s, ToAddr: %s, Body: %s",fromaddr.c_str(),toaddr.c_str(),body.c_str());
+
 	    return res == CURLE_OK;
 	  }
-	  return false;
+	}
+	else
+	{
+		CLogger::GetLogger().Info(StringBuilder::Format("EmailSender has not set Smtp server. Email \"%s\"\n can not be sent.",body.c_str()).c_str());
+	}
+	return false;
 }
 
 EmailSender::~EmailSender() {

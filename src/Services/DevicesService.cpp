@@ -16,6 +16,7 @@
 #include "Helpers/StringBuilder.h"
 #include "HisDevModbus.h"
 #include "PoppyDebugTools.h"
+#include "HisDevValueEmail.h"
 #include "microhttpd.h"
 
 using namespace rapidjson;
@@ -49,7 +50,8 @@ const http_response DevicesService::render_GET(const http_request& req)
 	Document respjsondoc;
 	respjsondoc.SetArray();
 	string path = req.get_path();
-	logger.Info("DevicesService::render_GET: %s.",path.c_str());
+
+	logger.Trace("DevicesService::render_GET: %s.",path.c_str());
 
 	int response_code = MHD_HTTP_FORBIDDEN;
 
@@ -629,6 +631,7 @@ HisDevValueBase* DevicesService::CreateVirtualDevValue(string strjson,string & m
 			{
 				EDataType type = (EDataType)document["type"].GetInt();
 				return virtualdev->AddDevValue(type);
+
 			}
 			else
 			{
@@ -766,6 +769,21 @@ bool DevicesService::UpdateDevValue(CUUID devValueId, string strjson)
 			else
 			{
 				logger.Error("Try to write not writable deviceValue");
+			}
+		}
+
+		HisDevValueEmail* valueEmail = dynamic_cast<HisDevValueEmail*>(devValue);
+		if (valueEmail!=NULL)
+		{
+			if (document.HasMember("fromAddr") && document["fromAddr"].IsString())
+			{
+				valueEmail->SetFromAddr(document["fromAddr"].GetString());
+				saveReq = true;
+			}
+			if (document.HasMember("receivers") && document["receivers"].IsString())
+			{
+				valueEmail->SetFromAddr(document["receivers"].GetString());
+				saveReq = true;
 			}
 		}
 

@@ -212,12 +212,11 @@ bool FoldersService::AddValueIdToFolder(string strFolderId, string strJson,strin
 		HisDevValueBase* valueBase = devices.FindValue(devValueId);
 		if (valueBase!=NULL)
 		{
-			CUUID ValueId = valueBase->GetRecordId();
 			CUUID folderId = CUUID::Parse(strFolderId);
 			HisDevFolder* folder = dynamic_cast<HisDevFolder*>(root.GetFolder()->Find(folderId));
 			if (folder!=NULL)
 			{
-				HisDevValueId* valueId = new HisDevValueId(ValueId,factory);
+				HisDevValueId* valueId = new HisDevValueId(valueBase,factory);
 				folder->Add(valueId);
 				root.Save();
 				return true;

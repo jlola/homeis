@@ -74,7 +74,8 @@ int main(int argc, char **argv)
 
 	if (!debug)
 	{
-		string pid = StringBuilder::Format("/var/run/%s.pid",File::getexefile().c_str());
+		File file;
+		string pid = StringBuilder::Format("/var/run/%s.pid",file.getexefile().c_str());
 		daemonize2(pid.c_str());
 		sleep(5);
 	}

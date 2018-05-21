@@ -17,8 +17,6 @@ class IExpression
 public:
 	virtual CUUID GetRecordId()=0;
 	virtual bool Evaluate()=0;
-	virtual void StartListening()=0;
-	virtual void StopListening()=0;
 	virtual ~IExpression() {}
 	virtual std::string GetName()=0;
 	virtual void Start()=0;

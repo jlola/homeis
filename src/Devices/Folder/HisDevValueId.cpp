@@ -4,7 +4,7 @@
  *  Created on: May 27, 2013
  *      Author: root
  */
-
+#include "HisException.h"
 #include "HisDevValueId.h"
 
 const xmlChar* HisDevValueId::GetNodeNameInternal()
@@ -28,10 +28,12 @@ void HisDevValueId::DoInternalLoad(xmlNodePtr & node)
 	deviceValueId = CUUID::Parse(strid);
 }
 
-HisDevValueId::HisDevValueId(CUUID pDeviceValueId,IHisDevFactory* factory) :
+HisDevValueId::HisDevValueId(HisDevValueBase* deviceValue,IHisDevFactory* factory) :
 	HisBase::HisBase(factory)
 {
-	deviceValueId = pDeviceValueId;
+	if (deviceValue==NULL)
+		throw new ArgumentNullException("deviceValue");
+	deviceValueId = deviceValue->GetRecordId();
 }
 
 HisDevValueId::HisDevValueId(xmlNodePtr pNode,IHisDevFactory* factory) :

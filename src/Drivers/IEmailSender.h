@@ -16,7 +16,7 @@ using namespace std;
 class IEmailSender
 {
 public:
-	virtual bool Send(string fromaddr,vector<string> toaddr, string subject, string body)=0;
+	virtual bool Send(string fromaddr,string toaddr, string subject, string body)=0;
 };
 
 

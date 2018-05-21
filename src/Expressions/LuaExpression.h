@@ -79,8 +79,6 @@ private:
 	void SetGlobals(lua_State* L);
 	void GetGlobals(lua_State* L);
 	string GetLuaCodeInFuncion(string funcName, string luaCodeFilePath);
-	void StartListening();
-	void StopListening();
 	int setLuaPath( lua_State* L, const char* path );
 	bool IsInExpressionDevices(HisDevBase* pdev);
 public:
@@ -108,9 +106,9 @@ public:
 	bool ForceEvaluate();
 	size_t GetCountInputs();
 	size_t GetCountOutputs();
-	void SetRunning(bool running);
 	bool GetRunning();
 	vector<string> GetLogs();
+	void SetRunning(bool running);
 	~LuaExpression();
 };
 

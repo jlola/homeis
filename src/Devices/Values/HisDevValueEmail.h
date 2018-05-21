@@ -14,17 +14,30 @@
 #define NODE_FROMADDR BAD_CAST "fromaddr"
 #define NODE_RECEIVERS BAD_CAST "receivers"
 
+using namespace std;
+
 class HisDevValueEmail : public HisDevValue<string>
 {
 	string fromAddr;
 	string receivers;
 	IEmailSender* emailSender;
 public:
-	HisDevValueEmail(std::string addr, IHisDevFactory* factory);
+	HisDevValueEmail(string subject,
+			string fromAddr,
+			string receivers,
+			IWriteToDevice* deviceWriter,
+			IHisDevFactory* factory);
 	HisDevValueEmail(xmlNodePtr pnode,
-				IHisDevFactory* factory,
-				IWriteToDevice* devHandler);
+				IWriteToDevice* deviceWriter,
+				IHisDevFactory* factory);
 	void SetValue(string pValue);
+	void SetFromAddr(string fromAddr);
+	string GetFromAddr();
+	void SetReceivers(string receivers);
+	string GetReceivers();
+	void SetSubject(string subject);
+	void ForceValue(string pValue);
+	string GetSubject();
 	void DoInternalSave(xmlNodePtr & node);
 	void DoInternalLoad(xmlNodePtr & node);
 	virtual ~HisDevValueEmail();

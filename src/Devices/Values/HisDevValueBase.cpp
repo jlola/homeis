@@ -29,10 +29,10 @@ HisDevValueBase::HisDevValueBase(std::string pdevaddr,
 	string ppinNumber,
 	string loadType,
 	IHisDevFactory* factory,
-	IWriteToDevice* devHandler) :
+	IWriteToDevice* deviceWriter) :
 	HisBase::HisBase(factory),
 	logger(CLogger::GetLogger()),
-	devHandler(devHandler)
+	deviceWriter(deviceWriter)
 {
 	loadtype = loadType;
 	pinNumber = ppinNumber;
@@ -45,10 +45,10 @@ HisDevValueBase::HisDevValueBase(std::string pdevaddr,
 
 HisDevValueBase::HisDevValueBase(xmlNodePtr pnode,
 		IHisDevFactory* factory,
-		IWriteToDevice* devHandler) :
+		IWriteToDevice* deviceWriter) :
 	HisBase::HisBase(pnode,factory),
 	logger(CLogger::GetLogger()),
-	devHandler(devHandler)
+	deviceWriter(deviceWriter)
 {
 	pinNumber = "";
 	direction = EHisDevDirection::Read;
@@ -69,10 +69,10 @@ void HisDevValueBase::SetForceOutput(bool force)
 
 HisDevValueBase::HisDevValueBase(HisDevValueBase & src,
 		IHisDevFactory* factory,
-		IWriteToDevice* devHandler) :
+		IWriteToDevice* deviceWriter) :
 	HisBase::HisBase(factory),
 	logger(CLogger::GetLogger()),
-	devHandler(devHandler)
+	deviceWriter(deviceWriter)
 {
 	//pinname = src.pinname;
 	devaddr = src.devaddr;
@@ -84,9 +84,9 @@ HisDevValueBase::HisDevValueBase(HisDevValueBase & src,
 	allowForceOutput = false;
 }
 
-void HisDevValueBase::SetWriteHandler(IWriteToDevice* devHandler)
+void HisDevValueBase::SetDevice(IWriteToDevice* deviceWriter)
 {
-	this->devHandler = devHandler;
+	this->deviceWriter = deviceWriter;
 }
 
 void HisDevValueBase::SetError()
@@ -96,7 +96,7 @@ void HisDevValueBase::SetError()
 
 HisDevValueBase* HisDevValueBase::Create(xmlNodePtr node,
 		IHisDevFactory* factory,
-		IWriteToDevice* handler)
+		IWriteToDevice* deviceWriter)
 {
 	STACK
 	EDataType datatype;
@@ -110,17 +110,17 @@ HisDevValueBase* HisDevValueBase::Create(xmlNodePtr node,
 		switch(datatype)
 		{
 			case EDataType::Bool:
-				return new HisDevValue<bool>(node,false,factory,handler);
+				return new HisDevValue<bool>(node,false,factory,deviceWriter);
 			case EDataType::Double:
-				return new HisDevValue<double>(node,0,factory,handler);
+				return new HisDevValue<double>(node,0,factory,deviceWriter);
 			case EDataType::Int:
-				return new HisDevValue<int>(node,0,factory,handler);
+				return new HisDevValue<int>(node,0,factory,deviceWriter);
 			case EDataType::String:
-				return new HisDevValue<string>(node,string(""),factory,handler);
+				return new HisDevValue<string>(node,string(""),factory,deviceWriter);
 			case EDataType::Uint:
-				return new HisDevValue<uint32_t>(node,0,factory,handler);
+				return new HisDevValue<uint32_t>(node,0,factory,deviceWriter);
 			case EDataType::Email:
-				return new HisDevValueEmail(node,factory,handler);
+				return new HisDevValueEmail(node,deviceWriter,factory);
 			default:
 				return NULL;
 		}
@@ -354,6 +354,7 @@ bool HisDevValueBase::ForceStringValue(string strvalue, bool checkChange)
 					value->ForceValue(val);
 				return true;
 			}
+			case EDataType::Email:
 			case EDataType::String:
 			{
 				STACK_SECTION("String")
@@ -413,6 +414,7 @@ std::string HisDevValueBase::GetStringValue()
 			s << value->GetValue();
 			return s.str();
 		}
+		case EDataType::Email:
 		case EDataType::String:
 		{
 			STACK_SECTION("String")

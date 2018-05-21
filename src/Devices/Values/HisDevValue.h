@@ -73,7 +73,7 @@ public:
 			T defaultValue,
 			string loadType,
 			IHisDevFactory* factory,
-			IWriteToDevice* devHandler
+			IWriteToDevice* deviceWriter
 			) :
 		HisDevValueBase::HisDevValueBase(
 				addr,
@@ -82,7 +82,7 @@ public:
 				pPinNumber,
 				loadType,
 				factory,
-				devHandler),
+				deviceWriter),
 				value(defaultValue),
 				oldValue(defaultValue)
 	{
@@ -96,7 +96,7 @@ public:
 			T defaultValue,
 			string loadType,
 			IHisDevFactory* factory,
-			IWriteToDevice* devHandler) :
+			IWriteToDevice* deviceWriter) :
 		HisDevValue::HisDevValue(
 				addr,
 				direct,
@@ -105,7 +105,7 @@ public:
 				defaultValue,
 				loadType,
 				factory,
-				devHandler)
+				deviceWriter)
 	{
 
 	}
@@ -152,7 +152,7 @@ public:
 			{
 				extvalue = pValue;
 				ValueChangedEventArgs args(this);
-				if (devHandler!=NULL) devHandler->WriteToDevice(args);
+				if (deviceWriter!=NULL) deviceWriter->WriteToDevice(args);
 			}
 		}
 	}
@@ -170,7 +170,7 @@ public:
 			if (GetDirection()==EHisDevDirection::Write || GetDirection()==EHisDevDirection::ReadWrite)
 			{
 				ValueChangedEventArgs args(this);
-				if (devHandler!=NULL) devHandler->WriteToDevice(args);
+				if (deviceWriter!=NULL) deviceWriter->WriteToDevice(args);
 			}
 			else
 			{

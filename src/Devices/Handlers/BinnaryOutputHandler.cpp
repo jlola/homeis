@@ -52,7 +52,7 @@ void BinnaryOutputHandler::Load()
 	for(size_t i=0;i<values.size();i++)
 	{
 		HisDevValue<bool> *value = values[i];
-		value->SetWriteHandler(devModbus);
+		value->SetDevice(devModbus);
 		if (value->GetLoadType()==LoadType)
 			valuesOutput.push_back(value);
 		else
@@ -146,7 +146,7 @@ void BinnaryOutputHandler::CreateOrValidOutputs(bool addnew)
 				devModbus->Add(output);
 			}
 			valuesOutput.push_back(output);
-			output->SetWriteHandler(devModbus);
+			output->SetDevice(devModbus);
 			//WriteToDeviceRequestDelegate delegate = WriteToDeviceRequestDelegate::from_method<HisDevModbus, &HisDevModbus::WriteToDevice>(devModbus);
 			//output->delegateWrite = delegate;
 			output->ReadedValueFromDevice(soutput.Value,false);
