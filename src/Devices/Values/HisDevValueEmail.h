@@ -22,10 +22,7 @@ class HisDevValueEmail : public HisDevValue<string>
 	string receivers;
 	IEmailSender* emailSender;
 public:
-	HisDevValueEmail(string subject,
-			string fromAddr,
-			string receivers,
-			IWriteToDevice* deviceWriter,
+	HisDevValueEmail(IWriteToDevice* deviceWriter,
 			IHisDevFactory* factory);
 	HisDevValueEmail(xmlNodePtr pnode,
 				IWriteToDevice* deviceWriter,

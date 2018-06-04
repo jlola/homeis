@@ -14,6 +14,7 @@
 #include "StringBuilder.h"
 #include "converter.h"
 #include "microhttpd.h"
+#include "ParamsNames.h"
 
 
 ModbusDeviceService::ModbusDeviceService(HisDevices* devices
@@ -58,7 +59,7 @@ const http_response ModbusDeviceService::render_GET(const http_request& req)
 
 		document.SetObject();
 		jsonvalue.SetString("Success",document.GetAllocator());
-		document.AddMember("Result",jsonvalue,document.GetAllocator());
+		document.AddMember(JSON_RESULT,jsonvalue,document.GetAllocator());
 		resonse_code = MHD_HTTP_OK;
 	}
 	else
@@ -73,16 +74,16 @@ const http_response ModbusDeviceService::render_GET(const http_request& req)
 
 			document.SetObject();
 			jsonvalue.SetString("Success",document.GetAllocator());
-			document.AddMember("Result",jsonvalue,document.GetAllocator());
+			document.AddMember(JSON_RESULT,jsonvalue,document.GetAllocator());
 			resonse_code = MHD_HTTP_OK;
 		}
 		else
 		{
 			document.SetObject();
 			jsonvalue.SetString("Error",document.GetAllocator());
-			document.AddMember("Result",jsonvalue,document.GetAllocator());
+			document.AddMember(JSON_RESULT,jsonvalue,document.GetAllocator());
 			jsonvalue.SetString("Connector not found",document.GetAllocator());
-			document.AddMember("Message",jsonvalue,document.GetAllocator());
+			document.AddMember(JSON_MESSAGE,jsonvalue,document.GetAllocator());
 			resonse_code = MHD_HTTP_NOT_FOUND;
 		}
 

@@ -183,33 +183,33 @@ void DevicesService::FillDeviceToJson(Value & devjson, HisDevBase* dev,Document 
 	Value jsonvalue;
 	string strvalue = dev->GetName();
 	jsonvalue.SetString(strvalue.c_str(),strvalue.length(),respjsondoc.GetAllocator());
-	devjson.AddMember("Name",jsonvalue,respjsondoc.GetAllocator());
+	devjson.AddMember(JSON_NAME,jsonvalue,respjsondoc.GetAllocator());
 
 	strvalue = dev->GetCreateDateTime().ToString();
 	jsonvalue.SetString(strvalue.c_str(),strvalue.length(),respjsondoc.GetAllocator());
-	devjson.AddMember("createtime",jsonvalue, respjsondoc.GetAllocator());
+	devjson.AddMember(JSON_CREATETIME,jsonvalue, respjsondoc.GetAllocator());
 
 	strvalue = dev->GetModifyDateTime().ToString();
 	jsonvalue.SetString(strvalue.c_str(),strvalue.length(),respjsondoc.GetAllocator());
-	devjson.AddMember("modifytime",jsonvalue, respjsondoc.GetAllocator());
+	devjson.AddMember(JSON_MODIDFYTIME,jsonvalue, respjsondoc.GetAllocator());
 
 	strvalue = dev->GetRecordId().ToString();
 	jsonvalue.SetString(strvalue.c_str(),strvalue.length(),respjsondoc.GetAllocator());
-	devjson.AddMember("Id",jsonvalue,respjsondoc.GetAllocator());
+	devjson.AddMember(JSON_ID,jsonvalue,respjsondoc.GetAllocator());
 
 	jsonvalue.SetUint(dev->GetScanPeriod());
-	devjson.AddMember("ScanPeriodMs",jsonvalue,respjsondoc.GetAllocator());
+	devjson.AddMember(JSON_SCANPERIODMS,jsonvalue,respjsondoc.GetAllocator());
 
 	jsonvalue.SetString(strvalue.c_str(),strvalue.length(),respjsondoc.GetAllocator());
 	jsonvalue.SetBool(dev->IsEnabled());
-	devjson.AddMember("Enabled",jsonvalue,respjsondoc.GetAllocator());
+	devjson.AddMember(JSON_ENABLED,jsonvalue,respjsondoc.GetAllocator());
 
 	HisDevModbus* devModbus = dynamic_cast<HisDevModbus*>(dev);
 	if (devModbus!=NULL)
 	{
 		strvalue = Converter::itos(devModbus->GetAddress(),10);
 		jsonvalue.SetString(strvalue.c_str(),strvalue.length(),respjsondoc.GetAllocator());
-		devjson.AddMember("Address",jsonvalue,respjsondoc.GetAllocator());
+		devjson.AddMember(JSON_ADDRESSNAME,jsonvalue,respjsondoc.GetAllocator());
 
 		IModbus* modbusDriver = devModbus->GetModbus();
 		if (modbusDriver!=NULL)
@@ -220,12 +220,12 @@ void DevicesService::FillDeviceToJson(Value & devjson, HisDevBase* dev,Document 
 		{
 			jsonvalue.Clear();
 		}
-		devjson.AddMember("ConnectionName",jsonvalue,respjsondoc.GetAllocator());
+		devjson.AddMember(JSON_CONNECTIONNAME,jsonvalue,respjsondoc.GetAllocator());
 	}
 
 	HisDevVirtual* devVirtual = dynamic_cast<HisDevVirtual*>(dev);
 	jsonvalue.SetBool(devVirtual!=NULL);
-	devjson.AddMember("Internal",jsonvalue,respjsondoc.GetAllocator());
+	devjson.AddMember(JSON_INTERNAL,jsonvalue,respjsondoc.GetAllocator());
 
 	Value tagsjson(kArrayType);
 	vector<HisDevValueBase*> tagvalues = dev->GetValues();
@@ -235,7 +235,7 @@ void DevicesService::FillDeviceToJson(Value & devjson, HisDevBase* dev,Document 
 		DevValueToJson(d,NULL,tagvalues[v],respjsondoc);
 		tagsjson.PushBack(d,respjsondoc.GetAllocator());
 	}
-	devjson.AddMember("Tags",tagsjson,respjsondoc.GetAllocator());
+	devjson.AddMember(JSON_TAGS,tagsjson,respjsondoc.GetAllocator());
 }
 
 void DevicesService::DevValueToJson(Value & d, HisDevValueId* valueId,HisDevValueBase* devValue,Document & respjsondoc)
@@ -243,70 +243,70 @@ void DevicesService::DevValueToJson(Value & d, HisDevValueId* valueId,HisDevValu
 	string strvalue = devValue->GetPinName();
 	Value jsonvalue;
 	jsonvalue.SetString(strvalue.c_str(),strvalue.length(),respjsondoc.GetAllocator());
-	d.AddMember( "name",jsonvalue, respjsondoc.GetAllocator());
+	d.AddMember(JSON_NAME,jsonvalue, respjsondoc.GetAllocator());
 
 	strvalue = devValue->GetCreateDateTime().ToString();
 	jsonvalue.SetString(strvalue.c_str(),strvalue.length(),respjsondoc.GetAllocator());
-	d.AddMember("createtime",jsonvalue, respjsondoc.GetAllocator());
+	d.AddMember(JSON_CREATETIME,jsonvalue, respjsondoc.GetAllocator());
 
 	strvalue = devValue->GetModifyDateTime().ToString();
 	jsonvalue.SetString(strvalue.c_str(),strvalue.length(),respjsondoc.GetAllocator());
-	d.AddMember("modifytime",jsonvalue, respjsondoc.GetAllocator());
+	d.AddMember(JSON_MODIDFYTIME,jsonvalue, respjsondoc.GetAllocator());
 
 
 	if (valueId!=NULL)
 	{
 		strvalue = valueId->GetRecordId().ToString();
 		jsonvalue.SetString(strvalue.c_str(),strvalue.length(),respjsondoc.GetAllocator());
-		d.AddMember( "DirValueId",jsonvalue, respjsondoc.GetAllocator());
+		d.AddMember( JSON_DIRVALUEID,jsonvalue, respjsondoc.GetAllocator());
 
 		if (valueId->GetParent()!=NULL)
 		{
 			strvalue = valueId->GetParent()->GetRecordId().ToString();
 			jsonvalue.SetString(strvalue.c_str(),strvalue.length(),respjsondoc.GetAllocator());
-			d.AddMember( "ParentId",jsonvalue, respjsondoc.GetAllocator());
+			d.AddMember( JSON_PARENTID,jsonvalue, respjsondoc.GetAllocator());
 		}
 	}
 
 	strvalue = devValue->GetRecordId().ToString();
 	jsonvalue.SetString(strvalue.c_str(),strvalue.length(),respjsondoc.GetAllocator());
-	d.AddMember( "id",jsonvalue, respjsondoc.GetAllocator());
+	d.AddMember(JSON_ID,jsonvalue, respjsondoc.GetAllocator());
 
 	strvalue = (const char*)devValue->GetNodeName();
 	jsonvalue.SetString(strvalue.c_str(),strvalue.length(),respjsondoc.GetAllocator());
-	d.AddMember("NodeName",jsonvalue, respjsondoc.GetAllocator());
+	d.AddMember(JSON_NODENAME,jsonvalue, respjsondoc.GetAllocator());
 
 	strvalue = devValue->GetAddress();
 	jsonvalue.SetString(strvalue.c_str(),strvalue.length(),respjsondoc.GetAllocator());
-	d.AddMember( "address",jsonvalue, respjsondoc.GetAllocator());
+	d.AddMember(JSON_ADDRESS,jsonvalue, respjsondoc.GetAllocator());
 
-	d.AddMember( "type",devValue->GetDataType(), respjsondoc.GetAllocator());
-	d.AddMember( "direction",devValue->GetDirection(), respjsondoc.GetAllocator());
+	d.AddMember(JSON_TYPE,devValue->GetDataType(), respjsondoc.GetAllocator());
+	d.AddMember(JSON_DIRECTION,devValue->GetDirection(), respjsondoc.GetAllocator());
 
 	strvalue = devValue->GetStringValue();
 	jsonvalue.SetString(strvalue.c_str(),strvalue.length(),respjsondoc.GetAllocator());
-	d.AddMember( "value",jsonvalue, respjsondoc.GetAllocator());
+	d.AddMember(JSON_VALUE,jsonvalue, respjsondoc.GetAllocator());
 
 	strvalue = devValue->GetValueChangeTime().ToString();
 	jsonvalue.SetString(strvalue.c_str(),strvalue.length(),respjsondoc.GetAllocator());
-	d.AddMember( "valuechangetime",jsonvalue, respjsondoc.GetAllocator());
+	d.AddMember(JSON_VALUECHANGETIME,jsonvalue, respjsondoc.GetAllocator());
 
-	d.AddMember("error",devValue->GetDeviceError(),respjsondoc.GetAllocator());
-	d.AddMember("force",devValue->GetForceOutput(),respjsondoc.GetAllocator());
+	d.AddMember(JSON_ERROR,devValue->GetDeviceError(),respjsondoc.GetAllocator());
+	d.AddMember(JSON_FORCE,devValue->GetForceOutput(),respjsondoc.GetAllocator());
 
 	strvalue = devValue->GetUnit();
 	jsonvalue.SetString(strvalue.c_str(),strvalue.length(),respjsondoc.GetAllocator());
-	d.AddMember( "unit",jsonvalue, respjsondoc.GetAllocator());
+	d.AddMember( JSON_UNIT,jsonvalue, respjsondoc.GetAllocator());
 
 	strvalue = devValue->GetAddressName();
 	jsonvalue.SetString(strvalue.c_str(),strvalue.length(),respjsondoc.GetAllocator());
-	d.AddMember( "addressname",jsonvalue, respjsondoc.GetAllocator());
+	d.AddMember( JSON_ADDRESSNAME,jsonvalue, respjsondoc.GetAllocator());
 
 	HisDevVirtual* virtdev = dynamic_cast<HisDevVirtual*>(devValue->GetParent());
 	if (virtdev!=NULL)
-		d.AddMember( "internal",true, respjsondoc.GetAllocator());
+		d.AddMember(JSON_INTERNAL,true, respjsondoc.GetAllocator());
 	else
-		d.AddMember( "internal",false, respjsondoc.GetAllocator());
+		d.AddMember(JSON_INTERNAL,false, respjsondoc.GetAllocator());
 }
 
 const http_response DevicesService::render_POST(const http_request& req)
@@ -354,7 +354,7 @@ const http_response DevicesService::render_POST(const http_request& req)
 				//DevValueToJson(d,NULL,value,respjsondoc);
 				Value jsonvalue;
 				jsonvalue.SetString(id.c_str(),id.length(),respjsondoc.GetAllocator());
-				d.AddMember( "id",jsonvalue, respjsondoc.GetAllocator());
+				d.AddMember(JSON_ID,jsonvalue, respjsondoc.GetAllocator());
 				respjsondoc.PushBack(d,respjsondoc.GetAllocator());
 				PrettyWriter<StringBuffer> wr(buffer);
 				respjsondoc.Accept(wr);
@@ -486,7 +486,7 @@ const http_response DevicesService::render_DELETE(const http_request& req)
 
 	Value jsonvalue;
 	jsonvalue.SetString(msg.c_str(),msg.length(),respjsondoc.GetAllocator());
-	respjsondoc.AddMember("message",jsonvalue, respjsondoc.GetAllocator());
+	respjsondoc.AddMember(JSON_MESSAGE,jsonvalue, respjsondoc.GetAllocator());
 
 	PrettyWriter<StringBuffer> wr(buffer);
 	respjsondoc.Accept(wr);
@@ -599,10 +599,10 @@ HisDevVirtual* DevicesService::CreateVirtualDevice(string strjson,string & messa
 	if (document.Parse<0>((char*)strjson.c_str()).HasParseError())
 		return NULL;
 	HisDevVirtual* virtualdev = NULL;
-	if (document.HasMember("Name") && document["Name"].IsString())
+	if (document.HasMember(JSON_NAME) && document[JSON_NAME].IsString())
 	{
 		virtualdev = new HisDevVirtual(factory);
-		virtualdev->SetName(document["Name"].GetString());
+		virtualdev->SetName(document[JSON_NAME].GetString());
 	}
 	else
 	{
@@ -618,18 +618,18 @@ HisDevValueBase* DevicesService::CreateVirtualDevValue(string strjson,string & m
 	if (document.Parse<0>((char*)strjson.c_str()).HasParseError())
 		return NULL;
 
-	if (document.HasMember("parentId"))
+	if (document.HasMember(JSON_PARENTID) && document[JSON_PARENTID].IsString())
 	{
-		string strparentid = document["parentId"].GetString();
+		string strparentid = document[JSON_PARENTID].GetString();
 		CUUID parentid = CUUID::Parse(strparentid);
 
 		int index = devices.Find(parentid);
 		if (index>=0)
 		{
 			HisDevVirtual* virtualdev = dynamic_cast<HisDevVirtual*>(devices[index]);
-			if (document.HasMember("type") && document["type"].IsInt())
+			if (document.HasMember(JSON_TYPE) && document[JSON_TYPE].IsInt())
 			{
-				EDataType type = (EDataType)document["type"].GetInt();
+				EDataType type = (EDataType)document[JSON_TYPE].GetInt();
 				return virtualdev->AddDevValue(type);
 
 			}
@@ -660,44 +660,44 @@ HisDevBase* DevicesService::UpdateDevice(string strDevId, string strjson)
 		dev = dynamic_cast<HisDevBase*>(devices[index]);
 		if (dev!=NULL)
 		{
-			if (document.HasMember("Name")&&document["Name"].IsString())
+			if (document.HasMember(JSON_NAME) && document[JSON_NAME].IsString())
 			{
-				if (dev->GetName()!=document["Name"].GetString())
+				if (dev->GetName()!=document[JSON_NAME].GetString())
 				{
-					dev->SetName(document["Name"].GetString());
+					dev->SetName(document[JSON_NAME].GetString());
 					changed = true;
 				}
 			}
-			if (document.HasMember("Enabled")&&document["Enabled"].IsBool())
+			if (document.HasMember(JSON_ENABLED) && document[JSON_ENABLED].IsBool())
 			{
-				bool enabled = document["Enabled"].GetBool();
+				bool enabled = document[JSON_ENABLED].GetBool();
 				if (dev->IsEnabled()!=enabled)
 				{
 					dev->Enable(enabled);
 					changed = true;
 				}
 			}
-			if (document.HasMember("ScanPeriodMs") && document["ScanPeriodMs"].IsUint())
+			if (document.HasMember(JSON_SCANPERIODMS) && document[JSON_SCANPERIODMS].IsUint())
 			{
 
-				if (dev->GetScanPeriod()!=document["ScanPeriodMs"].GetUint())
+				if (dev->GetScanPeriod()!=document[JSON_SCANPERIODMS].GetUint())
 				{
-					dev->SetScanPeriod(document["ScanPeriodMs"].GetUint());
+					dev->SetScanPeriod(document[JSON_SCANPERIODMS].GetUint());
 					changed = true;
 				}
 			}
-			if (document.HasMember("Tags"))
+			if (document.HasMember(JSON_TAGS))
 			{
-				const Value& a = document["Tags"];
+				const Value& a = document[JSON_TAGS];
 				if (a.IsArray())
 				{
 					for (Value::ConstValueIterator itr = a.Begin(); itr != a.End(); ++itr)
 					{
 						if (itr->IsObject())
 						{
-							if (itr->HasMember("id"))
+							if (itr->HasMember(JSON_ID))
 							{
-								string tagname = itr->operator[]("id").GetString();
+								string tagname = itr->operator[](JSON_ID).GetString();
 							}
 						}
 					}
@@ -720,9 +720,9 @@ bool DevicesService::UpdateDevValue(CUUID devValueId, string strjson)
 	HisDevValueBase* devValue = devices.FindValue(devValueId);
 	if (devValue != NULL)
 	{
-		if (document.HasMember("name") && document["name"].IsString())
+		if (document.HasMember(JSON_NAME) && document[JSON_NAME].IsString())
 		{
-			string name = document["name"].GetString();
+			string name = document[JSON_NAME].GetString();
 			if (name!=devValue->GetPinName())
 			{
 				devValue->SetPinName(name);
@@ -730,9 +730,9 @@ bool DevicesService::UpdateDevValue(CUUID devValueId, string strjson)
 			}
 		}
 
-		if (document.HasMember("addressname") && document["addressname"].IsString())
+		if (document.HasMember(JSON_ADDRESSNAME) && document[JSON_ADDRESSNAME].IsString())
 		{
-			string addressname = document["addressname"].GetString();
+			string addressname = document[JSON_ADDRESSNAME].GetString();
 			if (addressname!=devValue->GetAddressName())
 			{
 				devValue->SetAddressName(addressname);
@@ -740,9 +740,9 @@ bool DevicesService::UpdateDevValue(CUUID devValueId, string strjson)
 			}
 		}
 
-		if (document.HasMember("unit") && document["unit"].IsString())
+		if (document.HasMember(JSON_UNIT) && document[JSON_UNIT].IsString())
 		{
-			string strunit = document["unit"].GetString();
+			string strunit = document[JSON_UNIT].GetString();
 			if (strunit!=devValue->GetUnit())
 			{
 				devValue->SetUnit(strunit);
@@ -750,14 +750,14 @@ bool DevicesService::UpdateDevValue(CUUID devValueId, string strjson)
 			}
 		}
 
-		if (document.HasMember("force") && document["force"].IsBool())
+		if (document.HasMember(JSON_FORCE) && document[JSON_FORCE].IsBool())
 		{
-			bool force = document["force"].GetBool();
+			bool force = document[JSON_FORCE].GetBool();
 			devValue->SetForceOutput(force);
 		}
-		if (document.HasMember("value") && document["value"].IsString())
+		if (document.HasMember(JSON_VALUE) && document[JSON_VALUE].IsString())
 		{
-			string strvalue = document["value"].GetString();
+			string strvalue = document[JSON_VALUE].GetString();
 
 			if (devValue->GetDirection()==EHisDevDirection::ReadWrite ||
 				devValue->GetDirection()==EHisDevDirection::Write ||
@@ -775,14 +775,14 @@ bool DevicesService::UpdateDevValue(CUUID devValueId, string strjson)
 		HisDevValueEmail* valueEmail = dynamic_cast<HisDevValueEmail*>(devValue);
 		if (valueEmail!=NULL)
 		{
-			if (document.HasMember("fromAddr") && document["fromAddr"].IsString())
+			if (document.HasMember(JSON_SENDER) && document[JSON_SENDER].IsString())
 			{
-				valueEmail->SetFromAddr(document["fromAddr"].GetString());
+				valueEmail->SetFromAddr(document[JSON_SENDER].GetString());
 				saveReq = true;
 			}
-			if (document.HasMember("receivers") && document["receivers"].IsString())
+			if (document.HasMember(JSON_RECEIVERS) && document[JSON_RECEIVERS].IsString())
 			{
-				valueEmail->SetFromAddr(document["receivers"].GetString());
+				valueEmail->SetFromAddr(document[JSON_RECEIVERS].GetString());
 				saveReq = true;
 			}
 		}

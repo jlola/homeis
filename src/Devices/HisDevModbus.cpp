@@ -183,7 +183,7 @@ bool HisDevModbus::GetData(uint16_t* & data, uint8_t & length)
 	return false;
 }
 
-void HisDevModbus::WriteToDevice(ValueChangedEventArgs args)
+void HisDevModbus::WriteToDevice(ValueChangedEventArgs & args)
 {
 	if (args.GetValue()->GetDirection()==EHisDevDirection::ReadWrite ||
 		args.GetValue()->GetDirection()==EHisDevDirection::Write)

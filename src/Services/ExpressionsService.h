@@ -20,6 +20,8 @@
 #include "Expressions/IExpression.h"
 #include "Expressions/LuaExpression.h"
 #include "HttpHeadersProvider.h"
+#include "ParamsNames.h"
+
 
 using namespace std;
 using namespace httpserver;

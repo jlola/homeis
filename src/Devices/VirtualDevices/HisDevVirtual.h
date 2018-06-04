@@ -39,9 +39,11 @@ public:
 
 	virtual void DoInternalRefresh(bool alarm);
 
+	void SetErrorFalse(HisDevValueBase* value);
+
 	void OnError();
 
-	void WriteToDevice(ValueChangedEventArgs args);
+	void WriteToDevice(ValueChangedEventArgs & args);
 
 	static bool IsInternal(xmlNodePtr pnode);
 };

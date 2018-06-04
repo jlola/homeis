@@ -52,7 +52,7 @@ public:
 		scantag = NULL;
 	}
 
-	void WriteToDevice(ValueChangedEventArgs args)
+	void WriteToDevice(ValueChangedEventArgs & args)
 	{
 
 	}

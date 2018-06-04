@@ -17,6 +17,8 @@
 #include "Folder/HisDevFolderRoot.h"
 #include "IHttpHeadersProvider.h"
 
+#include "ParamsNames.h"
+
 using namespace std;
 using namespace httpserver;
 using namespace rapidjson;

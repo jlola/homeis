@@ -30,6 +30,8 @@ TEST_F(LuaExpressionTests,WriteToEmailTagFromLuaExpression)
 	string body = "test body";
 
 	Mock<IWriteToDevice> deviceWriterMock;
+	ValueChangedEventArgs args(NULL);
+	When(Method(deviceWriterMock,WriteToDevice).Using(Any<ValueChangedEventArgs>())).AlwaysReturn();
 
 	Mock<IEmailSender> emailSenderMock;
 	When(Method(emailSenderMock,Send)).AlwaysReturn();
@@ -60,7 +62,9 @@ TEST_F(LuaExpressionTests,WriteToEmailTagFromLuaExpression)
 	HisDevVirtual* virtualDev = new HisDevVirtual(factory);
 	HisDevices devices("fileName",modbusProvider);
 	devices.Add(virtualDev);
-	HisDevValueEmail* emailValue = new HisDevValueEmail(subject,fromAddr,strreceivers, &deviceWriterMock.get(), factory);
+	HisDevValueEmail* emailValue = new HisDevValueEmail(&deviceWriterMock.get(), factory);
+	emailValue->SetFromAddr(fromAddr);
+	emailValue->SetReceivers(strreceivers);
 	emailValue->SetAddressName("email");
 	emailValue->SetName(subject);
 	virtualDev->Add(emailValue);

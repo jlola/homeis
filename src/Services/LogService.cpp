@@ -4,6 +4,7 @@
  *  Created on: 23. 5. 2017
  *      Author: pc
  */
+#include <vector>
 #include "document.h"		// rapidjson's DOM-style API
 #include "prettywriter.h"
 #include "stringbuffer.h"
@@ -13,8 +14,8 @@
 #include "Helpers/Directory.h"
 #include "Helpers/File.h"
 #include "Helpers/StringBuilder.h"
-#include <vector>
 #include "File.h"
+#include "ParamsNames.h"
 
 using namespace rapidjson;
 
@@ -86,7 +87,7 @@ const http_response LogService::render_GET(const http_request& req)
 		else
 		{
 			jsonvalue.SetString("Not exists",document.GetAllocator());
-			document.AddMember("Result",jsonvalue,document.GetAllocator());
+			document.AddMember(JSON_RESULT,jsonvalue,document.GetAllocator());
 			response_code = MHD_HTTP_NOT_FOUND;
 		}
 	}

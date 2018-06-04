@@ -10,6 +10,7 @@
 #include "filestream.h"	// wrapper of C stream for prettywriter as output
 
 #include "HttpHeadersProvider.h"
+#include "ParamsNames.h"
 
 using namespace rapidjson;
 
@@ -35,7 +36,7 @@ string HttpHeadersProvider::GetErrorMessageJson(string message)
 	respjsondoc.SetObject();
 	Value jsonvalue;
 	jsonvalue.SetString(message.c_str(),message.length(),respjsondoc.GetAllocator());
-	respjsondoc.AddMember("error",jsonvalue, respjsondoc.GetAllocator());
+	respjsondoc.AddMember(JSON_ERROR,jsonvalue, respjsondoc.GetAllocator());
 
 	StringBuffer buffer;
 	PrettyWriter<StringBuffer> wr(buffer);

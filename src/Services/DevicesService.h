@@ -17,6 +17,7 @@
 #include "HttpHeadersProvider.h"
 #include "IHisDevFactory.h"
 #include "logger.h"
+#include "ParamsNames.h"
 
 using namespace std;
 using namespace httpserver;

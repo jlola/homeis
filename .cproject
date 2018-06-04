@@ -415,12 +415,13 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/Expressions}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/Devices/VirtualDevices}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/homeis/Tests}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/homeis/Tests/API}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/homeis/Tests/API/TestsSupport}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/homeis/Tests/API}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/homeis/Tests/Unit}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/homeis/Tests/Unit/Devices}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/homeis/Tests/Unit/Drivers}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/homeis/Tests/Unit/Devices/Handlers}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/homeis/Tests/API/TestsSupport/Atoms}&quot;"/>
 								</option>
 								<option id="gnu.cpp.compiler.option.preprocessor.def.125684587" name="Defined symbols (-D)" superClass="gnu.cpp.compiler.option.preprocessor.def" useByScannerDiscovery="false" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="HTTPSERVER_COMPILATION"/>

@@ -48,7 +48,7 @@ const http_response FoldersService::render_GET(const http_request& req)
 	respjsondoc.SetArray();
 	int response_code = MHD_HTTP_FORBIDDEN;
 
-	string strid = req.get_arg("id");
+	string strid = req.get_arg(JSON_ID);
 	HisDevFolder* folder = NULL;
 	string path = req.get_path();
 	if(!strid.empty())
@@ -121,33 +121,33 @@ void FoldersService::FolderToJson(HisDevFolderRoot & root,IHisBase *pParentFolde
 	string strvalue = pFolder->GetName();
 	Value jsonvalue;
 	jsonvalue.SetString(strvalue.c_str(),strvalue.length(),respjsondoc.GetAllocator());
-	d.AddMember("name",jsonvalue, respjsondoc.GetAllocator());
+	d.AddMember(JSON_NAME,jsonvalue, respjsondoc.GetAllocator());
 
 	strvalue = pFolder->GetCreateDateTime().ToString();
 	jsonvalue.SetString(strvalue.c_str(),strvalue.length(),respjsondoc.GetAllocator());
-	d.AddMember("createtime",jsonvalue, respjsondoc.GetAllocator());
+	d.AddMember(JSON_CREATETIME,jsonvalue, respjsondoc.GetAllocator());
 
 	strvalue = pFolder->GetModifyDateTime().ToString();
 	jsonvalue.SetString(strvalue.c_str(),strvalue.length(),respjsondoc.GetAllocator());
-	d.AddMember("modifytime",jsonvalue, respjsondoc.GetAllocator());
+	d.AddMember(JSON_MODIDFYTIME,jsonvalue, respjsondoc.GetAllocator());
 
 	strvalue = (const char*)pFolder->GetNodeName();
 	jsonvalue.SetString(strvalue.c_str(),strvalue.length(),respjsondoc.GetAllocator());
-	d.AddMember("NodeName",jsonvalue, respjsondoc.GetAllocator());
+	d.AddMember(JSON_NODENAME,jsonvalue, respjsondoc.GetAllocator());
 
 	if (pParentFolder!=NULL)
 	{
 		strvalue = pParentFolder->GetRecordId().ToString();
 		jsonvalue.SetString(strvalue.c_str(),strvalue.length(),respjsondoc.GetAllocator());
-		d.AddMember("ParentId",jsonvalue, respjsondoc.GetAllocator());
+		d.AddMember(JSON_PARENTID,jsonvalue, respjsondoc.GetAllocator());
 		strvalue = pParentFolder->GetName();
 		jsonvalue.SetString(strvalue.c_str(),strvalue.length(),respjsondoc.GetAllocator());
-		d.AddMember("ParentName",jsonvalue, respjsondoc.GetAllocator());
+		d.AddMember(JSON_PARENTNAME,jsonvalue, respjsondoc.GetAllocator());
 	}
 
 	strvalue = pFolder->GetRecordId().ToString();
 	jsonvalue.SetString(strvalue.c_str(),strvalue.length(),respjsondoc.GetAllocator());
-	d.AddMember("id",jsonvalue, respjsondoc.GetAllocator());
+	d.AddMember(JSON_ID,jsonvalue, respjsondoc.GetAllocator());
 
 	if (pFolder->GetParent()!=NULL)
 	{
@@ -155,7 +155,7 @@ void FoldersService::FolderToJson(HisDevFolderRoot & root,IHisBase *pParentFolde
 		{
 			strvalue = pFolder->GetParent()->GetRecordId().ToString();
 			jsonvalue.SetString(strvalue.c_str(),strvalue.length(),respjsondoc.GetAllocator());
-			d.AddMember("parentId",jsonvalue, respjsondoc.GetAllocator());
+			d.AddMember(JSON_PARENTID,jsonvalue, respjsondoc.GetAllocator());
 		}
 	}
 	respjsondoc.PushBack(d, respjsondoc.GetAllocator());
@@ -205,9 +205,9 @@ bool FoldersService::AddValueIdToFolder(string strFolderId, string strJson,strin
 	if (document.Parse<0>((char*)strJson.c_str()).HasParseError())
 		return NULL;
 
-	if (document.HasMember("DevValueId") && document["DevValueId"].IsString())
+	if (document.HasMember(JSON_DEVVALUEID) && document[JSON_DEVVALUEID].IsString())
 	{
-		string strDevValueId = document["DevValueId"].GetString();
+		string strDevValueId = document[JSON_DEVVALUEID].GetString();
 		CUUID devValueId = CUUID::Parse(strDevValueId);
 		HisDevValueBase* valueBase = devices.FindValue(devValueId);
 		if (valueBase!=NULL)
@@ -270,9 +270,9 @@ bool FoldersService::UpdateFolder(string strid, string strJson,string & message)
 		id = CUUID::Parse(strid);
 
 		CUUID parentid;
-		if (document.HasMember("ParentId") && document["ParentId"].IsString())
+		if (document.HasMember(JSON_PARENTID) && document[JSON_PARENTID].IsString())
 		{
-			parentid = CUUID::Parse(document["ParentId"].GetString());
+			parentid = CUUID::Parse(document[JSON_PARENTID].GetString());
 		}
 		else
 		{
@@ -281,9 +281,9 @@ bool FoldersService::UpdateFolder(string strid, string strJson,string & message)
 		}
 
 		string name;
-		if (document.HasMember("name") && document["name"].IsString())
+		if (document.HasMember(JSON_NAME) && document[JSON_NAME].IsString())
 		{
-			name = document["name"].GetString();
+			name = document[JSON_NAME].GetString();
 		}
 		else
 		{
@@ -328,11 +328,11 @@ bool FoldersService::CreateFolder(string strJson,string & message)
 		return false;
 
 	CUUID parentid = CUUID::Empty();
-	if (document.HasMember("parentId") && document["parentId"].IsString())
+	if (document.HasMember(JSON_PARENTID) && document[JSON_PARENTID].IsString())
 	{
 		try
 		{
-			parentid = CUUID::Parse(document["parentId"].GetString());
+			parentid = CUUID::Parse(document[JSON_PARENTID].GetString());
 		}
 		catch(...)
 		{
@@ -341,9 +341,9 @@ bool FoldersService::CreateFolder(string strJson,string & message)
 	}
 
 	HisDevFolder* newFolder = NULL;
-	if (document.HasMember("name") && document["name"].IsString())
+	if (document.HasMember(JSON_NAME) && document[JSON_NAME].IsString())
 	{
-		string name = document["name"].GetString();
+		string name = document[JSON_NAME].GetString();
 		newFolder = new HisDevFolder(name,factory);
 	}
 	else
@@ -371,13 +371,13 @@ const http_response FoldersService::render_PUT(const http_request& req)
 
 	if (req.get_user()=="a" && req.get_pass()=="a")
 	{
-		string strid = req.get_arg("id");
+		string strid = req.get_arg(JSON_ID);
 		string content = req.get_content();
 		string path = req.get_path();
 
 		if (path.find("/api/folder/valueid")!=string::npos)
 		{
-			string strfolderid = req.get_arg("folderid");
+			string strfolderid = req.get_arg(JSON_FOLDERID);
 			//vytvori id datoveho bodu ve slozce
 			if (AddValueIdToFolder(strfolderid,content,message))
 			{
@@ -452,7 +452,7 @@ const http_response FoldersService::render_DELETE(const http_request& req)
 
 	if (req.get_user()=="a" && req.get_pass()=="a")
 	{
-		string strid = req.get_arg("id");
+		string strid = req.get_arg(JSON_ID);
 
 		CUUID id = CUUID::Parse(strid);
 		HisDevFolder* folder = dynamic_cast<HisDevFolder*>(root.GetFolder()->Find(id));

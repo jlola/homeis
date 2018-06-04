@@ -9,7 +9,8 @@
 #include "prettywriter.h"
 #include "stringbuffer.h"
 #include "microhttpd.h"
-#include <Services/ModbusService.h>
+#include "ModbusService.h"
+#include "ParamsNames.h"
 
 using namespace rapidjson;
 
@@ -58,9 +59,9 @@ const http_response ModbusService::render_GET(const http_request& req)
 			document.SetObject();
 			jsonvalue.SetObject();
 			jsonvalue.SetString("Error",document.GetAllocator());
-			document.AddMember("Result",jsonvalue,document.GetAllocator());
+			document.AddMember(JSON_RESULT,jsonvalue,document.GetAllocator());
 			jsonvalue.SetString("Modbus getHoldings failed",document.GetAllocator());
-			document.AddMember("Message",jsonvalue,document.GetAllocator());
+			document.AddMember(JSON_MESSAGE,jsonvalue,document.GetAllocator());
 		}
 
 		delete[] target;
@@ -70,9 +71,9 @@ const http_response ModbusService::render_GET(const http_request& req)
 	{
 		document.SetObject();
 		jsonvalue.SetString("Error",document.GetAllocator());
-		document.AddMember("Result",jsonvalue,document.GetAllocator());
+		document.AddMember(JSON_RESULT,jsonvalue,document.GetAllocator());
 		jsonvalue.SetString("Connector not found",document.GetAllocator());
-		document.AddMember("Message",jsonvalue,document.GetAllocator());
+		document.AddMember(JSON_MESSAGE,jsonvalue,document.GetAllocator());
 	}
 
 	document.Accept(wr);
@@ -112,17 +113,17 @@ const http_response ModbusService::render_PUT(const http_request& req)
 		else
 		{
 			jsonvalue.SetString("Error",document.GetAllocator());
-			document.AddMember("Result",jsonvalue,document.GetAllocator());
+			document.AddMember(JSON_RESULT,jsonvalue,document.GetAllocator());
 			jsonvalue.SetString("Modbus setHolding failed",document.GetAllocator());
-			document.AddMember("Message",jsonvalue,document.GetAllocator());
+			document.AddMember(JSON_MESSAGE,jsonvalue,document.GetAllocator());
 		}
 	}
 	else
 	{
 		jsonvalue.SetString("Error",document.GetAllocator());
-		document.AddMember("Result",jsonvalue,document.GetAllocator());
+		document.AddMember(JSON_RESULT,jsonvalue,document.GetAllocator());
 		jsonvalue.SetString("Connector not found",document.GetAllocator());
-		document.AddMember("Message",jsonvalue,document.GetAllocator());
+		document.AddMember(JSON_MESSAGE,jsonvalue,document.GetAllocator());
 	}
 	document.Accept(wr);
 	std::string json = buffer.GetString();

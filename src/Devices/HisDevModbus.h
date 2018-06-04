@@ -75,7 +75,7 @@ public:
 
 	bool GetTypeDef(ETypes type,STypedef * stypedef);
 
-	void WriteToDevice(ValueChangedEventArgs args);
+	void WriteToDevice(ValueChangedEventArgs & args);
 
 	static bool Resolve(xmlNodePtr pnode);
 

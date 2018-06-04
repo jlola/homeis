@@ -166,44 +166,44 @@ void ExpressionService::ExpressionToJson(IHisBase* pParent, LuaExpression *pExpr
 	Value jsonvalue;
 
 	jsonvalue.SetString(strvalue.c_str(),strvalue.length(),respjsondoc.GetAllocator());
-	d.AddMember("name",jsonvalue, respjsondoc.GetAllocator());
+	d.AddMember(JSON_NAME,jsonvalue, respjsondoc.GetAllocator());
 
 	strvalue = pExpression->GetCreateDateTime().ToString();
 	jsonvalue.SetString(strvalue.c_str(),strvalue.length(),respjsondoc.GetAllocator());
-	d.AddMember("createtime",jsonvalue, respjsondoc.GetAllocator());
+	d.AddMember(JSON_CREATETIME,jsonvalue, respjsondoc.GetAllocator());
 
 	strvalue = pExpression->GetModifyDateTime().ToString();
 	jsonvalue.SetString(strvalue.c_str(),strvalue.length(),respjsondoc.GetAllocator());
-	d.AddMember("modifytime",jsonvalue, respjsondoc.GetAllocator());
+	d.AddMember(JSON_MODIDFYTIME,jsonvalue, respjsondoc.GetAllocator());
 
 	strvalue = (const char*)pExpression->GetNodeName();
 	jsonvalue.SetString(strvalue.c_str(),strvalue.length(),respjsondoc.GetAllocator());
-	d.AddMember("NodeName",jsonvalue, respjsondoc.GetAllocator());
+	d.AddMember(JSON_NODENAME,jsonvalue, respjsondoc.GetAllocator());
 
 	strvalue = pExpression->GetExpression();
 	jsonvalue.SetString(strvalue.c_str(),strvalue.length(),respjsondoc.GetAllocator());
-	d.AddMember("expression",jsonvalue, respjsondoc.GetAllocator());
+	d.AddMember(JSON_EXPRESSION,jsonvalue, respjsondoc.GetAllocator());
 
 	strvalue = pExpression->GetLastEvaluateError();
 	jsonvalue.SetString(strvalue.c_str(),strvalue.length(),respjsondoc.GetAllocator());
-	d.AddMember("errormessage",jsonvalue, respjsondoc.GetAllocator());
+	d.AddMember(JSON_ERRORMESSAGE,jsonvalue, respjsondoc.GetAllocator());
 
 	strvalue = pExpression->GetDescription();
 	jsonvalue.SetString(strvalue.c_str(),strvalue.length(),respjsondoc.GetAllocator());
-	d.AddMember("description",jsonvalue, respjsondoc.GetAllocator());
+	d.AddMember(JSON_DESCRIPTION,jsonvalue, respjsondoc.GetAllocator());
 
 	strvalue = pExpression->GetRecordId().ToString();
 	jsonvalue.SetString(strvalue.c_str(),strvalue.length(),respjsondoc.GetAllocator());
-	d.AddMember("id",jsonvalue, respjsondoc.GetAllocator());
+	d.AddMember(JSON_ID,jsonvalue, respjsondoc.GetAllocator());
 
 	jsonvalue.SetBool(pExpression->GetRunning());//SetString(strvalue.c_str(),strvalue.length(),respjsondoc.GetAllocator());
-	d.AddMember("running",jsonvalue, respjsondoc.GetAllocator());
+	d.AddMember(JSON_RUNNING,jsonvalue, respjsondoc.GetAllocator());
 
 	//if (pExpression->GetParent()->GetRecordId()!=root->GetFolder()->GetRecordId())
 	{
 		strvalue = pExpression->GetParent()->GetRecordId().ToString();
 		jsonvalue.SetString(strvalue.c_str(),strvalue.length(),respjsondoc.GetAllocator());
-		d.AddMember("parentId",jsonvalue, respjsondoc.GetAllocator());
+		d.AddMember(JSON_PARENTID,jsonvalue, respjsondoc.GetAllocator());
 	}
 	respjsondoc.PushBack(d, respjsondoc.GetAllocator());
 }
@@ -263,15 +263,15 @@ LuaExpression* ExpressionService::CreateOrUpdateExpression(string strJson,string
 			return NULL;
 
 		CUUID parentid;
-		if (document.HasMember("parentId") && document["parentId"].IsString())
+		if (document.HasMember(JSON_PARENTID) && document[JSON_PARENTID].IsString())
 		{
-			parentid = CUUID::Parse(document["parentId"].GetString());
+			parentid = CUUID::Parse(document[JSON_PARENTID].GetString());
 		}
 
 		CUUID expressionid;
-		if (document.HasMember("id") && document["id"].IsString())
+		if (document.HasMember(JSON_ID) && document[JSON_ID].IsString())
 		{
-			expressionid = CUUID::Parse(document["id"].GetString());
+			expressionid = CUUID::Parse(document[JSON_ID].GetString());
 		}
 
 		LuaExpression* expressionObj = NULL;
@@ -280,9 +280,9 @@ LuaExpression* ExpressionService::CreateOrUpdateExpression(string strJson,string
 		bool saveReq = false;
 		expressionObj = dynamic_cast<LuaExpression*>(parent->Find(expressionid));
 
-		if (document.HasMember("name") && document["name"].IsString())
+		if (document.HasMember(JSON_NAME) && document[JSON_NAME].IsString())
 		{
-			string name = document["name"].GetString();
+			string name = document[JSON_NAME].GetString();
 			if (expressionObj!=NULL)
 			{
 				if (expressionObj->GetName()!=name)
@@ -298,9 +298,9 @@ LuaExpression* ExpressionService::CreateOrUpdateExpression(string strJson,string
 				saveReq = true;
 			}
 
-			if (document.HasMember("description") && document["description"].IsString())
+			if (document.HasMember(JSON_DESCRIPTION) && document[JSON_DESCRIPTION].IsString())
 			{
-				string description = document["description"].GetString();
+				string description = document[JSON_DESCRIPTION].GetString();
 				if (description!=expressionObj->GetDescription())
 				{
 					expressionObj->SetDescription(description);
@@ -308,9 +308,9 @@ LuaExpression* ExpressionService::CreateOrUpdateExpression(string strJson,string
 				}
 			}
 
-			if (document.HasMember("expression") && document["expression"].IsString())
+			if (document.HasMember(JSON_EXPRESSION) && document[JSON_EXPRESSION].IsString())
 			{
-				string strexpression = document["expression"].GetString();
+				string strexpression = document[JSON_EXPRESSION].GetString();
 				if (strexpression!=expressionObj->GetExpression())
 				{
 					if (expressionObj->GetRunning())
@@ -327,16 +327,16 @@ LuaExpression* ExpressionService::CreateOrUpdateExpression(string strJson,string
 				}
 			}
 
-			if (document.HasMember("running"))
+			if (document.HasMember(JSON_RUNNING))
 			{
 				bool running = false;
-				if (document["running"].IsString())
+				if (document[JSON_RUNNING].IsString())
 				{
-					string strrunning = document["running"].GetString();
+					string strrunning = document[JSON_RUNNING].GetString();
 					running = strrunning=="1" ? true : false;
 				}
-				else if (document["running"].IsBool())
-					running = document["running"].GetBool();
+				else if (document[JSON_RUNNING].IsBool())
+					running = document[JSON_RUNNING].GetBool();
 				else
 				{
 					message = StringBuilder::Format("Property 'running': can not convert received value to bool");

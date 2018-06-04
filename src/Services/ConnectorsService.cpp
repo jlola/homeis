@@ -29,11 +29,11 @@ const http_response ConnectorsService::render_GET(const http_request& req)
 		valport.SetObject();
 		Value strval;
 		strval.SetString(connectors[i]->GetName().c_str(),respjsondoc.GetAllocator());
-		valport.AddMember("Name",strval,respjsondoc.GetAllocator());
+		valport.AddMember("name",strval,respjsondoc.GetAllocator());
 		strval.SetString(connectors[i]->GetDriverName().c_str(),respjsondoc.GetAllocator());
-		valport.AddMember("Driver",strval,respjsondoc.GetAllocator());
+		valport.AddMember("driver",strval,respjsondoc.GetAllocator());
 		strval.SetString(connectors[i]->GetPort().c_str(),respjsondoc.GetAllocator());
-		valport.AddMember("Port",strval,respjsondoc.GetAllocator());
+		valport.AddMember("port",strval,respjsondoc.GetAllocator());
 		respjsondoc.PushBack(valport,respjsondoc.GetAllocator());
 	}
 

@@ -55,7 +55,7 @@ TEST_F(ExpressionsTest,CreateExpressionTest)
 	string response;
 	string json = "{\"parentId\":\"b004782a-ff08-4aee-b459-aa0a2d19ac0d\",\"running\":false,\"description\":null,\"expression\":\"if(1\
 == 1) then test=\
-1 end\",\"errormessage\":null,\"name\":\"newExpression\",\"id\":null,\"NodeName\":\"expression\"}";
+1 end\",\"errorMessage\":null,\"name\":\"newExpression\",\"id\":null,\"nodeName\":\"expression\"}";
 	long http_code = 0;
 	CURLcode cresp = client.Put(reqest,json,response,http_code);
 	ASSERT_EQ(cresp, CURLE_OK);

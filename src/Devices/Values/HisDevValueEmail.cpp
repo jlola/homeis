@@ -10,9 +10,8 @@
 #include "StringBuilder.h"
 #include "HisDevValueEmail.h"
 
-HisDevValueEmail::HisDevValueEmail(string subject,string fromAddr,string receivers,
-		IWriteToDevice* deviceWriter, IHisDevFactory* factory	) :
-		HisDevValue::HisDevValue(subject,
+HisDevValueEmail::HisDevValueEmail(IWriteToDevice* deviceWriter, IHisDevFactory* factory	) :
+		HisDevValue::HisDevValue("emailtag",
 				EHisDevDirection::Write,
 				EDataType::Email,
 				0,

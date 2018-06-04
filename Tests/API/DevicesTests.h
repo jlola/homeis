@@ -8,15 +8,13 @@
 #ifndef SRC_TESTS_API_DEVICESTESTS_H_
 #define SRC_TESTS_API_DEVICESTESTS_H_
 
-namespace AF {
+
+#include "HomeIsStarter.h"
 
 class DevicesTests : public testing::Test
 {
 protected:
-	SSerPortConfig modbussim;
-	HomeIsServer* server;
-	IModbusProvider* modbusProvider;
-	Client client;
+	HomeIsStarter homeisStarter;
 public:
 	DevicesTests();
 	void SetUp();
@@ -24,6 +22,5 @@ public:
 	virtual ~DevicesTests();
 };
 
-} /* namespace AF */
 
 #endif /* SRC_TESTS_API_DEVICESTESTS_H_ */

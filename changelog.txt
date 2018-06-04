@@ -6,3 +6,4 @@
 20171221 - added option allow origin
 20180119 - added ScanPeriodMs to device 
 20180327 - added RFID support
+20180523 - added email tag to send email from lua script
