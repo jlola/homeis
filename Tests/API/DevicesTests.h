@@ -8,13 +8,13 @@
 #ifndef SRC_TESTS_API_DEVICESTESTS_H_
 #define SRC_TESTS_API_DEVICESTESTS_H_
 
-
+#include "DevicesAtom.h"
 #include "HomeIsStarter.h"
 
 class DevicesTests : public testing::Test
 {
 protected:
-	HomeIsStarter homeisStarter;
+	HomeIsStarter* homeisStarter;
 public:
 	DevicesTests();
 	void SetUp();

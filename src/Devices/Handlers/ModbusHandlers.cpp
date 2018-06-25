@@ -22,9 +22,9 @@ ModbusHandlers::ModbusHandlers(HisDevModbus* dev,IHisDevFactory* factory) :
 	STACK
 
 	if (dev==NULL)
-		throw ArgumentNullException(string("dev"));
+		throw ArgumentNullException("dev");
 	if (factory==NULL)
-		throw ArgumentNullException(string("factory"));
+		throw ArgumentNullException("factory");
 
 	handlers.push_back(new BinnaryInputHandler(this->dev,factory));
 	handlers.push_back(new BinnaryOutputHandler(this->dev,factory));

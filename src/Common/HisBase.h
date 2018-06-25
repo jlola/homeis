@@ -23,6 +23,8 @@
 using namespace rapidjson;
 using namespace std;
 
+#define DEFAULTNAME "-------"
+
 #define PROP_NAME BAD_CAST "name"
 #define PROP_RECORDID  BAD_CAST "recordid"
 #define PROP_CREATE_DATE BAD_CAST "createdate"

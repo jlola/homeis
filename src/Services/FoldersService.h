@@ -31,7 +31,10 @@ class FoldersService : public http_resource
 	IHttpHeadersProvider & headersProvider;
 	IHisDevFactory* factory;
 public:
-	FoldersService(HisDevices & dev,HisDevFolderRoot & proot, IHttpHeadersProvider & headersProvider,IHisDevFactory* factory);
+	FoldersService(HisDevices & dev,HisDevFolderRoot & proot,
+			IHttpHeadersProvider & headersProvider,
+			IHisDevFactory* factory,
+			webserver* ws_i);
 	~FoldersService(void);
 	const http_response render_OPTIONS(const http_request& req);
 	const http_response render_GET(const http_request& req);

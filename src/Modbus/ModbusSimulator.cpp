@@ -6,112 +6,12 @@
  */
 
 #include <string.h>
-#include <Modbus/ModbusSimulator.h>
+#include "ModbusSimulator.h"
 
 
-uint16_t registers_default[] = {
-		6,		//0
-	    3,
-	    10,
-	    0,
-	    0,
-	    0,
-	    0,
-	    0,
-	    0,
-	    0,
-	    1,		//10
-	    2,
-	    25,
-	    3,
-	    2,
-	    2,
-	    30,
-	    3,
-	    5,
-	    1,
-	    35,		//20
-	    3,
-	    0,
-	    0,
-	    0,
-	    0x0209,		//25
-	    0x0207,
-	    0,
-	    0,
-	    0,
-	    0x0003,		//30
-	    0x0002,
-	    0,
-	    0,
-	    0,
-	    0,		//35
-	    0,
-	    0,
-	    0,
-	    0,
-	    0,		//40
-	    0,
-	    0,
-	    0,
-	    0,
-	    0,		//45
-	    0,
-	    0,
-	    0,
-	    0,
-	    0,		//50
-	    0,
-	    0,
-	    0,
-	    0,
-	    0,
-	    0,
-	    0,
-	    0,
-	    0,
-	    0,
-	    0,
-	    0,
-	    0,
-	    0,
-	    0,
-	    0,
-	    0,
-	    0,
-	    0,
-	    0,
-	    0,
-	    0,
-	    0,
-	    0,
-	    0,
-	    0,
-	    0,
-	    0,
-	    0,
-	    0,
-	    0,
-	    0,
-	    0,
-	    0,
-	    0,
-	    0,
-	    0,
-	    0,
-	    0,
-	    0,
-	    0,
-	    0,
-	    0,
-	    0,
-	    0,
-	    0,
-	    0,
-	    0,
-	    0};
-
-uint16_t* registers_defaulti = registers_default;
+const uint16_t registers_default[] =
+//						10					  20							 30					 35
+{ 6,3,10,0,40,0,0,0,0,0,1,2,25,3,2,2,30,3,5,1,35,3,0,0,0,0x0209,0x0207,0,0,0,0x0003,0x0002,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,};
 
 string ModbusSimulator::DriverName = "modbussimulator";
 
@@ -120,16 +20,30 @@ string ModbusSimulator::GetDriverName()
 	return ModbusSimulator::DriverName;
 }
 
-ModbusSimulator::ModbusSimulator(SSerPortConfig config, uint16_t* & registers)
+ModbusSimulator::ModbusSimulator(SSerPortConfig config,const uint16_t registers[], uint16_t length)
 {
-	this->registers = registers;
+	this->registers = new uint16_t[length];
+	this->length = length;
+	memcpy(this->registers,registers,length*sizeof(uint16_t));
 	this->config = config;
 }
 
 ModbusSimulator::ModbusSimulator(SSerPortConfig config)
-	: ModbusSimulator(config,registers_defaulti)
+	: ModbusSimulator(config,registers_default,sizeof(registers_default)/sizeof(uint16_t))
 {
 
+}
+
+void ModbusSimulator::SetRegisters(uint16_t registers[], uint16_t length)
+{
+	if (this->registers != NULL && length > this->length)
+	{
+		delete[] this->registers;
+		this->registers = new uint16_t[length];
+		this->length = length;
+	}
+
+	memcpy(this->registers,registers,length*sizeof(uint16_t));
 }
 
 bool ModbusSimulator::Init()
@@ -178,6 +92,11 @@ bool ModbusSimulator::setHolding(uint16_t address,uint16_t index, uint16_t val)
 }
 bool ModbusSimulator::getHolding(uint16_t address,uint16_t index,uint16_t* holding)
 {
+	if (index >= length)
+	{
+		throw "Out of range exception";
+	}
+
 	if (address==1 || address==registers[0])
 	{
 		*holding = registers[index];
@@ -189,6 +108,11 @@ bool ModbusSimulator::getHoldings(uint16_t address,uint16_t offset,uint16_t coun
 {
 	if (address==1 || address==registers[0])
 	{
+		if (offset + count > length)
+		{
+			throw "Out of range exception";
+		}
+
 		memcpy(target,&registers[offset],sizeof(uint16_t)*count);
 		return true;
 	}
@@ -197,6 +121,8 @@ bool ModbusSimulator::getHoldings(uint16_t address,uint16_t offset,uint16_t coun
 
 
 ModbusSimulator::~ModbusSimulator() {
-
+	if (this->registers!=NULL)
+		delete[] registers;
+	this->registers = NULL;
 }
 

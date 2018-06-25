@@ -263,8 +263,18 @@ void HisDevModbus::DoInternalRefresh(bool alarm)
 		else
 		{
 			SHeader* h = (SHeader*)data;
-			header.lastIndex = h->lastIndex;
-			size = header.lastIndex+1;
+			if (header.lastIndex != h->lastIndex)
+			{
+				if (Scan(false))
+				{
+					//set outputs
+					handlers->RefreshOutputs();
+				}
+				else
+				{
+					SetError(true);
+				}
+			}
 
 			if (typesdefs==NULL)
 			{

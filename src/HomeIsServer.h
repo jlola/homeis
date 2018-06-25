@@ -63,8 +63,8 @@ class HomeIsServer
 	IEmailSender* emailSender;
 
 	//bool InitOneWireLib(vector<SSerPortConfig> & pserports);
-	bool Init(bool blocking);
-	bool InitHisDevices();
+	bool Init(bool blocking,string devicesxml,string foldersxml);
+	bool InitHisDevices(string devicesxml,string foldersxml);
 	void InitWebServer(bool blocking);
 public:
 	HomeIsServer(IModbusProvider & modbusprovider,
@@ -73,6 +73,7 @@ public:
 			string allowOrigin);
 	void AddModbus(IModbus* m);
 	void Start(bool blocking);
+	void Start(bool blocking,string devicesxml,string foldersxml);
 	void Stop();
 	~HomeIsServer();
 };

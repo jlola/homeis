@@ -24,7 +24,9 @@ class ModbusService : public http_resource
 	IHttpHeadersProvider & headersProvider;
 	IModbusProvider* mm;
 public:
-	ModbusService(IModbusProvider* mm, IHttpHeadersProvider & headersProvider);
+	ModbusService(IModbusProvider* mm,
+			IHttpHeadersProvider & headersProvider,
+			webserver* ws_i);
 	void render_GET(const http_request& req, http_response** res);
 	const http_response render_GET(const http_request& req);
 	const http_response render_PUT(const http_request& req);

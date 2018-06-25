@@ -19,6 +19,7 @@ BinnaryInputHandler::BinnaryInputHandler(IHisDevModbus* dev,IHisDevFactory* fact
 
 bool BinnaryInputHandler::Scan(bool addnew)
 {
+	STACK
 	if (dev->GetTypeDef(ETypes::BinInputs,&stypedef))
 	{
 		uint16_t* data = NULL;
@@ -29,12 +30,21 @@ bool BinnaryInputHandler::Scan(bool addnew)
 			CreateOrValidInputs(addnew);
 			return true;
 		}
+		else
+		{
+			sbininputs = NULL;
+		}
+	}
+	else
+	{
+		sbininputs = NULL;
 	}
 	return false;
 }
 
 void BinnaryInputHandler::Load()
 {
+	STACK
 	vector<HisDevValue<bool>*> values = dev->GetBoolItems();
 
 	for(size_t i=0;i<values.size();i++)
@@ -60,36 +70,41 @@ void BinnaryInputHandler::Load()
 void BinnaryInputHandler::CreateOrValidInputs(bool addnew)
 {
 	STACK
-	for(int i=0;i<stypedef.Count;i++)
+	if (sbininputs!=NULL)
 	{
-		SBinInput sinput = sbininputs[i];
-		HisDevValueBase* valuebase = dev->FindValue(Converter::itos(sinput.PinNumber));
-		HisDevValue<bool>* input = NULL;
-		input = dynamic_cast<HisDevValue<bool>*>(valuebase);
-		if ((input==NULL && addnew) || input!=NULL)
+		for(int i=0;i<stypedef.Count;i++)
 		{
-			if (input==NULL)
+
+			SBinInput sinput = sbininputs[i];
+			HisDevValueBase* valuebase = dev->FindValue(Converter::itos(sinput.PinNumber));
+			HisDevValue<bool>* input = NULL;
+			input = dynamic_cast<HisDevValue<bool>*>(valuebase);
+			if ((input==NULL && addnew) || input!=NULL)
 			{
-				input = new HisDevValue<bool>(Converter::itos(dev->GetAddress(),10),
-						EHisDevDirection::Read,
-						EDataType::Bool,
-						Converter::itos(sinput.PinNumber),
-						false,
-						LoadType,
-						factory,
-						dev);
-				input->SetName(StringBuilder::Format("BinaryInput%d",sinput.PinNumber));
-				input->SetAddressName(StringBuilder::Format("BinaryInput%d",sinput.PinNumber));
-				dev->Add(input);
+				if (input==NULL)
+				{
+					input = new HisDevValue<bool>(Converter::itos(dev->GetAddress(),10),
+							EHisDevDirection::Read,
+							EDataType::Bool,
+							Converter::itos(sinput.PinNumber),
+							false,
+							LoadType,
+							factory,
+							dev);
+					input->SetName(StringBuilder::Format("BinaryInput%d",sinput.PinNumber));
+					input->SetAddressName(StringBuilder::Format("BinaryInput%d",sinput.PinNumber));
+					dev->Add(input);
+				}
+				input->SetValue(sinput.Value);
+				valuesInput.push_back(input);
 			}
-			input->SetValue(sinput.Value);
-			valuesInput.push_back(input);
 		}
 	}
 }
 
 bool BinnaryInputHandler::Remove(CUUID id)
 {
+	STACK
 	if (valuesInput.size()>0)
 	{
 		size_t index=-1;
@@ -118,23 +133,30 @@ void BinnaryInputHandler::RefreshOutputs()
 void BinnaryInputHandler::Refresh(bool modbusSuccess)
 {
 	STACK
+
 	for(size_t v=0;v<valuesInput.size();v++)
 	{
-		for(int i=0;i<stypedef.Count;i++)
+		if (sbininputs!=NULL)
 		{
-			int strpinno = Converter::stoi(valuesInput[v]->GetPinNumber());
-			if (strpinno==sbininputs[i].PinNumber)
+			for(int i=0;i<stypedef.Count;i++)
 			{
-				bool readedrror = sbininputs[i].Quality == 1 ? false : true;
-				bool value = sbininputs[i].Value == 1 ? true : false;
-				valuesInput[v]->ReadedValueFromDevice(value,readedrror && !modbusSuccess);
-				break;
+				int strpinno = Converter::stoi(valuesInput[v]->GetPinNumber());
+				if (strpinno==sbininputs[i].PinNumber)
+				{
+					bool readedrror = sbininputs[i].Quality == 1 ? false : true;
+					bool value = sbininputs[i].Value == 1 ? true : false;
+					valuesInput[v]->ReadedValueFromDevice(value,readedrror && !modbusSuccess);
+					break;
+				}
 			}
+		}
+		else
+		{
+			valuesInput[v]->ReadedValueFromDevice(valuesInput[v]->GetValue(),true);
 		}
 	}
 }
 
 BinnaryInputHandler::~BinnaryInputHandler() {
-	// TODO Auto-generated destructor stub
 }
 

@@ -27,7 +27,9 @@ class ConnectorsService : public http_resource
 	//vector<SSerPortConfig> & serports;
 	IModbusProvider & provider;
 public:
-	ConnectorsService(IModbusProvider & provider,IHttpHeadersProvider & headersProvider);
+	ConnectorsService(IModbusProvider & provider,
+			IHttpHeadersProvider & headersProvider,
+			webserver* ws_i);
 	const http_response render_GET(const http_request& r);
 	virtual ~ConnectorsService();
 };

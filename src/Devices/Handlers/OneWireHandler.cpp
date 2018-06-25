@@ -31,6 +31,7 @@ OneWireHandler::OneWireHandler(IHisDevModbus* devModbus,IHisDevFactory* factory)
 
 void OneWireHandler::Load()
 {
+	STACK
 	vector<HisDevValue<bool>*> values = devModbus->GetBoolItems();
 
 	for(size_t i=0;i<values.size();i++)
@@ -78,6 +79,7 @@ bool OneWireHandler::Scan(bool addnew)
 
 bool OneWireHandler::Remove(CUUID id)
 {
+	STACK
 	if (scantag!=NULL && scantag->GetRecordId()==id)
 	{
 		scantag = NULL;

@@ -15,13 +15,23 @@
 #include "ExpressionsService.h"
 #include "microhttpd.h"
 
-FoldersService::FoldersService(HisDevices & dev,HisDevFolderRoot & root, IHttpHeadersProvider & headersProvider,IHisDevFactory* factory) :
+FoldersService::FoldersService(HisDevices & dev,
+		HisDevFolderRoot & root,
+		IHttpHeadersProvider & headersProvider,
+		IHisDevFactory* factory,
+		webserver* ws_i) :
 	logger(CLogger::GetLogger()),
 	root(root),
 	devices(dev),
 	headersProvider(headersProvider),
 	factory(factory)
 {
+	ws_i->register_resource(string("api/folders"), this, true);
+	ws_i->register_resource(string("api/folder"), this, true);
+	ws_i->register_resource(string("api/folders/{id}"), this, true);
+	ws_i->register_resource(string("api/folder/allitems/{id}"), this, true);
+	ws_i->register_resource(string("api/folder/{id}"), this, true);
+	ws_i->register_resource(string("api/folder/valueid/{folderId}"), this, true);
 }
 
 FoldersService::~FoldersService(void)

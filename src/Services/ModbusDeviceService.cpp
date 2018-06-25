@@ -20,11 +20,14 @@
 ModbusDeviceService::ModbusDeviceService(HisDevices* devices
 		,IModbusProvider* mm
 		,IHttpHeadersProvider & headersProvider,
-		IHisDevFactory* factory)
+		IHisDevFactory* factory,
+		webserver* ws_i)
 	: headersProvider(headersProvider),factory(factory)
 {
 	this->mm = mm;
 	this->devices = devices;
+
+	ws_i->register_resource("api/modbus/scan/{connectorname}/{address}", this, true);
 }
 
 ModbusDeviceService::~ModbusDeviceService()

@@ -20,7 +20,7 @@ HisBase::HisBase(IHisDevFactory* factory)
 	isloaded = false;
 	node = NULL;
 	parent = NULL;
-	name = "-------";
+	name = DEFAULTNAME;
 }
 
 HisBase::HisBase(xmlNodePtr pnode, IHisDevFactory* factory)

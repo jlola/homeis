@@ -30,7 +30,8 @@ public:
 	ModbusDeviceService(HisDevices *devices
 			,IModbusProvider* mm
 			,IHttpHeadersProvider & headersProvider
-			,IHisDevFactory* factory);
+			,IHisDevFactory* factory,
+			webserver* ws_i);
 	virtual ~ModbusDeviceService();
 	const http_response render_GET(const http_request& req);
 };

@@ -30,13 +30,22 @@ const char json[] = "[{\"name\":\"Bečka horní\",\"id\":4,\"type\":1,\"value\":
 DevicesService::DevicesService(HisDevices & dev,
 		HisDevFolderRoot & folder,
 		IHttpHeadersProvider & headersProvider,
-		IHisDevFactory* factory) :
+		IHisDevFactory* factory,
+		webserver* ws_i) :
 		logger(CLogger::GetLogger()),
 		devices(dev),
 		rootFolder(folder),
 		headersProvider(headersProvider),
 		factory(factory)
 {
+	ws_i->register_resource(string("api/onewiredevices"), this, true);
+	ws_i->register_resource(string("api/devices"), this, true);
+	ws_i->register_resource(string("api/onewiredevices/{devid}"), this, true);
+	ws_i->register_resource(string("api/onewiredevices/devvalue/{valueid}"), this, true);
+	ws_i->register_resource(string("api/devices/devvalue/{valueid}"), this, true);
+	ws_i->register_resource(string("api/devices/{devid}"), this, true);
+	ws_i->register_resource(string("api/devices/{devid}/devvalues/{valueid}"),this,true);
+	ws_i->register_resource(string("api/onewiredevices/folder/{id}"), this, true);
 }
 
 

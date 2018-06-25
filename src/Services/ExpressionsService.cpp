@@ -11,13 +11,25 @@
 #include "Common/HisException.h"
 #include "microhttpd.h"
 
-ExpressionService::ExpressionService(HisDevFolderRoot* folder, IExpressionRuntime *pexpressionRuntime, HisDevices* pdevices, IHttpHeadersProvider & headersProvider,IHisDevFactory* factory)
+ExpressionService::ExpressionService(HisDevFolderRoot* folder,
+		IExpressionRuntime *pexpressionRuntime,
+		HisDevices* pdevices,
+		IHttpHeadersProvider & headersProvider,
+		IHisDevFactory* factory,
+		webserver* ws_i)
 	: headersProvider(headersProvider),factory(factory)
 {
 	STACK
 	devices = pdevices;
 	expressionRuntime = pexpressionRuntime;
 	root = folder;
+
+	//run all expressions in folder
+	ws_i->register_resource("api/expression/run/{id}", this, true);
+	ws_i->register_resource("api/expression/folder/{id}", this, true);
+	ws_i->register_resource("api/expression/debuglog/{id}", this, true);
+	ws_i->register_resource("api/expression/{id}", this, true);
+	ws_i->register_resource("api/expression", this, true);
 }
 
 ExpressionService::~ExpressionService(void)

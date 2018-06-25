@@ -14,14 +14,16 @@
 class ModbusSimulator : public IModbus
 {
 	uint16_t* registers;
+	uint16_t length;
 	SSerPortConfig config;
 public:
 
 	static string DriverName;
 
-	ModbusSimulator(SSerPortConfig config, uint16_t* & registers);
+	ModbusSimulator(SSerPortConfig config,const uint16_t registers[], uint16_t length);
 	ModbusSimulator(SSerPortConfig config);
 
+	void SetRegisters(uint16_t registers[],uint16_t length);
 	bool Init();
 	string GetName();
 	string GetPort();

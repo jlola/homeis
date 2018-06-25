@@ -40,7 +40,11 @@ class DevicesService : public http_resource
 	bool DeleteDevValue(string strDevValueRecordId, string & msg);
 	bool DeleteDev(string strDevValueRecordId, string & msg);
 public:
-	DevicesService(HisDevices & dev,HisDevFolderRoot & folder, IHttpHeadersProvider & headersProvider,IHisDevFactory* factory);
+	DevicesService(HisDevices & dev,
+			HisDevFolderRoot & folder,
+			IHttpHeadersProvider & headersProvider,
+			IHisDevFactory* factory,
+			webserver* ws_i);
 	~DevicesService(void);
 	static void FillFolderDevicesToJson(HisDevFolder* folder,Document & respjsondoc, HisDevices & dev);
 	const http_response render_OPTIONS(const http_request& req);

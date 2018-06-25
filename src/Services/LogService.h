@@ -23,7 +23,7 @@ class LogService : public http_resource {
 	File file;
 	Directory directory;
 public:
-	LogService(IHttpHeadersProvider & httpHeadersProvider);
+	LogService(IHttpHeadersProvider & httpHeadersProvider, webserver* ws_i);
 	//void render_GET(const http_request&, http_response**);
 	const http_response render_GET(const http_request& req);
 	virtual ~LogService();

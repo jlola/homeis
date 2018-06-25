@@ -14,10 +14,13 @@
 
 using namespace rapidjson;
 
-ModbusService::ModbusService(IModbusProvider* mm, IHttpHeadersProvider & headersProvider)
+ModbusService::ModbusService(IModbusProvider* mm,
+		IHttpHeadersProvider & headersProvider,
+		webserver* ws_i)
 	: headersProvider(headersProvider)
 {
 	this->mm = mm;
+	ws_i->register_resource("api/modbus/registers/{connectorname}/{devaddress}/{baseaddress}/{value}", this, true);
 }
 
 const http_response ModbusService::render_GET(const http_request& req)

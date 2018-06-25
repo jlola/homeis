@@ -11,9 +11,12 @@
 #include <Services/ConnectorsService.h>
 #include "microhttpd.h"
 
-ConnectorsService::ConnectorsService(IModbusProvider & provider, IHttpHeadersProvider & headersProvider)
+ConnectorsService::ConnectorsService(IModbusProvider & provider,
+		IHttpHeadersProvider & headersProvider,
+		webserver* ws_i)
  : headersProvider(headersProvider), provider(provider)
 {
+	ws_i->register_resource("api/connectors", this, true);
 }
 
 const http_response ConnectorsService::render_GET(const http_request& req)

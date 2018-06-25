@@ -13,6 +13,7 @@
 #include "TestConfig.h"
 #include "HomeIsConfig.h"
 #include "EmailSender.h"
+#include "ModbusSimulator.h"
 
 using namespace AF;
 
@@ -25,8 +26,10 @@ class HomeIsStarter {
 	void Stop();
 public:
 	HomeIsStarter();
+	ModbusSimulator* GetModbusSimulator();
+	IModbusProvider* GetModbusProvider();
 	void Start();
-	SSerPortConfig GetConfig();
+	SSerPortConfig GetModbusConfig();
 	Client & GetClient();
 	virtual ~HomeIsStarter();
 };

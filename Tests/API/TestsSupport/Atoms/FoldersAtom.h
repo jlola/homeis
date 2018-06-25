@@ -14,8 +14,8 @@ class FoldersAtom {
 	HomeIsStarter & homeisStarter;
 public:
 	FoldersAtom(HomeIsStarter & homeisStarter);
-	string CreateFolder(string name, CUUID parentId, long & httpRespCode,CURLcode & urlCode);
-	string GetFolders(long & httpRespCode,CURLcode & urlCode);
+	void CreateFolder(string name, CUUID parentId);
+	Document GetFolders();
 	virtual ~FoldersAtom();
 };
 

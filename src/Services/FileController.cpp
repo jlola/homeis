@@ -16,9 +16,10 @@
 #include "FileController.h"
 #include "File.h"
 
-FileController::FileController()
+FileController::FileController(webserver* ws_i)
 {
-
+	ws_i->register_resource(string(""), this, true);
+	ws_i->register_resource(string("files/{path}"), this, true);
 }
 
 const http_response FileController::render_GET(const http_request& r)

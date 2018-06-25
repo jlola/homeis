@@ -32,9 +32,9 @@
 
 #include "HisException.h"
 
-bool HomeIsServer::Init(bool blocking)
+bool HomeIsServer::Init(bool blocking,string devicesxml,string foldersxml)
 {
-	if (!InitHisDevices())
+	if (!InitHisDevices(devicesxml,foldersxml))
 	{
 		logger.Error("Error init HisDevices");
 		return false;
@@ -55,7 +55,14 @@ void HomeIsServer::Stop()
 
 void HomeIsServer::Start(bool blocking)
 {
-	Init(blocking);
+	string devicesxml = file.getexepath() + "/devices.xml";
+	string foldersxml = file.getexepath() + "/folders.xml";
+	Init(blocking, devicesxml, foldersxml);
+}
+
+void HomeIsServer::Start(bool blocking,string devicesxml,string foldersxml)
+{
+	Init(blocking,devicesxml,foldersxml);
 }
 
 void  HomeIsServer::AddModbus(IModbus* m)
@@ -102,65 +109,28 @@ void HomeIsServer::InitWebServer(bool blocking)
 	if (rootFolder==NULL)
 		throw ArgumentNullException("rootFolder");
 
-	fc = new FileController();
-	owds = new DevicesService(*devs,*rootFolder, headersProvider,factory);
-	foldersService = new FoldersService(*devs,*rootFolder,headersProvider,factory);
-	expressionService = new ExpressionService(rootFolder,expressionRuntime, devs, headersProvider,factory);
-	modbusDevService = new ModbusDeviceService(devs,&modbusProvider,headersProvider,factory);
-	modbusservice = new ModbusService(&modbusProvider,headersProvider);
-	connectorsService = new ConnectorsService(modbusProvider, headersProvider);
-	logservice = new LogService(headersProvider);
+	fc = new FileController( ws_i );
+	owds = new DevicesService( *devs, *rootFolder, headersProvider, factory, ws_i );
+	foldersService = new FoldersService( *devs,*rootFolder, headersProvider, factory, ws_i );
+	expressionService = new ExpressionService( rootFolder, expressionRuntime, devs, headersProvider, factory, ws_i );
+	modbusDevService = new ModbusDeviceService( devs, &modbusProvider, headersProvider, factory, ws_i );
+	modbusservice = new ModbusService( &modbusProvider, headersProvider, ws_i );
+	connectorsService = new ConnectorsService( modbusProvider, headersProvider, ws_i );
+	logservice = new LogService(headersProvider, ws_i );
 
-	//ws_i = cw;
-	ws_i->register_resource(string("files/{path}"), fc, true);
-	ws_i->register_resource(string(""), fc, true);
-
-	ws_i->register_resource(string("api/logs"), logservice, true);
-	ws_i->register_resource(string("api/logs/{log}"), logservice, true);
-	//ws_i->register_resource(string("api/logs/loglevel"), logservice, true);
-	ws_i->register_resource(string("api/logs/loglevel/{level}"), logservice, true);
-
-	ws_i->register_resource(string("api/onewiredevices"), owds, true);
-	ws_i->register_resource(string("api/devices"), owds, true);
-	ws_i->register_resource(string("api/onewiredevices/{devid}"), owds, true);
-	ws_i->register_resource(string("api/onewiredevices/devvalue/{valueid}"), owds, true);
-	ws_i->register_resource(string("api/devices/devvalue/{valueid}"), owds, true);
-	ws_i->register_resource(string("api/devices/{devid}"), owds, true);
-	ws_i->register_resource(string("api/devices/{devid}/devvalues/{valueid}"),owds,true);
-	ws_i->register_resource(string("api/onewiredevices/folder/{id}"), owds, true);
-
-	//run all expressions in folder
-	ws_i->register_resource(string("api/expression/run/{id}"), expressionService, true);
-	ws_i->register_resource(string("api/expression/folder/{id}"), expressionService, true);
-	ws_i->register_resource(string("api/expression/debuglog/{id}"), expressionService, true);
-	ws_i->register_resource(string("api/expression/{id}"), expressionService, true);
-	ws_i->register_resource(string("api/expression"), expressionService, true);
-
-	ws_i->register_resource(string("api/folders"), foldersService, true);
-	ws_i->register_resource(string("api/folder"), foldersService, true);
-	ws_i->register_resource(string("api/folders/{id}"), foldersService, true);
-	ws_i->register_resource(string("api/folder/allitems/{id}"), foldersService, true);
-	ws_i->register_resource(string("api/folder/{id}"), foldersService, true);
-	ws_i->register_resource(string("api/folder/valueid/{folderid}"), foldersService, true);
-
-	ws_i->register_resource(string("api/modbus/scan/{connectorname}/{address}"),modbusDevService,true);
-
-	///{connectorname}/{devaddress}/{baseaddress}/{count}
-	ws_i->register_resource(string("api/modbus/registers/{connectorname}/{devaddress}/{baseaddress}/{value}"),modbusservice,true);
-	ws_i->register_resource(string("api/connectors"),connectorsService, true);
-	logger.Info("Start webserver with %s blocking", blocking ? "enabled" : "disabled");
+	logger.Info("Start homeis webserver %s blocking starting thread", blocking ? "with" : "without");
 	ws_i->start(blocking);
 }
 
-bool HomeIsServer::InitHisDevices()
+bool HomeIsServer::InitHisDevices(string devicesxml,string foldersxml)
 {
 	expressionRuntime = new ExpressionRuntime();
-	devs = new HisDevices(file.getexepath() + "/devices.xml",&modbusProvider);
+	devs = new HisDevices(devicesxml,&modbusProvider);
 
 	factory = new HisDevFactory(expressionRuntime,devs,emailSender,&file,&directory);
 	devs->Load(factory);
 
-	rootFolder = new HisDevFolderRoot(file.getexepath() + "/folders.xml",factory);
+	rootFolder = new HisDevFolderRoot(foldersxml,factory);
 	rootFolder->Load();
 
 	devruntime = new HisDevRuntime(*devs);

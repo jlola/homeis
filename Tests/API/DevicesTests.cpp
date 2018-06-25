@@ -22,8 +22,9 @@
 #include "ParamsNames.h"
 #include "curl.h"
 #include "FoldersAtom.h"
-#include "DeviceAtoms.h"
-
+#include "ModbusAtom.h"
+#include "OneWireHandler.h"
+#include "ModbusSimulator.h"
 
 DevicesTests::DevicesTests()
 {
@@ -31,11 +32,14 @@ DevicesTests::DevicesTests()
 
 void DevicesTests::SetUp()
 {
-	homeisStarter.Start();
+	homeisStarter = new HomeIsStarter();
 }
 
 void DevicesTests::TearDown()
 {
+	delete homeisStarter;
+	homeisStarter = NULL;
+
 	File file;
 
 	string foldersfile = StringBuilder::Format("%s/folders.xml",file.getexepath().c_str());
@@ -47,24 +51,66 @@ void DevicesTests::TearDown()
 }
 
 
+
+TEST_F(DevicesTests,TestLoadDeviceWithoutScanAndThenScan)
+{
+	ModbusAtom modbusAtom(*homeisStarter);
+	//							   0						10	   1314     1718     2122  24 25 26          30       35         40
+	uint16_t registers[] =        {4,3,10,3200,40,0,0,0,0,0,1,3,25,3,2,1,30,3,5,1,35,3,0,0,0,769,770,771,0,0,4,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+//																																					44
+	uint16_t registers_scaned[] = {4,3,10,3200,46,0,0,0,0,0,1,3,25,3,2,1,30,3,5,1,35,3,0,0,0,769,770,771,0,0,4,0,0,0,0,0,1,0,1,0,63016,2719,6,52224,2362,1,0,0,0,0,0};
+	ModbusSimulator* modbusSimulator =  homeisStarter->GetModbusSimulator();
+	modbusSimulator->SetRegisters(registers_scaned,sizeof(registers_scaned)/sizeof(uint16_t));
+	homeisStarter->Start();
+	//scan with termometer
+	string scanResponse = modbusAtom.Scan(homeisStarter->GetModbusConfig().Name,1);
+	delete homeisStarter;
+	//start without thermometer
+	homeisStarter = new HomeIsStarter();
+	modbusSimulator =  homeisStarter->GetModbusSimulator();
+	modbusSimulator->SetRegisters(registers,sizeof(registers)/sizeof(uint16_t));
+	homeisStarter->Start();
+
+	DevicesAtom deviceAtoms(*homeisStarter);
+	string deviceId = deviceAtoms.GetDeviceId();
+	ASSERT_NE(deviceId,"");
+	deviceAtoms.UpdateDevicePropertyUint(deviceId,JSON_SCANPERIODMS,100);
+	int period = deviceAtoms.GetDevicePropertyInt(deviceId,JSON_SCANPERIODMS);
+	ASSERT_EQ(100,period);
+
+	string ds18b20TagId = deviceAtoms.FindTagId(deviceId,DEFAULTNAME);
+	ASSERT_NE(ds18b20TagId,"");
+
+	string scanOneWireTagId = deviceAtoms.FindTagId(deviceId,SCAN_ONEWIRE_NAME);
+	ASSERT_NE(scanOneWireTagId,"");
+	uint16_t holdingRegister;
+	modbusSimulator->getHolding(1,35,&holdingRegister);
+	ASSERT_EQ(0,holdingRegister);
+	//scan
+	deviceAtoms.WriteToTag(scanOneWireTagId,"true");
+	while(holdingRegister==0)
+	{
+		modbusSimulator->getHolding(1,35,&holdingRegister);
+		sleep(1);
+	}
+	ASSERT_EQ(1,holdingRegister);
+	modbusSimulator->SetRegisters(registers_scaned,sizeof(registers_scaned)/sizeof(uint16_t));
+	//string tagValue = deviceAtoms.GetTag(scanOneWireTagId)[JSON_VALUE].GetString();
+	sleep(20);
+	//ASSERT_EQ(tagValue,"0");
+	//int error = deviceAtoms.GetTag(ds18b20TagId)[JSON_ERROR].GetInt();
+	//ASSERT_EQ(0,error);
+}
+
 TEST_F(DevicesTests,CreateFolderReturnsSameFolder)
 {
-
-	FoldersAtom foldersAtom(homeisStarter);
+	homeisStarter->Start();
+	FoldersAtom foldersAtom(*homeisStarter);
 	string folderName = "subtest2";
-	long http_code;
-	CURLcode urlCode;
-	foldersAtom.CreateFolder(folderName,CUUID::Empty(),http_code,urlCode);
 
-	ASSERT_EQ(http_code, MHD_HTTP_OK);
+	foldersAtom.CreateFolder(folderName,CUUID::Empty());
 
-	string response = foldersAtom.GetFolders(http_code,urlCode);
-	ASSERT_EQ(CURLcode::CURLE_OK, urlCode);
-	ASSERT_EQ(http_code, MHD_HTTP_OK);
-
-	Document document;	// Default template parameter uses UTF8 and MemoryPoolAllocator.
-	ASSERT_EQ(document.Parse<0>((char*)response.c_str()).HasParseError(),false);
-	ASSERT_EQ(document.IsArray(),true);
+	Document document = foldersAtom.GetFolders();
 
 	const Value& folders = document;
 	ASSERT_EQ(folders.Size(),(size_t)1);
@@ -79,16 +125,16 @@ TEST_F(DevicesTests,CreateFolderReturnsSameFolder)
 
 TEST_F(DevicesTests,CreateEmailTagTest)
 {
-	DeviceAtoms deviceAtom(homeisStarter);
+	homeisStarter->Start();
+	DevicesAtom deviceAtom(*homeisStarter);
 	string deviceName = "test";
 	string expectedTagName = "tagName";
 
 	string response = deviceAtom.CreateDevice(deviceName);
 
-	response = deviceAtom.GetDevices();
 
-	Document document;	// Default template parameter uses UTF8 and MemoryPoolAllocator.
-	ASSERT_EQ(document.Parse<0>((char*)response.c_str()).HasParseError(),false);
+	Document document = deviceAtom.GetDevices();
+
 	const Value& devices = document;
 	ASSERT_EQ(devices.Size(),(size_t)1);
 	for(SizeType ob = 0 ;ob < devices.Size();ob++)
@@ -101,13 +147,13 @@ TEST_F(DevicesTests,CreateEmailTagTest)
 		response = deviceAtom.CreateEmailTag(parentId,expectedTagName);
 	}
 
-	response = deviceAtom.GetDevices();
-	ASSERT_EQ(document.Parse<0>((char*)response.c_str()).HasParseError(),false);
-	ASSERT_EQ(devices.Size(),(size_t)1);
-	for(SizeType ob = 0 ;ob < devices.Size();ob++)
+	Document document2 = deviceAtom.GetDevices();
+	const Value& devices2 = document2;
+	ASSERT_EQ(devices2.Size(),(size_t)1);
+	for(SizeType ob = 0 ;ob < devices2.Size();ob++)
 	{
-		ASSERT_TRUE(devices[ob].HasMember(JSON_TAGS));
-		const Value& tags = devices[ob][JSON_TAGS];
+		ASSERT_TRUE(devices2[ob].HasMember(JSON_TAGS));
+		const Value& tags = devices2[ob][JSON_TAGS];
 		for(SizeType t = 0 ;t < tags.Size();t++)
 		{
 			string tagName = tags[t][JSON_NAME].GetString();
@@ -116,25 +162,18 @@ TEST_F(DevicesTests,CreateEmailTagTest)
 	}
 }
 
+//[4,3,10,3200,40,0,0,0,0,0,1,3,25,3,2,1,30,3,5,1,35,3,0,0,0,769,770,771,0,0,4,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0]
+
 TEST_F(DevicesTests,GetDevValueTest)
 {
-	string response;
-	long http_code = 0;
+	homeisStarter->Start();
 
-	//api/modbus/scan/{connectorname}/{address}
-	std::string scandevice = StringBuilder::Format("api/modbus/scan/%s/%d",homeisStarter.GetConfig().Name.c_str(),1);
-	CURLcode cresp = homeisStarter.GetClient().Get(scandevice,response,http_code);
-	ASSERT_EQ(cresp, CURLE_OK);
-	ASSERT_EQ(http_code,MHD_HTTP_OK);
+	ModbusAtom modbusAtom(*homeisStarter);
+	DevicesAtom deviceAtoms(*homeisStarter);
 
-	std::string reqest = StringBuilder::Format("api/devices");
-	cresp = homeisStarter.GetClient().Get(reqest,response,http_code);
-	ASSERT_EQ(cresp, CURLE_OK);
-	ASSERT_EQ(http_code, MHD_HTTP_OK);
+	string response = modbusAtom.Scan(homeisStarter->GetModbusConfig().Name,1);
 
-	Document document;	// Default template parameter uses UTF8 and MemoryPoolAllocator.
-	ASSERT_EQ(document.Parse<0>((char*)response.c_str()).HasParseError(),false);
-	ASSERT_EQ(document.IsArray(),true);
+	Document document = deviceAtoms.GetDevices();
 
 	const Value& devicesarray = document;
 	for(SizeType ob = 0 ;ob < devicesarray.Size();ob++)

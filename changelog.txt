@@ -7,3 +7,4 @@
 20180119 - added ScanPeriodMs to device 
 20180327 - added RFID support
 20180523 - added email tag to send email from lua script
+20180625 - fixed refresh after scan onewire

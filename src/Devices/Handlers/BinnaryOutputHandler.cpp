@@ -29,6 +29,13 @@ void BinnaryOutputHandler::RefreshOutputs()
 	{
 		int pinno = Converter::stoi(valuesOutput[v]->GetPinNumber());
 
+		if (sbinoutputs==NULL && stypedef.Count>0)
+		{
+			string msg = StringBuilder::Format("BinnaryOutputHandler::RefreshOutputs | sbinoutputs is null and stypedef.Count>0");
+			CLogger::GetLogger().Error(msg.c_str());
+			throw Exception(msg);
+		}
+
 		for(int i=0;i<stypedef.Count;i++)
 		{
 			if (pinno==sbinoutputs[i].PinNumber)
@@ -98,6 +105,7 @@ bool BinnaryOutputHandler::Scan(bool addnew)
 
 bool BinnaryOutputHandler::Remove(CUUID id)
 {
+	STACK
 	if (valuesOutput.size()>0)
 	{
 		size_t index=-1;

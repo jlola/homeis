@@ -37,7 +37,12 @@ private:
 	IExpressionRuntime *expressionRuntime;
 	LuaExpression* CreateOrUpdateExpression(string strJson,string & message);
 public:
-	ExpressionService(HisDevFolderRoot* folder,IExpressionRuntime *pexpressionRuntime, HisDevices* pdevices, IHttpHeadersProvider & headersProvider,IHisDevFactory* factory);
+	ExpressionService(HisDevFolderRoot* folder,
+			IExpressionRuntime *pexpressionRuntime,
+			HisDevices* pdevices,
+			IHttpHeadersProvider & headersProvider,
+			IHisDevFactory* factory,
+			webserver* ws_i);
 	~ExpressionService(void);
 	bool DeleteExpression(string strid,string & message);
 	static void ExpressionToJson(IHisBase* pParent,LuaExpression *pExpression, Document & respjsondoc);

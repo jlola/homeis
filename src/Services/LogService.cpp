@@ -19,11 +19,13 @@
 
 using namespace rapidjson;
 
-LogService::LogService(IHttpHeadersProvider & httpHeadersProvider)
+LogService::LogService(IHttpHeadersProvider & httpHeadersProvider, webserver* ws_i)
 	: logger(CLogger::GetLogger()),
 	httpHeadersProvider(httpHeadersProvider)
 {
-
+	ws_i->register_resource(string("api/logs"), this, true);
+	ws_i->register_resource(string("api/logs/{log}"), this, true);
+	ws_i->register_resource(string("api/logs/loglevel/{level}"), this, true);
 }
 
 LogService::~LogService() {

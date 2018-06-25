@@ -17,108 +17,7 @@
 
 namespace AF {
 
-uint16_t registers[] = {
-	    5,
-	    3,
-	    10,
-	    5120,
-	    92,
-	    0,
-	    0,
-	    0,
-	    0,
-	    0,
-	    1,
-	    3,
-	    23,
-	    3,
-	    2,
-	    1,
-	    26,
-	    3,
-	    5,
-	    1,
-	    27,
-	    3,
-	    0,
-	    769,
-	    770,
-	    771,
-	    4,
-	    0,
-	    0,
-	    0,
-	    0,
-	    0,
-	    0,
-	    0,
-	    0,
-	    0,
-	    0,
-	    0,
-	    0,
-	    0,
-	    0,
-	    0,
-	    0,
-	    0,
-	    0,
-	    0,
-	    0,
-	    0,
-	    0,
-	    0,
-	    0,
-	    0,
-	    0,
-	    0,
-	    0,
-	    0,
-	    0,
-	    0,
-	    0,
-	    0,
-	    0,
-	    0,
-	    0,
-	    0,
-	    0,
-	    0,
-	    0,
-	    0,
-	    0,
-	    0,
-	    0,
-	    0,
-	    0,
-	    0,
-	    0,
-	    0,
-	    0,
-	    0,
-	    0,
-	    0,
-	    0,
-	    0,
-	    0,
-	    0,
-	    0,
-	    0,
-	    0,
-	    0,
-	    0,
-	    0,
-	    0,
-	    0,
-	    0,
-	    0,
-	    0,
-	    0,
-	    0,
-	    0,
-	    0,
-	    0
-};
+uint16_t registers[] = { 5,3,10,5120,92,0,0,0,0,0,1,3,23,3,2,1,26,3,5,1,27,3,0,769,770,771,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
 uint16_t* registersi = (uint16_t*)registers;
 
 HisDevModbusTests::HisDevModbusTests() {
@@ -131,7 +30,7 @@ HisDevModbusTests::HisDevModbusTests() {
 
 void HisDevModbusTests::SetUp()
 {
-	modbus = new ModbusSimulator(modbussim,registersi);
+	modbus = new ModbusSimulator(modbussim,registers,sizeof(registers)/sizeof(uint16_t));
 
 	When(Method(hisDevFactoryMock,Create)).AlwaysReturn(NULL);
 	hisDevFactory = &hisDevFactoryMock.get();
@@ -164,7 +63,7 @@ TEST_F(HisDevModbusTests,Resolve_FAIL)
 
 TEST_F(HisDevModbusTests,ScanTest)
 {
-	IModbus* modbus = new ModbusSimulator(modbussim,registersi);
+	IModbus* modbus = new ModbusSimulator(modbussim,registers,sizeof(registers)/sizeof(uint16_t));
 	Mock<IHisDevFactory> hisDevFactoryMock;
 	When(Method(hisDevFactoryMock,Create)).AlwaysReturn(NULL);
 	IHisDevFactory &hisDevFactory = hisDevFactoryMock.get();

@@ -23,6 +23,7 @@ public:
 	CURLcode Get(string requestApi,string & response, long & http_code);
 	CURLcode Post(string requestApi,string message,string & response, long & http_code);
 	CURLcode Put(string requestApi,string message,string & response,long &http_code);
+	static void AssertCurlResponse(long http_code, CURLcode urlCode);
 	Client();
 	virtual ~Client();
 };

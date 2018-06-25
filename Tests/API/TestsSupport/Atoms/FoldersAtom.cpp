@@ -17,6 +17,7 @@ using namespace std;
 #include "prettywriter.h"
 #include "stringbuffer.h"
 #include "ParamsNames.h"
+#include "HisException.h"
 
 using namespace std;
 using namespace rapidjson;
@@ -31,9 +32,8 @@ FoldersAtom::FoldersAtom(HomeIsStarter & homeisStarter)
 }
 
 
-string FoldersAtom::CreateFolder(string name, CUUID parentId, long & httpRespCode,CURLcode & urlCode)
+void FoldersAtom::CreateFolder(string name, CUUID parentId)
 {
-
 	Document document;	// Default template parameter uses UTF8 and MemoryPoolAllocator.
 	document.SetObject();
 
@@ -45,15 +45,32 @@ string FoldersAtom::CreateFolder(string name, CUUID parentId, long & httpRespCod
 	document.Accept(wr);
 	const std::string json(buffer.GetString());
 	string response;
-	urlCode = homeisStarter.GetClient().Post("/api/folder",json,response,httpRespCode);
-	return response;
+	long int http_code;
+	CURLcode urlCode = homeisStarter.GetClient().Post("/api/folder",json,response,http_code);
+	Client::AssertCurlResponse(http_code,urlCode);
+
+//	Document documentResponse;	// Default template parameter uses UTF8 and MemoryPoolAllocator.
+//	if (documentResponse.Parse<0>((char*)response.c_str()).HasParseError() == true)
+//	{
+//		throw ArgumentNullException("response");
+//	}
+
+	//return documentResponse;
 }
 
-string FoldersAtom::GetFolders(long & httpRespCode, CURLcode & urlCode)
+Document FoldersAtom::GetFolders()
 {
+	long http_code;
+	CURLcode urlCode;
 	string response;
-	urlCode = homeisStarter.GetClient().Get("api/folder/allitems",response,httpRespCode);
-	return response;
+	urlCode = homeisStarter.GetClient().Get("api/folder/allitems",response,http_code);
+	Client::AssertCurlResponse(http_code,urlCode);
+
+	Document document;	// Default template parameter uses UTF8 and MemoryPoolAllocator.
+	if (document.Parse<0>((char*)response.c_str()).HasParseError() == true)
+		throw ArgumentNullException("response");
+
+	return document;
 }
 
 FoldersAtom::~FoldersAtom() {

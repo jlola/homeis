@@ -15,7 +15,7 @@ using namespace httpserver;
 
 class FileController : public http_resource {
 	public:
-		FileController();
+		FileController(webserver* server);
 		const http_response render_GET(const http_request&);
 };
 

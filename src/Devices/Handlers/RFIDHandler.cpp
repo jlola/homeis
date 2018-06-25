@@ -13,9 +13,9 @@ string RFIDHandler::LoadType = "RFIDHandler";
 
 RFIDHandler::RFIDHandler(IHisDevModbus* devModbus,IHisDevFactory* factory) {
 	if (devModbus==NULL)
-		throw ArgumentNullException(string("devModbus"));
+		throw ArgumentNullException("devModbus");
 	if (factory==NULL)
-		throw ArgumentNullException(string("factory"));
+		throw ArgumentNullException("factory");
 
 	this->srfidregs = NULL;
 	this->newDataFlag = NULL;
@@ -45,6 +45,7 @@ bool RFIDHandler::Scan(bool addnew)
 
 bool RFIDHandler::Remove(CUUID id)
 {
+	STACK
 	if (rfiddataflag!=NULL && rfiddataflag->GetRecordId()==id)
 	{
 		rfiddataflag = NULL;
@@ -60,6 +61,7 @@ bool RFIDHandler::Remove(CUUID id)
 
 void RFIDHandler::CreateOrValidTags(bool addnew)
 {
+	STACK
 	HisDevValueBase* valuebase = dev->FindValue(NEWDATAFLAG,LoadType);
 	newDataFlag = dynamic_cast<HisDevValue<bool>*>(valuebase);
 	if (newDataFlag!=NULL || addnew)
@@ -116,6 +118,7 @@ void RFIDHandler::RefreshOutputs()
 
 void RFIDHandler::Refresh(bool modbusSuccess)
 {
+	STACK
 	if ( srfidregs != NULL )
 	{
 		if (newDataFlag!=NULL)
@@ -131,6 +134,7 @@ void RFIDHandler::Refresh(bool modbusSuccess)
 
 void RFIDHandler::Load()
 {
+	STACK
 	HisDevValueBase* value = dev->FindValue(RFIDDATATAG,LoadType);
 	if (value!=NULL)
 	{

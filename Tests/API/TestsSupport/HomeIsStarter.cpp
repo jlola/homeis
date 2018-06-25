@@ -7,6 +7,7 @@
 
 #ifdef HOMEISTEST
 
+
 #include "HomeIsStarter.h"
 
 HomeIsStarter::HomeIsStarter()
@@ -15,9 +16,16 @@ HomeIsStarter::HomeIsStarter()
 	modbussim.Driver = "modbussimulator";
 	modbussim.Name = "modbussimulator";
 	modbussim.Port = "";
+
+	std::vector<SSerPortConfig> serports;
+		serports.push_back(modbussim);
+
+	emailSender = new EmailSender("","","");
+	modbusProvider = new ModbusProvider(serports);
+	server = new HomeIsServer(*modbusProvider,emailSender,SERVER_PORT,"");
 }
 
-SSerPortConfig HomeIsStarter::GetConfig()
+SSerPortConfig HomeIsStarter::GetModbusConfig()
 {
 	return modbussim;
 }
@@ -29,13 +37,17 @@ Client & HomeIsStarter::GetClient()
 
 void HomeIsStarter::Start()
 {
-	std::vector<SSerPortConfig> serports;
-	serports.push_back(modbussim);
-
-	emailSender = new EmailSender("","","");
-	modbusProvider = new ModbusProvider(serports);
-	server = new HomeIsServer(*modbusProvider,emailSender,SERVER_PORT,"");
 	server->Start(false);
+}
+
+IModbusProvider* HomeIsStarter::GetModbusProvider()
+{
+	return modbusProvider;
+}
+
+ModbusSimulator* HomeIsStarter::GetModbusSimulator()
+{
+	return dynamic_cast<ModbusSimulator*>(modbusProvider->Find(ModbusSimulator::DriverName));
 }
 
 void HomeIsStarter::Stop()

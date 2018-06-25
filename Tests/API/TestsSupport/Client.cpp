@@ -10,6 +10,7 @@
 
 #include "Client.h"
 #include "StringBuilder.h"
+#include "microhttpd.h"
 
 namespace AF
 {
@@ -106,6 +107,14 @@ CURLcode Client::Put(string requestApi,string message,string & response,long &ht
 	}
 	response = s;
 	return res;
+}
+
+void Client::AssertCurlResponse(long http_code, CURLcode urlCode)
+{
+	if (CURLcode::CURLE_OK != urlCode)
+		throw StringBuilder::Format("Assert urlCode: Expected: %d, Actual: %d",CURLcode::CURLE_OK,urlCode).c_str();
+	if (MHD_HTTP_OK != http_code)
+		throw StringBuilder::Format("Assert http_code: Expected: %d, Actual: %d",MHD_HTTP_OK,http_code).c_str();
 }
 
 Client::~Client() {
