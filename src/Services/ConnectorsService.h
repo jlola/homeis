@@ -14,23 +14,24 @@
 #include "Devices/Folder/HisDevValueId.h"
 #include "VirtualDevices/HisDevVirtual.h"
 #include "HomeIsConfig.h"
-#include "HttpHeadersProvider.h"
+#include "IHisDevFactory.h"
 #include "IModbusProvider.h"
+#include "ServiceBase.h"
 
 using namespace std;
 using namespace httpserver;
 using namespace rapidjson;
 
-class ConnectorsService : public http_resource
+class ConnectorsService : public ServiceBase
 {
-	IHttpHeadersProvider & headersProvider;
 	//vector<SSerPortConfig> & serports;
 	IModbusProvider & provider;
 public:
 	ConnectorsService(IModbusProvider & provider,
-			IHttpHeadersProvider & headersProvider,
+			IUserManager* userManager,
+			IHisDevFactory* factory,
 			webserver* ws_i);
-	const http_response render_GET(const http_request& r);
+	const http_response GET(const http_request& r);
 	virtual ~ConnectorsService();
 };
 

@@ -21,7 +21,7 @@ public:
 	HttpHeadersProvider(string allowOrigin);
 	http_response_builder& AddHeaders(http_response_builder & responseBuilder);
 	string GetContentTypeAppJson();
-
+	string GetMessageJson(string message);
 	string GetErrorMessageJson(string message);
 
 	virtual ~HttpHeadersProvider();

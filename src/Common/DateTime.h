@@ -33,6 +33,8 @@ public:
 
 	bool operator != (const DateTime& dt_);
 
+	double operator - (const DateTime& dt_);
+
 	DateTime operator = (const DateTime& dt_);
 
 	static DateTime Now();

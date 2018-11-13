@@ -150,7 +150,7 @@ bool HisDevModbus::Scan(bool addnew)
 			STACK_VAL(Scan,"File: "+string(__FILE__)+",Line: "+Converter::itos(__LINE__))
 			if (handlers->Scan(addnew))
 			{
-				CLogger::GetLogger().Info(StringBuilder::Format("Dev %s: Scan was not success",this->GetAddress()).c_str());
+				logger.Info("Dev %s: Scan was not success",this->GetAddress());
 			}
 		}
 		else
@@ -331,6 +331,12 @@ void HisDevModbus::DoInternalLoad(xmlNodePtr & node)
 	}
 
 	handlers->Load();
+}
+
+void HisDevModbus::Enable(bool enabled)
+{
+	HisDevBase::Enable(enabled);
+	logger.Info("Device address %d was %s",GetAddress(),enabled ? "enabled" : "disabled");
 }
 
 void HisDevModbus::OnError() {

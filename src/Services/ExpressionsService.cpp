@@ -8,16 +8,16 @@
 #include "ExpressionsService.h"
 #include "PoppyDebugTools.h"
 #include "StringBuilder.h"
-#include "Common/HisException.h"
+#include "HisException.h"
 #include "microhttpd.h"
 
 ExpressionService::ExpressionService(HisDevFolderRoot* folder,
 		IExpressionRuntime *pexpressionRuntime,
 		HisDevices* pdevices,
-		IHttpHeadersProvider & headersProvider,
+		IUserManager* userManager,
 		IHisDevFactory* factory,
 		webserver* ws_i)
-	: headersProvider(headersProvider),factory(factory)
+	: ServiceBase::ServiceBase(factory,userManager)
 {
 	STACK
 	devices = pdevices;
@@ -37,19 +37,7 @@ ExpressionService::~ExpressionService(void)
 
 }
 
-const http_response ExpressionService::render_OPTIONS(const http_request& req)
-{
-	int response_code = MHD_HTTP_OK;
-	string message = "";
-	http_response_builder response_builder(message,response_code,headersProvider.GetContentTypeAppJson());
-	this->headersProvider.AddHeaders(response_builder);
-	response_builder = response_builder.with_header("Access-Control-Allow-Methods","POST, PUT");
-	response_builder = response_builder.with_header("Access-Control-Allow-Headers","authorization,content-type");
-	http_response resp(response_builder.string_response());
-	return resp;
-}
-
-const http_response ExpressionService::render_GET(const http_request& req)
+const http_response ExpressionService::GET(const http_request& req)
 {
 	STACK
 	Document respjsondoc;
@@ -106,6 +94,26 @@ const http_response ExpressionService::render_GET(const http_request& req)
 			ExpressionsToJson(strid , root, respjsondoc);
 			response_code = MHD_HTTP_OK;
 		}
+		else if (path.find("/api/expression")!=string::npos)
+		{
+			if(!strid.empty())
+			{
+				LuaExpression* expression = NULL;
+				CUUID id = CUUID::Parse(strid);
+				expression = dynamic_cast<LuaExpression*>(root->FindExpression(id));
+				if (expression!=NULL)
+				{
+					ExpressionToJson(expression,respjsondoc);
+					response_code = MHD_HTTP_OK;
+				}
+				else
+					response_code = MHD_HTTP_NOT_FOUND;
+			}
+			else
+			{
+				response_code = MHD_HTTP_NOT_FOUND;
+			}
+		}
 		else
 		{
 			response_code = MHD_HTTP_NOT_FOUND;
@@ -126,23 +134,20 @@ const http_response ExpressionService::render_GET(const http_request& req)
 	PrettyWriter<StringBuffer> wr(buffer);
 	respjsondoc.Accept(wr);
 	std::string json = buffer.GetString();
-	http_response_builder response_builder(json, response_code,headersProvider.GetContentTypeAppJson());
-	headersProvider.AddHeaders(response_builder);
-	http_response resp(response_builder.string_response());
-	return resp;
+	return CreateResponseString(json,response_code);
 }
 
-void ExpressionService::ExpressionsToJson(string strid, HisDevFolderRoot* root, Document & respjsondoc)
+void ExpressionService::ExpressionsToJson(string strFolderId, HisDevFolderRoot* root, Document & respjsondoc)
 {
 	STACK
 	HisDevFolder* folder = NULL;
 	vector<LuaExpression*> expressions;
 	HisDevFolder* rootFolder = root->GetFolder();
 
-	if(!strid.empty())
+	if(!strFolderId.empty())
 	{
-		CUUID id = CUUID::Parse(strid);
-		folder = dynamic_cast<HisDevFolder*>(rootFolder->Find(id));
+		CUUID folderid = CUUID::Parse(strFolderId);
+		folder = dynamic_cast<HisDevFolder*>(rootFolder->Find(folderid));
 	}
 
 	if (folder!=NULL)
@@ -150,7 +155,7 @@ void ExpressionService::ExpressionsToJson(string strid, HisDevFolderRoot* root, 
 		expressions = folder->GetItems<LuaExpression>();
 		for (size_t i=0;i<expressions.size();i++)
 		{
-			ExpressionToJson(folder, expressions[i],respjsondoc);
+			ExpressionToJson(expressions[i],respjsondoc);
 		}
 	}
 }
@@ -170,7 +175,7 @@ void ExpressionService::ExpressionDebugLogToJson(LuaExpression *pExpression, Doc
 	}
 }
 
-void ExpressionService::ExpressionToJson(IHisBase* pParent, LuaExpression *pExpression, Document & respjsondoc)
+void ExpressionService::ExpressionToJson(LuaExpression *pExpression, Document & respjsondoc)
 {
 	STACK
 	Value d(kObjectType);
@@ -305,7 +310,7 @@ LuaExpression* ExpressionService::CreateOrUpdateExpression(string strJson,string
 			}
 			else
 			{
-				expressionObj = new LuaExpression(parent,devices,name,expressionRuntime,factory );
+				expressionObj = new LuaExpression(parent,devices,name,expressionRuntime,GetFactory() );
 				parent->Add(expressionObj);
 				saveReq = true;
 			}
@@ -376,105 +381,75 @@ LuaExpression* ExpressionService::CreateOrUpdateExpression(string strJson,string
 	}
 }
 
-const http_response ExpressionService::render_POST(const http_request& req)
+const http_response ExpressionService::POST(const http_request& req)
 {
 	STACK
 	std::string content = req.get_content();
 	int response_code = MHD_HTTP_FORBIDDEN;
 	string message = "";
 
-	if (req.get_user()=="a" && req.get_pass()=="a")
+
+	LuaExpression* expression = CreateOrUpdateExpression(content,message);
+	if (expression!=NULL)
 	{
-		LuaExpression* expression = CreateOrUpdateExpression(content,message);
-		if (expression!=NULL)
-		{
-			Document respjsondoc;
-			respjsondoc.SetArray();
+		Document respjsondoc;
+		respjsondoc.SetArray();
 
-			ExpressionToJson(expression->GetParent(), expression,respjsondoc);
+		ExpressionToJson(expression,respjsondoc);
 
-			StringBuffer buffer;
-			PrettyWriter<StringBuffer> wr(buffer);
-			respjsondoc.Accept(wr);
-			std::string json = buffer.GetString();
+		StringBuffer buffer;
+		PrettyWriter<StringBuffer> wr(buffer);
+		respjsondoc.Accept(wr);
+		std::string json = buffer.GetString();
 
-			message = json;
-			response_code = MHD_HTTP_OK;
-		}
-		else
-		{
-			message = headersProvider.GetErrorMessageJson("Not found");
-			response_code = MHD_HTTP_NOT_FOUND;
-		}
+		message = json;
+		response_code = MHD_HTTP_OK;
 	}
 	else
 	{
-		message = headersProvider.GetErrorMessageJson("Authentication error");
-		response_code = MHD_HTTP_UNAUTHORIZED;
+		message = GetErrorMessageJson("Not found");
+		response_code = MHD_HTTP_NOT_FOUND;
 	}
-	http_response_builder response_builder(message, response_code,headersProvider.GetContentTypeAppJson());
-	headersProvider.AddHeaders(response_builder);
-	http_response resp(response_builder.string_response());
-	return resp;
+
+	return CreateResponseString(message,response_code);
 }
 
-const http_response ExpressionService::render_PUT(const http_request& req)
+const http_response ExpressionService::PUT(const http_request& req)
 {
 	STACK
 	std::string content = req.get_content();
 	int response_code = MHD_HTTP_FORBIDDEN;
 	string message = "";
-	if (req.get_user()=="a" && req.get_pass()=="a")
-	{
 
-		if (CreateOrUpdateExpression(content,message))
-		{
-			response_code = MHD_HTTP_OK;
-		}
-		else
-		{
-			message = headersProvider.GetErrorMessageJson(message);
-		}
+	if (CreateOrUpdateExpression(content,message))
+	{
+		response_code = MHD_HTTP_OK;
 	}
 	else
 	{
-		message = headersProvider.GetErrorMessageJson("Authentication error");
-		response_code = MHD_HTTP_UNAUTHORIZED;
+		message = GetErrorMessageJson(message);
 	}
 
-	http_response_builder response_builder(message, response_code,headersProvider.GetContentTypeAppJson());
-	headersProvider.AddHeaders(response_builder);
-	http_response resp(response_builder.string_response());
-	return resp;
+	return CreateResponseString(message,response_code);
 }
 
-const http_response ExpressionService::render_DELETE(const http_request& req)
+const http_response ExpressionService::DELETE(const http_request& req)
 {
 	STACK
 	int response_code = MHD_HTTP_FORBIDDEN;
 	string message = "";
-	if (req.get_user()=="a" && req.get_pass()=="a")
+
+	string strid = req.get_arg("id");
+	if (DeleteExpression(strid,message))
 	{
-		string strid = req.get_arg("id");
-		if (DeleteExpression(strid,message))
-		{
-			response_code = MHD_HTTP_OK;
-			message = "OK";
-		}
-		else
-		{
-			message = headersProvider.GetErrorMessageJson(message);
-		}
+		response_code = MHD_HTTP_OK;
+		message = "OK";
 	}
 	else
 	{
-		message = headersProvider.GetErrorMessageJson("Authentication error");
-		response_code = MHD_HTTP_UNAUTHORIZED;
+		message = GetErrorMessageJson(message);
 	}
 
-	http_response_builder response_builder(message, response_code,headersProvider.GetContentTypeAppJson());
-	headersProvider.AddHeaders(response_builder);
-	http_response resp(response_builder.string_response());
-	return resp;
+	return CreateResponseString(message,response_code);
 }
 

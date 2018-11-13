@@ -17,14 +17,13 @@
 
 FoldersService::FoldersService(HisDevices & dev,
 		HisDevFolderRoot & root,
-		IHttpHeadersProvider & headersProvider,
+		IUserManager* userManager,
 		IHisDevFactory* factory,
 		webserver* ws_i) :
+		ServiceBase::ServiceBase(factory,userManager),
 	logger(CLogger::GetLogger()),
 	root(root),
-	devices(dev),
-	headersProvider(headersProvider),
-	factory(factory)
+	devices(dev)
 {
 	ws_i->register_resource(string("api/folders"), this, true);
 	ws_i->register_resource(string("api/folder"), this, true);
@@ -39,19 +38,7 @@ FoldersService::~FoldersService(void)
 
 }
 
-const http_response FoldersService::render_OPTIONS(const http_request& req)
-{
-	int response_code = MHD_HTTP_OK;
-	string message = "";
-	http_response_builder response_builder(message,response_code,headersProvider.GetContentTypeAppJson());
-	this->headersProvider.AddHeaders(response_builder);
-	response_builder = response_builder.with_header("Access-Control-Allow-Methods","POST, PUT");
-	response_builder = response_builder.with_header("Access-Control-Allow-Headers","authorization,content-type");
-	http_response resp(response_builder.string_response());
-	return resp;
-}
-
-const http_response FoldersService::render_GET(const http_request& req)
+const http_response FoldersService::GET(const http_request& req)
 {
 	STACK
 	Document respjsondoc;
@@ -116,11 +103,7 @@ const http_response FoldersService::render_GET(const http_request& req)
 	respjsondoc.Accept(wr);
 	const std::string json(buffer.GetString());
 
-
-	http_response_builder response_builder(json, response_code,headersProvider.GetContentTypeAppJson());
-	headersProvider.AddHeaders(response_builder);
-	http_response resp(response_builder.string_response());
-	return resp;
+	return CreateResponseString(json,response_code);
 }
 
 void FoldersService::FolderToJson(HisDevFolderRoot & root,IHisBase *pParentFolder, IHisBase *pFolder, Document & respjsondoc)
@@ -201,7 +184,7 @@ void FoldersService::FoldersToJson(HisDevFolderRoot & root,HisDevFolder *parentF
 			}
 			else if (pExpression!=NULL)
 			{
-				ExpressionService::ExpressionToJson(pExpression->GetParent() ,pExpression, respjsondoc);
+				ExpressionService::ExpressionToJson(pExpression, respjsondoc);
 			}
 		}
 	}
@@ -226,7 +209,7 @@ bool FoldersService::AddValueIdToFolder(string strFolderId, string strJson,strin
 			HisDevFolder* folder = dynamic_cast<HisDevFolder*>(root.GetFolder()->Find(folderId));
 			if (folder!=NULL)
 			{
-				HisDevValueId* valueId = new HisDevValueId(valueBase,factory);
+				HisDevValueId* valueId = new HisDevValueId(valueBase,GetFactory());
 				folder->Add(valueId);
 				root.Save();
 				return true;
@@ -240,30 +223,19 @@ bool FoldersService::AddValueIdToFolder(string strFolderId, string strJson,strin
 	return false;
 }
 
-const http_response FoldersService::render_POST(const http_request& req)
+const http_response FoldersService::POST(const http_request& req)
 {
 	STACK
 	string message = "";
 	int response_code = MHD_HTTP_FORBIDDEN;
 	std::string content = req.get_content();
 
-	if (req.get_user()=="a" && req.get_pass()=="a")
+	if (CreateFolder(content,message))
 	{
-		if (CreateFolder(content,message))
-		{
-			response_code = MHD_HTTP_OK;
-		}
-	}
-	else
-	{
-		message = "Autentication error";
-		response_code = MHD_HTTP_UNAUTHORIZED;
+		response_code = MHD_HTTP_OK;
 	}
 
-	http_response_builder responsebuilder(message, response_code,headersProvider.GetContentTypeAppJson());
-	headersProvider.AddHeaders(responsebuilder);
-	http_response resp(responsebuilder.string_response());
-	return resp;
+	return CreateResponseString(message,response_code);
 }
 
 bool FoldersService::UpdateFolder(string strid, string strJson,string & message)
@@ -354,7 +326,7 @@ bool FoldersService::CreateFolder(string strJson,string & message)
 	if (document.HasMember(JSON_NAME) && document[JSON_NAME].IsString())
 	{
 		string name = document[JSON_NAME].GetString();
-		newFolder = new HisDevFolder(name,factory);
+		newFolder = new HisDevFolder(name,GetFactory());
 	}
 	else
 	{
@@ -373,43 +345,31 @@ bool FoldersService::CreateFolder(string strJson,string & message)
 }
 
 
-const http_response FoldersService::render_PUT(const http_request& req)
+const http_response FoldersService::PUT(const http_request& req)
 {
 	STACK
 	string message;
-	int response_code = 403;
+	int response_code = MHD_HTTP_FORBIDDEN;
 
-	if (req.get_user()=="a" && req.get_pass()=="a")
+	string strid = req.get_arg(JSON_ID);
+	string content = req.get_content();
+	string path = req.get_path();
+
+	if (path.find("/api/folder/valueid")!=string::npos)
 	{
-		string strid = req.get_arg(JSON_ID);
-		string content = req.get_content();
-		string path = req.get_path();
-
-		if (path.find("/api/folder/valueid")!=string::npos)
+		string strfolderid = req.get_arg(JSON_FOLDERID);
+		//vytvori id datoveho bodu ve slozce
+		if (AddValueIdToFolder(strfolderid,content,message))
 		{
-			string strfolderid = req.get_arg(JSON_FOLDERID);
-			//vytvori id datoveho bodu ve slozce
-			if (AddValueIdToFolder(strfolderid,content,message))
-			{
-				response_code = 200;
-			}
-		}
-		else if (UpdateFolder(strid,content,message))
-		{
-			response_code = 200;
+			response_code = MHD_HTTP_OK;
 		}
 	}
-	else
+	else if (UpdateFolder(strid,content,message))
 	{
-		message = "Autentication error";
-		response_code = 401;
+		response_code = MHD_HTTP_OK;
 	}
 
-
-	http_response_builder response_builder(message, response_code,headersProvider.GetContentTypeAppJson());
-	headersProvider.AddHeaders(response_builder);
-	http_response resp(response_builder.string_response());
-	return resp;
+	return CreateResponseString(message,response_code);
 }
 
 string FoldersService::DeleteDevValue(string strDevValueRecordId)
@@ -454,38 +414,26 @@ string FoldersService::DeleteDevValue(string strDevValueRecordId)
 	return "";
 }
 
-const http_response FoldersService::render_DELETE(const http_request& req)
+const http_response FoldersService::DELETE(const http_request& req)
 {
 	STACK
 	int response_code = MHD_HTTP_FORBIDDEN;
 	string message;
 
-	if (req.get_user()=="a" && req.get_pass()=="a")
+	string strid = req.get_arg(JSON_ID);
+	CUUID id = CUUID::Parse(strid);
+	HisDevFolder* folder = dynamic_cast<HisDevFolder*>(root.GetFolder()->Find(id));
+
+	if (folder!=NULL)
 	{
-		string strid = req.get_arg(JSON_ID);
+		HisDevFolder* parentfolder = dynamic_cast<HisDevFolder*>(folder->GetParent());
+		parentfolder->Remove(id);
+		delete(folder);
+		root.Save();
 
-		CUUID id = CUUID::Parse(strid);
-		HisDevFolder* folder = dynamic_cast<HisDevFolder*>(root.GetFolder()->Find(id));
-
-		if (folder!=NULL)
-		{
-			HisDevFolder* parentfolder = dynamic_cast<HisDevFolder*>(folder->GetParent());
-			parentfolder->Remove(id);
-			delete(folder);
-			root.Save();
-
-			response_code = MHD_HTTP_OK;
-			message = "OK";
-		}
-	}
-	else
-	{
-		message = "Authentication error";
-		response_code = MHD_HTTP_UNAUTHORIZED;
+		response_code = MHD_HTTP_OK;
+		message = "OK";
 	}
 
-	http_response_builder response_builder(message,response_code,headersProvider.GetContentTypeAppJson());
-	headersProvider.AddHeaders(response_builder);
-	http_response resp(response_builder.string_response());
-	return resp;
+	return CreateResponseString(message,response_code);
 }

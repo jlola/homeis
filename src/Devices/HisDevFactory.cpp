@@ -30,9 +30,11 @@ HisDevFactory::HisDevFactory(IExpressionRuntime *expressionRuntime,
 		HisDevices* devices,
 		IEmailSender* emailSender,
 		IFile* file,
-		IDirectory* directory
+		IDirectory* directory,
+		IHttpHeadersProvider* headersProvider
 		)
 {
+	this->headersProvider = headersProvider;
 	this->directory = directory;
 	this->file = file;
 	this->devices = devices;
@@ -43,6 +45,11 @@ HisDevFactory::HisDevFactory(IExpressionRuntime *expressionRuntime,
 HisDevFactory::~HisDevFactory()
 {
 
+}
+
+IHttpHeadersProvider* HisDevFactory::GetHeadersProvider()
+{
+	return headersProvider;
 }
 
 IEmailSender* HisDevFactory::GetEmailSender()

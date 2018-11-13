@@ -13,23 +13,24 @@
 #include "document.h"		// rapidjson's DOM-style API
 #include "prettywriter.h"
 #include "HisDevices.h"
-#include "HttpHeadersProvider.h"
+#include "ServiceBase.h"
+
 
 using namespace std;
 using namespace httpserver;
 using namespace rapidjson;
 
-class ModbusService : public http_resource
+class ModbusService : public ServiceBase
 {
-	IHttpHeadersProvider & headersProvider;
 	IModbusProvider* mm;
 public:
 	ModbusService(IModbusProvider* mm,
-			IHttpHeadersProvider & headersProvider,
+			IUserManager* userManager,
+			IHisDevFactory* factory,
 			webserver* ws_i);
 	void render_GET(const http_request& req, http_response** res);
-	const http_response render_GET(const http_request& req);
-	const http_response render_PUT(const http_request& req);
+	const http_response GET(const http_request& req);
+	const http_response PUT(const http_request& req);
 	virtual ~ModbusService();
 };
 

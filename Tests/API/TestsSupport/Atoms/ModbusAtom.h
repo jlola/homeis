@@ -9,6 +9,9 @@
 #define TESTS_API_TESTSSUPPORT_ATOMS_MODBUSATOM_H_
 
 #include "HomeIsStarter.h"
+#include "fakeit.hpp"
+
+using namespace fakeit;
 
 class ModbusAtom {
 	HomeIsStarter & homeisStarter;

@@ -33,7 +33,7 @@ void BinnaryOutputHandler::RefreshOutputs()
 		{
 			string msg = StringBuilder::Format("BinnaryOutputHandler::RefreshOutputs | sbinoutputs is null and stypedef.Count>0");
 			CLogger::GetLogger().Error(msg.c_str());
-			throw Exception(msg);
+			throw MException(msg);
 		}
 
 		for(int i=0;i<stypedef.Count;i++)

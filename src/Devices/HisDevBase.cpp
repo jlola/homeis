@@ -31,8 +31,8 @@ HisDevBase::~HisDevBase()
 }
 
 HisDevBase::HisDevBase(IHisDevFactory* factory) :
-		logger(CLogger::GetLogger()),
 		HisBase::HisBase(factory),
+		logger(CLogger::GetLogger()),
 		enabled(true),
 		scanPeriodMs(10000),
 		error(true),
@@ -46,8 +46,8 @@ HisDevBase::HisDevBase(IHisDevFactory* factory) :
 }
 
 HisDevBase::HisDevBase(xmlNodePtr node,IHisDevFactory* factory)
-	: logger(CLogger::GetLogger()),
-	HisBase::HisBase(node,factory),
+	: HisBase::HisBase(node,factory),
+	logger(CLogger::GetLogger()),
 	enabled(true),
 	scanPeriodMs(10000),
 	error(true),

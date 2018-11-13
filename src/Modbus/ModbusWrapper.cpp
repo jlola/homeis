@@ -61,12 +61,12 @@ bool Modbus::Init()
 
 	modbus_get_byte_timeout(ctx, &sec,&usec);
 
-	sec = 0;
-	usec = 100000;
+	sec = 1;
+	usec = 0;
 	modbus_set_byte_timeout(ctx, sec, usec);
 
-	sec = 0;
-	usec = 100000;
+	sec = 1;
+	usec = 0;
 	modbus_set_response_timeout(ctx, sec,usec);
 	return true;
 }

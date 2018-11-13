@@ -8,12 +8,12 @@
 #ifndef SRC_HELPERS_ILOGGER_H_
 #define SRC_HELPERS_ILOGGER_H_
 
-enum ELogLevel
+typedef enum
 {
 	ELogLevelError,
 	ELogLevelInfo,
 	ELogLevelTrace
-};
+} ELogLevel;
 
 class CLogger;
 

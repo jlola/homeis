@@ -9,6 +9,7 @@
 #define TESTS_API_TESTSSUPPORT_FOLDERSATOM_H_
 
 #include "HomeIsStarter.h"
+#include "UsersAtom.h"
 
 class FoldersAtom {
 	HomeIsStarter & homeisStarter;

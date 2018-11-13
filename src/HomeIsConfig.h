@@ -11,27 +11,13 @@
 #include <string.h>
 #include "File.h"
 #include <libconfig.h++>
-#include <vector>
-#include "logger.h"
+#include "ILogger.h"
+#include "IConfig.h"
 
 using namespace std;
 using namespace libconfig;
 
-typedef struct
-{
-	string Port;
-	string Name;
-	string Driver;
-} SSerPortConfig;
-
-typedef struct
-{
-	string SMTP;
-	string UserName;
-	string Password;
-} SSmtpSettings;
-
-class HomeIsConfig
+class HomeIsConfig : public IConfig
 {
 	ILogger & logger;
 	Config cfg;

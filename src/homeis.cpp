@@ -97,7 +97,7 @@ Home information system %d.%d.%8d\n\
 	SSmtpSettings smtpsetttings = config.GetSmtpSettings();
 	ModbusProvider provider(serports);
 	EmailSender esender(smtpsetttings);
-	HomeIsServer server(provider,&esender,config.GetServerPort(),config.GetAllowOrigin());
+	HomeIsServer server(provider,&esender,config);
 
 	server.Start(true);
 	server.Stop();

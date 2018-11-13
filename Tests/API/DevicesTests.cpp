@@ -96,7 +96,6 @@ TEST_F(DevicesTests,TestLoadDeviceWithoutScanAndThenScan)
 	ASSERT_EQ(1,holdingRegister);
 	modbusSimulator->SetRegisters(registers_scaned,sizeof(registers_scaned)/sizeof(uint16_t));
 	//string tagValue = deviceAtoms.GetTag(scanOneWireTagId)[JSON_VALUE].GetString();
-	sleep(20);
 	//ASSERT_EQ(tagValue,"0");
 	//int error = deviceAtoms.GetTag(ds18b20TagId)[JSON_ERROR].GetInt();
 	//ASSERT_EQ(0,error);

@@ -8,13 +8,12 @@
 #ifndef HISDEVICES_H_
 #define HISDEVICES_H_
 
-#include <Modbus/IModbusProvider.h>
-#include "HisDevBase.h"
-#include "Common/CUUID.h"
-#include "Common/HisLock.h"
 #include <queue>          // std::queue
-#include "Devices/HisDevBase.h"
-#include "Expressions/IExpressionRuntime.h"
+#include "IModbusProvider.h"
+#include "HisDevBase.h"
+#include "CUUID.h"
+#include "HisLock.h"
+#include "HisDevBase.h"
 #include "IHisDevFactory.h"
 #include "logger.h"
 

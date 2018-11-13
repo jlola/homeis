@@ -17,12 +17,13 @@
 #include "ParamsNames.h"
 
 
-ModbusDeviceService::ModbusDeviceService(HisDevices* devices
-		,IModbusProvider* mm
-		,IHttpHeadersProvider & headersProvider,
+ModbusDeviceService::ModbusDeviceService(HisDevices* devices,
+		IModbusProvider* mm,
+		IUserManager* userManager,
 		IHisDevFactory* factory,
 		webserver* ws_i)
-	: headersProvider(headersProvider),factory(factory)
+	: ServiceBase::ServiceBase(factory,userManager),
+	  factory(factory)
 {
 	this->mm = mm;
 	this->devices = devices;
@@ -35,10 +36,10 @@ ModbusDeviceService::~ModbusDeviceService()
 
 }
 
-const http_response ModbusDeviceService::render_GET(const http_request& req)
+const http_response ModbusDeviceService::GET(const http_request& req)
 {
 	STACK
-	int resonse_code = MHD_HTTP_FORBIDDEN;
+	int response_code = MHD_HTTP_FORBIDDEN;
 	Document document;
 	document.SetObject();
 
@@ -63,7 +64,7 @@ const http_response ModbusDeviceService::render_GET(const http_request& req)
 		document.SetObject();
 		jsonvalue.SetString("Success",document.GetAllocator());
 		document.AddMember(JSON_RESULT,jsonvalue,document.GetAllocator());
-		resonse_code = MHD_HTTP_OK;
+		response_code = MHD_HTTP_OK;
 	}
 	else
 	{
@@ -78,7 +79,7 @@ const http_response ModbusDeviceService::render_GET(const http_request& req)
 			document.SetObject();
 			jsonvalue.SetString("Success",document.GetAllocator());
 			document.AddMember(JSON_RESULT,jsonvalue,document.GetAllocator());
-			resonse_code = MHD_HTTP_OK;
+			response_code = MHD_HTTP_OK;
 		}
 		else
 		{
@@ -87,14 +88,12 @@ const http_response ModbusDeviceService::render_GET(const http_request& req)
 			document.AddMember(JSON_RESULT,jsonvalue,document.GetAllocator());
 			jsonvalue.SetString("Connector not found",document.GetAllocator());
 			document.AddMember(JSON_MESSAGE,jsonvalue,document.GetAllocator());
-			resonse_code = MHD_HTTP_NOT_FOUND;
+			response_code = MHD_HTTP_NOT_FOUND;
 		}
 
 	}
 	document.Accept(wr);
 	std::string json = buffer.GetString();
-	http_response_builder response_builder(json, resonse_code,headersProvider.GetContentTypeAppJson());
-	headersProvider.AddHeaders(response_builder);
-	http_response resp(response_builder.string_response());
-	return resp;
+
+	return CreateResponseString(json,response_code);
 }

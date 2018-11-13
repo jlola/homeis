@@ -18,17 +18,17 @@
 #include "IHisDevFactory.h"
 #include "logger.h"
 #include "ParamsNames.h"
+#include "ServiceBase.h"
 
 using namespace std;
 using namespace httpserver;
 using namespace rapidjson;
 
-class DevicesService : public http_resource
+class DevicesService : public ServiceBase
 {
 	ILogger & logger;
 	HisDevices & devices;
 	HisDevFolderRoot & rootFolder;
-	IHttpHeadersProvider & headersProvider;
 	IHisDevFactory* factory;
 
 	bool UpdateDevValue(CUUID devValueId, string strjson);
@@ -42,16 +42,15 @@ class DevicesService : public http_resource
 public:
 	DevicesService(HisDevices & dev,
 			HisDevFolderRoot & folder,
-			IHttpHeadersProvider & headersProvider,
+			IUserManager* userManager,
 			IHisDevFactory* factory,
 			webserver* ws_i);
 	~DevicesService(void);
 	static void FillFolderDevicesToJson(HisDevFolder* folder,Document & respjsondoc, HisDevices & dev);
-	const http_response render_OPTIONS(const http_request& req);
-	const http_response render_GET(const http_request&);
-	const http_response render_POST(const http_request& r);
-	const http_response render_PUT(const http_request& req);
-	const http_response render_DELETE(const http_request& req);
+	const http_response GET(const http_request&);
+	const http_response POST(const http_request& r);
+	const http_response PUT(const http_request& req);
+	const http_response DELETE(const http_request& req);
 	static void FillDeviceToJson(Value & d, HisDevBase* dev,Document & respjsondoc);
 	static void DevValueToJson(Value & d, HisDevValueId* valueId,HisDevValueBase* devValue,Document & respjsondoc);
 };

@@ -50,6 +50,10 @@ private:
 	void CreateOrValidOneWire(bool addnew);
 	void CreateOrValidOneWireHeader(bool addnew);
 
+	bool TriggerPeriodicScan();
+
+	volatile uint64_t nextScanTime;
+
 public:
 
 	static string LoadType;

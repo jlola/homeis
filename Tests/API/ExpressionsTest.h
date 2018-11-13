@@ -11,6 +11,10 @@
 #include "gtest_src/gtest/gtest.h"
 #include "File.h"
 
+#include "fakeit.hpp"
+
+using namespace fakeit;
+
 namespace AF {
 
 class ExpressionsTest : public testing::Test

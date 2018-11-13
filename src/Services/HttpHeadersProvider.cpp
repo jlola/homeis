@@ -30,6 +30,23 @@ http_response_builder& HttpHeadersProvider::AddHeaders(http_response_builder & r
 	return responseBuilder;
 }
 
+string HttpHeadersProvider::GetMessageJson(string msg)
+{
+	Document respjsondoc;
+	respjsondoc.SetObject();
+	StringBuffer buffer;
+
+	Value jsonvalue;
+	jsonvalue.SetString(msg.c_str(),msg.length(),respjsondoc.GetAllocator());
+	respjsondoc.AddMember(JSON_MESSAGE,jsonvalue, respjsondoc.GetAllocator());
+
+	PrettyWriter<StringBuffer> wr(buffer);
+	respjsondoc.Accept(wr);
+	std::string json = buffer.GetString();
+
+	return json;
+}
+
 string HttpHeadersProvider::GetErrorMessageJson(string message)
 {
 	Document respjsondoc;

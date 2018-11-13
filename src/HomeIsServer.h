@@ -28,9 +28,12 @@
 #include "Services/ModbusService.h"
 #include "Services/ConnectorsService.h"
 #include "Services/LogService.h"
+#include "Services/UsersService.h"
 #include "File.h"
 #include "Directory.h"
 #include "HisDevFactory.h"
+#include "IConfig.h"
+#include "IUserManager.h"
 
 using namespace httpserver;
 using namespace std;
@@ -41,7 +44,6 @@ class HomeIsServer
 	File file;
 	ILogger & logger;
 	HisDevFactory* factory;
-	//LOW_network  oneWireNet;
 	HttpHeadersProvider headersProvider;
 	HisDevRuntime* devruntime;
 	HisDevFolderRoot* rootFolder;
@@ -49,7 +51,6 @@ class HomeIsServer
 	create_webserver cw;
 	HisDevices* devs;
 	IModbusProvider & modbusProvider;
-	//vector<SSerPortConfig> & serports;
 	webserver* ws_i;
 
 	FileController* fc;
@@ -60,20 +61,21 @@ class HomeIsServer
 	ModbusService* modbusservice;
 	ConnectorsService* connectorsService;
 	LogService* logservice;
-	IEmailSender* emailSender;
+	UsersService* usersService;
 
-	//bool InitOneWireLib(vector<SSerPortConfig> & pserports);
-	bool Init(bool blocking,string devicesxml,string foldersxml);
-	bool InitHisDevices(string devicesxml,string foldersxml);
+	IEmailSender* emailSender;
+	IUserManager* userManager;
+
+	bool Init(bool blocking,string devicesxml,string foldersxml,string usersxml);
+	bool InitHisDevices(string devicesxml,string foldersxml,string usresxml);
 	void InitWebServer(bool blocking);
 public:
 	HomeIsServer(IModbusProvider & modbusprovider,
 			IEmailSender* emailSender,
-			int tcpPort,
-			string allowOrigin);
+			IConfig & config);
 	void AddModbus(IModbus* m);
 	void Start(bool blocking);
-	void Start(bool blocking,string devicesxml,string foldersxml);
+	void Start(bool blocking,string devicesxml,string foldersxml,string usresxml);
 	void Stop();
 	~HomeIsServer();
 };

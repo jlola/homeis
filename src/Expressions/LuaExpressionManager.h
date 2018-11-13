@@ -7,6 +7,7 @@
 
 #ifndef LUAEXPRESSIONMANAGER_H_
 #define LUAEXPRESSIONMANAGER_H_
+#include <HisCollectionBase.hpp>
 #include <vector>
 #include <iostream>
 #include <algorithm>    // std::sort
@@ -17,13 +18,11 @@
 #include <libxml/tree.h>
 
 #include "LuaExpression.h"
-#include "Common/HisCollectionBase.h"
-
 #include "Devices/Folder/HisDevFolderRoot.h"
 
 using namespace std;
 
-class LuaExpressionManager : public HisCollectionBase
+class LuaExpressionManager : public HisCollectionBase<IHisBase>
 {
 	xmlDocPtr doc;       /* document pointer */
 	vector<LuaExpression*> expressions;

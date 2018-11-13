@@ -42,7 +42,7 @@ using namespace std;
 #define PROP_DESCRIPTION "description"
 #define PROP_RUNNING "running"
 #define PROP_EXPRESSIONBODY "expressionbody"
-#define MAX_LOGS 20
+#define MAX_LOGS 10
 
 class LuaExpression : public HisBase, public IExpression
 {
@@ -91,8 +91,9 @@ public:
 	LuaExpression(HisDevFolder* folder,HisDevices* hisDevices, string expressionName,IExpressionRuntime *pExpressionRuntime,IHisDevFactory* factory);
 	LuaExpression(xmlNodePtr pnode,HisDevices* hisDevices,IExpressionRuntime *pExpressionRuntime,IHisDevFactory* factory);
 	void DebugLog(string ln);
+	void DebugPrint(string ln);
 	void ReloadValues();
-	string GetFileName(string pFileName);
+	string GetFilePath(string pFileName);
 	void SetName(string name);
 	void SetExpression(string expression);
 	string GetExpression();

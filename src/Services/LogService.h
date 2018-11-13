@@ -13,19 +13,22 @@
 #include "logger.h"
 #include "File.h"
 #include "Directory.h"
+#include "ServiceBase.h"
+#include "IHisDevFactory.h"
 
 using namespace std;
 using namespace httpserver;
 
-class LogService : public http_resource {
+class LogService : public ServiceBase {
 	ILogger & logger;
-	IHttpHeadersProvider & httpHeadersProvider;
 	File file;
 	Directory directory;
 public:
-	LogService(IHttpHeadersProvider & httpHeadersProvider, webserver* ws_i);
+	LogService(webserver* ws_i,
+			IUserManager* userManager,
+			IHisDevFactory* factory);
 	//void render_GET(const http_request&, http_response**);
-	const http_response render_GET(const http_request& req);
+	const http_response GET(const http_request& req);
 	virtual ~LogService();
 };
 

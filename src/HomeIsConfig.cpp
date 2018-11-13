@@ -14,6 +14,7 @@
 #include "HisException.h"
 #include "StringBuilder.h"
 #include "File.h"
+#include "logger.h"
 
 using namespace std;
 
@@ -80,7 +81,7 @@ string HomeIsConfig::GetOrCreateFilePath(string filename)
 		FILE* fp = fopen(configFilePath.c_str(), "w+");
 		if (fp == NULL) {
 			logger.Error("I couldn't open %s for writing.\n",configFilePath.c_str());
-			throw Exception(StringBuilder::Format("I couldn't open %s for writing.\n").c_str());
+			throw MException(StringBuilder::Format("I couldn't open %s for writing.\n").c_str());
 		}
 
 		fprintf(fp,configFileDefault);

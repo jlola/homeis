@@ -16,7 +16,9 @@
 #include "gtest/gtest.h"
 #include "Client.h"
 #include "Tests/API/ExpressionsTest.h"
+#include "UsersAtom.h"
 #include "ModbusProvider.h"
+
 
 namespace AF {
 
@@ -33,7 +35,10 @@ void ExpressionsTest::SetUp()
 	std::vector<SSerPortConfig> serports;
 	serports.push_back(modbussim);
 	modbusprovider = new ModbusProvider(serports);
-	server = new HomeIsServer(*modbusprovider,NULL,SERVER_PORT,"");
+	Mock<IConfig> configMock;
+	When(Method(configMock,GetServerPort)).AlwaysReturn(SERVER_PORT);
+	When(Method(configMock,GetAllowOrigin)).AlwaysReturn("");
+	server = new HomeIsServer(*modbusprovider,NULL,configMock.get());
 	server->Start(false);
 }
 
@@ -57,7 +62,12 @@ TEST_F(ExpressionsTest,CreateExpressionTest)
 == 1) then test=\
 1 end\",\"errorMessage\":null,\"name\":\"newExpression\",\"id\":null,\"nodeName\":\"expression\"}";
 	long http_code = 0;
-	CURLcode cresp = client.Put(reqest,json,response,http_code);
+
+	string hashPassword;
+	UsersAtom usersAtom(client);
+	usersAtom.LoginUser("admin","admin","sessionId",hashPassword);
+
+	CURLcode cresp = client.Put(reqest,json,hashPassword,response,http_code);
 	ASSERT_EQ(cresp, CURLE_OK);
 	ASSERT_EQ(http_code, MHD_HTTP_OK);
 	string exprefile = StringBuilder::Format("%s/Expressions/%s.lua",file.getexepath().c_str(),"newExpression");

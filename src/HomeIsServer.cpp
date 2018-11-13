@@ -29,12 +29,12 @@
 
 #include "HomeIsServer.h"
 #include "HttpHeadersProvider.h"
-
+#include "UserManager.h"
 #include "HisException.h"
 
-bool HomeIsServer::Init(bool blocking,string devicesxml,string foldersxml)
+bool HomeIsServer::Init(bool blocking,string devicesxml,string foldersxml,string usersxml)
 {
-	if (!InitHisDevices(devicesxml,foldersxml))
+	if (!InitHisDevices(devicesxml,foldersxml,usersxml))
 	{
 		logger.Error("Error init HisDevices");
 		return false;
@@ -57,12 +57,13 @@ void HomeIsServer::Start(bool blocking)
 {
 	string devicesxml = file.getexepath() + "/devices.xml";
 	string foldersxml = file.getexepath() + "/folders.xml";
-	Init(blocking, devicesxml, foldersxml);
+	string usersxml = file.getexepath() + "/users.xml";
+	Init(blocking, devicesxml, foldersxml,usersxml);
 }
 
-void HomeIsServer::Start(bool blocking,string devicesxml,string foldersxml)
+void HomeIsServer::Start(bool blocking,string devicesxml,string foldersxml,string usersxml)
 {
-	Init(blocking,devicesxml,foldersxml);
+	Init(blocking,devicesxml,foldersxml,usersxml);
 }
 
 void  HomeIsServer::AddModbus(IModbus* m)
@@ -72,18 +73,16 @@ void  HomeIsServer::AddModbus(IModbus* m)
 
 HomeIsServer::HomeIsServer(IModbusProvider & modbusprovider,
 		IEmailSender* emailSender,
-		int TcpPort,
-		string allowOrigin) :
+		IConfig & config) :
 		logger(CLogger::GetLogger()),
 		factory(NULL),
-		headersProvider(allowOrigin),
+		headersProvider(config.GetAllowOrigin()),
 		devruntime(NULL),
 		rootFolder(NULL),
 		expressionRuntime(NULL),
-		cw(create_webserver(TcpPort)),
+		cw(create_webserver(config.GetServerPort())),
 		devs(NULL),
 		modbusProvider(modbusprovider),
-		//serports(pserports),
 		fc(NULL),
 		owds(NULL),
 		foldersService(NULL),
@@ -92,7 +91,9 @@ HomeIsServer::HomeIsServer(IModbusProvider & modbusprovider,
 		modbusservice(NULL),
 		connectorsService(NULL),
 		logservice(NULL),
-		emailSender(emailSender)
+		emailSender(emailSender),
+		userManager(NULL),
+		usersService(NULL)
 {
 	ws_i = new webserver(cw);
 }
@@ -100,6 +101,7 @@ HomeIsServer::HomeIsServer(IModbusProvider & modbusprovider,
 void HomeIsServer::InitWebServer(bool blocking)
 {
 	STACK
+
 	if (devs==NULL)
 		throw ArgumentNullException("devs");
 	if (factory==NULL)
@@ -108,26 +110,38 @@ void HomeIsServer::InitWebServer(bool blocking)
 		throw ArgumentNullException("expressionRuntime");
 	if (rootFolder==NULL)
 		throw ArgumentNullException("rootFolder");
+	if (userManager==NULL)
+			throw ArgumentNullException("userManager");
 
-	fc = new FileController( ws_i );
-	owds = new DevicesService( *devs, *rootFolder, headersProvider, factory, ws_i );
-	foldersService = new FoldersService( *devs,*rootFolder, headersProvider, factory, ws_i );
-	expressionService = new ExpressionService( rootFolder, expressionRuntime, devs, headersProvider, factory, ws_i );
-	modbusDevService = new ModbusDeviceService( devs, &modbusProvider, headersProvider, factory, ws_i );
-	modbusservice = new ModbusService( &modbusProvider, headersProvider, ws_i );
-	connectorsService = new ConnectorsService( modbusProvider, headersProvider, ws_i );
-	logservice = new LogService(headersProvider, ws_i );
+	fc = new FileController( ws_i,userManager, factory );
+	owds = new DevicesService( *devs, *rootFolder, userManager, factory, ws_i );
+	foldersService = new FoldersService( *devs,*rootFolder, userManager, factory, ws_i );
+	expressionService = new ExpressionService( rootFolder, expressionRuntime, devs, userManager, factory, ws_i );
+	modbusDevService = new ModbusDeviceService( devs, &modbusProvider, userManager, factory, ws_i );
+	modbusservice = new ModbusService( &modbusProvider, userManager, factory, ws_i );
+	connectorsService = new ConnectorsService( modbusProvider, userManager, factory, ws_i );
+	logservice = new LogService(ws_i,userManager, factory);
+	usersService = new UsersService(ws_i,userManager, factory);
 
 	logger.Info("Start homeis webserver %s blocking starting thread", blocking ? "with" : "without");
 	ws_i->start(blocking);
 }
 
-bool HomeIsServer::InitHisDevices(string devicesxml,string foldersxml)
+bool HomeIsServer::InitHisDevices(string devicesxml,string foldersxml,string usersxml)
 {
 	expressionRuntime = new ExpressionRuntime();
 	devs = new HisDevices(devicesxml,&modbusProvider);
+	userManager = new UserManager(usersxml,300);
 
-	factory = new HisDevFactory(expressionRuntime,devs,emailSender,&file,&directory);
+	factory = new HisDevFactory(expressionRuntime,
+			devs,
+			emailSender,
+			&file,
+			&directory,
+			&headersProvider
+			);
+
+	userManager->Load(factory);
 	devs->Load(factory);
 
 	rootFolder = new HisDevFolderRoot(foldersxml,factory);
@@ -162,4 +176,6 @@ HomeIsServer::~HomeIsServer()
 	connectorsService = NULL;
 	delete logservice;
 	logservice = NULL;
+	delete usersService;
+	usersService = NULL;
 }

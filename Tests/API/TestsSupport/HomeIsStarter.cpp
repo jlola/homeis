@@ -10,6 +10,8 @@
 
 #include "HomeIsStarter.h"
 
+using namespace fakeit;
+
 HomeIsStarter::HomeIsStarter()
 	: server(NULL),client(SERVER_NAME,SERVER_PORT),modbusProvider(NULL)
 {
@@ -22,7 +24,10 @@ HomeIsStarter::HomeIsStarter()
 
 	emailSender = new EmailSender("","","");
 	modbusProvider = new ModbusProvider(serports);
-	server = new HomeIsServer(*modbusProvider,emailSender,SERVER_PORT,"");
+	Mock<IConfig> configMock;
+	When(Method(configMock,GetServerPort)).AlwaysReturn(SERVER_PORT);
+	When(Method(configMock,GetAllowOrigin)).AlwaysReturn("");
+	server = new HomeIsServer(*modbusProvider,emailSender,configMock.get());
 }
 
 SSerPortConfig HomeIsStarter::GetModbusConfig()

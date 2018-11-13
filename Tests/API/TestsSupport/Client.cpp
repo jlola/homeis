@@ -46,7 +46,13 @@ CURLcode Client::Get(string requestApi,string & response, long & http_code)
 	return res;
 }
 
-CURLcode Client::Post(string requestApi,string message,string & response, long & http_code)
+
+CURLcode Client::Post(string requestApi,string message, string sessionHash, string & response, long & http_code)
+{
+	return Post(requestApi,message,user,sessionHash,response,http_code);
+}
+
+CURLcode Client::Post(string requestApi,string message,string user, string sessionHash, string & response, long & http_code)
 {
 	std::string s;
 	CURLcode res;
@@ -55,10 +61,13 @@ CURLcode Client::Post(string requestApi,string message,string & response, long &
 	if(curl) {
 	  std::string url = StringBuilder::Format("http://%s:%d/%s",
 			  serverName.c_str(),port,requestApi.c_str());
+
+	  string login = StringBuilder::Format("%s:%s", user.c_str(), sessionHash.c_str());
+
 	  curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
 	  curl_easy_setopt(curl, CURLOPT_HTTPPOST, 1L);
 	  curl_easy_setopt(curl, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
-	  curl_easy_setopt(curl, CURLOPT_USERPWD, "a:a"); //Your credentials goes here
+	  curl_easy_setopt(curl, CURLOPT_USERPWD, login.c_str()); //Your credentials goes here
 	  curl_easy_setopt(curl, CURLOPT_POSTFIELDS, message.c_str());
 	  curl_easy_setopt(curl, CURLOPT_POSTFIELDSIZE, message.length());
 	  curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, writeFunction);
@@ -71,7 +80,12 @@ CURLcode Client::Post(string requestApi,string message,string & response, long &
 	return res;
 }
 
-CURLcode Client::Put(string requestApi,string message,string & response,long &http_code)
+CURLcode Client::Put(string requestApi,string message,string sessionHash, string & response, long & http_code)
+{
+	return Put(requestApi,message,user,sessionHash,response,http_code);
+}
+
+CURLcode Client::Put(string requestApi,string message,string user, string sessionHash, string & response,long &http_code)
 {
 	std::string s;
 	CURLcode res;
@@ -88,6 +102,8 @@ CURLcode Client::Put(string requestApi,string message,string & response,long &ht
 	   if (headers == NULL)
 	     return CURLcode::CURLE_FAILED_INIT;
 
+	   string login = StringBuilder::Format("%s:%s", user.c_str(), sessionHash.c_str());
+
 	  headers = curl_slist_append(headers, "Content-Type: application/json");
 
 	  curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
@@ -95,7 +111,7 @@ CURLcode Client::Put(string requestApi,string message,string & response,long &ht
 	  curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "PUT"); /* !!! */
 
 	  curl_easy_setopt(curl, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
-	  curl_easy_setopt(curl, CURLOPT_USERPWD, "a:a"); //Your credentials goes here
+	  curl_easy_setopt(curl, CURLOPT_USERPWD, login.c_str()); //Your credentials goes here
 
 	  curl_easy_setopt(curl, CURLOPT_POSTFIELDS, message.c_str());
 	  curl_easy_setopt(curl, CURLOPT_POSTFIELDSIZE, message.length());

@@ -15,10 +15,14 @@
 #include "IEmailSender.h"
 #include "IFile.h"
 #include "IDirectory.h"
+#include "IHttpHeadersProvider.h"
 
 class IHisDevFactory
 {
 public:
+
+	virtual IHttpHeadersProvider* GetHeadersProvider()=0;
+
 	virtual IDirectory *GetDirectory()=0;
 
 	virtual IFile *GetFile()=0;

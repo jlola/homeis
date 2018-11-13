@@ -16,13 +16,18 @@
 #include "FileController.h"
 #include "File.h"
 
-FileController::FileController(webserver* ws_i)
+FileController::FileController(webserver* ws_i,
+		IUserManager* userManager,
+		IHisDevFactory* factory
+		)
+	: ServiceBase::ServiceBase(factory,userManager)
+
 {
 	ws_i->register_resource(string(""), this, true);
 	ws_i->register_resource(string("files/{path}"), this, true);
 }
 
-const http_response FileController::render_GET(const http_request& r)
+const http_response FileController::GET(const http_request& r)
 {
 	STACK
 	File file;

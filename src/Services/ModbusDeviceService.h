@@ -16,24 +16,24 @@
 #include "HisDevModbus.h"
 #include "HttpHeadersProvider.h"
 #include "IHisDevFactory.h"
+#include "ServiceBase.h"
 
 using namespace std;
 using namespace httpserver;
 using namespace rapidjson;
 
-class ModbusDeviceService : public http_resource {
-	IHttpHeadersProvider & headersProvider;
+class ModbusDeviceService : public ServiceBase {
 	HisDevices *devices;
 	IModbusProvider* mm;
 	IHisDevFactory* factory;
 public:
-	ModbusDeviceService(HisDevices *devices
-			,IModbusProvider* mm
-			,IHttpHeadersProvider & headersProvider
-			,IHisDevFactory* factory,
+	ModbusDeviceService(HisDevices *devices,
+			IModbusProvider* mm,
+			IUserManager* userManager,
+			IHisDevFactory* factory,
 			webserver* ws_i);
 	virtual ~ModbusDeviceService();
-	const http_response render_GET(const http_request& req);
+	const http_response GET(const http_request& req);
 };
 
 #endif /* SRC_SERVICES_MODBUSDEVICESERVICE_H_ */

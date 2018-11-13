@@ -27,6 +27,7 @@ OneWireHandler::OneWireHandler(IHisDevModbus* devModbus,IHisDevFactory* factory)
 	scanRequest(false),
 	factory(factory)
 {
+	nextScanTime = 0;
 }
 
 void OneWireHandler::Load()
@@ -65,13 +66,13 @@ bool OneWireHandler::Scan(bool addnew)
 		{
 			owheader = reinterpret_cast<SOWHeader*>(&data[stypedef.OffsetOfType]);
 			CreateOrValidOneWireHeader(addnew);
-			logger.Info(StringBuilder::Format("Scanned dev address: %d and found: %d ds18b20",devModbus->GetAddress(), owheader->count).c_str());
+			logger.Trace("Scanned dev address: %d and found: %d ds18b20",devModbus->GetAddress(), owheader->count);
 			if (owheader->count>0)
 			{
 				sds18b20s = reinterpret_cast<SDS18B20*>(&data[stypedef.OffsetOfType+OW_DEVICES_OFFSET]);
 				CreateOrValidOneWire(addnew);
-				return true;
 			}
+			return true;
 		}
 	}
 	return false;
@@ -113,13 +114,25 @@ void OneWireHandler::CreateOrValidOneWireHeader(bool addnew)
 	}
 }
 
+bool OneWireHandler::TriggerPeriodicScan()
+{
+	uint64_t curTimeUs = HisDateTime::timeval_to_usec(HisDateTime::Now());
+	uint64_t periodMs = 10000;
+	if (curTimeUs >= nextScanTime)
+	{
+		nextScanTime =curTimeUs + periodMs*1000;
+		return true;
+	}
+	return false;
+}
+
 void OneWireHandler::RefreshOutputs()
 {
 	STACK
 
 	if (scantag->GetValue()==true)
 	{
-		logger.Info("Write to setHolding OW_SCAN_OFFSET to 1");
+		logger.Trace("Write to setHolding OW_SCAN_OFFSET to 1");
 		bool success = devModbus->setHolding(stypedef.OffsetOfType+OW_SCAN_OFFSET,scantag->GetValue());
 		if (success)
 		{
@@ -171,18 +184,26 @@ void OneWireHandler::Refresh(bool modbusSuccess)
 {
 	STACK
 
+
 	//uint16_t lscan = data[typesdefs[sowiretypesdefsIndex].OffsetOfType];
 	uint16_t owscan = owheader->scan;
 	if (scantag!=NULL)
 	{
-		scantag->ReadedValueFromDevice(owscan,!modbusSuccess);
-		if (!owscan && scanRequest)
+		if (TriggerPeriodicScan())
 		{
-			scanRequest = false;
-			if (!this->Scan(true))
+			scantag->SetValue(true);
+		}
+		else
+		{
+			scantag->ReadedValueFromDevice(owscan,!modbusSuccess);
+			if (!owscan && scanRequest)
 			{
-				logger.Error("Error scan modbus field with address %d",devModbus->GetAddress());
-				return;
+				scanRequest = false;
+				if (!this->Scan(true))
+				{
+					logger.Error("Error scan modbus field with address %d",devModbus->GetAddress());
+					return;
+				}
 			}
 		}
 	}

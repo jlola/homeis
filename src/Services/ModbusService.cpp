@@ -15,15 +15,16 @@
 using namespace rapidjson;
 
 ModbusService::ModbusService(IModbusProvider* mm,
-		IHttpHeadersProvider & headersProvider,
+		IUserManager* userManager,
+		IHisDevFactory* factory,
 		webserver* ws_i)
-	: headersProvider(headersProvider)
+	: ServiceBase::ServiceBase(factory,userManager)
 {
 	this->mm = mm;
 	ws_i->register_resource("api/modbus/registers/{connectorname}/{devaddress}/{baseaddress}/{value}", this, true);
 }
 
-const http_response ModbusService::render_GET(const http_request& req)
+const http_response ModbusService::GET(const http_request& req)
 {
 	//api/modbus/holdings/{connectorname}/{devaddress}/{baseaddress}/{count}
 	string connectorName = req.get_arg("connectorname");
@@ -81,13 +82,11 @@ const http_response ModbusService::render_GET(const http_request& req)
 
 	document.Accept(wr);
 	std::string json = buffer.GetString();
-	http_response_builder response_builder(json, response_code,headersProvider.GetContentTypeAppJson());
-	headersProvider.AddHeaders(response_builder);
-	http_response resp(response_builder.string_response());
-	return resp;
+
+	return CreateResponseString(json,response_code);
 }
 
-const http_response ModbusService::render_PUT(const http_request& req)
+const http_response ModbusService::PUT(const http_request& req)
 {
 	string connectorName = req.get_arg("connectorname");
 	string strDevAddress = req.get_arg("devaddress");
@@ -130,8 +129,8 @@ const http_response ModbusService::render_PUT(const http_request& req)
 	}
 	document.Accept(wr);
 	std::string json = buffer.GetString();
-	http_response resp(http_response_builder(json, 200,"application/json").string_response());
-	return resp;
+
+	return CreateResponseString(json, MHD_HTTP_OK);
 }
 
 ModbusService::~ModbusService() {

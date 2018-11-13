@@ -125,8 +125,24 @@ TEST_F(DateTimeTests,OperatorDateTimeNotEqualResultFalseTest)
 	ASSERT_EQ(dt1 != dt2,false);
 }
 
+TEST_F(DateTimeTests,DateSubtract)
+{
+	int diffSecondsExpected = 11;
+	tm stm;
+	stm.tm_sec = 10;
+	stm.tm_min = 47;
+	stm.tm_hour = 9;
+	stm.tm_year = 2017-1900;
+	stm.tm_mon = 7-1;
+	stm.tm_mday = 2;
+	DateTime dt1(stm);
+	stm.tm_sec += diffSecondsExpected;
+	DateTime dt2(stm);
+	auto diffSeconds = dt2 - dt1;
+	ASSERT_EQ(diffSecondsExpected,diffSeconds);
+}
+
 DateTimeTests::~DateTimeTests() {
-	// TODO Auto-generated destructor stub
 }
 
 }

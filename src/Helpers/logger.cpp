@@ -178,3 +178,8 @@ void CLogger::Error(const char * text, ...)
 		va_end (args);
 	}
 }
+
+CLogger::~CLogger()
+{
+
+}

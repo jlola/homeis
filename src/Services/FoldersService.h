@@ -16,31 +16,28 @@
 #include "Folder/HisDevFolder.h"
 #include "Folder/HisDevFolderRoot.h"
 #include "IHttpHeadersProvider.h"
-
+#include "ServiceBase.h"
 #include "ParamsNames.h"
 
 using namespace std;
 using namespace httpserver;
 using namespace rapidjson;
 
-class FoldersService : public http_resource
+class FoldersService : public ServiceBase
 {
 	ILogger & logger;
 	HisDevFolderRoot & root;
 	HisDevices & devices;
-	IHttpHeadersProvider & headersProvider;
-	IHisDevFactory* factory;
 public:
 	FoldersService(HisDevices & dev,HisDevFolderRoot & proot,
-			IHttpHeadersProvider & headersProvider,
+			IUserManager* userManager,
 			IHisDevFactory* factory,
 			webserver* ws_i);
 	~FoldersService(void);
-	const http_response render_OPTIONS(const http_request& req);
-	const http_response render_GET(const http_request& req);
-	const http_response render_POST(const http_request& req);
-	const http_response render_PUT(const http_request& req);
-	const http_response render_DELETE(const http_request& req);
+	const http_response GET(const http_request& req);
+	const http_response POST(const http_request& req);
+	const http_response PUT(const http_request& req);
+	const http_response DELETE(const http_request& req);
 	void FoldersToJson(HisDevFolderRoot & root, HisDevFolder *pFolder, Document & respjsondoc, bool foldersOnly);
 	bool AddValueIdToFolder(string strFolderId, string strJson,string & message);
 	string DeleteDevValue(string strDevValueRecordId);

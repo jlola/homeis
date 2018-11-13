@@ -19,9 +19,11 @@
 
 using namespace rapidjson;
 
-LogService::LogService(IHttpHeadersProvider & httpHeadersProvider, webserver* ws_i)
-	: logger(CLogger::GetLogger()),
-	httpHeadersProvider(httpHeadersProvider)
+LogService::LogService(webserver* ws_i,
+		IUserManager* userManager,
+		IHisDevFactory* factory)
+	: ServiceBase::ServiceBase(factory,userManager),
+	logger(CLogger::GetLogger())
 {
 	ws_i->register_resource(string("api/logs"), this, true);
 	ws_i->register_resource(string("api/logs/{log}"), this, true);
@@ -32,7 +34,7 @@ LogService::~LogService() {
 
 }
 
-const http_response LogService::render_GET(const http_request& req)
+const http_response LogService::GET(const http_request& req)
 {
 	STACK
 	int response_code = MHD_HTTP_FORBIDDEN;
@@ -81,9 +83,6 @@ const http_response LogService::render_GET(const http_request& req)
 			jsonvalue.SetString(content.c_str(),document.GetAllocator());
 			document.AddMember(path_filename.c_str(),jsonvalue,document.GetAllocator());
 			document.Accept(wr);
-			std::string json = buffer.GetString();
-			vector<string> topics;
-			topics.push_back(json);
 			response_code = MHD_HTTP_OK;
 		}
 		else
@@ -94,9 +93,6 @@ const http_response LogService::render_GET(const http_request& req)
 		}
 	}
 	std::string json = buffer.GetString();
-	http_response_builder response_builder(json, response_code,httpHeadersProvider.GetContentTypeAppJson());
-	httpHeadersProvider.AddHeaders(response_builder);
-	http_response resp(response_builder.string_response());
-	return resp;
+	return CreateResponseString(json,response_code);
 }
 

@@ -38,6 +38,7 @@ public:
 	void Info(const char * text, ...);
 	void Trace(const char * text, ...);
 	void Error(const char * text, ...);
+	virtual ~CLogger();
 };
 
 #endif /* HELPERS_H_ */

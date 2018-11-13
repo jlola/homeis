@@ -14,7 +14,10 @@
 #include "HomeIsConfig.h"
 #include "EmailSender.h"
 #include "ModbusSimulator.h"
+#include "gtest/gtest.h"
+#include "fakeit.hpp"
 
+using namespace fakeit;
 using namespace AF;
 
 class HomeIsStarter {

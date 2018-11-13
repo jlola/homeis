@@ -103,6 +103,8 @@ public:
 
 	virtual void DoInternalLoad(xmlNodePtr & node);
 
+	void Enable(bool enabled);
+
 	virtual void OnError();
 
 	virtual ~HisDevModbus();

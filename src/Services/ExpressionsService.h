@@ -21,17 +21,15 @@
 #include "Expressions/LuaExpression.h"
 #include "HttpHeadersProvider.h"
 #include "ParamsNames.h"
-
+#include "ServiceBase.h"
 
 using namespace std;
 using namespace httpserver;
 using namespace rapidjson;
 
-class ExpressionService : public http_resource
+class ExpressionService : public ServiceBase
 {
 private:
-	IHttpHeadersProvider & headersProvider;
-	IHisDevFactory* factory;
 	HisDevFolderRoot* root;
 	HisDevices* devices;
 	IExpressionRuntime *expressionRuntime;
@@ -40,19 +38,18 @@ public:
 	ExpressionService(HisDevFolderRoot* folder,
 			IExpressionRuntime *pexpressionRuntime,
 			HisDevices* pdevices,
-			IHttpHeadersProvider & headersProvider,
+			IUserManager* userManager,
 			IHisDevFactory* factory,
 			webserver* ws_i);
 	~ExpressionService(void);
 	bool DeleteExpression(string strid,string & message);
-	static void ExpressionToJson(IHisBase* pParent,LuaExpression *pExpression, Document & respjsondoc);
-	static void ExpressionsToJson(string strid, HisDevFolderRoot* root, Document & respjsondoc);
+	static void ExpressionToJson(LuaExpression *pExpression, Document & respjsondoc);
+	static void ExpressionsToJson(string strFolderId, HisDevFolderRoot* root, Document & respjsondoc);
 	static void ExpressionDebugLogToJson(LuaExpression *pExpression, Document & respjsondoc);
-	const http_response render_OPTIONS(const http_request& req);
-	const http_response render_GET(const http_request& r);
-	const http_response render_POST(const http_request& r);
-	const http_response render_PUT(const http_request& req);
-	const http_response render_DELETE(const http_request& req);
+	const http_response GET(const http_request& r);
+	const http_response POST(const http_request& r);
+	const http_response PUT(const http_request& req);
+	const http_response DELETE(const http_request& req);
 };
 
 #endif /* EXPRESSIONSSERVICE_H_ */

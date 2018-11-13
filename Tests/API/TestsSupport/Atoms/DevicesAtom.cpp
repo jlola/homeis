@@ -11,6 +11,7 @@
 #include "HisException.h"
 #include "StringBuilder.h"
 #include "OneWireHandler.h"
+#include "UsersAtom.h"
 
 DevicesAtom::DevicesAtom(HomeIsStarter & homeisStarter)
 	: homeisStarter(homeisStarter)
@@ -29,7 +30,12 @@ string DevicesAtom::CreateDevice(string name)
 	document.Accept(wr);
 	const std::string json(buffer.GetString());
 	string response;
-	urlCode = homeisStarter.GetClient().Post("api/devices",json,response,http_code);
+
+	string hashPassword;
+	UsersAtom usersAtom(&homeisStarter);
+	usersAtom.LoginUser("admin","admin","sessionId",hashPassword);
+
+	urlCode = homeisStarter.GetClient().Post("api/devices",json,hashPassword,response,http_code);
 	Client::AssertCurlResponse(http_code,urlCode);
 	return response;
 }
@@ -96,7 +102,12 @@ void DevicesAtom::UpdateDeviceProperty(string deviceId,string name, Value & valu
 
 	string response;
 	string url = StringBuilder::Format("/api/devices/%s",deviceId.c_str());
-	urlCode = homeisStarter.GetClient().Put(url,json,response,http_code);
+
+	string hashPassword;
+	UsersAtom usersAtom(homeisStarter.GetClient());
+	usersAtom.LoginUser("admin","admin","sessionId",hashPassword);
+
+	urlCode = homeisStarter.GetClient().Put(url,json,hashPassword,response,http_code);
 	Client::AssertCurlResponse(http_code,urlCode);
 }
 
@@ -180,7 +191,12 @@ string DevicesAtom::CreateEmailTag(string deviceId, string name)
 	document.Accept(wr);
 	const std::string json(buffer.GetString());
 	string response;
-	urlCode = homeisStarter.GetClient().Post("api/devices/devvalue/",json,response,http_code);
+
+	string hashPassword;
+	UsersAtom usersAtom(homeisStarter.GetClient());
+	usersAtom.LoginUser("admin","admin","sessionId",hashPassword);
+
+	urlCode = homeisStarter.GetClient().Post("api/devices/devvalue/",json,hashPassword,response,http_code);
 	Client::AssertCurlResponse(http_code,urlCode);
 	return response;
 }
@@ -199,7 +215,12 @@ void DevicesAtom::WriteToTag(string tagId,string value)
 	const std::string json(buffer.GetString());
 	string response;
 	string url = StringBuilder::Format("api/devices/devvalue/%s",tagId.c_str());
-	urlCode = homeisStarter.GetClient().Put(url.c_str(),json,response,http_code);
+
+	string hashPassword;
+	UsersAtom usersAtom(homeisStarter.GetClient());
+	usersAtom.LoginUser("admin","admin","sessionId",hashPassword);
+
+	urlCode = homeisStarter.GetClient().Put(url.c_str(),json,hashPassword,response,http_code);
 	Client::AssertCurlResponse(http_code,urlCode);
 }
 

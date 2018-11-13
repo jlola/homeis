@@ -36,7 +36,6 @@ void FoldersAtom::CreateFolder(string name, CUUID parentId)
 {
 	Document document;	// Default template parameter uses UTF8 and MemoryPoolAllocator.
 	document.SetObject();
-
 	document.AddMember(JSON_PARENTID,"parentid",document.GetAllocator());
 	document.AddMember(JSON_NAME,name.c_str(),document.GetAllocator());
 
@@ -46,7 +45,10 @@ void FoldersAtom::CreateFolder(string name, CUUID parentId)
 	const std::string json(buffer.GetString());
 	string response;
 	long int http_code;
-	CURLcode urlCode = homeisStarter.GetClient().Post("/api/folder",json,response,http_code);
+	string hashPassword;
+	UsersAtom usersAtom(homeisStarter.GetClient());
+	usersAtom.LoginUser("admin","admin","sessionId",hashPassword);
+	CURLcode urlCode = homeisStarter.GetClient().Post("/api/folder",json,hashPassword,response,http_code);
 	Client::AssertCurlResponse(http_code,urlCode);
 
 //	Document documentResponse;	// Default template parameter uses UTF8 and MemoryPoolAllocator.

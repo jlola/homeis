@@ -16,8 +16,8 @@
 #include <semaphore.h>
 #include "HisDevBase.h"
 #include "HisDevValue.h"
-#include "HisDevFactory.h"
 #include "VirtualDevices/HisDevVirtual.h"
+#include "HisDevFactory.h"
 #include "PoppyDebugTools.h"
 #include "HisDevModbus.h"
 #include "logger.h"
@@ -171,7 +171,6 @@ void HisDevices::Add(HisDevBase *hisdev)
 
 size_t HisDevices::Size()
 {
-
 	return devices.size();
 }
 
@@ -182,7 +181,6 @@ void HisDevices::Delete(uint16_t index)
 	if (size>index)
 	{
 		HisDevBase* dev = devices[index];
-		//xmlNodePtr node = dev->GetNodePtr();
 		devices.erase(devices.begin() + index);
 		delete(dev);
 	}

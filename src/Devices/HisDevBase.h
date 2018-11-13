@@ -88,7 +88,7 @@ public:
 	void Register(OnValueChangedDelegate delegate,void* owner);
 	void UnRegister(void* owner);
 	bool IsEnabled();
-	void Enable(bool enabled);
+	virtual void Enable(bool enabled);
 	uint32_t GetScanPeriod();
 	void SetScanPeriod(uint32_t period);
 	void NeedRefresh();

@@ -210,10 +210,10 @@ void LuaExpression::SaveExpressionToFile()
 
 	if (oldName!=GetName())
 	{
-		if (GetFactory()->GetFile()->Exists(GetFileName(oldName)))
-			GetFactory()->GetFile()->Delete(GetFileName(oldName));
+		if (GetFactory()->GetFile()->Exists(GetFilePath(oldName)))
+			GetFactory()->GetFile()->Delete(GetFilePath(oldName));
 	}
-	FILE* fp = fopen(GetFileName(GetName()).c_str(), "w+");
+	FILE* fp = fopen(GetFilePath(GetName()).c_str(), "w+");
 	if (fp == NULL) {
 		string file = this->GetName()+".lua";
 		printf("I couldn't open %s for writing.\n",file.c_str());
@@ -229,9 +229,9 @@ void LuaExpression::SaveExpressionToFile()
 void LuaExpression::LoadExpressionFromFile()
 {
 	STACK
-	if (GetFactory()->GetFile()->Exists(GetFileName(GetName())))
+	if (GetFactory()->GetFile()->Exists(GetFilePath(GetName())))
 	{
-		std::ifstream in(GetFileName(GetName()));
+		std::ifstream in(GetFilePath(GetName()));
 
 		stringstream buffer;
 		buffer << in.rdbuf();
@@ -240,7 +240,7 @@ void LuaExpression::LoadExpressionFromFile()
 	}
 }
 
-string LuaExpression::GetFileName(string pFileName)
+string LuaExpression::GetFilePath(string pFileName)
 {
 	STACK
 	return GetLuaFilesPath() + "/" + pFileName + ".lua";
@@ -255,7 +255,7 @@ bool LuaExpression::ExistsName(string pName)
 {
 	STACK
 	string path;
-	path = GetFileName(pName);
+	path = GetFilePath(pName);
 	return GetFactory()->GetFile()->Exists(path);
 }
 
@@ -510,7 +510,8 @@ string LuaExpression::GetLuaCodeInFuncion(string funcName, string luaCodeFilePat
 {
 	STACK
 	string code = GetFactory()->GetFile()->ReadWholeFile(luaCodeFilePath);
-	return "function " + funcName +"() \
+	return "function " + funcName +"()  \
+			print=debuglog \
 			" + code + " \
 			end" ;
 }
@@ -527,20 +528,19 @@ int lua_debuglog(lua_State* L) {
 	int nargs = lua_gettop(L);
 
 	for (int i=1; i <= nargs; i++) {
-	        if (lua_isstring(L, i)) {
-	            /* Pop the next arg using lua_tostring(L, i) and do your print */
-	        	if (LuaExpression::ActualExpression!=NULL)
-	        	{
-	        		string arg = lua_tostring(L, i);
-	        		LuaExpression::ActualExpression->DebugLog(arg);
-	        		CLogger::GetLogger().Info("Expr. | %s",arg.c_str());
-	        	}
+		if (lua_isstring(L, i)) {
+			/* Pop the next arg using lua_tostring(L, i) and do your print */
+			if (LuaExpression::ActualExpression!=NULL)
+			{
+				string arg = lua_tostring(L, i);
+				LuaExpression::ActualExpression->DebugLog(arg);
+			}
 
-	        }
-	        else {
-	        /* Do something with non-strings if you like */
-	        }
-	    }
+		}
+		else {
+		/* Do something with non-strings if you like */
+		}
+	}
 	return 0;
 }
 
@@ -550,8 +550,9 @@ int lua_log(lua_State* L) {
     for (int i=1; i <= nargs; i++) {
         if (lua_isstring(L, i)) {
             /* Pop the next arg using lua_tostring(L, i) and do your print */
-        	//printf(lua_tostring(L,i));
-        	CLogger::GetLogger().Info(lua_tostring(L,i));
+        	string arg = lua_tostring(L, i);
+        	LuaExpression::ActualExpression->DebugLog(arg);
+        	CLogger::GetLogger().Info("Expr. | %s",arg.c_str());
         }
         else {
         /* Do something with non-strings if you like */
@@ -607,7 +608,7 @@ bool LuaExpression::Evaluate()
 		string path = GetLuaFilesPath()+"/?.lua";
 		this->setLuaPath(L,path.c_str());
 		/* add code to function */
-		string code = GetLuaCodeInFuncion("runExpression",GetFileName(GetName()));
+		string code = GetLuaCodeInFuncion("runExpression",GetFilePath(GetName()));
 
 		/* load string and check syntax */
 		if (luaL_dostring(L,code.c_str()))
@@ -702,8 +703,6 @@ string LuaExpression::GetName()
 
 void LuaExpression::DebugLog(string ln)
 {
-	STACK
-
 	string msg = DateTime::Now().ToString();
 	msg += " | ";
 	msg += ln;
@@ -773,5 +772,5 @@ LuaExpression::~LuaExpression()
 {
 	STACK
 	//SetRunning(false);
-	GetFactory()->GetFile()->Delete(GetFileName(GetName()));
+	GetFactory()->GetFile()->Delete(GetFilePath(GetName()));
 }

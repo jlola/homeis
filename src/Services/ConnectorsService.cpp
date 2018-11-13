@@ -12,14 +12,16 @@
 #include "microhttpd.h"
 
 ConnectorsService::ConnectorsService(IModbusProvider & provider,
-		IHttpHeadersProvider & headersProvider,
+		IUserManager* userManager,
+		IHisDevFactory* factory,
 		webserver* ws_i)
- : headersProvider(headersProvider), provider(provider)
+ : ServiceBase::ServiceBase(factory,userManager),
+   provider(provider)
 {
 	ws_i->register_resource("api/connectors", this, true);
 }
 
-const http_response ConnectorsService::render_GET(const http_request& req)
+const http_response ConnectorsService::GET(const http_request& req)
 {
 	Document respjsondoc;
 	respjsondoc.SetArray();
@@ -44,10 +46,8 @@ const http_response ConnectorsService::render_GET(const http_request& req)
 	PrettyWriter<StringBuffer> wr(buffer);
 	respjsondoc.Accept(wr);
 	std::string json = buffer.GetString();
-	http_response_builder response_builder(json, MHD_HTTP_OK,headersProvider.GetContentTypeAppJson());
-	headersProvider.AddHeaders(response_builder);
-	http_response resp(response_builder.string_response());
-	return resp;
+	int response_code = MHD_HTTP_OK;
+	return CreateResponseString(json,response_code);
 }
 
 ConnectorsService::~ConnectorsService() {

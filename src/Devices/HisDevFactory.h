@@ -20,6 +20,7 @@ private:
 	IDirectory* directory;
 	IFile* file;
 	HisDevices* devices;
+	IHttpHeadersProvider* headersProvider;
 	IExpressionRuntime* expressionRuntime;
 	IEmailSender* emailSender;
 
@@ -30,7 +31,10 @@ public:
 				HisDevices* devices,
 				IEmailSender* emailSender,
 				IFile* file,
-				IDirectory* directory);
+				IDirectory* directory,
+				IHttpHeadersProvider* headersProvider);
+
+	IHttpHeadersProvider* GetHeadersProvider();
 
 	IHisBase* Create(xmlNodePtr node);
 

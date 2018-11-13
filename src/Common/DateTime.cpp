@@ -111,6 +111,11 @@ bool DateTime::operator != (const DateTime& dt_)
 	return thisTime != thatTime;
 }
 
+double DateTime::operator - (const DateTime& dt_)
+{
+	return difftime(_time,dt_._time);
+}
+
 DateTime::~DateTime() {
 	// TODO Auto-generated destructor stub
 }

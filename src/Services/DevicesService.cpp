@@ -29,13 +29,13 @@ const char json[] = "[{\"name\":\"Bečka horní\",\"id\":4,\"type\":1,\"value\":
 
 DevicesService::DevicesService(HisDevices & dev,
 		HisDevFolderRoot & folder,
-		IHttpHeadersProvider & headersProvider,
+		IUserManager* userManager,
 		IHisDevFactory* factory,
 		webserver* ws_i) :
+		ServiceBase::ServiceBase(factory, userManager),
 		logger(CLogger::GetLogger()),
 		devices(dev),
 		rootFolder(folder),
-		headersProvider(headersProvider),
 		factory(factory)
 {
 	ws_i->register_resource(string("api/onewiredevices"), this, true);
@@ -53,7 +53,7 @@ DevicesService::~DevicesService(void)
 {
 }
 
-const http_response DevicesService::render_GET(const http_request& req)
+const http_response DevicesService::GET(const http_request& req)
 {
 	STACK
 	Document respjsondoc;
@@ -163,10 +163,7 @@ const http_response DevicesService::render_GET(const http_request& req)
 	respjsondoc.Accept(wr);
 	std::string json = buffer.GetString();
 
-	http_response_builder response_builder(json, response_code,headersProvider.GetContentTypeAppJson());
-	headersProvider.AddHeaders(response_builder);
-	http_response resp(response_builder.string_response());
-	return resp;
+	return CreateResponseString(json,response_code);
 }
 
 void DevicesService::FillFolderDevicesToJson(HisDevFolder* folder,Document & respjsondoc,HisDevices & devices)
@@ -318,7 +315,7 @@ void DevicesService::DevValueToJson(Value & d, HisDevValueId* valueId,HisDevValu
 		d.AddMember(JSON_INTERNAL,false, respjsondoc.GetAllocator());
 }
 
-const http_response DevicesService::render_POST(const http_request& req)
+const http_response DevicesService::POST(const http_request& req)
 {
 	std::string content = req.get_content();
 	string path = req.get_path();
@@ -331,162 +328,123 @@ const http_response DevicesService::render_POST(const http_request& req)
 	//respjsondoc.SetObject();
 	StringBuffer buffer;
 
-	if (req.get_user()=="a" && req.get_pass()=="a")
+
+	if (path.find("/api/onewiredevices/devvalue")!=string::npos ||
+		path.find("/api/devices/devvalue")!=string::npos)
 	{
-		if (path.find("/api/onewiredevices/devvalue")!=string::npos ||
-			path.find("/api/devices/devvalue")!=string::npos)
+		HisDevValueBase* devvalue = CreateVirtualDevValue(content,message);
+		if (devvalue!=NULL)
 		{
-			HisDevValueBase* devvalue = CreateVirtualDevValue(content,message);
-			if (devvalue!=NULL)
+			if (UpdateDevValue(devvalue->GetRecordId(),content))
 			{
-				if (UpdateDevValue(devvalue->GetRecordId(),content))
-				{
-					response_code = MHD_HTTP_OK;
-				}
-			}
-			else
-			{
-				message = headersProvider.GetErrorMessageJson("Not found");
-				response_code = MHD_HTTP_NOT_FOUND;
-			}
-		}
-		else if (path.find("/api/onewiredevices")!=string::npos ||
-				 path.find("/api/devices")!=string::npos)
-		{
-			HisDevVirtual* vritualdev = CreateVirtualDevice(content,message);
-			if (vritualdev!=NULL)
-			{
-				devices.Add(vritualdev);
-				devices.Save();
-				string id = vritualdev->GetRecordId().ToString();
-				Value d(kObjectType);
-				//DevValueToJson(d,NULL,value,respjsondoc);
-				Value jsonvalue;
-				jsonvalue.SetString(id.c_str(),id.length(),respjsondoc.GetAllocator());
-				d.AddMember(JSON_ID,jsonvalue, respjsondoc.GetAllocator());
-				respjsondoc.PushBack(d,respjsondoc.GetAllocator());
-				PrettyWriter<StringBuffer> wr(buffer);
-				respjsondoc.Accept(wr);
-				std::string json = buffer.GetString();
 				response_code = MHD_HTTP_OK;
-				message = json;
-			}
-			else
-			{
-				message = headersProvider.GetErrorMessageJson("Not found");
-				response_code = MHD_HTTP_NOT_FOUND;
 			}
 		}
+		else
+		{
+			message = GetErrorMessageJson("Not found");
+			response_code = MHD_HTTP_NOT_FOUND;
+		}
 	}
-	else
+	else if (path.find("/api/onewiredevices")!=string::npos ||
+			 path.find("/api/devices")!=string::npos)
 	{
-		string message = headersProvider.GetErrorMessageJson("Authentication error");
-		response_code = MHD_HTTP_UNAUTHORIZED;
+		HisDevVirtual* vritualdev = CreateVirtualDevice(content,message);
+		if (vritualdev!=NULL)
+		{
+			devices.Add(vritualdev);
+			devices.Save();
+			string id = vritualdev->GetRecordId().ToString();
+			Value d(kObjectType);
+			//DevValueToJson(d,NULL,value,respjsondoc);
+			Value jsonvalue;
+			jsonvalue.SetString(id.c_str(),id.length(),respjsondoc.GetAllocator());
+			d.AddMember(JSON_ID,jsonvalue, respjsondoc.GetAllocator());
+			respjsondoc.PushBack(d,respjsondoc.GetAllocator());
+			PrettyWriter<StringBuffer> wr(buffer);
+			respjsondoc.Accept(wr);
+			std::string json = buffer.GetString();
+			response_code = MHD_HTTP_OK;
+			message = json;
+		}
+		else
+		{
+			message = GetErrorMessageJson("Not found");
+			response_code = MHD_HTTP_NOT_FOUND;
+		}
 	}
 
-	http_response_builder response_builder(message,response_code,headersProvider.GetContentTypeAppJson());
-	this->headersProvider.AddHeaders(response_builder);
-	http_response resp(response_builder.string_response());
-	return resp;
+
+	return CreateResponseString(message,response_code);
 }
 
-const http_response DevicesService::render_OPTIONS(const http_request& req)
-{
-	int response_code = MHD_HTTP_OK;
-	string message = "";
-	http_response_builder response_builder(message,response_code,headersProvider.GetContentTypeAppJson());
-	this->headersProvider.AddHeaders(response_builder);
-	response_builder = response_builder.with_header("Access-Control-Allow-Methods","POST, PUT");
-	response_builder = response_builder.with_header("Access-Control-Allow-Headers","authorization,content-type");
-	http_response resp(response_builder.string_response());
-	return resp;
-}
-
-const http_response DevicesService::render_PUT(const http_request& req)
+const http_response DevicesService::PUT(const http_request& req)
 {
 	std::string content = req.get_content();
 	string path = req.get_path();
 	string message;
 	int response_code = MHD_HTTP_FORBIDDEN;
 
-	if (req.get_user()=="a" && req.get_pass()=="a")
+	if (path.find("/api/onewiredevices/devvalue")!=string::npos ||
+		path.find("/api/devices/devvalue")!=string::npos)
 	{
-		if (path.find("/api/onewiredevices/devvalue")!=string::npos ||
-		    path.find("/api/devices/devvalue")!=string::npos)
+		string strDevValueId = req.get_arg("valueid");
+		CUUID devValueId = CUUID::Parse(strDevValueId);
+		if (UpdateDevValue(devValueId,content))
 		{
-			string strDevValueId = req.get_arg("valueid");
-			CUUID devValueId = CUUID::Parse(strDevValueId);
-			if (UpdateDevValue(devValueId,content))
-			{
-				response_code = MHD_HTTP_OK;
-				message = "OK";
-			}
-		}
-		else if (path.find("/api/onewiredevices")!=string::npos ||
-				 path.find("/api/devices")!=string::npos)
-		{
-			string strDevId = req.get_arg("devid");
-			if (UpdateDevice(strDevId,content))
-			{
-				message = "OK";
-				response_code = MHD_HTTP_OK;
-			}
+			response_code = MHD_HTTP_OK;
+			message = "OK";
 		}
 	}
-	else
+	else if (path.find("/api/onewiredevices")!=string::npos ||
+			 path.find("/api/devices")!=string::npos)
 	{
-		message = headersProvider.GetErrorMessageJson("Authentication error");
-		response_code = MHD_HTTP_UNAUTHORIZED;
+		string strDevId = req.get_arg("devid");
+		if (UpdateDevice(strDevId,content))
+		{
+			message = "OK";
+			response_code = MHD_HTTP_OK;
+		}
 	}
 
-	http_response_builder response_builder(message, response_code,headersProvider.GetContentTypeAppJson());
-	headersProvider.AddHeaders(response_builder);
-	http_response resp(response_builder.string_response());
-	return resp;
+	return CreateResponseString(message,response_code);
 }
 
-const http_response DevicesService::render_DELETE(const http_request& req)
+const http_response DevicesService::DELETE(const http_request& req)
 {
 	std::string content = req.get_content();
 	string path = req.get_path();
 	int response_code = MHD_HTTP_FORBIDDEN;
 	string msg;
 
-	if (req.get_user()=="a" && req.get_pass()=="a")
-	{
-		if (path.find("/api/onewiredevices/folder")!=string::npos)
-		{
-			string strValueIdRecordId = req.get_arg("id");
 
-			if (DeleteValueId(strValueIdRecordId,msg))
-			{
-				msg = "OK";
-				response_code = MHD_HTTP_OK;
-			}
-		}
-		else if (path.find("/api/onewiredevices/devvalue")!=string::npos)
+	if (path.find("/api/onewiredevices/folder")!=string::npos)
+	{
+		string strValueIdRecordId = req.get_arg("id");
+
+		if (DeleteValueId(strValueIdRecordId,msg))
 		{
-			string strRecordId = req.get_arg("id");
-			if (DeleteDevValue(strRecordId,msg))
-			{
-				response_code = MHD_HTTP_OK;
-				msg = "OK";
-			}
-		}
-		else if (path.find("/api/onewiredevices")!=string::npos)
-		{
-			string strRecordId = req.get_arg("devid");
-			if (DeleteDev(strRecordId,msg))
-			{
-				response_code = MHD_HTTP_OK;
-				msg = "OK";
-			}
+			msg = "OK";
+			response_code = MHD_HTTP_OK;
 		}
 	}
-	else
+	else if (path.find("/api/onewiredevices/devvalue")!=string::npos)
 	{
-		msg = "Authentication error";
-		response_code = MHD_HTTP_UNAUTHORIZED;
+		string strRecordId = req.get_arg("id");
+		if (DeleteDevValue(strRecordId,msg))
+		{
+			response_code = MHD_HTTP_OK;
+			msg = "OK";
+		}
+	}
+	else if (path.find("/api/onewiredevices")!=string::npos)
+	{
+		string strRecordId = req.get_arg("devid");
+		if (DeleteDev(strRecordId,msg))
+		{
+			response_code = MHD_HTTP_OK;
+			msg = "OK";
+		}
 	}
 
 	Document respjsondoc;
@@ -500,10 +458,8 @@ const http_response DevicesService::render_DELETE(const http_request& req)
 	PrettyWriter<StringBuffer> wr(buffer);
 	respjsondoc.Accept(wr);
 	std::string json = buffer.GetString();
-	http_response_builder response_builder(json, response_code,headersProvider.GetContentTypeAppJson());
-	headersProvider.AddHeaders(response_builder);
-	http_response resp(response_builder.string_response());
-	return resp;
+
+	return CreateResponseString(json,response_code);
 }
 
 bool DevicesService::DeleteDevValue(string strDevValueRecordId, string & msg)
@@ -777,7 +733,7 @@ bool DevicesService::UpdateDevValue(CUUID devValueId, string strjson)
 			}
 			else
 			{
-				logger.Error("Try to write not writable deviceValue");
+				logger.Error("Try to write ReadOnly deviceValue %s",devValue->GetName().c_str());
 			}
 		}
 
