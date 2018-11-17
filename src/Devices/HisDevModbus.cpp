@@ -148,10 +148,7 @@ bool HisDevModbus::Scan(bool addnew)
 		if (connection->getHoldings(address,0,size,data))
 		{
 			STACK_VAL(Scan,"File: "+string(__FILE__)+",Line: "+Converter::itos(__LINE__))
-			if (handlers->Scan(addnew))
-			{
-				logger.Info("Dev %s: Scan was not success",this->GetAddress());
-			}
+			handlers->Scan(addnew);
 		}
 		else
 		{

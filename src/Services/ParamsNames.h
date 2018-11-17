@@ -49,6 +49,6 @@
 #define JSON_USERNAME "userName"
 #define JSON_PASSWORD "password"
 #define JSON_SESSIONID "sessionId"
-#define JSON_SESSIONHASH "SessionHash"
+#define JSON_SESSIONHASH "sessionHash"
 
 #endif /* SRC_SERVICES_PARAMSNAMES_H_ */

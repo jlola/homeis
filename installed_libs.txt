@@ -43,4 +43,4 @@ git push
 git commit -m "commit description" -a
 git push -f origin master
 username: jlola
-password: 5EsDkE1
+password: 

@@ -313,6 +313,18 @@ void DevicesService::DevValueToJson(Value & d, HisDevValueId* valueId,HisDevValu
 		d.AddMember(JSON_INTERNAL,true, respjsondoc.GetAllocator());
 	else
 		d.AddMember(JSON_INTERNAL,false, respjsondoc.GetAllocator());
+
+	HisDevValueEmail* emailValue = dynamic_cast<HisDevValueEmail*>(devValue);
+	if (emailValue!=NULL)
+	{
+		strvalue = emailValue->GetFromAddr();
+		jsonvalue.SetString(strvalue.c_str(),strvalue.length(),respjsondoc.GetAllocator());
+		d.AddMember(JSON_SENDER,jsonvalue, respjsondoc.GetAllocator());
+
+		strvalue = emailValue->GetReceivers();
+		jsonvalue.SetString(strvalue.c_str(),strvalue.length(),respjsondoc.GetAllocator());
+		d.AddMember(JSON_RECEIVERS,jsonvalue, respjsondoc.GetAllocator());
+	}
 }
 
 const http_response DevicesService::POST(const http_request& req)
@@ -747,7 +759,7 @@ bool DevicesService::UpdateDevValue(CUUID devValueId, string strjson)
 			}
 			if (document.HasMember(JSON_RECEIVERS) && document[JSON_RECEIVERS].IsString())
 			{
-				valueEmail->SetFromAddr(document[JSON_RECEIVERS].GetString());
+				valueEmail->SetReceivers(document[JSON_RECEIVERS].GetString());
 				saveReq = true;
 			}
 		}

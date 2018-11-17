@@ -133,7 +133,8 @@ TEST_F(DevicesTests,CreateEmailTagTest)
 
 
 	Document document = deviceAtom.GetDevices();
-
+	string expectedSender = "sender";
+	string expectedReceivers = "receiver1;receiver2";
 	const Value& devices = document;
 	ASSERT_EQ(devices.Size(),(size_t)1);
 	for(SizeType ob = 0 ;ob < devices.Size();ob++)
@@ -143,7 +144,7 @@ TEST_F(DevicesTests,CreateEmailTagTest)
 		ASSERT_EQ(deviceName,name);
 		string parentId = devices[ob][JSON_ID].GetString();
 
-		response = deviceAtom.CreateEmailTag(parentId,expectedTagName);
+		response = deviceAtom.CreateEmailTag(parentId,expectedTagName,expectedSender,expectedReceivers);
 	}
 
 	Document document2 = deviceAtom.GetDevices();
@@ -153,11 +154,23 @@ TEST_F(DevicesTests,CreateEmailTagTest)
 	{
 		ASSERT_TRUE(devices2[ob].HasMember(JSON_TAGS));
 		const Value& tags = devices2[ob][JSON_TAGS];
+		string tagName;
+		int tagIndex = -1;
 		for(SizeType t = 0 ;t < tags.Size();t++)
 		{
-			string tagName = tags[t][JSON_NAME].GetString();
-			ASSERT_EQ(expectedTagName,tagName);
+			 tagName = tags[t][JSON_NAME].GetString();
+			if (tagName==expectedTagName)
+			{
+				tagIndex = t;
+				break;
+			}
 		}
+		ASSERT_NE(-1,tagIndex);
+		ASSERT_EQ(expectedTagName,tagName);
+		string sender = tags[tagIndex][JSON_SENDER].GetString();
+		ASSERT_EQ(expectedSender,sender);
+		string receivers = tags[tagIndex][JSON_RECEIVERS].GetString();
+		ASSERT_EQ(expectedReceivers,receivers);
 	}
 }
 

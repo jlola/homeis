@@ -155,7 +155,7 @@ Document DevicesAtom::GetDevices()
 	return document;
 }
 
-string DevicesAtom::CreateEmailTag(string deviceId, string name)
+string DevicesAtom::CreateEmailTag(string deviceId, string name,string sender, string receivers)
 {
 	Document document;	// Default template parameter uses UTF8 and MemoryPoolAllocator.
 	document.SetObject();
@@ -174,9 +174,6 @@ string DevicesAtom::CreateEmailTag(string deviceId, string name)
 //	  "setOutputState":0,
 //	  "error":false
 //	}
-
-	string sender = "sender";
-	string receivers = "receiver1;receiver2";
 
 	document.AddMember(JSON_PARENTID,deviceId.c_str(),document.GetAllocator());
 	document.AddMember(JSON_NAME,name.c_str(),document.GetAllocator());
