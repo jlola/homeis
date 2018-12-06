@@ -11,9 +11,10 @@
 #include "User.h"
 
 UserManager::UserManager(string fileName, int expireSessionSec)
-	: HisCollectionBase::HisCollectionBase(fileName),
+	: users(fileName),
 	  factory(NULL),
-	  logger(CLogger::GetLogger())
+	  logger(CLogger::GetLogger()),
+	  admin(NULL)
 {
 	expireTimeSeconds = expireSessionSec;
 }
@@ -21,45 +22,56 @@ UserManager::UserManager(string fileName, int expireSessionSec)
 void UserManager::Load(IHisDevFactory* factory)
 {
 	this->factory = factory;
-	HisCollectionBase<IUser>::Load();
-
-	IUser* userAdmin = FindByUserName("admin");
-	if (userAdmin==NULL)
-	{
-		userAdmin = new User(factory,"admin");
-		userAdmin->SetPassword("admin");
-		Add(userAdmin);
-	}
+	users.Load(factory);
+	admin = FindByUserName(ADMIN_USERNAME);
 }
 
 void UserManager::Add(IUser* user)
 {
-	HisCollectionBase<IUser>::Add(user);
+	if (user==NULL)
+		throw ArgumentNullException("user");
+
+	if (FindUser(user->GetRecordId())!=NULL)
+		users.Add(user);
+	else
+		throw MException("User already exists");
 }
 
-IUser* UserManager::Delete(size_t index)
+bool UserManager::Delete(IUser* user)
 {
-	return HisCollectionBase<IUser>::Delete(index);
+	if (user==NULL)
+		throw ArgumentNullException("user");
+
+	if (IsUserLogged(user))
+	{
+		CLogger::GetLogger().Error("User %s is logged and can not be deleted.",user->GetUserName().c_str());
+		return false;
+	}
+
+	int index = users.FindIndex(user->GetRecordId());
+	users.Delete(index);
+
+	return true;
 }
 
-string UserManager::GetRootNodeName()
+bool UserManager::IsUserLogged(IUser* user)
 {
-	return "users";
+	for(int i=sessions.size()-1;i>=0;i--)
+	{
+		if (sessions[i]->GetUser()->GetRecordId()==user->GetRecordId())
+			return true;
+	}
+	return false;
 }
 
 IUser* UserManager::FindByUserName(string userName)
 {
-	for(size_t i=0;i<Size();i++)
-	{
-		if (this->operator [](i)->GetUserName()==userName)
-			return this->operator [](i);
-	}
-	return NULL;
+	return users.FindByUserName(userName);
 }
 
 size_t UserManager::Size()
 {
-	return HisCollectionBase::Size();
+	return users.Size();
 }
 
 bool UserManager::Authentize(string userName, string password, string sessionId, string ip, string & sessionHash, DateTime now)
@@ -67,7 +79,7 @@ bool UserManager::Authentize(string userName, string password, string sessionId,
 	 size_t index = FindUserIndex(userName);
 	 if (index>=0)
 	 {
-		 IUser* user = this->operator [](index);
+		 IUser* user = this->users[index];
 		 if (user!=NULL)
 		 {
 			 string passwordHash = user->sha256(password);
@@ -81,6 +93,17 @@ bool UserManager::Authentize(string userName, string password, string sessionId,
 		 }
 	 }
 	 return false;
+}
+
+bool UserManager::LogSessionOut(string sessionHash, string ip)
+{
+	auto sessionIndex = FindSessionIndex(sessionHash,ip);
+	if (sessionIndex>=0)
+	{
+		sessions.erase(sessions.begin()+sessionIndex);
+		return true;
+	}
+	return false;
 }
 
 void UserManager::AddToSessions(IUser* user, string hash, string ip, DateTime now)
@@ -106,17 +129,34 @@ void UserManager::RecycleOldSessions(DateTime now)
 	}
 }
 
+int UserManager::FindSessionIndex(string sessionHash, string ip)
+{
+	if (sessionHash.empty())
+		return -1;
+
+	auto funcSearch = [ip,sessionHash](Session* obj){
+					return obj->GetSessionHash() == sessionHash && obj->GetIp()==ip;
+			};
+	std::vector<Session*>::iterator it = std::find_if(sessions.begin(), sessions.end(),funcSearch);
+
+	if (it == sessions.end())
+	{
+	  return -1;
+	}
+	else
+	{
+	  return std::distance(sessions.begin(), it);
+	}
+}
+
 Session* UserManager::FindSession(string sessionHash, string ip)
 {
-	auto funcSearch = [ip,sessionHash](Session* obj){
-				return obj->GetSessionHash() == sessionHash && obj->GetIp()==ip;
-		};
-	auto it = std::find_if(sessions.begin(), sessions.end(),funcSearch);
+	int index =  FindSessionIndex(sessionHash,ip);
 	//return if iterator points to end or not. It points to end then it means element
 	// does not exists in list
-	if (it != sessions.end())
+	if (index >= 0)
 	{
-		return *it;
+		return sessions[index];
 	}
 	return NULL;
 }
@@ -125,7 +165,7 @@ Session* UserManager::FindSession(string sessionHash, string ip)
  * find session by ip and sessionhash
  * if is ession finded there is reset session time
  * */
-bool UserManager::AuthorizeSession(string sessionHash, string ip,DateTime now)
+Session* UserManager::AuthorizeSession(string sessionHash, string ip,DateTime now)
 {
 	RecycleOldSessions(now);
 
@@ -133,48 +173,47 @@ bool UserManager::AuthorizeSession(string sessionHash, string ip,DateTime now)
 	if (session!=NULL)
 	{
 		session->ResetDate(now);
-		return true;
+		return session;
 	}
-	return false;
+	return NULL;
 }
 
-IUser* UserManager::LoadItem(xmlNodePtr cur)
+IUser* UserManager::GetAdmin()
 {
-	return new User(cur,factory);
+	return admin;
 }
 
 int UserManager::FindUserIndex(string userName)
 {
-	for(size_t i=0;i<HisCollectionBase::Size();i++)
+	for(size_t i=0;i<users.Size();i++)
 	{
-		IHisBase* base = dynamic_cast<IHisBase*>(operator [](i));
+		IHisBase* base = dynamic_cast<IHisBase*>(users[i]);
 		if (base->GetName()==userName)
 			return i;
 	}
 	return -1;
 }
 
-size_t UserManager::FindUser(CUUID userid)
+IUser* UserManager::FindUser(CUUID userid)
 {
-	for(size_t i=0;i<HisCollectionBase::Size();i++)
+	for(size_t i=0;i<users.Size();i++)
 	{
-		IHisBase* base = dynamic_cast<IHisBase*>(operator [](i));
-		if (base->GetRecordId()==userid)
-			return i;
+		if (users[i]->GetRecordId()==userid)
+			return users[i];
 	}
-	return -1;
+	return NULL;
 }
 
 IUser* UserManager::GetUser(size_t index)
 {
-	if (index<Size())
-		return this->operator [](index);
+	if (index<users.Size())
+		return users[index];
 	return NULL;
 }
 
 void UserManager::Save()
 {
-	HisCollectionBase::Save();
+	users.Save();
 }
 
 UserManager::~UserManager()

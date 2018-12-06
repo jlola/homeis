@@ -24,6 +24,8 @@ UsersService::UsersService(webserver* ws_i, IUserManager* userManager, IHisDevFa
 	ws_i->register_resource(string("api/users/logout"), this, true);
 	ws_i->register_resource(string("api/users"), this, true);
 	ws_i->register_resource(string("api/users/{userId}"), this, true);
+	ws_i->register_resource(string("api/users/findbyname/{userName}"), this, true);
+	ws_i->register_resource(string("api/users/changepassword"), this, true);
 }
 
 const http_response UsersService::GET(const http_request& req)
@@ -38,28 +40,41 @@ const http_response UsersService::GET(const http_request& req)
 	string path = req.get_path();
 	IUser* user = NULL;
 
+	if (path.find("/api/users/findbyname")!=string::npos)
+	{
+		string userName = req.get_arg("userName");
+		auto user = userManager->FindByUserName(userName);
+		if (user!=NULL)
+		{
+			UserToJson(user,respjsondoc,respjsondoc);
+			response_code = MHD_HTTP_OK;
+		}
+		else
+		{
+			response_code = MHD_HTTP_NOT_FOUND;
+		}
+	}
 	//vrati vsechny polozky ve slozce
-	if (path.find("/api/users")!=string::npos)
+	else if (path.find("/api/users")!=string::npos)
 	{
 		if (!strusreid.empty())
 		{
 			try
 			{
 				CUUID id = CUUID::Parse(strusreid);
-				int index = userManager->FindUser(id);
-				if (index>=0)
-					user = userManager->GetUser(index);
+				user = userManager->FindUser(id);
+				if (user!=NULL)
+				{
+					respjsondoc.SetObject();
+					UserToJson(user,respjsondoc,respjsondoc);
+					response_code = MHD_HTTP_OK;
+				}
 			}
 			catch(...)
 			{
-				user = NULL;
+				response_code = MHD_HTTP_BAD_REQUEST;
 			}
-			if (user!=NULL)
-			{
-				respjsondoc.SetObject();
-				UserToJson(user,respjsondoc,respjsondoc);
-				response_code = MHD_HTTP_OK;
-			}
+
 		}
 		else
 		{
@@ -75,7 +90,7 @@ const http_response UsersService::GET(const http_request& req)
 	}
 	else
 	{
-		response_code = MHD_HTTP_NOT_FOUND;
+		response_code = MHD_HTTP_BAD_REQUEST;
 	}
 
 	StringBuffer buffer;
@@ -84,6 +99,17 @@ const http_response UsersService::GET(const http_request& req)
 	const std::string json(buffer.GetString());
 
 	return CreateResponseString(json,response_code);
+}
+
+void UsersService::UserToStringJson(IUser* user, string & json)
+{
+	Document respjsondoc;
+	respjsondoc.SetObject();
+	UserToJson(user,respjsondoc,respjsondoc);
+	StringBuffer buffer;
+	PrettyWriter<StringBuffer> wr(buffer);
+	respjsondoc.Accept(wr);
+	json = buffer.GetString();
 }
 
 void UsersService::UserToJson(IUser* user, Value & userJson, Document & respjsondoc)
@@ -133,6 +159,18 @@ const http_response UsersService::POST(const http_request& req)
 			response_code = MHD_HTTP_UNAUTHORIZED;
 		}
 	}
+	else if (path.find("/api/users/logout")!=string::npos)
+	{
+		if (Logout(req.get_content(),req.get_requestor()))
+		{
+			response_code = MHD_HTTP_OK;
+		}
+		else
+		{
+			response_code = MHD_HTTP_NOT_FOUND;
+		}
+
+	}
 	else if (path.find("/api/users")!=string::npos)
 	{
 		auto userName = GetUserNameFromJson(content);
@@ -142,6 +180,7 @@ const http_response UsersService::POST(const http_request& req)
 			user = new User(GetFactory(),userName);
 			UpdateUser(user,content);
 			userManager->Add(user);
+			UserToStringJson(user,message);
 			response_code = MHD_HTTP_OK;
 		}
 		else
@@ -176,17 +215,37 @@ const http_response UsersService::PUT(const http_request& req)
 	string message;
 	int response_code = MHD_HTTP_FORBIDDEN;
 
-
-	if (path.find("/api/users")!=string::npos)
+	if (path.find("api/users/changepassword")!=string::npos)
 	{
-		string strUserId = req.get_arg("userid");
-		CUUID userId = CUUID::Parse(strUserId);
-		auto index = userManager->FindUser(userId);
-		auto user = userManager->GetUser(index);
-		if (UpdateUser(user,content))
+		try
 		{
-			response_code = MHD_HTTP_OK;
-			message = "OK";
+			if (SetPassword(content))
+			{
+				response_code = MHD_HTTP_OK;
+			}
+		}
+		catch(...)
+		{
+			response_code = MHD_HTTP_BAD_REQUEST;
+		}
+	}
+	else if (path.find("/api/users")!=string::npos)
+	{
+		string strUserId = req.get_arg("userId");
+		try
+		{
+			CUUID userId = CUUID::Parse(strUserId);
+			auto user = userManager->FindUser(userId);
+			if (UpdateUser(user,content))
+			{
+				response_code = MHD_HTTP_OK;
+				UserToStringJson(user,message);
+				response_code = MHD_HTTP_OK;
+			}
+		}
+		catch(...)
+		{
+			response_code = MHD_HTTP_BAD_REQUEST;
 		}
 	}
 
@@ -240,6 +299,23 @@ bool UsersService::Authentize(string strjson, string ip, string & sessionHash)
 	return result;
 }
 
+bool UsersService::Logout(string strjson, string ip)
+{
+	STACK
+	Document document;
+	if (!document.Parse<0>((char*)strjson.c_str()).HasParseError())
+	{
+		if (document.HasMember(JSON_SESSIONHASH) && document[JSON_SESSIONHASH].IsString())
+		{
+			auto sessionHash = document[JSON_SESSIONHASH].GetString();
+			auto result = userManager->LogSessionOut(sessionHash,ip);
+			return result;
+		}
+	}
+
+	return false;
+}
+
 const http_response UsersService::DELETE(const http_request& req)
 {
 	STACK
@@ -251,7 +327,7 @@ const http_response UsersService::DELETE(const http_request& req)
 
 	if (path.find("/api/users")!=string::npos)
 	{
-		string strUserId = req.get_arg("id");
+		string strUserId = req.get_arg("userId");
 		CUUID userId = CUUID::Parse(strUserId);
 		if (DeleteUser(userId,msg))
 		{
@@ -267,13 +343,23 @@ const http_response UsersService::DELETE(const http_request& req)
 bool UsersService::DeleteUser(CUUID userId, string & msg)
 {
 	STACK
-	auto index = userManager->FindUser(userId);
-	if ( index >= 0 )
+	auto user = userManager->FindUser(userId);
+	if ( user!= NULL )
 	{
-		auto user = userManager->Delete(index);
-		delete user;
-		user = NULL;
-		return true;
+		CUUID adminid = userManager->GetAdmin()->GetRecordId();
+		CUUID loggeduserId = GetSession()->GetUser()->GetRecordId();
+		if (!userManager->IsUserLogged(user) &&	adminid==loggeduserId)
+		{
+			userManager->Delete(user);
+			delete user;
+			user = NULL;
+			return true;
+		}
+		else
+		{
+			msg = "User is logged in and can not be deleted just now";
+			return false;
+		}
 	}
 
 	return false;
@@ -315,19 +401,49 @@ bool UsersService::UpdateUser(IUser* user, string strjson)
 				saveReq = true;
 			}
 		}
-		if (document.HasMember(JSON_PASSWORD) && document[JSON_PASSWORD].IsString())
-		{
-			string password = document[JSON_PASSWORD].GetString();
-			if (!user->IsPasswordValid(user->sha256(password)))
-			{
-				user->SetPassword(password);
-				saveReq = true;
-			}
-		}
 
 		if (saveReq) userManager->Save();
 
 		return true;
+}
+
+bool UsersService::SetPassword(string strjson)
+{
+	Document document;	// Default template parameter uses UTF8 and MemoryPoolAllocator.
+
+	if (document.Parse<0>((char*)strjson.c_str()).HasParseError())
+		return false;
+	IUser* user = NULL;
+	string newPassword;
+	string oldPassword;
+
+	if (document.HasMember(JSON_ID) && document[JSON_ID].IsString())
+	{
+		string strid = document[JSON_ID].GetString();
+		CUUID userid = CUUID::Parse(strid);
+		user = userManager->FindUser(userid);
+
+		if (user!=NULL)
+		{
+			if (document.HasMember(JSON_NEWPASSWORD) && document[JSON_NEWPASSWORD].IsString())
+			{
+				newPassword = document[JSON_NEWPASSWORD].GetString();
+			}
+			if (document.HasMember(JSON_OLDPASSWORD) && document[JSON_OLDPASSWORD].IsString())
+			{
+				oldPassword = document[JSON_OLDPASSWORD].GetString();
+			}
+
+			bool loggedAdmin = GetSession()->GetUser()->IsAdmin();
+			if (user->SetPassword(oldPassword,newPassword,loggedAdmin))
+			{
+				userManager->Save();
+				return true;
+			}
+		}
+	}
+
+	return false;
 }
 
 

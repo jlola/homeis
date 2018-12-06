@@ -32,7 +32,10 @@ public:
 	const http_response PUT(const http_request& req);
 	const http_response POST(const http_request& req);
 	const http_response DELETE(const http_request& req);
+	bool Logout(string strjson, string ip);
 	bool UpdateUser(IUser* user, string strjson);
+	void UserToStringJson(IUser* user,string & json);
+	bool SetPassword(string strjson);
 	bool DeleteUser(CUUID userId, string & msg);
 	virtual ~UsersService();
 };

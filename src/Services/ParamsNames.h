@@ -48,6 +48,8 @@
 #define JSON_LASTNAME "lastName"
 #define JSON_USERNAME "userName"
 #define JSON_PASSWORD "password"
+#define JSON_OLDPASSWORD "oldPassword"
+#define JSON_NEWPASSWORD "newPassword"
 #define JSON_SESSIONID "sessionId"
 #define JSON_SESSIONHASH "sessionHash"
 

@@ -43,8 +43,8 @@ TEST_F(UserManagerTests,CreatNewCollectionAddUserSaveUserThenLoad)
 	manager.Add(user);
 	manager.Save();
 	ASSERT_EQ((size_t)2,manager.Size());
-	IUser* base = manager.Delete(0);
-	delete base;
+	auto success = manager.Delete(user);
+	delete user;
 	ASSERT_EQ((size_t)1,manager.Size());
 	UserManager manager2(usersxml,300);
 	manager2.Load(&factoryMock.get());
@@ -61,7 +61,7 @@ TEST_F(UserManagerTests,AddUserAndFindByNameAndCheckPassword)
 	string userName = "userName";
 	IUser* user = new User(&factoryMock.get(),userName);
 	user->SetUserName("userName");
-	user->SetPassword("password");
+	user->SetPassword("","password",true);
 	manager.Add(user);
 	string sessionhash;
 	string ip = "192.168.89.254";
@@ -81,7 +81,7 @@ TEST_F(UserManagerTests,AddUserAndRecycleSessionThenAuthorizeSessionFail)
 	manager.Load(&factoryMock.get());
 	string userName = "userName";
 	IUser* user = new User(&factoryMock.get(),userName);
-	user->SetPassword("password");
+	user->SetPassword("","password",true);
 	manager.Add(user);
 	string sessionhash;
 	string ip = "192.168.89.254";

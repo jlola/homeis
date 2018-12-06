@@ -91,9 +91,10 @@ HomeIsServer::HomeIsServer(IModbusProvider & modbusprovider,
 		modbusservice(NULL),
 		connectorsService(NULL),
 		logservice(NULL),
+		usersService(NULL),
 		emailSender(emailSender),
-		userManager(NULL),
-		usersService(NULL)
+		userManager(NULL)
+
 {
 	ws_i = new webserver(cw);
 }

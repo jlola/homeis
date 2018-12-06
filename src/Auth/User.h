@@ -30,8 +30,10 @@ class User : public HisBase, public IUser
 public:
 	User(IHisDevFactory* factory, string userName);
 	User(xmlNodePtr pnode, IHisDevFactory* factory);
+	CUUID GetRecordId();
 	string GetFirstName();
 	string GetLastName();
+	bool IsAdmin();
 	void SetFirstName(string firstName);
 	void SetLastName(string lastName);
 	string sha256(const string str);
@@ -40,7 +42,7 @@ public:
 	void DoInternalLoad(xmlNodePtr & node);
 	const xmlChar* GetNodeNameInternal();
 	bool IsPasswordValid(string passwordHash);
-	void SetPassword(string passwordHash);
+	bool SetPassword(string oldPassword, string newPassword, bool loggedAdmin);
 	string GetUserName();
 	void SetUserName(string userName);
 	IHisBase* GetParent();

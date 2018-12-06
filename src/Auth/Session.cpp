@@ -13,6 +13,11 @@ Session::Session(IUser* user,string ip,string sessionHash,DateTime now) :
 	date = now;
 }
 
+IUser* Session::GetUser()
+{
+	return user;
+}
+
 string Session::GetIp()
 {
 	return ip;

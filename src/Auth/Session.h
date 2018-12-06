@@ -18,6 +18,7 @@ class Session
 	DateTime date;
 public:
 	Session(IUser* user, string ip,string sessionHash,DateTime now);
+	IUser* GetUser();
 	string GetIp();
 	string GetSessionHash();
 	DateTime GetDate();

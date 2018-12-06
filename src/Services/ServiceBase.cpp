@@ -13,6 +13,7 @@
 ServiceBase::ServiceBase(IHisDevFactory* factory,IUserManager* userManager) :
 	factory(factory),userManager(userManager)
 {
+	session = NULL;
 }
 
 bool ServiceBase::Authorize(const http_request& req)
@@ -20,9 +21,17 @@ bool ServiceBase::Authorize(const http_request& req)
 	if (req.get_user()=="a" && req.get_pass()=="a")
 		return true;
 
-	auto result = userManager->AuthorizeSession(req.get_pass(),req.get_requestor(),DateTime::Now());
+	session = userManager->AuthorizeSession(req.get_pass(),req.get_requestor(),DateTime::Now());
 
-	return result;
+	if (session!=NULL)
+		return true;
+
+	return false;
+}
+
+Session* ServiceBase::GetSession()
+{
+	return session;
 }
 
 IHisDevFactory* ServiceBase::GetFactory()

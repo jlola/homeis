@@ -20,8 +20,12 @@ public:
 	UsersAtom(HomeIsStarter* homeisStarter);
 	UsersAtom(Client & client);
 	int LoginUser(string userName, string password, string sessionId,string & hashPassword);
-	string CreateUser(string userName,string firstName,string lastName,string sessionHash);
-	void DeleteUser(CUUID userId);
+	void LogOutUser(string sessionHash);
+	Document CreateUser(string userName,string firstName,string lastName,string sessionHash);
+	string UpdateUser(string userId, string userName,string firstName,string lastName,string sessionHash);
+	void UpdatePassword(string userId, string oldPassword,string newPassword,string sessionHash);
+	bool DeleteUser(string userId,string loggeduser,string sessionHash);
+	Document FindUser(string userName);
 	Document GetUser(CUUID userId);
 	Document GetUsers();
 	virtual ~UsersAtom();

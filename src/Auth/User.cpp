@@ -10,13 +10,13 @@
 User::User(xmlNodePtr node, IHisDevFactory* factory) :
 	HisBase::HisBase(node,factory)
 {
-
 }
 
 User::User(IHisDevFactory* factory, string userName) :
 	HisBase::HisBase(factory)
 {
 	SetName(userName);
+	passwordhash = sha256("");
 }
 
 void User::DoInternalSave(xmlNodePtr & node)
@@ -83,11 +83,19 @@ string User::GetUserName()
 }
 void User::SetUserName(string userName)
 {
+	if (IsAdmin())
+		throw "Change admin user name is not allowed";
+
 	HisBase::SetName(userName);
 }
 const xmlChar* User::GetNodeNameInternal()
 {
 	return (const xmlChar*)NODE_USER;
+}
+
+CUUID User::GetRecordId()
+{
+	return HisBase::GetRecordId();
 }
 
 string User::GetFirstName()
@@ -114,13 +122,28 @@ IHisBase* User::GetParent()
 	return NULL;
 }
 
+bool User::IsAdmin()
+{
+	string userName = GetUserName();
+	if (userName==ADMIN_USERNAME)
+		return true;
+	return false;
+}
+
 bool User::IsPasswordValid(string passwordHash)
 {
 	return passwordHash==this->passwordhash;
 }
-void User::SetPassword(string password)
+bool User::SetPassword(string oldPassword, string newPassword, bool loggedAdmin)
 {
-	this->passwordhash = sha256(password);
+	string oldPasswordHash = sha256(oldPassword);
+	string userName = GetUserName();
+	if (passwordhash==oldPasswordHash || loggedAdmin)
+	{
+		this->passwordhash = sha256(newPassword);
+		return true;
+	}
+	return false;
 }
 
 User::~User()

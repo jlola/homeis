@@ -22,6 +22,7 @@ class ServiceBase  : public http_resource
 private:
 	IHisDevFactory* factory;
 	IUserManager* userManager;
+	Session* session;
 
 	const http_response render_GET(const http_request& req);
 	const http_response render_POST(const http_request& req);
@@ -29,6 +30,7 @@ private:
 	const http_response render_DELETE(const http_request& req);
 	const http_response render_OPTIONS(const http_request& req);
 protected:
+	Session* GetSession();
 	bool Authorize(const http_request& req);
 	http_response CreateResponseString(string json,int response_code);
 	string GetErrorMessageJson(string message);
