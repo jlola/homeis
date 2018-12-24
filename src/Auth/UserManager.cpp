@@ -31,7 +31,7 @@ void UserManager::Add(IUser* user)
 	if (user==NULL)
 		throw ArgumentNullException("user");
 
-	if (FindUser(user->GetRecordId())!=NULL)
+	if (FindUser(user->GetRecordId())==NULL)
 		users.Add(user);
 	else
 		throw MException("User already exists");

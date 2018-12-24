@@ -16,7 +16,7 @@ GTEST_API_ int main(int argc, char **argv) {
   printf("Running main() from gtest_main.cc\n");
   testing::InitGoogleTest(&argc, argv);
   //::testing::GTEST_FLAG(filter) = "DevicesTests.TestLoadDeviceWithoutScanAndThenScan";
-  //::testing::GTEST_FLAG(filter) = "UsersTests.CreateUserLoginUserAndTryToDeleteNotSuccessLogoutThenDeleteSuccess";
+  //::testing::GTEST_FLAG(filter) = "ExpressionsTest.AddTagToExpressionThenRemove";
   return RUN_ALL_TESTS();
 }
 

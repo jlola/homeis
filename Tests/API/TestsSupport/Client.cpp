@@ -44,7 +44,7 @@ CURLcode Client::Get(string requestApi,string & response, long & http_code)
 	  curl_easy_cleanup(curl);
 	}
 	response = s;
-	printf("Response: %s",response.c_str());
+	printf("Response: %s\n",response.c_str());
 	return res;
 }
 
@@ -64,9 +64,9 @@ CURLcode Client::Post(string requestApi,string message,string user, string sessi
 	  std::string url = StringBuilder::Format("http://%s:%d/%s",
 			  serverName.c_str(),port,requestApi.c_str());
 
-	  printf("POST %s",url.c_str());
+	  printf("POST %s\n",url.c_str());
 
-	  printf("Request body: %s",message.c_str());
+	  printf("Request body: %s\n",message.c_str());
 
 	  string login = StringBuilder::Format("%s:%s", user.c_str(), sessionHash.c_str());
 
@@ -83,7 +83,7 @@ CURLcode Client::Post(string requestApi,string message,string user, string sessi
 	  curl_easy_cleanup(curl);
 	}
 	response = s;
-	printf("Response: %s",response.c_str());
+	printf("Response: %s\n",response.c_str());
 	return res;
 }
 
@@ -102,7 +102,7 @@ CURLcode Client::Put(string requestApi,string message,string user, string sessio
 	  std::string url = StringBuilder::Format("http://%s:%d/%s",
 			  serverName.c_str(),port,requestApi.c_str());
 
-	  printf("PUT %s",url.c_str());
+	  printf("PUT %s\n",url.c_str());
 
 	  printf(message.c_str());
 
@@ -133,7 +133,7 @@ CURLcode Client::Put(string requestApi,string message,string user, string sessio
 	  curl_easy_cleanup(curl);
 	}
 	response = s;
-	printf("Response: %s",response.c_str());
+	printf("Response: %s\n",response.c_str());
 	return res;
 }
 

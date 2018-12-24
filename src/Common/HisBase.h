@@ -57,8 +57,8 @@ protected:
 	virtual const xmlChar* GetNodeNameInternal() = 0;
 	void ClearIsNew();
 	void FreeItems();
-	vector<IHisBase*> GetAllItems();
 public:
+	vector<IHisBase*> GetAllItems();
 	IHisDevFactory* GetFactory();
 	const xmlChar* GetNodeName();
 	/*

@@ -9,6 +9,7 @@
 #include "PoppyDebugTools.h"
 #include "StringBuilder.h"
 #include "HisException.h"
+#include "DevicesService.h"
 #include "microhttpd.h"
 
 ExpressionService::ExpressionService(HisDevFolderRoot* folder,
@@ -25,6 +26,8 @@ ExpressionService::ExpressionService(HisDevFolderRoot* folder,
 	root = folder;
 
 	//run all expressions in folder
+	ws_i->register_resource("api/expression/{expressionId}/removetag/{tagId}", this, true);
+	ws_i->register_resource("api/expression/{expressionId}/addtag/{tagId}", this, true);
 	ws_i->register_resource("api/expression/run/{id}", this, true);
 	ws_i->register_resource("api/expression/folder/{id}", this, true);
 	ws_i->register_resource("api/expression/debuglog/{id}", this, true);
@@ -91,7 +94,7 @@ const http_response ExpressionService::GET(const http_request& req)
 		}
 		else if (path.find("/api/expression/folder")!=string::npos)
 		{
-			ExpressionsToJson(strid , root, respjsondoc);
+			ExpressionsToJson(devices, strid , root, respjsondoc);
 			response_code = MHD_HTTP_OK;
 		}
 		else if (path.find("/api/expression")!=string::npos)
@@ -103,7 +106,8 @@ const http_response ExpressionService::GET(const http_request& req)
 				expression = dynamic_cast<LuaExpression*>(root->FindExpression(id));
 				if (expression!=NULL)
 				{
-					ExpressionToJson(expression,respjsondoc);
+					respjsondoc.SetObject();
+					ExpressionToJson(devices, respjsondoc,expression,respjsondoc);
 					response_code = MHD_HTTP_OK;
 				}
 				else
@@ -122,7 +126,6 @@ const http_response ExpressionService::GET(const http_request& req)
 	catch(HisException & ex)
 	{
 		respjsondoc.SetObject();
-		StringBuffer buffer;
 		string msg = ex.what();
 		Value jsonvalue;
 		jsonvalue.SetString(msg.c_str(),msg.length(),respjsondoc.GetAllocator());
@@ -130,14 +133,11 @@ const http_response ExpressionService::GET(const http_request& req)
 		response_code = MHD_HTTP_FORBIDDEN;
 	}
 
-	StringBuffer buffer;
-	PrettyWriter<StringBuffer> wr(buffer);
-	respjsondoc.Accept(wr);
-	std::string json = buffer.GetString();
+	std::string json = DocumentToString(respjsondoc);
 	return CreateResponseString(json,response_code);
 }
 
-void ExpressionService::ExpressionsToJson(string strFolderId, HisDevFolderRoot* root, Document & respjsondoc)
+void ExpressionService::ExpressionsToJson(HisDevices* devices,string strFolderId, HisDevFolderRoot* root, Document & respjsondoc)
 {
 	STACK
 	HisDevFolder* folder = NULL;
@@ -155,7 +155,9 @@ void ExpressionService::ExpressionsToJson(string strFolderId, HisDevFolderRoot* 
 		expressions = folder->GetItems<LuaExpression>();
 		for (size_t i=0;i<expressions.size();i++)
 		{
-			ExpressionToJson(expressions[i],respjsondoc);
+			Value d(kObjectType);
+			ExpressionToJson(devices, d,expressions[i],respjsondoc);
+			respjsondoc.PushBack(d, respjsondoc.GetAllocator());
 		}
 	}
 }
@@ -170,15 +172,69 @@ void ExpressionService::ExpressionDebugLogToJson(LuaExpression *pExpression, Doc
 	{
 		string strvalue = logs[i];
 		jsonvalue.SetString(strvalue.c_str(),strvalue.length(),respjsondoc.GetAllocator());
-		//d.AddMember("log",jsonvalue, respjsondoc.GetAllocator());
 		respjsondoc.PushBack(jsonvalue, respjsondoc.GetAllocator());
 	}
 }
 
-void ExpressionService::ExpressionToJson(LuaExpression *pExpression, Document & respjsondoc)
+bool ExpressionService::RemoveValueIdFromExpression(string strExpressionId, string strTagId, string & message)
+{
+	CUUID devValueId = CUUID::Parse(strTagId);
+	HisDevValueBase* devValue = devices->FindValue(devValueId);
+	if (devValue!=NULL)
+	{
+		CUUID expressionId = CUUID::Parse(strExpressionId);
+		LuaExpression* expression = dynamic_cast<LuaExpression*>(root->FindExpression(expressionId));
+		if (expression!=NULL)
+		{
+			HisDevValueId* objValueId = expression->FindDevValueId(devValueId);
+			if (objValueId!=NULL)
+			{
+				if (expression->Remove(objValueId->GetRecordId())!=NULL)
+				{
+					root->Save();
+					return true;
+				}
+			}
+			else
+			{
+				message = "Not found";
+			}
+		}
+	}
+	return false;
+}
+
+bool ExpressionService::AddValueIdToExpression(string strExpressionId, string strTagId,string & message)
 {
 	STACK
-	Value d(kObjectType);
+
+	CUUID devValueId = CUUID::Parse(strTagId);
+	HisDevValueBase* devValue = devices->FindValue(devValueId);
+	if (devValue!=NULL)
+	{
+		CUUID expressionId = CUUID::Parse(strExpressionId);
+		LuaExpression* expression = dynamic_cast<LuaExpression*>(root->FindExpression(expressionId));
+		if (expression!=NULL)
+		{
+			HisDevValueId* objValueId = expression->FindDevValueId(devValueId);
+			if (objValueId==NULL)
+			{
+				objValueId = new HisDevValueId(devValue,GetFactory());
+				expression->Add(objValueId);
+				root->Save();
+			}
+			return true;
+		}
+	}
+
+	return false;
+}
+
+
+void ExpressionService::ExpressionToJson(HisDevices* devices, Value & d, LuaExpression *pExpression, Document & respjsondoc)
+{
+	STACK
+
 	string strvalue = pExpression->GetName();
 	Value jsonvalue;
 
@@ -222,7 +278,21 @@ void ExpressionService::ExpressionToJson(LuaExpression *pExpression, Document & 
 		jsonvalue.SetString(strvalue.c_str(),strvalue.length(),respjsondoc.GetAllocator());
 		d.AddMember(JSON_PARENTID,jsonvalue, respjsondoc.GetAllocator());
 	}
-	respjsondoc.PushBack(d, respjsondoc.GetAllocator());
+
+	Value tagsArray(kArrayType);
+	auto items = pExpression->GetAllItems();
+	for (size_t i=0;i<items.size();i++)
+	{
+		HisDevValueId* valueId = dynamic_cast<HisDevValueId*>(items[i]);
+		Value d(kObjectType);
+		HisDevValueBase* devValue = devices->FindValue(valueId->GetDeviceValueId());
+		if (devValue!=NULL)
+		{
+			DevicesService::DevValueToJson(d,valueId,devValue,respjsondoc);
+			tagsArray.PushBack(d, respjsondoc.GetAllocator());
+		}
+	}
+	d.AddMember(JSON_TAGS,tagsArray,respjsondoc.GetAllocator());
 }
 
 bool ExpressionService::DeleteExpression(string strid,string & message)
@@ -393,16 +463,11 @@ const http_response ExpressionService::POST(const http_request& req)
 	if (expression!=NULL)
 	{
 		Document respjsondoc;
-		respjsondoc.SetArray();
+		respjsondoc.SetObject();
 
-		ExpressionToJson(expression,respjsondoc);
+		ExpressionToJson(devices, respjsondoc,expression,respjsondoc);
 
-		StringBuffer buffer;
-		PrettyWriter<StringBuffer> wr(buffer);
-		respjsondoc.Accept(wr);
-		std::string json = buffer.GetString();
-
-		message = json;
+		message = DocumentToString(respjsondoc);
 		response_code = MHD_HTTP_OK;
 	}
 	else
@@ -420,12 +485,27 @@ const http_response ExpressionService::PUT(const http_request& req)
 	std::string content = req.get_content();
 	int response_code = MHD_HTTP_FORBIDDEN;
 	string message = "";
+	string path = req.get_path();
 
-	if (CreateOrUpdateExpression(content,message))
+	//0  /1			/2				/3		/4
+	//api/expression/{expressionId}/addtag
+	if (req.get_path_piece(0)=="api" &&
+		req.get_path_piece(1)=="expression" &&
+		req.get_path_piece(3)=="addtag")
+	{
+		string strExpressionId = req.get_arg("expressionId");
+		string strTagId = req.get_arg("tagId");
+		if (AddValueIdToExpression(strExpressionId,strTagId,message))
+		{
+			response_code = MHD_HTTP_OK;
+		}
+	}
+	else if (CreateOrUpdateExpression(content,message))
 	{
 		response_code = MHD_HTTP_OK;
 	}
-	else
+
+	if (response_code != MHD_HTTP_OK)
 	{
 		message = GetErrorMessageJson(message);
 	}
@@ -438,9 +518,21 @@ const http_response ExpressionService::DELETE(const http_request& req)
 	STACK
 	int response_code = MHD_HTTP_FORBIDDEN;
 	string message = "";
-
 	string strid = req.get_arg("id");
-	if (DeleteExpression(strid,message))
+
+
+	if (req.get_path_piece(0)=="api" &&
+			req.get_path_piece(1)=="expression" &&
+			req.get_path_piece(3)=="removetag")
+	{
+		string tagid = req.get_arg("tagId");
+		string strExpressionId = req.get_arg("expressionId");
+		if (RemoveValueIdFromExpression(strExpressionId, tagid, message))
+		{
+			response_code = MHD_HTTP_OK;
+		}
+	}
+	else if (DeleteExpression(strid,message))
 	{
 		response_code = MHD_HTTP_OK;
 		message = "OK";

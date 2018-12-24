@@ -15,61 +15,75 @@
 #include "homeis.h"
 #include "gtest/gtest.h"
 #include "Client.h"
+#include "DevicesAtom.h"
 #include "Tests/API/ExpressionsTest.h"
-#include "UsersAtom.h"
+
 #include "ModbusProvider.h"
 
 
 namespace AF {
 
 ExpressionsTest::ExpressionsTest():
-	client(SERVER_NAME,SERVER_PORT),server(NULL),modbusprovider(NULL)
+	homeisStarter(NULL),
+	client(NULL),
+	expressionAtom(NULL),
+	usersAtom(NULL)
 {
 }
 
 void ExpressionsTest::SetUp()
 {
-	modbussim.Driver = "modbussimulator";
-	modbussim.Name = "modbussimulator";
-	modbussim.Port = "";
-	std::vector<SSerPortConfig> serports;
-	serports.push_back(modbussim);
-	modbusprovider = new ModbusProvider(serports);
-	Mock<IConfig> configMock;
-	When(Method(configMock,GetServerPort)).AlwaysReturn(SERVER_PORT);
-	When(Method(configMock,GetAllowOrigin)).AlwaysReturn("");
-	server = new HomeIsServer(*modbusprovider,NULL,configMock.get());
-	server->Start(false);
+	homeisStarter = new HomeIsStarter();
+	homeisStarter->Start();
+	client = &homeisStarter->GetClient();
+	expressionAtom = new ExpressionAtom(homeisStarter);
+	usersAtom = new UsersAtom(homeisStarter);
+	usersAtom->LoginUser("admin","admin","sessionId",hashPassword);
 }
 
+TEST_F(ExpressionsTest,AddTagToExpressionThenRemove)
+{
+	DevicesAtom devAtom(*homeisStarter);
+	Document devjson = devAtom.CreateDevice("testDevice");
+	string strdevid =  devjson[JSON_ID].GetString();
+	CUUID devId = CUUID::Parse(strdevid);
+
+	Document tagdoc = devAtom.CreateTag(devId.ToString(),EDataType::Int,"tagtest","","");
+	string strtagId = tagdoc[JSON_ID].GetString();
+
+	string parentid="b004782a-ff08-4aee-b459-aa0a2d19ac0d";
+	string name = "newExpression";
+	string expression = "if(1== 1) then test=1 end";
+	string nodeName = "expression";
+	Document exprjson = expressionAtom->CreateExpression(parentid,false,name,"",expression,nodeName,hashPassword);
+	string strExprId = exprjson[JSON_ID].GetString();
+	expressionAtom->AddTagToExpression(strExprId,strtagId,hashPassword);
+	Document exprjsonAddedTag = expressionAtom->GetExpression(strExprId);
+	int tagsCount = exprjsonAddedTag[JSON_TAGS].Size();
+	ASSERT_EQ(1,tagsCount);
+	expressionAtom->RemoveTagFromExpression(strExprId,strtagId,"admin",hashPassword);
+	Document exprjsonRemovedTag = expressionAtom->GetExpression(strExprId);
+	tagsCount = exprjsonRemovedTag[JSON_TAGS].Size();
+	ASSERT_EQ(0,tagsCount);
+}
 
 TEST_F(ExpressionsTest,ModbusReadTest)
 {
 	std::string reqest = StringBuilder::Format("api/modbus/registers/%s/1/0/52",
-				  modbussim.Name.c_str());
+			homeisStarter->GetModbusConfig().Name.c_str());
 	string response;
 	long http_code;
-	CURLcode cresp = client.Get(reqest,response,http_code);
+	CURLcode cresp = client->Get(reqest,response,http_code);
 	ASSERT_EQ(cresp, CURLE_OK);
 }
 
 TEST_F(ExpressionsTest,CreateExpressionTest)
 {
-
-	std::string reqest = StringBuilder::Format("api/expression");
-	string response;
-	string json = "{\"parentId\":\"b004782a-ff08-4aee-b459-aa0a2d19ac0d\",\"running\":false,\"description\":null,\"expression\":\"if(1\
-== 1) then test=\
-1 end\",\"errorMessage\":null,\"name\":\"newExpression\",\"id\":null,\"nodeName\":\"expression\"}";
-	long http_code = 0;
-
-	string hashPassword;
-	UsersAtom usersAtom(client);
-	usersAtom.LoginUser("admin","admin","sessionId",hashPassword);
-
-	CURLcode cresp = client.Put(reqest,json,hashPassword,response,http_code);
-	ASSERT_EQ(cresp, CURLE_OK);
-	ASSERT_EQ(http_code, MHD_HTTP_OK);
+	string parentid="b004782a-ff08-4aee-b459-aa0a2d19ac0d";
+	string name = "newExpression";
+	string expression = "if(1== 1) then test=1 end";
+	string nodeName = "expression";
+	expressionAtom->CreateExpression(parentid,false,name,"",expression,nodeName,hashPassword);
 	string exprefile = StringBuilder::Format("%s/Expressions/%s.lua",file.getexepath().c_str(),"newExpression");
 	ASSERT_EQ(file.Exists(exprefile), true);
 	if (file.Exists(exprefile))
@@ -79,6 +93,8 @@ TEST_F(ExpressionsTest,CreateExpressionTest)
 
 void ExpressionsTest::TearDown()
 {
+	delete expressionAtom;
+	delete usersAtom;
 	string foldersfile = StringBuilder::Format("%s/folders.xml",file.getexepath().c_str());
 	if (file.Exists(foldersfile))
 		file.Delete(foldersfile);
@@ -86,11 +102,7 @@ void ExpressionsTest::TearDown()
 	if (file.Exists(devicesfile))
 		file.Delete(devicesfile);
 
-	server->Stop();
-	delete(server);
-
-	delete modbusprovider;
-	modbusprovider = NULL;
+	delete homeisStarter;
 }
 
 ExpressionsTest::~ExpressionsTest() {

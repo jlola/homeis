@@ -83,7 +83,9 @@ private:
 	bool IsInExpressionDevices(HisDevBase* pdev);
 public:
 	void Start();
+	HisDevValueId *FindDevValueId(CUUID valueId);
 	string GetName();
+	vector<HisDevValueBase*> Tags();
 	string GetLuaFilesPath();
 	CUUID GetRecordId();
 	static int delays;

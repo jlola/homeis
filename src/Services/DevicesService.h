@@ -39,6 +39,7 @@ class DevicesService : public ServiceBase
 	bool DeleteValueId(string strValueId, string & message);
 	bool DeleteDevValue(string strDevValueRecordId, string & msg);
 	bool DeleteDev(string strDevValueRecordId, string & msg);
+	string DeviceToJson(HisDevVirtual* vritualdev);
 public:
 	DevicesService(HisDevices & dev,
 			HisDevFolderRoot & folder,

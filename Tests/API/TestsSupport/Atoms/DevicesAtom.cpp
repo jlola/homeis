@@ -16,9 +16,11 @@
 DevicesAtom::DevicesAtom(HomeIsStarter & homeisStarter)
 	: homeisStarter(homeisStarter)
 {
+	urlCode = CURLE_OK;
+	http_code = 0;
 }
 
-string DevicesAtom::CreateDevice(string name)
+Document DevicesAtom::CreateDevice(string name)
 {
 	Document document;	// Default template parameter uses UTF8 and MemoryPoolAllocator.
 	document.SetObject();
@@ -37,7 +39,10 @@ string DevicesAtom::CreateDevice(string name)
 
 	urlCode = homeisStarter.GetClient().Post("api/devices",json,hashPassword,response,http_code);
 	Client::AssertCurlResponse(http_code,urlCode);
-	return response;
+	Document documentresp;
+	if (documentresp.Parse<0>((char*)response.c_str()).HasParseError() == true)
+		throw ArgumentNullException("response");
+	return documentresp;
 }
 
 string DevicesAtom::GetDeviceId()
@@ -155,7 +160,7 @@ Document DevicesAtom::GetDevices()
 	return document;
 }
 
-string DevicesAtom::CreateEmailTag(string deviceId, string name,string sender, string receivers)
+Document DevicesAtom::CreateTag(string deviceId, EDataType dataType, string name,string sender, string receivers)
 {
 	Document document;	// Default template parameter uses UTF8 and MemoryPoolAllocator.
 	document.SetObject();
@@ -177,7 +182,7 @@ string DevicesAtom::CreateEmailTag(string deviceId, string name,string sender, s
 
 	document.AddMember(JSON_PARENTID,deviceId.c_str(),document.GetAllocator());
 	document.AddMember(JSON_NAME,name.c_str(),document.GetAllocator());
-	document.AddMember(JSON_TYPE,EDataType::Email,document.GetAllocator());
+	document.AddMember(JSON_TYPE,dataType,document.GetAllocator());
 	document.AddMember(JSON_INTERNAL,true,document.GetAllocator());
 	document.AddMember(JSON_ENABLED,true,document.GetAllocator());
 	document.AddMember(JSON_SENDER,sender.c_str(),document.GetAllocator());
@@ -195,7 +200,11 @@ string DevicesAtom::CreateEmailTag(string deviceId, string name,string sender, s
 
 	urlCode = homeisStarter.GetClient().Post("api/devices/devvalue/",json,hashPassword,response,http_code);
 	Client::AssertCurlResponse(http_code,urlCode);
-	return response;
+
+	Document respDocument;	// Default template parameter uses UTF8 and MemoryPoolAllocator.
+	if (respDocument.Parse<0>((char*)response.c_str()).HasParseError() == true)
+		throw ArgumentNullException("response");
+	return respDocument;
 }
 
 void DevicesAtom::WriteToTag(string tagId,string value)

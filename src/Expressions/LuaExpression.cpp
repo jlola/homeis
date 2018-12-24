@@ -116,6 +116,42 @@ LuaExpression::LuaExpression(HisDevFolder* folder,
 	cL = NULL;
 }
 
+HisDevValueId *LuaExpression::FindDevValueId(CUUID valueId)
+{
+	Load();
+
+	vector<IHisBase*> items = GetAllItems();
+	for(size_t i=0;i<items.size();i++)
+	{
+		HisDevValueId* value = dynamic_cast<HisDevValueId*>(items[i]);
+		if (value!=NULL)
+		{
+			if (valueId == value->GetDeviceValueId()) return value;
+		}
+	}
+
+	return NULL;
+}
+
+vector<HisDevValueBase*> LuaExpression::Tags()
+{
+	vector<HisDevValueBase*> result;
+	auto items =  GetAllItems();
+	for(size_t i=0;i<items.size();i++)
+	{
+		auto valueId = dynamic_cast<HisDevValueId*>(items[0]);
+		if (valueId!=NULL)
+		{
+			HisDevValueBase* value = devices->FindValue(valueId->GetDeviceValueId());
+			if (value!=NULL)
+			{
+				result.push_back(value);
+			}
+		}
+	}
+	return result;
+}
+
 CUUID LuaExpression::GetRecordId()
 {
 	STACK

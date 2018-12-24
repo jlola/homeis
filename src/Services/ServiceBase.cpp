@@ -7,7 +7,8 @@
 
 #include "ServiceBase.h"
 #include "HttpHeadersProvider.h"
-
+#include "prettywriter.h"
+#include "stringbuffer.h"
 
 
 ServiceBase::ServiceBase(IHisDevFactory* factory,IUserManager* userManager) :
@@ -37,6 +38,16 @@ Session* ServiceBase::GetSession()
 IHisDevFactory* ServiceBase::GetFactory()
 {
 	return factory;
+}
+
+
+string ServiceBase::DocumentToString(Document & doc)
+{
+	StringBuffer buffer;
+	PrettyWriter<StringBuffer> wr(buffer);
+	doc.Accept(wr);
+	std::string json = buffer.GetString();
+	return json;
 }
 
 string ServiceBase::GetErrorMessageJson(string message)

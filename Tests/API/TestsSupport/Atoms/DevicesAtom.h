@@ -16,12 +16,12 @@ class DevicesAtom {
 	CURLcode urlCode;
 public:
 	DevicesAtom(HomeIsStarter & homeisStarter);
-	string CreateDevice(string name);
+	Document CreateDevice(string name);
 	Document GetDevices();
 	Document GetDevice(string id);
 	void UpdateDevicePropertyUint(string devid,string name,uint32_t value);
 	void UpdateDeviceProperty(string id,string name, Value & value);
-	string CreateEmailTag(string deviceId, string name,string sender, string receivers);
+	Document CreateTag(string deviceId, EDataType dataType, string name,string sender, string receivers);
 	string GetDevicePropertyString(string devieId,string name);
 	int GetDevicePropertyInt(string deviceId,string name);
 	int GetDevicePropertyUInt(string deviceId,string name);

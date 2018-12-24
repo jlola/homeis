@@ -5,8 +5,6 @@
  *      Author: pc
  */
 #include "document.h"		// rapidjson's DOM-style API
-#include "prettywriter.h"
-#include "stringbuffer.h"
 #include "filestream.h"	// wrapper of C stream for prettywriter as output
 #include <Services/ConnectorsService.h>
 #include "microhttpd.h"
@@ -42,10 +40,8 @@ const http_response ConnectorsService::GET(const http_request& req)
 		respjsondoc.PushBack(valport,respjsondoc.GetAllocator());
 	}
 
-	StringBuffer buffer;
-	PrettyWriter<StringBuffer> wr(buffer);
-	respjsondoc.Accept(wr);
-	std::string json = buffer.GetString();
+
+	std::string json = DocumentToString(respjsondoc);
 	int response_code = MHD_HTTP_OK;
 	return CreateResponseString(json,response_code);
 }

@@ -8,8 +8,6 @@
 #include "Services/DevicesService.h"
 #include "HisDevices.h"
 #include "document.h"		// rapidjson's DOM-style API
-#include "prettywriter.h"
-#include "stringbuffer.h"
 #include "filestream.h"	// wrapper of C stream for prettywriter as output
 #include "HisDevValue.h"
 #include "EItemType.h"
@@ -158,10 +156,7 @@ const http_response DevicesService::GET(const http_request& req)
 		response_code = MHD_HTTP_NOT_FOUND;
 	}
 
-	StringBuffer buffer;
-	PrettyWriter<StringBuffer> wr(buffer);
-	respjsondoc.Accept(wr);
-	std::string json = buffer.GetString();
+	std::string json = DocumentToString(respjsondoc);
 
 	return CreateResponseString(json,response_code);
 }
@@ -335,12 +330,6 @@ const http_response DevicesService::POST(const http_request& req)
 	string message;
 	int response_code = MHD_HTTP_FORBIDDEN;
 
-	Document respjsondoc;
-	respjsondoc.SetArray();
-	//respjsondoc.SetObject();
-	StringBuffer buffer;
-
-
 	if (path.find("/api/onewiredevices/devvalue")!=string::npos ||
 		path.find("/api/devices/devvalue")!=string::npos)
 	{
@@ -349,6 +338,10 @@ const http_response DevicesService::POST(const http_request& req)
 		{
 			if (UpdateDevValue(devvalue->GetRecordId(),content))
 			{
+				Document respjsondoc;
+				respjsondoc.SetObject();
+				DevValueToJson(respjsondoc,NULL,devvalue,respjsondoc);
+				message = DocumentToString(respjsondoc);
 				response_code = MHD_HTTP_OK;
 			}
 		}
@@ -366,18 +359,9 @@ const http_response DevicesService::POST(const http_request& req)
 		{
 			devices.Add(vritualdev);
 			devices.Save();
-			string id = vritualdev->GetRecordId().ToString();
-			Value d(kObjectType);
-			//DevValueToJson(d,NULL,value,respjsondoc);
-			Value jsonvalue;
-			jsonvalue.SetString(id.c_str(),id.length(),respjsondoc.GetAllocator());
-			d.AddMember(JSON_ID,jsonvalue, respjsondoc.GetAllocator());
-			respjsondoc.PushBack(d,respjsondoc.GetAllocator());
-			PrettyWriter<StringBuffer> wr(buffer);
-			respjsondoc.Accept(wr);
-			std::string json = buffer.GetString();
+
+			message = DeviceToJson(vritualdev);
 			response_code = MHD_HTTP_OK;
-			message = json;
 		}
 		else
 		{
@@ -388,6 +372,25 @@ const http_response DevicesService::POST(const http_request& req)
 
 
 	return CreateResponseString(message,response_code);
+}
+
+string DevicesService::DeviceToJson(HisDevVirtual* virtualdev)
+{
+	Document respjsondoc;
+	respjsondoc.SetObject();
+
+	//DevValueToJson(d,NULL,value,respjsondoc);
+	string strId = virtualdev->GetRecordId().ToString();
+	Value jsonvalue;
+	jsonvalue.SetString(strId.c_str(),strId.length(),respjsondoc.GetAllocator());
+	respjsondoc.AddMember(JSON_ID,jsonvalue, respjsondoc.GetAllocator());
+
+	jsonvalue.SetString(virtualdev->GetName().c_str(),virtualdev->GetName().length(),respjsondoc.GetAllocator());
+	respjsondoc.AddMember(JSON_NAME,jsonvalue, respjsondoc.GetAllocator());
+
+	std::string json = DocumentToString(respjsondoc);
+
+	return json;
 }
 
 const http_response DevicesService::PUT(const http_request& req)
@@ -461,15 +464,13 @@ const http_response DevicesService::DELETE(const http_request& req)
 
 	Document respjsondoc;
 	respjsondoc.SetObject();
-	StringBuffer buffer;
 
 	Value jsonvalue;
 	jsonvalue.SetString(msg.c_str(),msg.length(),respjsondoc.GetAllocator());
 	respjsondoc.AddMember(JSON_MESSAGE,jsonvalue, respjsondoc.GetAllocator());
 
-	PrettyWriter<StringBuffer> wr(buffer);
-	respjsondoc.Accept(wr);
-	std::string json = buffer.GetString();
+
+	std::string json = DocumentToString(respjsondoc);
 
 	return CreateResponseString(json,response_code);
 }

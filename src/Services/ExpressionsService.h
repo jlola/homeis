@@ -42,9 +42,11 @@ public:
 			IHisDevFactory* factory,
 			webserver* ws_i);
 	~ExpressionService(void);
+	bool RemoveValueIdFromExpression(string strExpressionId, string strTagId, string & message);
 	bool DeleteExpression(string strid,string & message);
-	static void ExpressionToJson(LuaExpression *pExpression, Document & respjsondoc);
-	static void ExpressionsToJson(string strFolderId, HisDevFolderRoot* root, Document & respjsondoc);
+	bool AddValueIdToExpression(string strExpressionId, string strTagId,string & message);
+	static void ExpressionToJson(HisDevices* devices, Value & d, LuaExpression *pExpression, Document & respjsondoc);
+	static void ExpressionsToJson(HisDevices* devices,string strFolderId, HisDevFolderRoot* root, Document & respjsondoc);
 	static void ExpressionDebugLogToJson(LuaExpression *pExpression, Document & respjsondoc);
 	const http_response GET(const http_request& r);
 	const http_response POST(const http_request& r);

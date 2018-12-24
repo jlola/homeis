@@ -9,4 +9,5 @@
 20180523 - added email tag to send email from lua script
 20180625 - fixed refresh after scan onewire
 20181113 - user management and sessionhash authentication
-		 - periodic scan and automatic detection onewire devices 
+		 - periodic scan and automatic detection onewire devices
+20181224 - adding tags to expression API 

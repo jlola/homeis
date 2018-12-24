@@ -27,6 +27,7 @@
 #include "ModbusSimulator.h"
 
 DevicesTests::DevicesTests()
+	: homeisStarter(NULL)
 {
 }
 
@@ -129,7 +130,7 @@ TEST_F(DevicesTests,CreateEmailTagTest)
 	string deviceName = "test";
 	string expectedTagName = "tagName";
 
-	string response = deviceAtom.CreateDevice(deviceName);
+	deviceAtom.CreateDevice(deviceName);
 
 
 	Document document = deviceAtom.GetDevices();
@@ -144,7 +145,7 @@ TEST_F(DevicesTests,CreateEmailTagTest)
 		ASSERT_EQ(deviceName,name);
 		string parentId = devices[ob][JSON_ID].GetString();
 
-		response = deviceAtom.CreateEmailTag(parentId,expectedTagName,expectedSender,expectedReceivers);
+		deviceAtom.CreateTag(parentId,EDataType::Email, expectedTagName,expectedSender,expectedReceivers);
 	}
 
 	Document document2 = deviceAtom.GetDevices();

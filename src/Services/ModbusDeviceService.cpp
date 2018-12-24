@@ -6,9 +6,6 @@
  */
 
 #include "document.h"		// rapidjson's DOM-style API
-#include "prettywriter.h"
-#include "stringbuffer.h"
-
 #include "PoppyDebugTools.h"
 #include "Services/ModbusDeviceService.h"
 #include "StringBuilder.h"
@@ -42,9 +39,6 @@ const http_response ModbusDeviceService::GET(const http_request& req)
 	int response_code = MHD_HTTP_FORBIDDEN;
 	Document document;
 	document.SetObject();
-
-	StringBuffer buffer;
-	PrettyWriter<StringBuffer> wr(buffer);
 	Value jsonvalue;
 
 	string connector = req.get_arg("connectorname");
@@ -92,8 +86,8 @@ const http_response ModbusDeviceService::GET(const http_request& req)
 		}
 
 	}
-	document.Accept(wr);
-	std::string json = buffer.GetString();
+
+	std::string json = DocumentToString(document);
 
 	return CreateResponseString(json,response_code);
 }

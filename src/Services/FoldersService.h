@@ -10,8 +10,6 @@
 
 #include "DevicesService.h"
 #include "document.h"		// rapidjson's DOM-style API
-#include "prettywriter.h"
-#include "stringbuffer.h"
 #include "filestream.h"	// wrapper of C stream for prettywriter as output
 #include "Folder/HisDevFolder.h"
 #include "Folder/HisDevFolderRoot.h"

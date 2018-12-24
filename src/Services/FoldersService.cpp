@@ -98,10 +98,7 @@ const http_response FoldersService::GET(const http_request& req)
 		response_code = MHD_HTTP_NOT_FOUND;
 	}
 
-	StringBuffer buffer;
-	PrettyWriter<StringBuffer> wr(buffer);
-	respjsondoc.Accept(wr);
-	const std::string json(buffer.GetString());
+	string json = DocumentToString(respjsondoc);
 
 	return CreateResponseString(json,response_code);
 }
@@ -184,7 +181,9 @@ void FoldersService::FoldersToJson(HisDevFolderRoot & root,HisDevFolder *parentF
 			}
 			else if (pExpression!=NULL)
 			{
-				ExpressionService::ExpressionToJson(pExpression, respjsondoc);
+				Value d(kObjectType);
+				ExpressionService::ExpressionToJson(&devices, d,pExpression, respjsondoc);
+				respjsondoc.PushBack(d,respjsondoc.GetAllocator());
 			}
 		}
 	}

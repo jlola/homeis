@@ -93,7 +93,8 @@ TEST_F(UsersTests,CreateUserLoginUserAndTryToDeleteNotSuccessLogoutThenDeleteSuc
 	string sessionHash2;
 	string pass = "pass";
 	usersAtom->UpdatePassword(userid,"",pass,sessionHash);
-	usersAtom->LoginUser("userName","","sessionid2",sessionHash2);
+	usersAtom->LoginUser("userName",pass,"sessionid2",sessionHash2);
+	//should be not success because user is loggedin
 	bool result = usersAtom->DeleteUser(userid,"admin",sessionHash);
 	ASSERT_FALSE(result);
 	usersAtom->LogOutUser(sessionHash2);

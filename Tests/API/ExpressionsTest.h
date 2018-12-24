@@ -10,7 +10,8 @@
 
 #include "gtest_src/gtest/gtest.h"
 #include "File.h"
-
+#include "UsersAtom.h"
+#include "ExpressionAtom.h"
 #include "fakeit.hpp"
 
 using namespace fakeit;
@@ -21,10 +22,11 @@ class ExpressionsTest : public testing::Test
 {
 protected:
 	File file;
-	SSerPortConfig modbussim;
-	Client client;
-	HomeIsServer* server;
-	IModbusProvider* modbusprovider;
+	HomeIsStarter* homeisStarter;
+	Client* client;
+	ExpressionAtom* expressionAtom;
+	UsersAtom* usersAtom;
+	string hashPassword;
 public:
 	ExpressionsTest();
 	void SetUp();

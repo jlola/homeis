@@ -11,6 +11,9 @@
 #include <httpserver.hpp>
 #include "IHisDevFactory.h"
 #include "IUserManager.h"
+#include "document.h"		// rapidjson's DOM-style API
+
+using namespace rapidjson;
 
 #define URL_LOGIN "api/users/login"
 
@@ -36,6 +39,7 @@ protected:
 	string GetErrorMessageJson(string message);
 	IHisDevFactory* GetFactory();
 public:
+	string DocumentToString(Document & doc);
 	http_response UnauthorizedResponse();
 	ServiceBase(IHisDevFactory* factory,IUserManager* userManager);
 	virtual const http_response GET(const http_request& req);
