@@ -4,6 +4,8 @@
  *  Created on: 11. 12. 2018
  *      Author: pc
  */
+#ifdef HOMEISTEST
+
 #include <string>
 #include "StringBuilder.h"
 #include "HisException.h"
@@ -80,3 +82,4 @@ Document ExpressionAtom::CreateExpression(string parentId,bool running, string n
 ExpressionAtom::~ExpressionAtom() {
 }
 
+#endif
