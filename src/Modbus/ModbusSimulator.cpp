@@ -91,7 +91,8 @@ bool ModbusSimulator::setHolding(uint16_t address,uint16_t index, uint16_t val)
 	}
 	return false;
 }
-bool ModbusSimulator::getHolding(uint16_t address,uint16_t index,uint16_t* holding)
+
+bool ModbusSimulator::getHolding(uint16_t address,uint16_t index,uint16_t* holding,uint32_t timeOutMs)
 {
 	if (index >= length)
 	{
@@ -105,19 +106,30 @@ bool ModbusSimulator::getHolding(uint16_t address,uint16_t index,uint16_t* holdi
 	}
 	return false;
 }
-bool ModbusSimulator::getHoldings(uint16_t address,uint16_t offset,uint16_t count,uint16_t* target)
+
+bool ModbusSimulator::getHolding(uint16_t address,uint16_t index,uint16_t* holding)
+{
+	return getHolding(address,index,holding, 0);
+}
+
+bool ModbusSimulator::getHoldings(uint16_t address,uint16_t offset,uint16_t count,uint16_t* target,uint32_t timeOutMs)
 {
 	if (address==1 || address==registers[0])
-	{
-		if (offset + count > length)
 		{
-			throw "Out of range exception";
-		}
+			if (offset + count > length)
+			{
+				throw "Out of range exception";
+			}
 
-		memcpy(target,&registers[offset],sizeof(uint16_t)*count);
-		return true;
-	}
-	return false;
+			memcpy(target,&registers[offset],sizeof(uint16_t)*count);
+			return true;
+		}
+		return false;
+}
+
+bool ModbusSimulator::getHoldings(uint16_t address,uint16_t offset,uint16_t count,uint16_t* target)
+{
+	return getHoldings(address,offset,count,target,1000);
 }
 
 

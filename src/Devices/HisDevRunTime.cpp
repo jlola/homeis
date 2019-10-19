@@ -26,18 +26,25 @@ HisDevRuntime::HisDevRuntime(HisDevices & pdevices) :
 
 void* HisDevRuntime::ThreadFunction(void* obj)
 {
-	STACK
 	HisDevRuntime* runtime = (HisDevRuntime*)obj;
 
-	runtime->logger.Info("Strat thread HisDevRuntime::ThreadFunction with threadid: %ul",pthread_self());
+	runtime->ThreadMethod();
 
-	while(runtime->running)
+	return NULL;
+}
+
+void HisDevRuntime::ThreadMethod()
+{
+	STACK
+
+	logger.Info("Strat thread HisDevRuntime::ThreadFunction with threadid: %ul",pthread_self());
+
+	while(running)
 	{
-		runtime->devices.Refresh();
+		devices.Refresh();
 	}
 
-	runtime->logger.Info("End thread HisDevRuntime::ThreadFunction with threadid: %ul",pthread_self());
-	return NULL;
+	logger.Info("End thread HisDevRuntime::ThreadFunction with threadid: %ul",pthread_self());
 }
 
 void HisDevRuntime::Start()

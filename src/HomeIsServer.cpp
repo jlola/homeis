@@ -123,6 +123,7 @@ void HomeIsServer::InitWebServer(bool blocking)
 	connectorsService = new ConnectorsService( modbusProvider, userManager, factory, ws_i );
 	logservice = new LogService(ws_i,userManager, factory);
 	usersService = new UsersService(ws_i,userManager, factory);
+	versionService = new VersionService(ws_i,userManager,factory);
 
 	logger.Info("Start homeis webserver %s blocking starting thread", blocking ? "with" : "without");
 	ws_i->start(blocking);

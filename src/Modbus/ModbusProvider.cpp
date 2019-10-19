@@ -11,6 +11,7 @@
 #include "Modbus/ModbusSimulator.h"
 #include <Modbus/ModbusProvider.h>
 #include "StringBuilder.h"
+#include "ModifiedMdbus.h"
 
 ModbusProvider::ModbusProvider(vector<SSerPortConfig> & serports)
 {
@@ -29,7 +30,7 @@ IModbus* ModbusProvider::CreateDriver(SSerPortConfig serport)
 
 	if (driverType==Modbus::DriverName)
 	{
-		m = new Modbus(serport);
+		m = new ModifiedMdbus(serport);
 	}
 	else if (driverType==ModbusSimulator::DriverName)
 	{

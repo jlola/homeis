@@ -14,8 +14,8 @@
 using namespace std;
 
 HisDevModbus::HisDevModbus(IModbus* connection,int address,IHisDevFactory* factory)
-	: logger(CLogger::GetLogger()),
-	  HisDevBase::HisDevBase(factory),
+	: HisDevBase::HisDevBase(factory),
+	  logger(CLogger::GetLogger()),
 	  data(NULL),
 	  size(0),
 	  typesdefs(NULL),

@@ -22,6 +22,7 @@
 #include "HisDevModbus.h"
 #include "logger.h"
 #include "HisDevices.h"
+#include "ModbusSimulator.h"
 
 HisDevices::HisDevices(string fileName ,IModbusProvider* modbusProvider)
  : logger(CLogger::GetLogger())
@@ -231,6 +232,10 @@ void HisDevices::Refresh()
 		if (devices[i]->IsEnabled())
 			devices[i]->Refresh(false);
 
+		//HisDevBase* alarmedDevice = ReadAlarmDevice();
+		//if (alarmedDevice!=NULL && alarmedDevice->IsEnabled())
+		//	alarmedDevice->Refresh(true);
+
 		while (devqueue.size()>0)
 		{
 			logger.Trace("Refresh before refreshMutex.Lock()");
@@ -246,8 +251,31 @@ void HisDevices::Refresh()
 				dev->Refresh(false);
 
 		}
-		usleep(1000);
+		usleep(10000);
 	}
+}
+
+
+HisDevBase* HisDevices::ReadAlarmDevice()
+{
+	uint16_t field[2];
+	uint32_t timeoutMs = 50;
+	auto connectors = modbusProvider->GetConnectors();
+	for (size_t i=0;i<connectors.size();i++)
+	{
+		if (connectors[i]->GetDriverName()!=ModbusSimulator::DriverName)
+		{
+			if (connectors[i]->getHoldings(1,DEVADDR_OFFSET,2,field,timeoutMs))
+			{
+				usleep(100000);
+				//reset by set 1
+				connectors[i]->setHolding(field[0],CHANGE_FLAG,1);
+				int i = FindModbusDev(field[0]);
+				if (i>=0) return devices[i];
+			}
+		}
+	}
+	return NULL;
 }
 
 int HisDevices::FindModbusDev(int addressId)

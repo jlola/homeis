@@ -21,6 +21,7 @@ class HisDevRuntime
 	static void* ThreadFunction(void* obj);
 public:
 	HisDevRuntime(HisDevices & pdevices);
+	void ThreadMethod();
 	void Start();
 	void Stop();
 };

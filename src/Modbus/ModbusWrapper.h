@@ -25,6 +25,7 @@ class Modbus : public IModbus
 	modbus_t *ctx;
 	int SetSlave(uint16_t address);
 	ILogger & logger;
+	void SetTimeOut(uint32_t ms);
 public:
 	static string DriverName;
 	Modbus(SSerPortConfig config);
@@ -43,7 +44,10 @@ public:
 
 	bool setHolding(uint16_t address,uint16_t index, uint16_t val);
 	bool getHolding(uint16_t address,uint16_t index,uint16_t* holding);
+	bool getHolding(uint16_t address,uint16_t index,uint16_t* holding, uint32_t timeOut);
 	bool getHoldings(uint16_t address,uint16_t offset,uint16_t count,uint16_t* target);
+	bool getHoldings(uint16_t address,uint16_t offset,uint16_t count,uint16_t* target, uint32_t timeOutMs);
+
 
 	virtual ~Modbus(){}
 };

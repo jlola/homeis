@@ -52,5 +52,6 @@
 #define JSON_NEWPASSWORD "newPassword"
 #define JSON_SESSIONID "sessionId"
 #define JSON_SESSIONHASH "sessionHash"
+#define JSON_HOMEISVERSION "homeisVersion"
 
 #endif /* SRC_SERVICES_PARAMSNAMES_H_ */

@@ -29,6 +29,7 @@
 #include "Services/ConnectorsService.h"
 #include "Services/LogService.h"
 #include "Services/UsersService.h"
+#include "VersionService.h"
 #include "File.h"
 #include "Directory.h"
 #include "HisDevFactory.h"
@@ -62,6 +63,7 @@ class HomeIsServer
 	ConnectorsService* connectorsService;
 	LogService* logservice;
 	UsersService* usersService;
+	VersionService* versionService;
 
 	IEmailSender* emailSender;
 	IUserManager* userManager;
