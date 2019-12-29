@@ -16,6 +16,7 @@
 #include "HisDevBase.h"
 #include "IHisDevFactory.h"
 #include "logger.h"
+#include "IBlockingQueue.h"
 
 #define DEVICEBASE 						0
 #define DEVADDR_OFFSET					DEVICEBASE+0
@@ -27,7 +28,8 @@
 
 using namespace std;
 
-class HisDevices {
+class HisDevices : public IDeviceEventConsumer
+{
 	ILogger & logger;
 	xmlDocPtr doc;       /* document pointer */
 	string devicesFileName;
@@ -36,26 +38,30 @@ class HisDevices {
 	queue<HisDevBase*> devqueue;
 	OnRefreshDelegate onRefreshdelegate;
 	IModbusProvider* modbusProvider;
+	IBlockingQueue<HisDevBase*>* deviceQueue;
+
+	void AddToRefreshQueue(HisDevBase* hisDevBase);
+	void RegisterToModbus();
 public:
-	HisDevices(string fileName,IModbusProvider* modbusProvider);
+	HisDevices(string fileName,IModbusProvider* modbusProvider,IBlockingQueue<HisDevBase*>* deviceQueue);
 	int Find(CUUID RecordId);
 	size_t Size();
 	void AddScanned();
 	/*
 	 * reads address=1 and if got response clear alarm
 	 */
-	HisDevBase* ReadAlarmDevice();
+	//HisDevBase* ReadAlarmDevice(IModbus* modbus);
 	void Add(HisDevBase *hisdev);
 	void Refresh();
 	HisDevValueBase* FindValue(string address);
 	HisDevValueBase* FindValue(CUUID valueId);
 	~HisDevices();
-	void AddToRefreshQueue(HisDevBase* hisDevBase);
 	int FindModbusDev(int addressId);
 	void Save();
 	void Load(IHisDevFactory* factory);
 	void Delete(uint16_t index);
 	HisDevBase *operator[](unsigned int i);
+	void FireEvent(int adr);
 };
 
 #endif /* HISDEVICES_H_ */

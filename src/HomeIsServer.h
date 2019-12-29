@@ -35,6 +35,8 @@
 #include "HisDevFactory.h"
 #include "IConfig.h"
 #include "IUserManager.h"
+#include "IBlockingQueue.h"
+#include "ModbusProcessor.h"
 
 using namespace httpserver;
 using namespace std;
@@ -64,6 +66,8 @@ class HomeIsServer
 	LogService* logservice;
 	UsersService* usersService;
 	VersionService* versionService;
+	IBlockingQueue<HisDevBase*>* deviceQueue;
+	ModbusProcessor* modbusProcessor;
 
 	IEmailSender* emailSender;
 	IUserManager* userManager;

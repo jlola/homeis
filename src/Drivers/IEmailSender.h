@@ -17,6 +17,9 @@ class IEmailSender
 {
 public:
 	virtual bool Send(string fromaddr,string toaddr, string subject, string body)=0;
+	virtual ~IEmailSender(){
+
+	}
 };
 
 

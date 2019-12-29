@@ -61,6 +61,10 @@ public:
 	virtual bool setHolding(uint16_t index, uint16_t val)=0;
 
 	virtual HisDevValueBase* FindValue(string pinNumber,string loadType)=0;
+
+	virtual ~IHisDevModbus() {
+
+	}
 };
 
 

@@ -25,6 +25,9 @@ public:
 	virtual void Info(const char * text, ...)=0;
 	virtual void Trace(const char * text, ...)=0;
 	virtual void Error(const char * text, ...)=0;
+	virtual ~ILogger(){
+
+	}
 };
 
 

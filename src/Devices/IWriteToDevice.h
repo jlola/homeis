@@ -14,6 +14,10 @@ class IWriteToDevice
 {
 public:
 	virtual void WriteToDevice(ValueChangedEventArgs & args)=0;
+
+	virtual ~IWriteToDevice(){
+
+		}
 };
 
 

@@ -19,42 +19,44 @@
 HisDevRuntime::HisDevRuntime(HisDevices & pdevices) :
 	logger(CLogger::GetLogger()),
 	devices(pdevices),
-	thread(0),
+	refreshThread(0),
 	running(false)
 {
+	queue = new BlockingQueue<int>();
 }
 
-void* HisDevRuntime::ThreadFunction(void* obj)
+void* HisDevRuntime::RefreshThreadFunction(void* obj)
 {
 	HisDevRuntime* runtime = (HisDevRuntime*)obj;
 
-	runtime->ThreadMethod();
+	runtime->Refresh();
 
 	return NULL;
 }
 
-void HisDevRuntime::ThreadMethod()
+void HisDevRuntime::Refresh()
 {
 	STACK
 
-	logger.Info("Strat thread HisDevRuntime::ThreadFunction with threadid: %ul",pthread_self());
+	logger.Info("Strat thread HisDevRuntime::Refresh with threadid: %ul",pthread_self());
 
 	while(running)
 	{
 		devices.Refresh();
+		sleep(1);
 	}
 
-	logger.Info("End thread HisDevRuntime::ThreadFunction with threadid: %ul",pthread_self());
+	logger.Info("End thread HisDevRuntime::Refresh with threadid: %ul",pthread_self());
 }
 
 void HisDevRuntime::Start()
 {
 	running = true;
-	pthread_create( &thread, NULL, HisDevRuntime::ThreadFunction, (void*)this );
+	pthread_create( &refreshThread, NULL, HisDevRuntime::RefreshThreadFunction, (void*)this );
 }
 
 void HisDevRuntime::Stop()
 {
 	running = false;
-	pthread_join( thread, NULL);
+	pthread_join( refreshThread, NULL);
 }

@@ -10,6 +10,7 @@
 
 #include <stdint.h>
 #include <string>
+#include "IDeviceEventConsumer.h"
 
 using namespace std;
 
@@ -27,6 +28,7 @@ public:
 	virtual bool getHoldings(uint16_t address,uint16_t offset,uint16_t count,uint16_t* target)=0;
 	virtual bool getHoldings(uint16_t address,uint16_t offset,uint16_t count,uint16_t* target, uint32_t timeOutMs)=0;
 
+	virtual void AddConsumer(IDeviceEventConsumer* consumer)=0;
 
 	virtual ~IModbus() {}
 };

@@ -28,6 +28,7 @@
 #include "Common/HisBase.h"
 #include "Expressions/IExpression.h"
 #include "IHisDevFactory.h"
+#include "IBlockingQueue.h"
 
 using namespace std;
 
@@ -53,6 +54,7 @@ class HisDevBase : public HisBase
 	EDataSource dataSource;
 	bool error;
 	bool changed;
+	bool alarm;
 	vector<IExpression*> expressions;
 protected:
 	bool needRefresh;
@@ -68,13 +70,17 @@ protected:
 public:
 	HisDevBase();
 	virtual ~HisDevBase();
+	void SetAlarm();
+	void ResetAlarm();
 	virtual IHisBase* Remove(CUUID puuid);
 	void SetChanged();
 	void SetNextScanTime(uint64_t ms);
 	/*
 	 * read device and if change any value fire event ValueChanged
 	 */
-	void Refresh(bool alarm);
+	void RefreshTime(IBlockingQueue<HisDevBase*>* refreshQueue, bool alarm);
+
+	void Refresh();
 	/*
 	 *
 	 */

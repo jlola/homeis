@@ -139,7 +139,36 @@ IHisBase* HisDevBase::Remove(CUUID puuid)
 	return HisBase::Remove(puuid);
 }
 
-void HisDevBase::Refresh(bool alarm)
+void HisDevBase::SetAlarm()
+{
+	alarm = true;
+}
+
+void HisDevBase::ResetAlarm()
+{
+	alarm = false;
+}
+
+void HisDevBase::Refresh()
+{
+	try
+	{
+		DoInternalRefresh(alarm);
+	}
+	catch(HisException & ex)
+	{
+		string msg = "Error in %s name: %s | error: %s\nStack trace: " + Stack::GetTraceString();
+		logger.Error( msg.c_str(), GetNodeName(), GetName().c_str(), ex.what());
+		OnError();
+	}
+	catch(...)
+	{
+		logger.Error("HisDevBase::Refresh | Unexpected error");
+		OnError();
+	}
+}
+
+void HisDevBase::RefreshTime(IBlockingQueue<HisDevBase*>* refreshQueue, bool alarm)
 {
 	STACK
 
@@ -149,21 +178,7 @@ void HisDevBase::Refresh(bool alarm)
 		needRefresh = false;
 		SetNextScanTime(this->scanPeriodMs);
 
-		try
-		{
-			DoInternalRefresh(alarm);
-		}
-		catch(HisException & ex)
-		{
-			string msg = "Error in %s name: %s | error: %s\nStack trace: " + Stack::GetTraceString();
-			logger.Error( msg.c_str(), GetNodeName(), GetName().c_str(), ex.what());
-			OnError();
-		}
-		catch(...)
-		{
-			logger.Error("HisDevBase::Refresh | Unexpected error");
-			OnError();
-		}
+		refreshQueue->Push(this);
 	}
 }
 

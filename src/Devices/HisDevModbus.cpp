@@ -128,6 +128,17 @@ vector<HisDevValue<bool>*> HisDevModbus::GetBoolItems()
 	return GetItems<HisDevValue<bool>>();
 }
 
+bool HisDevModbus::ResetAlarm()
+{
+	if (connection->setHolding(address,CHANGE_FLAG,1))
+	{
+		HisDevBase::ResetAlarm();
+		return true;
+	}
+
+	return false;
+}
+
 bool HisDevModbus::Scan(bool addnew)
 {
 	STACK
@@ -245,6 +256,12 @@ void HisDevModbus::DoInternalRefresh(bool alarm)
 	}
 	else
 	{
+		if (alarm)
+		{
+			if (!ResetAlarm())
+				return;
+		}
+
 		if (refreshOutputs)
 		{
 			refreshOutputs = false;

@@ -19,6 +19,10 @@ public:
 	virtual bool Exists(string path)=0;
 	virtual bool Create(string path)=0;
 	virtual vector<string> GetFileList(string dir)=0;
+	virtual ~IDirectory()
+	{
+
+	}
 };
 
 

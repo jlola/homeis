@@ -78,10 +78,10 @@ Home information system %d.%d.%8d\n\
 //	//if (!modbus.Send((uint8_t*)&strtosend,strtosend.size()))
 //	uint16_t* array[1000];
 //
-//	//while(1)
+//	while(1)
 //	{
 //
-//	if (modbus.getHoldings(0x06,0,100,(uint16_t* )array,50))
+//	if (modbus.getHoldings(0x06,0,1,(uint16_t* )array,50))
 //	{
 //		logger.Info("Received");
 //	}
@@ -89,7 +89,6 @@ Home information system %d.%d.%8d\n\
 //	{
 //		logger.Error("Timeout");
 //	}
-//
 //	}
 
 

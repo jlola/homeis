@@ -23,27 +23,39 @@
 #include "logger.h"
 #include "HisDevices.h"
 #include "ModbusSimulator.h"
+#include "BlockingQueue.h"
+#include "HisException.h"
 
-HisDevices::HisDevices(string fileName ,IModbusProvider* modbusProvider)
+
+HisDevices::HisDevices(string fileName ,IModbusProvider* modbusProvider,IBlockingQueue<HisDevBase*>* deviceQueue)
  : logger(CLogger::GetLogger())
 {
+	if (deviceQueue==NULL)
+		throw ArgumentNullException("deviceQueue");
+	if (modbusProvider==NULL)
+			throw ArgumentNullException("modbusProvider");
+
 	this->modbusProvider = modbusProvider;
 	devicesFileName = fileName;
 	doc = NULL;
 	onRefreshdelegate = OnRefreshDelegate::from_method<HisDevices, &HisDevices::AddToRefreshQueue>(this);
+	this->deviceQueue = deviceQueue;
+	RegisterToModbus();
+}
+
+void HisDevices::RegisterToModbus()
+{
+	auto connectors = modbusProvider->GetConnectors();
+	for(size_t i=0;i<connectors.size();i++)
+	{
+		connectors[i]->AddConsumer(this);
+	}
 }
 
 void HisDevices::AddToRefreshQueue(HisDevBase* hisDevBase)
 {
 	STACK
-	logger.Trace("AddToRefreshQueue before refreshMutex.Lock()");
-	refreshMutex.Lock();
-	logger.Trace("AddToRefreshQueue after refreshMutex.Lock()");
-	logger.Trace("AddToRefreshQueue Add %s to refresh queue." ,hisDevBase->GetName().c_str());
-	devqueue.push(hisDevBase);
-	logger.Trace("AddToRefreshQueue before refreshMutex.Unlock()");
-	refreshMutex.Unlock();
-	logger.Trace("AddToRefreshQueue after refreshMutex.Unlock()");
+	this->deviceQueue->Push(hisDevBase);
 }
 
 HisDevBase *HisDevices::operator[](unsigned int i)
@@ -53,6 +65,20 @@ HisDevBase *HisDevices::operator[](unsigned int i)
 		return devices[i];
 	}
 	return NULL;
+}
+
+void HisDevices::FireEvent(int adr)
+{
+	STACK
+
+	auto devIndex = FindModbusDev(adr);
+	if (devIndex >=0)
+	{
+		auto dev = this->operator [](devIndex);
+		dev->SetAlarm();
+		this->deviceQueue->Push(dev);
+	}
+
 }
 
 HisDevices::~HisDevices()
@@ -225,58 +251,59 @@ HisDevValueBase* HisDevices::FindValue(CUUID valueId)
 
 void HisDevices::Refresh()
 {
-	HisDevBase* dev = NULL;
 	STACK
 	for(uint i=0;i<devices.size();i++)
 	{
 		if (devices[i]->IsEnabled())
-			devices[i]->Refresh(false);
+			devices[i]->RefreshTime(deviceQueue,false);
 
-		//HisDevBase* alarmedDevice = ReadAlarmDevice();
-		//if (alarmedDevice!=NULL && alarmedDevice->IsEnabled())
-		//	alarmedDevice->Refresh(true);
+//		HisDevBase* alarmedDevice = ReadAlarmDevice();
+//		if (alarmedDevice!=NULL && alarmedDevice->IsEnabled())
+//			alarmedDevice->Refresh(true);
 
-		while (devqueue.size()>0)
-		{
-			logger.Trace("Refresh before refreshMutex.Lock()");
-			refreshMutex.Lock();
-			logger.Trace("Refresh after refreshMutex.Lock()");
-			dev = devqueue.front();
-			devqueue.pop();
-			logger.Trace("Refresh before refreshMutex.Unlock()");
-			refreshMutex.Unlock();
-			logger.Trace("Refresh after refreshMutex.Unlock()");
-			logger.Trace("Refresh from queue: %s" ,dev->GetName().c_str());
-			if (dev->IsEnabled())
-				dev->Refresh(false);
-
-		}
-		usleep(10000);
+//		while (devqueue.size()>0)
+//		{
+//			logger.Trace("Refresh before refreshMutex.Lock()");
+//			refreshMutex.Lock();
+//			logger .Trace("Refresh after refreshMutex.Lock()");
+//			dev = devqueue.front();
+//			devqueue.pop();
+//			logger.Trace("Refresh before refreshMutex.Unlock()");
+//			refreshMutex.Unlock();
+//			logger.Trace("Refresh after refreshMutex.Unlock()");
+//			logger.Trace("Refresh from queue: %s" ,dev->GetName().c_str());
+//			if (dev->IsEnabled())
+//				dev->Refresh(false);
+//
+//		}
+		usleep(1000);
 	}
 }
 
 
-HisDevBase* HisDevices::ReadAlarmDevice()
-{
-	uint16_t field[2];
-	uint32_t timeoutMs = 50;
-	auto connectors = modbusProvider->GetConnectors();
-	for (size_t i=0;i<connectors.size();i++)
-	{
-		if (connectors[i]->GetDriverName()!=ModbusSimulator::DriverName)
-		{
-			if (connectors[i]->getHoldings(1,DEVADDR_OFFSET,2,field,timeoutMs))
-			{
-				usleep(100000);
-				//reset by set 1
-				connectors[i]->setHolding(field[0],CHANGE_FLAG,1);
-				int i = FindModbusDev(field[0]);
-				if (i>=0) return devices[i];
-			}
-		}
-	}
-	return NULL;
-}
+//HisDevBase* HisDevices::ReadAlarmDevice(IModbus* modbus)
+//{
+//	auto connectors = modbusProvider->GetConnectors();
+//	for (size_t i=0;i<connectors.size();i++)
+//	{
+//		if (connectors[i]->GetDriverName()!=ModbusSimulator::DriverName)
+//		{
+//			auto addr = connectors[i]->WaitForAddress();
+//			if (addr > 1)
+//			{
+//				usleep(10000);
+//				//reset by set 1
+//				if (connectors[i]->setHolding(addr,CHANGE_FLAG,1))
+//				{
+//					CLogger::GetLogger().Info("Alarmed device addr: %d",addr);
+//					int i = FindModbusDev(addr);
+//					if (i>=0) return devices[i];
+//				}
+//			}
+//		}
+//	}
+//	return NULL;
+//}
 
 int HisDevices::FindModbusDev(int addressId)
 {

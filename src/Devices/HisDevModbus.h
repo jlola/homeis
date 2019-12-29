@@ -25,6 +25,13 @@
 #define PROP_ADDRESS BAD_CAST "Address"
 #define PROP_CONNECTION_NAME BAD_CAST "ConnectionName"
 
+#define DEVICEBASE 						0
+#define DEVADDR_OFFSET					DEVICEBASE+0
+#define COUNT_OF_TYPES_OFFSET			DEVICEBASE+1
+#define TYPE_DEFS_OFFSET				DEVICEBASE+2
+#define RESET_REG_OFFSET				DEVICEBASE+3
+#define LAST_INDEX						DEVICEBASE+4
+#define CHANGE_FLAG						DEVICEBASE+5
 
 
 class HisDevModbus : public HisDevBase, public IHisDevModbus
@@ -59,7 +66,11 @@ class HisDevModbus : public HisDevBase, public IHisDevModbus
 
 	void ReleaseResources();
 
+	bool ResetAlarm();
+
 public:
+
+
 
 	void Add(IHisBase *pitem);
 

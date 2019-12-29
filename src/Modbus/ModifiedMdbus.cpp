@@ -10,8 +10,11 @@
 #include "ModbusRequest.h"
 #include "logger.h"
 #include <byteswap.h>
+#include <unistd.h>
 using namespace std;
 #include "crc.h"
+#include "BlockingQueue.h"
+#include "PoppyDebugTools.h"
 
 string ModifiedMdbus::DriverName = "modbus";
 
@@ -21,6 +24,8 @@ ModifiedMdbus::ModifiedMdbus(SSerPortConfig config) :
 		serialPort(config.Port,BaudRate::B_115200)
 {
 	modbusmutex = HisLock::CreateMutex();
+	receiving = false;
+	events = new BlockingQueue<int>();
 }
 
 bool ModifiedMdbus::Init()
@@ -47,36 +52,106 @@ string ModifiedMdbus::GetDriverName()
 
 bool ModifiedMdbus::Send(uint8_t* data,uint16_t len,const int timeoutMs)
 {
-	buffer.clear();
+	getholdingsBuffer.clear();
 	serialPort.Write(data,len);
 	event.Reset();
 	auto signaled = event.Wait(timeoutMs);
 	return signaled;
 }
 
-void ModifiedMdbus::OnData(std::vector<uint8_t> data)
+void ModifiedMdbus::AddConsumer(IDeviceEventConsumer* consumer)
 {
-	for (size_t i=0;i<data.size();i++)
-		buffer.push_back(data[i]);
-
-	if (DataCompleted())
+	if (consumer!=NULL)
 	{
-		event.Signal();
+		consumers.push_back(consumer);
 	}
 }
 
-bool ModifiedMdbus::DataCompleted()
+void ModifiedMdbus::Stop()
 {
-	if (buffer[OFFSET_FUNC]==FUNC_GETHOLDINGS)
+	events->RequestShutdown();
+}
+
+int ModifiedMdbus::WaitForAddress()
+{
+	int addr;
+
+	if (events->Pop(addr))
 	{
-								/*addr + func + countValue+count+2crc*/
-		const size_t totalCount = 3 + buffer[OFFSET_COUNT] + 2;
-		return buffer.size() == totalCount;
+		return addr;
 	}
-	if (buffer[OFFSET_FUNC]==FUNC_SETHOLDING)
+	return -1;
+}
+
+void ModifiedMdbus::OnData(std::vector<uint8_t> data)
+{
+	STACK
+
+	receiving = true;
+	bool isvalid;
+	for (size_t i=0;i<data.size();i++)
 	{
-		const size_t totalCount = 8;/*addr + func + firsthi + firstlo+valueHI+valueLow+2crc*/
-		return buffer.size() == totalCount;
+		buffer.push_back(data[i]);
+		if (DataCompleted(isvalid))
+		{
+			if (event.IsWaiting())
+			{
+				for(size_t c=0;c<buffer.size();c++)
+				{
+					getholdingsBuffer.push_back(buffer[c]);
+				}
+				buffer.clear();
+				event.Signal();
+			}
+			else
+			{
+				if (!checkFrameCrc(&buffer[0],buffer.size()))
+				{
+					CLogger::GetLogger().Error("Received wrong data first byte: %d",buffer[0]);
+				}
+				else
+				{
+					//fire event on consumers
+					for(size_t i=0;i<consumers.size();i++)
+						consumers[i]->FireEvent(buffer[0]);
+				}
+			}
+		}
+		else if (!isvalid)
+		{
+			buffer.clear();
+		}
+	}
+
+	if (!event.IsWaiting())
+		buffer.clear();
+
+
+	receiving = false;
+}
+
+bool ModifiedMdbus::DataCompleted(bool & valid)
+{
+	valid = true;
+	if (buffer.size() > OFFSET_FUNC)
+	{
+		if (buffer[OFFSET_FUNC]==FUNC_GETHOLDINGS)
+		{
+								/*addr + func + countValue+count+2crc*/
+			const size_t totalCount = 3 + buffer[OFFSET_COUNT] + 2;
+			if (buffer.size() > totalCount) valid = false;
+			return buffer.size() == totalCount;
+		}
+		else if (buffer[OFFSET_FUNC]==FUNC_SETHOLDING)
+		{
+			const size_t totalCount = 8;/*addr + func + firsthi + firstlo+valueHI+valueLow+2crc*/
+			if (buffer.size() > totalCount) valid = false;
+			return buffer.size() == totalCount;
+		}
+		else
+		{
+			valid = false;
+		}
 	}
 	return false;
 }
@@ -111,6 +186,9 @@ bool ModifiedMdbus::setHolding(uint16_t address,uint16_t offset, uint16_t val)
 {
 	HisLock lock(modbusmutex);
 
+	while(receiving)
+		usleep(1000);
+
 	const int func = 0x06;
 	int timeoutMs = 50;
 
@@ -121,17 +199,16 @@ bool ModifiedMdbus::setHolding(uint16_t address,uint16_t offset, uint16_t val)
 	request.Count = bswap_16(val);
 	request.CRC = crc.calc((uint8_t*)&request, sizeof(request)-2);
 
-
 	if (Send((uint8_t*)&request, sizeof(request),timeoutMs))
 	{
-		ModbusRequest response = *(ModbusRequest*)&buffer[0];
+		ModbusRequest response = *(ModbusRequest*)&getholdingsBuffer[0];
 		if (response.Address == request.Address &&
 			response.CRC == request.CRC)
 			return true;
 	}
 	else
 	{
-		logger.Error("Error getHolding: %d, error: %s",address,"timeout");
+		logger.Error("Error setHolding: %d, error: %s",address,"timeout");
 	}
 	return false;
 }
@@ -160,6 +237,10 @@ bool ModifiedMdbus::checkFrameCrc(const uint8_t *p, uint8_t length) {
 bool ModifiedMdbus::getHoldings(uint16_t address,uint16_t offset,uint16_t count,uint16_t* target, uint32_t timeoutMs)
 {
 	HisLock lock(modbusmutex);
+
+	while(receiving)
+		usleep(1000);
+
 	ModbusRequest request;
 	request.Address = address;
 	request.Function = FUNC_GETHOLDINGS;
@@ -171,17 +252,17 @@ bool ModifiedMdbus::getHoldings(uint16_t address,uint16_t offset,uint16_t count,
 	if (Send((uint8_t*)&request, sizeof(request),timeoutMs))
 	{
 		//check buffer
-		if (buffer[0]!=address)
+		if (getholdingsBuffer[0]!=address)
 			logger.Error("Error getHolding: %d, error: %s",address,"wrong address");
-		else if (buffer[1]!=FUNC_GETHOLDINGS)
+		else if (getholdingsBuffer[1]!=FUNC_GETHOLDINGS)
 			logger.Error("Error getHolding: %d, error: %s",address,"incorrect function");
-		else if (buffer[2]!=count*2)
-			logger.Error("Error getHolding: %d, error: incorrect count of bytes request:%d, response:%d",address,count*2,buffer[2]);
-		else if (!checkFrameCrc(&buffer[0],buffer.size()))
+		else if (getholdingsBuffer[2]!=count*2)
+			logger.Error("Error getHolding: %d, error: incorrect count of bytes request:%d, response:%d",address,count*2,getholdingsBuffer[2]);
+		else if (!checkFrameCrc(&getholdingsBuffer[0],getholdingsBuffer.size()))
 			logger.Error("Error getHolding: %d, error: %s",address,"incorrect crc");
 		else
 		{
-			memcpy(target,&buffer[3],count*2);
+			memcpy(target,&getholdingsBuffer[3],count*2);
 			for (int i=0;i<count;i++)
 				target[i] = bswap_16(target[i]);
 			return true;

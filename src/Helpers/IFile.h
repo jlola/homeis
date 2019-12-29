@@ -20,6 +20,9 @@ public:
 	virtual bool Delete(string fileName)=0;
 	virtual string ReadWholeFile(string filePath)=0;
 	virtual string getexefile()=0;
+	virtual ~IFile(){
+
+		}
 };
 
 

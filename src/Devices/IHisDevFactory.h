@@ -16,6 +16,8 @@
 #include "IFile.h"
 #include "IDirectory.h"
 #include "IHttpHeadersProvider.h"
+//#include "HisDevBase.h"
+//#include "IBlockingQueue.h"
 
 class IHisDevFactory
 {

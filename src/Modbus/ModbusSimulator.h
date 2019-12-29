@@ -42,6 +42,11 @@ public:
 	bool getHoldings(uint16_t address,uint16_t offset,uint16_t count,uint16_t* target);
 	bool getHoldings(uint16_t address,uint16_t offset,uint16_t count,uint16_t* target,uint32_t timeOutMs);
 
+	bool WaitForAlarm();
+	int GetAlarmAddress();
+
+	void AddConsumer(IDeviceEventConsumer* consumer);
+
 	~ModbusSimulator();
 };
 

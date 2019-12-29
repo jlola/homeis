@@ -15,11 +15,12 @@ class Event
 {
 private:
     bool m_bFlag;
+    bool isWaiting;
     mutable std::mutex m_mutex;
     mutable std::condition_variable m_condition;
 
 public:
-    inline Event() : m_bFlag(false) { }
+    inline Event() : m_bFlag(false),isWaiting(false) { }
 
     inline void Wait() const
     {
@@ -28,14 +29,17 @@ public:
     }
 
     //template< typename R,typename P >
-        bool Wait(const int crRelTime) const
-        {
-        	std::chrono::milliseconds ms(crRelTime);
-            std::unique_lock<std::mutex> lock(m_mutex);
-            if (!m_condition.wait_for(lock,ms,[&]()->bool{ return m_bFlag; }))
-                return false;
-            return true;
-        }
+	bool Wait(const int crRelTime)
+	{
+		isWaiting = true;
+		std::chrono::milliseconds ms(crRelTime);
+		std::unique_lock<std::mutex> lock(m_mutex);
+		bool result = m_condition.wait_for(lock,ms,[&]()->bool{ return m_bFlag; });
+		isWaiting = false;
+		if (!result)
+			return false;
+		return true;
+	}
 
     inline bool Signal()
     {
@@ -50,6 +54,7 @@ public:
 
     inline bool Reset()
     {
+    	if (isWaiting) return false;
         bool bWasSignalled;
         m_mutex.lock();
         bWasSignalled = m_bFlag;
@@ -59,6 +64,8 @@ public:
     }
 
     inline bool IsSet() const { return m_bFlag; }
+
+    inline bool IsWaiting() const { return isWaiting; }
 };
 
 #endif /* SRC_COMMON_EVENT_H_ */

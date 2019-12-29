@@ -36,6 +36,10 @@ public:
 	virtual SSmtpSettings GetSmtpSettings()=0;
 
 	virtual vector<SSerPortConfig> GetSerialPorts()=0;
+
+	virtual ~IConfig() {
+
+	}
 };
 
 #endif /* SRC_ICONFIG_H_ */

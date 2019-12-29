@@ -11,17 +11,20 @@
 #include <pthread.h>
 #include "HisDevices.h"
 #include "logger.h"
+#include "BlockingQueue.h"
+
 
 class HisDevRuntime
 {
+	BlockingQueue<int>* queue;
 	ILogger & logger;
 	HisDevices & devices;
-	pthread_t thread;
+	pthread_t refreshThread;
 	bool running;
-	static void* ThreadFunction(void* obj);
+	static void* RefreshThreadFunction(void* obj);
 public:
 	HisDevRuntime(HisDevices & pdevices);
-	void ThreadMethod();
+	void Refresh();
 	void Start();
 	void Stop();
 };

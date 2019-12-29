@@ -21,6 +21,11 @@ string ModbusSimulator::GetDriverName()
 	return ModbusSimulator::DriverName;
 }
 
+void ModbusSimulator::AddConsumer(IDeviceEventConsumer* consumer)
+{
+
+}
+
 ModbusSimulator::ModbusSimulator(SSerPortConfig config,const uint16_t registers[], uint16_t length)
 {
 	this->registers = new uint16_t[length];
@@ -45,6 +50,15 @@ void ModbusSimulator::SetRegisters(uint16_t registers[], uint16_t length)
 	}
 
 	memcpy(this->registers,registers,length*sizeof(uint16_t));
+}
+
+bool ModbusSimulator::WaitForAlarm()
+{
+	return false;
+}
+int ModbusSimulator::GetAlarmAddress()
+{
+	return -1;
 }
 
 bool ModbusSimulator::Init()

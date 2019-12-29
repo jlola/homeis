@@ -13,6 +13,7 @@
 #include <iostream>
 #include <vector>
 #include <thread>
+#include <queue>
 #include <mutex>
 #include <condition_variable>
 #include "Event.h"
@@ -22,6 +23,7 @@
 #include "ILogger.h"
 #include "Common/HisLock.h"
 #include "linuxcs.h"
+#include "IBlockingQueue.h"
 
 using namespace mn;
 using namespace CppLinuxSerial;
@@ -40,15 +42,21 @@ class ModifiedMdbus : public ISerialReceiver, public IModbus
 	SSerPortConfig config;
 	SerialPort serialPort;
 	vector<uint8_t> buffer;
+	vector<uint8_t> getholdingsBuffer;
+	vector<IDeviceEventConsumer*> consumers;
+	IBlockingQueue<int>* events;
 	bool Send(uint8_t* data,uint16_t len,const int timeoutMs);
+	bool receiving;
 public:
 	static string DriverName;
+
+	void Stop();
 
 	ModifiedMdbus(SSerPortConfig config);
 
 	void OnData(std::vector<uint8_t> data);
 
-	bool DataCompleted();
+	bool DataCompleted(bool & valid);
 
 	bool Init();
 
@@ -74,6 +82,9 @@ public:
 	bool getHoldings(uint16_t address,uint16_t offset,uint16_t count,uint16_t* target);
 	bool getHoldings(uint16_t address,uint16_t offset,uint16_t count,uint16_t* target, uint32_t timeOutMs);
 
+	int WaitForAddress();
+
+	void AddConsumer(IDeviceEventConsumer* consumer);
 
 	virtual ~ModifiedMdbus();
 };

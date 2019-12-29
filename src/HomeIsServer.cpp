@@ -92,10 +92,15 @@ HomeIsServer::HomeIsServer(IModbusProvider & modbusprovider,
 		connectorsService(NULL),
 		logservice(NULL),
 		usersService(NULL),
+		versionService(NULL),
+		deviceQueue(NULL),
+		modbusProcessor(NULL),
 		emailSender(emailSender),
 		userManager(NULL)
 
 {
+	deviceQueue = new BlockingQueue<HisDevBase*>();
+	modbusProcessor = new ModbusProcessor(deviceQueue);
 	ws_i = new webserver(cw);
 }
 
@@ -131,8 +136,9 @@ void HomeIsServer::InitWebServer(bool blocking)
 
 bool HomeIsServer::InitHisDevices(string devicesxml,string foldersxml,string usersxml)
 {
+
 	expressionRuntime = new ExpressionRuntime();
-	devs = new HisDevices(devicesxml,&modbusProvider);
+	devs = new HisDevices(devicesxml,&modbusProvider,deviceQueue);
 	userManager = new UserManager(usersxml,300);
 
 	factory = new HisDevFactory(expressionRuntime,
@@ -151,7 +157,11 @@ bool HomeIsServer::InitHisDevices(string devicesxml,string foldersxml,string use
 
 	devruntime = new HisDevRuntime(*devs);
 	expressionRuntime->Start();
+	//consumer blocking queue
+	modbusProcessor->Start();
+	//time consumer + events from expressions + alarm consumer from bus
 	devruntime->Start();
+
 	return true;
 }
 

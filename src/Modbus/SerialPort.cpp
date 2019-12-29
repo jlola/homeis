@@ -37,6 +37,8 @@ namespace CppLinuxSerial {
         baudRate_ = defaultBaudRate_;
         readBufferSize_B_ = defaultReadBufferSize_B_;
         readBuffer_.reserve(readBufferSize_B_);
+        thread = 0;
+        receiver = NULL;
 	}
 
 	SerialPort::SerialPort(const std::string& device, BaudRate baudRate) :
@@ -114,6 +116,50 @@ namespace CppLinuxSerial {
         ConfigureTermios();
 	}
 
+//	int
+//	set_interface_attribs (int speed, int parity)
+//	{
+//	        struct termios tty;
+//	        memset (&tty, 0, sizeof tty);
+//	        if (tcgetattr (fd, &tty) != 0)
+//	        {
+//	        	throw std::system_error(EFAULT, std::system_category());
+//	                return -1;
+//	        }
+//
+//	        cfsetospeed (&tty, speed);
+//	        cfsetispeed (&tty, speed);
+//
+//	        tty.c_cflag = (tty.c_cflag & ~CSIZE) | CS8;     // 8-bit chars
+//	        // disable IGNBRK for mismatched speed tests; otherwise receive break
+//	        // as \000 chars
+//	        tty.c_iflag &= ~IGNBRK;         // disable break processing
+//	        tty.c_lflag = 0;                // no signaling chars, no echo,
+//	                                        // no canonical processing
+//	        tty.c_oflag = 0;                // no remapping, no delays
+//	        tty.c_cc[VMIN]  = 0;            // read doesn't block
+//	        tty.c_cc[VTIME] = 5;            // 0.5 seconds read timeout
+//
+//	        tty.c_iflag &= ~(IXON | IXOFF | IXANY); // shut off xon/xoff ctrl
+//
+//	        tty.c_cflag |= (CLOCAL | CREAD);// ignore modem controls,
+//	                                        // enable reading
+//	        tty.c_cflag &= ~(PARENB | PARODD);      // shut off parity
+//	        tty.c_cflag |= parity;
+//	        tty.c_cflag &= ~CSTOPB;
+//	        tty.c_cflag &= ~CRTSCTS;
+//
+//	        if (tcsetattr (fd, TCSANOW, &tty) != 0)
+//	        {
+//	        	throw std::system_error(EFAULT, std::system_category());
+//	                return -1;
+//	        }
+//
+//	        this->SetTermios(tty);
+//
+//	        return 0;
+//	}
+
 	void SerialPort::ConfigureTermios()
 	{
 		std::cout << "Configuring COM port \"" << device_ << "\"." << std::endl;
@@ -179,14 +225,14 @@ namespace CppLinuxSerial {
             // Always wait for at least one byte, this could
             // block indefinitely
             tty.c_cc[VTIME] = 0;
-            tty.c_cc[VMIN] = 1;
+            tty.c_cc[VMIN] = 7;
         } else if(timeout_ms_ == 0) {
             // Setting both to 0 will give a non-blocking read
             tty.c_cc[VTIME] = 0;
             tty.c_cc[VMIN] = 0;
         } else if(timeout_ms_ > 0) {
             tty.c_cc[VTIME] = (cc_t)(timeout_ms_/100);    // 0.1 seconds read timeout
-            tty.c_cc[VMIN] = 1;
+            tty.c_cc[VMIN] = 7;
         }
 
 
@@ -209,6 +255,25 @@ namespace CppLinuxSerial {
 
 		// Try and use raw function call
 		//cfmakeraw(&tty);
+
+		tty.c_cflag = (tty.c_cflag & ~CSIZE) | CS8;     // 8-bit chars
+			        // disable IGNBRK for mismatched speed tests; otherwise receive break
+			        // as \000 chars
+			        tty.c_iflag &= ~IGNBRK;         // disable break processing
+			        tty.c_lflag = 0;                // no signaling chars, no echo,
+			                                        // no canonical processing
+			        tty.c_oflag = 0;                // no remapping, no delays
+			        //tty.c_cc[VMIN]  = 0;            // read doesn't block
+			        //tty.c_cc[VTIME] = 5;            // 0.5 seconds read timeout
+
+			        tty.c_iflag &= ~(IXON | IXOFF | IXANY); // shut off xon/xoff ctrl
+
+			        tty.c_cflag |= (CLOCAL | CREAD);// ignore modem controls,
+			                                        // enable reading
+			        tty.c_cflag &= ~(PARENB | PARODD);      // shut off parity
+			        tty.c_cflag |= 0/*parity*/;
+			        tty.c_cflag &= ~CSTOPB;
+			        tty.c_cflag &= ~CRTSCTS;
 
 		this->SetTermios(tty);
 
