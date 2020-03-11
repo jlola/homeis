@@ -14,7 +14,7 @@
 #include <vector>
 #include "Common/HisLock.h"
 #include "HomeIsConfig.h"
-#include "Logger.h"
+#include "logger.h"
 
 using namespace std;
 
