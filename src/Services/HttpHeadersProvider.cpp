@@ -23,11 +23,11 @@ string HttpHeadersProvider::GetContentTypeAppJson()
 	return "application/json";
 }
 
-http_response_builder& HttpHeadersProvider::AddHeaders(http_response_builder & responseBuilder)
+std::shared_ptr<http_response> & HttpHeadersProvider::AddHeaders(std::shared_ptr<http_response> & response)
 {
 	if (allowOrigin.length()>0)
-		responseBuilder.with_header("Access-Control-Allow-Origin",allowOrigin);
-	return responseBuilder;
+		response->with_header("Access-Control-Allow-Origin",allowOrigin);
+	return response;
 }
 
 string HttpHeadersProvider::GetMessageJson(string msg)

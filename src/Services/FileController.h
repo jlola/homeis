@@ -21,7 +21,7 @@ class FileController : public ServiceBase {
 				IUserManager* userManager,
 				IHisDevFactory* factory
 				);
-		const http_response GET(const http_request&);
+		const std::shared_ptr<http_response> GET(const http_request&);
 };
 
 

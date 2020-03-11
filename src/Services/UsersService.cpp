@@ -5,7 +5,7 @@
  *      Author: pc
  */
 #include <string.h>
-#include <httpserver.hpp>
+#include "httpserver.hpp"
 #include "PoppyDebugTools.h"
 #include "microhttpd.h"
 #include "HisException.h"
@@ -28,7 +28,7 @@ UsersService::UsersService(webserver* ws_i, IUserManager* userManager, IHisDevFa
 	ws_i->register_resource(string("api/users/changepassword"), this, true);
 }
 
-const http_response UsersService::GET(const http_request& req)
+const std::shared_ptr<http_response> UsersService::GET(const http_request& req)
 {
 	STACK
 	Document respjsondoc;
@@ -137,7 +137,7 @@ void UsersService::UserToJson(IUser* user, Value & userJson, Document & respjson
 }
 
 
-const http_response UsersService::POST(const http_request& req)
+const std::shared_ptr<http_response> UsersService::POST(const http_request& req)
 {
 	STACK
 	std::string content = req.get_content();
@@ -207,7 +207,7 @@ string UsersService::GetUserNameFromJson(string content)
 	return userName;
 }
 
-const http_response UsersService::PUT(const http_request& req)
+const std::shared_ptr<http_response> UsersService::PUT(const http_request& req)
 {
 	STACK
 	std::string content = req.get_content();
@@ -316,7 +316,7 @@ bool UsersService::Logout(string strjson, string ip)
 	return false;
 }
 
-const http_response UsersService::DELETE(const http_request& req)
+const std::shared_ptr<http_response> UsersService::DELETE(const http_request& req)
 {
 	STACK
 	std::string content = req.get_content();

@@ -33,7 +33,7 @@ ModbusDeviceService::~ModbusDeviceService()
 
 }
 
-const http_response ModbusDeviceService::GET(const http_request& req)
+const std::shared_ptr<http_response> ModbusDeviceService::GET(const http_request& req)
 {
 	STACK
 	int response_code = MHD_HTTP_FORBIDDEN;

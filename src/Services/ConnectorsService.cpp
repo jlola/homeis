@@ -19,7 +19,7 @@ ConnectorsService::ConnectorsService(IModbusProvider & provider,
 	ws_i->register_resource("api/connectors", this, true);
 }
 
-const http_response ConnectorsService::GET(const http_request& req)
+const std::shared_ptr<http_response> ConnectorsService::GET(const http_request& req)
 {
 	Document respjsondoc;
 	respjsondoc.SetArray();

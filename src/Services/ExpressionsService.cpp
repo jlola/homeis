@@ -40,7 +40,7 @@ ExpressionService::~ExpressionService(void)
 
 }
 
-const http_response ExpressionService::GET(const http_request& req)
+const std::shared_ptr<http_response> ExpressionService::GET(const http_request& req)
 {
 	STACK
 	Document respjsondoc;
@@ -451,7 +451,7 @@ LuaExpression* ExpressionService::CreateOrUpdateExpression(string strJson,string
 	}
 }
 
-const http_response ExpressionService::POST(const http_request& req)
+const std::shared_ptr<http_response> ExpressionService::POST(const http_request& req)
 {
 	STACK
 	std::string content = req.get_content();
@@ -479,7 +479,7 @@ const http_response ExpressionService::POST(const http_request& req)
 	return CreateResponseString(message,response_code);
 }
 
-const http_response ExpressionService::PUT(const http_request& req)
+const std::shared_ptr<http_response> ExpressionService::PUT(const http_request& req)
 {
 	STACK
 	std::string content = req.get_content();
@@ -513,7 +513,7 @@ const http_response ExpressionService::PUT(const http_request& req)
 	return CreateResponseString(message,response_code);
 }
 
-const http_response ExpressionService::DELETE(const http_request& req)
+const std::shared_ptr<http_response> ExpressionService::DELETE(const http_request& req)
 {
 	STACK
 	int response_code = MHD_HTTP_FORBIDDEN;

@@ -27,7 +27,7 @@ FileController::FileController(webserver* ws_i,
 	ws_i->register_resource(string("files/{path}"), this, true);
 }
 
-const http_response FileController::GET(const http_request& r)
+const std::shared_ptr<http_response> FileController::GET(const http_request& r)
 {
 	STACK
 	File file;
@@ -42,13 +42,13 @@ const http_response FileController::GET(const http_request& r)
 	if (strfile.find(".css")!= std::string::npos)
 	{
 		//*res = new http_file_response(file, 200, "text/css");
-		http_response resp(http_response_builder(strfile, 200, "text/css").file_response());
+		std::shared_ptr<http_response> resp = std::shared_ptr<http_response>(new file_response(strfile, 200, "text/css"));
 		return resp;
 	}
 	else
 	{
 		//*res = new http_file_response(file, 200, "text/html");
-		http_response resp(http_response_builder(strfile, 200, "text/html").file_response());
+		std::shared_ptr<http_response> resp = std::shared_ptr<http_response>(new file_response(strfile, 200, "text/html"));
 		return resp;
 	}
 }

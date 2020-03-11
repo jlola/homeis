@@ -24,7 +24,7 @@ ModbusService::ModbusService(IModbusProvider* mm,
 	ws_i->register_resource("api/modbus/registers/{connectorname}/{devaddress}/{baseaddress}/{value}", this, true);
 }
 
-const http_response ModbusService::GET(const http_request& req)
+const std::shared_ptr<http_response> ModbusService::GET(const http_request& req)
 {
 	//api/modbus/holdings/{connectorname}/{devaddress}/{baseaddress}/{count}
 	string connectorName = req.get_arg("connectorname");
@@ -86,7 +86,7 @@ const http_response ModbusService::GET(const http_request& req)
 	return CreateResponseString(json,response_code);
 }
 
-const http_response ModbusService::PUT(const http_request& req)
+const std::shared_ptr<http_response> ModbusService::PUT(const http_request& req)
 {
 	string connectorName = req.get_arg("connectorname");
 	string strDevAddress = req.get_arg("devaddress");

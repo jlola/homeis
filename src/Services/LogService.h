@@ -8,7 +8,7 @@
 #ifndef SRC_SERVICES_LOGSERVICE_H_
 #define SRC_SERVICES_LOGSERVICE_H_
 
-#include <httpserver.hpp>
+#include "httpserver.hpp"
 #include "HttpHeadersProvider.h"
 #include "logger.h"
 #include "File.h"
@@ -28,7 +28,7 @@ public:
 			IUserManager* userManager,
 			IHisDevFactory* factory);
 	//void render_GET(const http_request&, http_response**);
-	const http_response GET(const http_request& req);
+	const std::shared_ptr<http_response> GET(const http_request& req);
 	virtual ~LogService();
 };
 

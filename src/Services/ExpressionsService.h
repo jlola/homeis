@@ -48,10 +48,10 @@ public:
 	static void ExpressionToJson(HisDevices* devices, Value & d, LuaExpression *pExpression, Document & respjsondoc);
 	static void ExpressionsToJson(HisDevices* devices,string strFolderId, HisDevFolderRoot* root, Document & respjsondoc);
 	static void ExpressionDebugLogToJson(LuaExpression *pExpression, Document & respjsondoc);
-	const http_response GET(const http_request& r);
-	const http_response POST(const http_request& r);
-	const http_response PUT(const http_request& req);
-	const http_response DELETE(const http_request& req);
+	const std::shared_ptr<http_response> GET(const http_request& r);
+	const std::shared_ptr<http_response> POST(const http_request& r);
+	const std::shared_ptr<http_response> PUT(const http_request& req);
+	const std::shared_ptr<http_response> DELETE(const http_request& req);
 };
 
 #endif /* EXPRESSIONSSERVICE_H_ */

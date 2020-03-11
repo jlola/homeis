@@ -33,7 +33,7 @@ public:
 			IHisDevFactory* factory,
 			webserver* ws_i);
 	virtual ~ModbusDeviceService();
-	const http_response GET(const http_request& req);
+	const std::shared_ptr<http_response> GET(const http_request& req);
 };
 
 #endif /* SRC_SERVICES_MODBUSDEVICESERVICE_H_ */

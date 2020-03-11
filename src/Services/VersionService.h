@@ -23,7 +23,7 @@ public:
 			IUserManager* userManager,
 			IHisDevFactory* factory);
 
-	const http_response GET(const http_request& req);
+	const std::shared_ptr<http_response> GET(const http_request& req);
 	string VersionToJson();
 
 	virtual ~VersionService();

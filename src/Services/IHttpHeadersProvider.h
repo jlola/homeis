@@ -16,7 +16,7 @@ using namespace httpserver;
 class IHttpHeadersProvider
 {
 public:
-	virtual http_response_builder& AddHeaders(http_response_builder & responseBuilder)=0;
+	virtual std::shared_ptr<http_response> & AddHeaders(std::shared_ptr<http_response> & responseBuilder)=0;
 	virtual string GetContentTypeAppJson()=0;
 	virtual string GetErrorMessageJson(string message)=0;
 	virtual string GetMessageJson(string msg)=0;

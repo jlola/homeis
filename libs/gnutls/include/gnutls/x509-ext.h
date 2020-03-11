@@ -16,7 +16,7 @@
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>
  *
  */
 
@@ -162,6 +162,11 @@ int gnutls_x509_ext_import_key_usage(const gnutls_datum_t * ext,
 int gnutls_x509_ext_export_key_usage(unsigned int key_usage,
 				  gnutls_datum_t * ext);
 
+int gnutls_x509_ext_import_inhibit_anypolicy(const gnutls_datum_t * ext,
+				  unsigned int *skipcerts);
+int gnutls_x509_ext_export_inhibit_anypolicy(unsigned int skipcerts,
+				  gnutls_datum_t * ext);
+
 int gnutls_x509_ext_import_proxy(const gnutls_datum_t * ext, int *pathlen,
 			      char **policyLanguage, char **policy,
 			      size_t * sizeof_policy);
@@ -185,6 +190,14 @@ int gnutls_x509_ext_import_policies(const gnutls_datum_t * ext, gnutls_x509_poli
 int gnutls_x509_ext_export_policies(gnutls_x509_policies_t policies,
 				 gnutls_datum_t * ext);
 
+int gnutls_x509_ext_import_tlsfeatures(const gnutls_datum_t * ext,
+									   gnutls_x509_tlsfeatures_t,
+									   unsigned int flags);
+
+int gnutls_x509_ext_export_tlsfeatures(gnutls_x509_tlsfeatures_t f,
+					  gnutls_datum_t * ext);
+
+int gnutls_x509_tlsfeatures_add(gnutls_x509_tlsfeatures_t f, unsigned int feature);
 
 /* *INDENT-OFF* */
 #ifdef __cplusplus

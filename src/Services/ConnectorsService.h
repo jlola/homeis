@@ -31,7 +31,7 @@ public:
 			IUserManager* userManager,
 			IHisDevFactory* factory,
 			webserver* ws_i);
-	const http_response GET(const http_request& r);
+	const std::shared_ptr<http_response> GET(const http_request& r);
 	virtual ~ConnectorsService();
 };
 

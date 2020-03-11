@@ -18,7 +18,7 @@ VersionService::VersionService(webserver* ws_i,
 	ws_i->register_resource(string("api/version"), this, true);
 }
 
-const http_response VersionService::GET(const http_request& req)
+const std::shared_ptr<http_response> VersionService::GET(const http_request& req)
 {
 	return CreateResponseString(VersionToJson(),MHD_HTTP_OK);
 }

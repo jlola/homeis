@@ -19,9 +19,9 @@ public:
 	LoginService(void);
 	~LoginService(void);
 	//void handle( LogicalConnection* pClient, IncomingPacket* pRequest );
-	const http_response render_GET(const http_request&);
-	const http_response render_POST(const http_request& r);
-	const http_response render_PUT(const http_request& r);
+	const std::shared_ptr<http_response> render_GET(const http_request&);
+	const std::shared_ptr<http_response> render_POST(const http_request& r);
+	const std::shared_ptr<http_response> render_PUT(const http_request& r);
 
 };
 

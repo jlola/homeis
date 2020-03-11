@@ -5,10 +5,10 @@
 # It is necessary for linking the library.
 
 # The name that we can dlopen(3).
-dlname='libconfig++.so.9'
+dlname='libconfig++.so.11'
 
 # Names of this library.
-library_names='libconfig++.so.9.2.0 libconfig++.so.9 libconfig++.so'
+library_names='libconfig++.so.11.0.2 libconfig++.so.11 libconfig++.so'
 
 # The name of the static archive.
 old_library='libconfig++.a'
@@ -24,8 +24,8 @@ weak_library_names=''
 
 # Version information for libconfig++.
 current=11
-age=2
-revision=0
+age=0
+revision=2
 
 # Is this an already installed library?
 installed=yes
@@ -38,4 +38,4 @@ dlopen=''
 dlpreopen=''
 
 # Directory that this library needs to be installed in:
-libdir='/root/libconfig/lib'
+libdir='/usr/local/lib'

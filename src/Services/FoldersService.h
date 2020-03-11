@@ -32,10 +32,10 @@ public:
 			IHisDevFactory* factory,
 			webserver* ws_i);
 	~FoldersService(void);
-	const http_response GET(const http_request& req);
-	const http_response POST(const http_request& req);
-	const http_response PUT(const http_request& req);
-	const http_response DELETE(const http_request& req);
+	const std::shared_ptr<http_response> GET(const http_request& req);
+	const std::shared_ptr<http_response> POST(const http_request& req);
+	const std::shared_ptr<http_response> PUT(const http_request& req);
+	const std::shared_ptr<http_response> DELETE(const http_request& req);
 	void FoldersToJson(HisDevFolderRoot & root, HisDevFolder *pFolder, Document & respjsondoc, bool foldersOnly);
 	bool AddValueIdToFolder(string strFolderId, string strJson,string & message);
 	string DeleteDevValue(string strDevValueRecordId);

@@ -48,10 +48,10 @@ public:
 			webserver* ws_i);
 	~DevicesService(void);
 	static void FillFolderDevicesToJson(HisDevFolder* folder,Document & respjsondoc, HisDevices & dev);
-	const http_response GET(const http_request&);
-	const http_response POST(const http_request& r);
-	const http_response PUT(const http_request& req);
-	const http_response DELETE(const http_request& req);
+	const std::shared_ptr<http_response> GET(const http_request&);
+	const std::shared_ptr<http_response> POST(const http_request& r);
+	const std::shared_ptr<http_response> PUT(const http_request& req);
+	const std::shared_ptr<http_response> DELETE(const http_request& req);
 	static void FillDeviceToJson(Value & d, HisDevBase* dev,Document & respjsondoc);
 	static void DevValueToJson(Value & d, HisDevValueId* valueId,HisDevValueBase* devValue,Document & respjsondoc);
 };

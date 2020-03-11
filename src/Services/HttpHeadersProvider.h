@@ -19,7 +19,7 @@ class HttpHeadersProvider : public IHttpHeadersProvider
 	string allowOrigin;
 public:
 	HttpHeadersProvider(string allowOrigin);
-	http_response_builder& AddHeaders(http_response_builder & responseBuilder);
+	std::shared_ptr<http_response> & AddHeaders(std::shared_ptr<http_response> & responseBuilder);
 	string GetContentTypeAppJson();
 	string GetMessageJson(string message);
 	string GetErrorMessageJson(string message);

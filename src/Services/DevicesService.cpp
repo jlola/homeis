@@ -51,7 +51,7 @@ DevicesService::~DevicesService(void)
 {
 }
 
-const http_response DevicesService::GET(const http_request& req)
+const std::shared_ptr<http_response> DevicesService::GET(const http_request& req)
 {
 	STACK
 	Document respjsondoc;
@@ -322,7 +322,7 @@ void DevicesService::DevValueToJson(Value & d, HisDevValueId* valueId,HisDevValu
 	}
 }
 
-const http_response DevicesService::POST(const http_request& req)
+const std::shared_ptr<http_response> DevicesService::POST(const http_request& req)
 {
 	std::string content = req.get_content();
 	string path = req.get_path();
@@ -393,7 +393,7 @@ string DevicesService::DeviceToJson(HisDevVirtual* virtualdev)
 	return json;
 }
 
-const http_response DevicesService::PUT(const http_request& req)
+const std::shared_ptr<http_response> DevicesService::PUT(const http_request& req)
 {
 	std::string content = req.get_content();
 	string path = req.get_path();
@@ -425,7 +425,7 @@ const http_response DevicesService::PUT(const http_request& req)
 	return CreateResponseString(message,response_code);
 }
 
-const http_response DevicesService::DELETE(const http_request& req)
+const std::shared_ptr<http_response> DevicesService::DELETE(const http_request& req)
 {
 	std::string content = req.get_content();
 	string path = req.get_path();

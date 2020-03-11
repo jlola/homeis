@@ -38,7 +38,7 @@ FoldersService::~FoldersService(void)
 
 }
 
-const http_response FoldersService::GET(const http_request& req)
+const std::shared_ptr<http_response> FoldersService::GET(const http_request& req)
 {
 	STACK
 	Document respjsondoc;
@@ -222,7 +222,7 @@ bool FoldersService::AddValueIdToFolder(string strFolderId, string strJson,strin
 	return false;
 }
 
-const http_response FoldersService::POST(const http_request& req)
+const std::shared_ptr<http_response> FoldersService::POST(const http_request& req)
 {
 	STACK
 	string message = "";
@@ -344,7 +344,7 @@ bool FoldersService::CreateFolder(string strJson,string & message)
 }
 
 
-const http_response FoldersService::PUT(const http_request& req)
+const std::shared_ptr<http_response> FoldersService::PUT(const http_request& req)
 {
 	STACK
 	string message;
@@ -413,7 +413,7 @@ string FoldersService::DeleteDevValue(string strDevValueRecordId)
 	return "";
 }
 
-const http_response FoldersService::DELETE(const http_request& req)
+const std::shared_ptr<http_response> FoldersService::DELETE(const http_request& req)
 {
 	STACK
 	int response_code = MHD_HTTP_FORBIDDEN;
