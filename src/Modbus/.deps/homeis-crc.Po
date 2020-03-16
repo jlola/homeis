@@ -1,0 +1,48 @@
+Modbus/homeis-crc.o: Modbus/crc.cpp \
+ /usr/arm-linux-gnueabihf/include/stdc-predef.h Modbus/crc.h \
+ /usr/lib/gcc-cross/arm-linux-gnueabihf/8/include/stdint.h \
+ /usr/arm-linux-gnueabihf/include/stdint.h \
+ /usr/arm-linux-gnueabihf/include/bits/libc-header-start.h \
+ /usr/arm-linux-gnueabihf/include/features.h \
+ /usr/arm-linux-gnueabihf/include/sys/cdefs.h \
+ /usr/arm-linux-gnueabihf/include/bits/wordsize.h \
+ /usr/arm-linux-gnueabihf/include/bits/long-double.h \
+ /usr/arm-linux-gnueabihf/include/gnu/stubs.h \
+ /usr/arm-linux-gnueabihf/include/gnu/stubs-hard.h \
+ /usr/arm-linux-gnueabihf/include/bits/types.h \
+ /usr/arm-linux-gnueabihf/include/bits/typesizes.h \
+ /usr/arm-linux-gnueabihf/include/bits/wchar.h \
+ /usr/arm-linux-gnueabihf/include/bits/stdint-intn.h \
+ /usr/arm-linux-gnueabihf/include/bits/stdint-uintn.h
+
+/usr/arm-linux-gnueabihf/include/stdc-predef.h:
+
+Modbus/crc.h:
+
+/usr/lib/gcc-cross/arm-linux-gnueabihf/8/include/stdint.h:
+
+/usr/arm-linux-gnueabihf/include/stdint.h:
+
+/usr/arm-linux-gnueabihf/include/bits/libc-header-start.h:
+
+/usr/arm-linux-gnueabihf/include/features.h:
+
+/usr/arm-linux-gnueabihf/include/sys/cdefs.h:
+
+/usr/arm-linux-gnueabihf/include/bits/wordsize.h:
+
+/usr/arm-linux-gnueabihf/include/bits/long-double.h:
+
+/usr/arm-linux-gnueabihf/include/gnu/stubs.h:
+
+/usr/arm-linux-gnueabihf/include/gnu/stubs-hard.h:
+
+/usr/arm-linux-gnueabihf/include/bits/types.h:
+
+/usr/arm-linux-gnueabihf/include/bits/typesizes.h:
+
+/usr/arm-linux-gnueabihf/include/bits/wchar.h:
+
+/usr/arm-linux-gnueabihf/include/bits/stdint-intn.h:
+
+/usr/arm-linux-gnueabihf/include/bits/stdint-uintn.h:

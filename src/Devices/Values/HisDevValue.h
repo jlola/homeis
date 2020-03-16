@@ -11,8 +11,8 @@
 #include <map>
 #include <libxml/parser.h>
 #include <libxml/tree.h>
-#include "srutil/event/event.hpp"
-#include "srutil/delegate/delegate.hpp"
+#include "event/event.hpp"
+#include "delegate/delegate.hpp"
 #include "Common/DateTime.h"
 
 #include "logger.h"

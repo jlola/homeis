@@ -1,0 +1,130 @@
+lua-5.2.1/src/src3party-lstate.o: lua-5.2.1/src/lstate.c \
+ /usr/include/stdc-predef.h \
+ /usr/lib/gcc/x86_64-linux-gnu/8/include/stddef.h /usr/include/string.h \
+ /usr/include/x86_64-linux-gnu/bits/libc-header-start.h \
+ /usr/include/features.h /usr/include/x86_64-linux-gnu/sys/cdefs.h \
+ /usr/include/x86_64-linux-gnu/bits/wordsize.h \
+ /usr/include/x86_64-linux-gnu/bits/long-double.h \
+ /usr/include/x86_64-linux-gnu/gnu/stubs.h \
+ /usr/include/x86_64-linux-gnu/gnu/stubs-64.h \
+ /usr/include/x86_64-linux-gnu/bits/types/locale_t.h \
+ /usr/include/x86_64-linux-gnu/bits/types/__locale_t.h \
+ /usr/include/strings.h lua-5.2.1/src/lua.h \
+ /usr/lib/gcc/x86_64-linux-gnu/8/include/stdarg.h lua-5.2.1/src/luaconf.h \
+ /usr/lib/gcc/x86_64-linux-gnu/8/include-fixed/limits.h \
+ /usr/lib/gcc/x86_64-linux-gnu/8/include-fixed/syslimits.h \
+ /usr/include/limits.h /usr/include/x86_64-linux-gnu/bits/posix1_lim.h \
+ /usr/include/x86_64-linux-gnu/bits/local_lim.h \
+ /usr/include/linux/limits.h \
+ /usr/include/x86_64-linux-gnu/bits/posix2_lim.h lua-5.2.1/src/lapi.h \
+ lua-5.2.1/src/llimits.h lua-5.2.1/src/lstate.h lua-5.2.1/src/lobject.h \
+ lua-5.2.1/src/ltm.h lua-5.2.1/src/lzio.h lua-5.2.1/src/lmem.h \
+ lua-5.2.1/src/ldebug.h lua-5.2.1/src/ldo.h lua-5.2.1/src/lfunc.h \
+ lua-5.2.1/src/lgc.h lua-5.2.1/src/llex.h lua-5.2.1/src/lstring.h \
+ lua-5.2.1/src/ltable.h /usr/include/time.h \
+ /usr/include/x86_64-linux-gnu/bits/time.h \
+ /usr/include/x86_64-linux-gnu/bits/types.h \
+ /usr/include/x86_64-linux-gnu/bits/typesizes.h \
+ /usr/include/x86_64-linux-gnu/bits/types/clock_t.h \
+ /usr/include/x86_64-linux-gnu/bits/types/time_t.h \
+ /usr/include/x86_64-linux-gnu/bits/types/struct_tm.h \
+ /usr/include/x86_64-linux-gnu/bits/types/struct_timespec.h \
+ /usr/include/x86_64-linux-gnu/bits/types/clockid_t.h \
+ /usr/include/x86_64-linux-gnu/bits/types/timer_t.h \
+ /usr/include/x86_64-linux-gnu/bits/types/struct_itimerspec.h
+
+/usr/include/stdc-predef.h:
+
+/usr/lib/gcc/x86_64-linux-gnu/8/include/stddef.h:
+
+/usr/include/string.h:
+
+/usr/include/x86_64-linux-gnu/bits/libc-header-start.h:
+
+/usr/include/features.h:
+
+/usr/include/x86_64-linux-gnu/sys/cdefs.h:
+
+/usr/include/x86_64-linux-gnu/bits/wordsize.h:
+
+/usr/include/x86_64-linux-gnu/bits/long-double.h:
+
+/usr/include/x86_64-linux-gnu/gnu/stubs.h:
+
+/usr/include/x86_64-linux-gnu/gnu/stubs-64.h:
+
+/usr/include/x86_64-linux-gnu/bits/types/locale_t.h:
+
+/usr/include/x86_64-linux-gnu/bits/types/__locale_t.h:
+
+/usr/include/strings.h:
+
+lua-5.2.1/src/lua.h:
+
+/usr/lib/gcc/x86_64-linux-gnu/8/include/stdarg.h:
+
+lua-5.2.1/src/luaconf.h:
+
+/usr/lib/gcc/x86_64-linux-gnu/8/include-fixed/limits.h:
+
+/usr/lib/gcc/x86_64-linux-gnu/8/include-fixed/syslimits.h:
+
+/usr/include/limits.h:
+
+/usr/include/x86_64-linux-gnu/bits/posix1_lim.h:
+
+/usr/include/x86_64-linux-gnu/bits/local_lim.h:
+
+/usr/include/linux/limits.h:
+
+/usr/include/x86_64-linux-gnu/bits/posix2_lim.h:
+
+lua-5.2.1/src/lapi.h:
+
+lua-5.2.1/src/llimits.h:
+
+lua-5.2.1/src/lstate.h:
+
+lua-5.2.1/src/lobject.h:
+
+lua-5.2.1/src/ltm.h:
+
+lua-5.2.1/src/lzio.h:
+
+lua-5.2.1/src/lmem.h:
+
+lua-5.2.1/src/ldebug.h:
+
+lua-5.2.1/src/ldo.h:
+
+lua-5.2.1/src/lfunc.h:
+
+lua-5.2.1/src/lgc.h:
+
+lua-5.2.1/src/llex.h:
+
+lua-5.2.1/src/lstring.h:
+
+lua-5.2.1/src/ltable.h:
+
+/usr/include/time.h:
+
+/usr/include/x86_64-linux-gnu/bits/time.h:
+
+/usr/include/x86_64-linux-gnu/bits/types.h:
+
+/usr/include/x86_64-linux-gnu/bits/typesizes.h:
+
+/usr/include/x86_64-linux-gnu/bits/types/clock_t.h:
+
+/usr/include/x86_64-linux-gnu/bits/types/time_t.h:
+
+/usr/include/x86_64-linux-gnu/bits/types/struct_tm.h:
+
+/usr/include/x86_64-linux-gnu/bits/types/struct_timespec.h:
+
+/usr/include/x86_64-linux-gnu/bits/types/clockid_t.h:
+
+/usr/include/x86_64-linux-gnu/bits/types/timer_t.h:
+
+/usr/include/x86_64-linux-gnu/bits/types/struct_itimerspec.h:

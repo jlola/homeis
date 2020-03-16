@@ -7,7 +7,7 @@
 #include <stddef.h>
 #include "converter.h"
 #include "Common/HisException.h"
-#include "Modbus/ModbusWrapper.h"
+//#include "Modbus/ModbusWrapper.h"
 #include "Modbus/ModbusSimulator.h"
 #include <Modbus/ModbusProvider.h>
 #include "StringBuilder.h"
@@ -28,7 +28,7 @@ IModbus* ModbusProvider::CreateDriver(SSerPortConfig serport)
 	std::string driverType = Converter::strtolower((serport.Driver));
 	IModbus* m = NULL;
 
-	if (driverType==Modbus::DriverName)
+	if (driverType==ModifiedMdbus::DriverName)
 	{
 		m = new ModifiedMdbus(serport);
 	}

@@ -1,0 +1,79 @@
+lua-5.2.1/src/libsrc3party_la-lmem.lo: lua-5.2.1/src/lmem.c \
+ /usr/arm-linux-gnueabihf/include/stdc-predef.h \
+ /usr/lib/gcc-cross/arm-linux-gnueabihf/8/include/stddef.h \
+ lua-5.2.1/src/lua.h \
+ /usr/lib/gcc-cross/arm-linux-gnueabihf/8/include/stdarg.h \
+ lua-5.2.1/src/luaconf.h \
+ /usr/lib/gcc-cross/arm-linux-gnueabihf/8/include-fixed/limits.h \
+ /usr/lib/gcc-cross/arm-linux-gnueabihf/8/include-fixed/syslimits.h \
+ /usr/arm-linux-gnueabihf/include/limits.h \
+ /usr/arm-linux-gnueabihf/include/bits/libc-header-start.h \
+ /usr/arm-linux-gnueabihf/include/features.h \
+ /usr/arm-linux-gnueabihf/include/sys/cdefs.h \
+ /usr/arm-linux-gnueabihf/include/bits/wordsize.h \
+ /usr/arm-linux-gnueabihf/include/bits/long-double.h \
+ /usr/arm-linux-gnueabihf/include/gnu/stubs.h \
+ /usr/arm-linux-gnueabihf/include/gnu/stubs-hard.h \
+ /usr/arm-linux-gnueabihf/include/bits/posix1_lim.h \
+ /usr/arm-linux-gnueabihf/include/bits/local_lim.h \
+ /usr/arm-linux-gnueabihf/include/linux/limits.h \
+ /usr/arm-linux-gnueabihf/include/bits/posix2_lim.h \
+ lua-5.2.1/src/ldebug.h lua-5.2.1/src/lstate.h lua-5.2.1/src/lobject.h \
+ lua-5.2.1/src/llimits.h lua-5.2.1/src/ltm.h lua-5.2.1/src/lzio.h \
+ lua-5.2.1/src/lmem.h lua-5.2.1/src/ldo.h lua-5.2.1/src/lgc.h
+
+/usr/arm-linux-gnueabihf/include/stdc-predef.h:
+
+/usr/lib/gcc-cross/arm-linux-gnueabihf/8/include/stddef.h:
+
+lua-5.2.1/src/lua.h:
+
+/usr/lib/gcc-cross/arm-linux-gnueabihf/8/include/stdarg.h:
+
+lua-5.2.1/src/luaconf.h:
+
+/usr/lib/gcc-cross/arm-linux-gnueabihf/8/include-fixed/limits.h:
+
+/usr/lib/gcc-cross/arm-linux-gnueabihf/8/include-fixed/syslimits.h:
+
+/usr/arm-linux-gnueabihf/include/limits.h:
+
+/usr/arm-linux-gnueabihf/include/bits/libc-header-start.h:
+
+/usr/arm-linux-gnueabihf/include/features.h:
+
+/usr/arm-linux-gnueabihf/include/sys/cdefs.h:
+
+/usr/arm-linux-gnueabihf/include/bits/wordsize.h:
+
+/usr/arm-linux-gnueabihf/include/bits/long-double.h:
+
+/usr/arm-linux-gnueabihf/include/gnu/stubs.h:
+
+/usr/arm-linux-gnueabihf/include/gnu/stubs-hard.h:
+
+/usr/arm-linux-gnueabihf/include/bits/posix1_lim.h:
+
+/usr/arm-linux-gnueabihf/include/bits/local_lim.h:
+
+/usr/arm-linux-gnueabihf/include/linux/limits.h:
+
+/usr/arm-linux-gnueabihf/include/bits/posix2_lim.h:
+
+lua-5.2.1/src/ldebug.h:
+
+lua-5.2.1/src/lstate.h:
+
+lua-5.2.1/src/lobject.h:
+
+lua-5.2.1/src/llimits.h:
+
+lua-5.2.1/src/ltm.h:
+
+lua-5.2.1/src/lzio.h:
+
+lua-5.2.1/src/lmem.h:
+
+lua-5.2.1/src/ldo.h:
+
+lua-5.2.1/src/lgc.h:

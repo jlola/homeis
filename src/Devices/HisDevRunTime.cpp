@@ -6,7 +6,7 @@
  */
 #include <unistd.h>
 #include <vector>
-#include <libxml/parser.h>
+#include "libxml/parser.h"
 #include <libxml/tree.h>
 #include "srutil/event/event.hpp"
 #include "srutil/delegate/delegate.hpp"

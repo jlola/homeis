@@ -4,7 +4,7 @@
  *  Created on: 22. 4. 2018
  *      Author: pc
  */
-#include "curl.h"
+#include "curl/curl.h"
 #include "StringBuilder.h"
 #include "DateTime.h"
 #include "CUUID.h"
