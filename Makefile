@@ -69,10 +69,10 @@ am__make_running_with_option = \
   test $$has_opt = yes
 am__make_dryrun = (target_option=n; $(am__make_running_with_option))
 am__make_keepgoing = (target_option=k; $(am__make_running_with_option))
-pkgdatadir = $(datadir)/homeis
-pkgincludedir = $(includedir)/homeis
-pkglibdir = $(libdir)/homeis
-pkglibexecdir = $(libexecdir)/homeis
+pkgdatadir = $(datadir)/home-automation
+pkgincludedir = $(includedir)/home-automation
+pkglibdir = $(libdir)/home-automation
+pkglibexecdir = $(libexecdir)/home-automation
 am__cd = CDPATH="$${ZSH_VERSION+.}$(PATH_SEPARATOR)" && cd
 install_sh_DATA = $(install_sh) -c -m 644
 install_sh_PROGRAM = $(install_sh) -c
@@ -161,7 +161,7 @@ CTAGS = ctags
 CSCOPE = cscope
 DIST_SUBDIRS = $(SUBDIRS)
 am__DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/config.h.in compile \
-	config.guess config.sub install-sh ltmain.sh missing
+	config.guess config.sub depcomp install-sh ltmain.sh missing
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 distdir = $(PACKAGE)-$(VERSION)
 top_distdir = $(distdir)
@@ -258,11 +258,11 @@ OBJDUMP = arm-linux-gnueabihf-objdump
 OBJEXT = o
 OTOOL = 
 OTOOL64 = 
-PACKAGE = homeis
+PACKAGE = home-automation
 PACKAGE_BUGREPORT = BUG-REPORT-ADDRESS
-PACKAGE_NAME = homeis
-PACKAGE_STRING = homeis 1.0.0
-PACKAGE_TARNAME = homeis
+PACKAGE_NAME = Home automation
+PACKAGE_STRING = Home automation 1.0.0
+PACKAGE_TARNAME = home-automation
 PACKAGE_URL = 
 PACKAGE_VERSION = 1.0.0
 PATH_SEPARATOR = :
@@ -326,8 +326,7 @@ target_alias =
 top_build_prefix = 
 top_builddir = .
 top_srcdir = .
-AUTOMAKE_OPTIONS = foreign
-SUBDIRS = src_3party src
+SUBDIRS = src
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
 

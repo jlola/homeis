@@ -1,5 +1,5 @@
 #! /bin/bash
-# Generated automatically by config.status (homeis) 1.0.0
+# Generated automatically by config.status (home-automation) 1.0.0
 # NOTE: Changes made to this file will be lost: look at ltmain.sh.
 
 # Provide generalized library-building support services.
@@ -44,7 +44,7 @@ macro_revision=2.4.6
 build_libtool_libs=yes
 
 # Whether or not to build static libraries.
-build_old_libs=yes
+build_old_libs=no
 
 # What type of objects to build.
 pic_mode=default

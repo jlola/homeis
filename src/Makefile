@@ -70,10 +70,10 @@ am__make_running_with_option = \
   test $$has_opt = yes
 am__make_dryrun = (target_option=n; $(am__make_running_with_option))
 am__make_keepgoing = (target_option=k; $(am__make_running_with_option))
-pkgdatadir = $(datadir)/homeis
-pkgincludedir = $(includedir)/homeis
-pkglibdir = $(libdir)/homeis
-pkglibexecdir = $(libexecdir)/homeis
+pkgdatadir = $(datadir)/home-automation
+pkgincludedir = $(includedir)/home-automation
+pkglibdir = $(libdir)/home-automation
+pkglibexecdir = $(libexecdir)/home-automation
 am__cd = CDPATH="$${ZSH_VERSION+.}$(PATH_SEPARATOR)" && cd
 install_sh_DATA = $(install_sh) -c -m 644
 install_sh_PROGRAM = $(install_sh) -c
@@ -105,7 +105,54 @@ CONFIG_CLEAN_VPATH_FILES =
 am__installdirs = "$(DESTDIR)$(bindir)"
 PROGRAMS = $(bin_PROGRAMS)
 am__dirstamp = $(am__leading_dot)dirstamp
-am_homeis_OBJECTS = Helpers/homeis-logger.$(OBJEXT) \
+am_homeis_OBJECTS = ../src_3party/homeis-linuxservice.$(OBJEXT) \
+	../src_3party/linuxcs/homeis-linuxcs.$(OBJEXT) \
+	../src_3party/lua-5.2.1/src/homeis-lapi.$(OBJEXT) \
+	../src_3party/lua-5.2.1/src/homeis-lauxlib.$(OBJEXT) \
+	../src_3party/lua-5.2.1/src/homeis-lbaselib.$(OBJEXT) \
+	../src_3party/lua-5.2.1/src/homeis-lbitlib.$(OBJEXT) \
+	../src_3party/lua-5.2.1/src/homeis-lcode.$(OBJEXT) \
+	../src_3party/lua-5.2.1/src/homeis-lcorolib.$(OBJEXT) \
+	../src_3party/lua-5.2.1/src/homeis-lctype.$(OBJEXT) \
+	../src_3party/lua-5.2.1/src/homeis-ltm.$(OBJEXT) \
+	../src_3party/lua-5.2.1/src/homeis-lmathlib.$(OBJEXT) \
+	../src_3party/lua-5.2.1/src/homeis-ldblib.$(OBJEXT) \
+	../src_3party/lua-5.2.1/src/homeis-ldebug.$(OBJEXT) \
+	../src_3party/lua-5.2.1/src/homeis-ldo.$(OBJEXT) \
+	../src_3party/lua-5.2.1/src/homeis-ldump.$(OBJEXT) \
+	../src_3party/lua-5.2.1/src/homeis-lfunc.$(OBJEXT) \
+	../src_3party/lua-5.2.1/src/homeis-lgc.$(OBJEXT) \
+	../src_3party/lua-5.2.1/src/homeis-linit.$(OBJEXT) \
+	../src_3party/lua-5.2.1/src/homeis-liolib.$(OBJEXT) \
+	../src_3party/lua-5.2.1/src/homeis-llex.$(OBJEXT) \
+	../src_3party/lua-5.2.1/src/homeis-lmem.$(OBJEXT) \
+	../src_3party/lua-5.2.1/src/homeis-loadlib.$(OBJEXT) \
+	../src_3party/lua-5.2.1/src/homeis-lobject.$(OBJEXT) \
+	../src_3party/lua-5.2.1/src/homeis-lopcodes.$(OBJEXT) \
+	../src_3party/lua-5.2.1/src/homeis-loslib.$(OBJEXT) \
+	../src_3party/lua-5.2.1/src/homeis-lparser.$(OBJEXT) \
+	../src_3party/lua-5.2.1/src/homeis-lstate.$(OBJEXT) \
+	../src_3party/lua-5.2.1/src/homeis-lstring.$(OBJEXT) \
+	../src_3party/lua-5.2.1/src/homeis-lstrlib.$(OBJEXT) \
+	../src_3party/lua-5.2.1/src/homeis-ltable.$(OBJEXT) \
+	../src_3party/lua-5.2.1/src/homeis-ltablib.$(OBJEXT) \
+	../src_3party/lua-5.2.1/src/homeis-lua.$(OBJEXT) \
+	../src_3party/lua-5.2.1/src/homeis-luac.$(OBJEXT) \
+	../src_3party/lua-5.2.1/src/homeis-lundump.$(OBJEXT) \
+	../src_3party/lua-5.2.1/src/homeis-lvm.$(OBJEXT) \
+	../src_3party/lua-5.2.1/src/homeis-lzio.$(OBJEXT) \
+	../src_3party/uuid/homeis-clear.$(OBJEXT) \
+	../src_3party/uuid/homeis-compare.$(OBJEXT) \
+	../src_3party/uuid/homeis-copy.$(OBJEXT) \
+	../src_3party/uuid/homeis-gen_uuid.$(OBJEXT) \
+	../src_3party/uuid/homeis-isnull.$(OBJEXT) \
+	../src_3party/uuid/homeis-pack.$(OBJEXT) \
+	../src_3party/uuid/homeis-parse.$(OBJEXT) \
+	../src_3party/uuid/homeis-tst_uuid.$(OBJEXT) \
+	../src_3party/uuid/homeis-unpack.$(OBJEXT) \
+	../src_3party/uuid/homeis-unparse.$(OBJEXT) \
+	../src_3party/uuid/homeis-uuid_time.$(OBJEXT) \
+	Helpers/homeis-logger.$(OBJEXT) \
 	../src_3party/homeis-death_handler.$(OBJEXT) \
 	Helpers/homeis-File.$(OBJEXT) \
 	Helpers/homeis-Directory.$(OBJEXT) \
@@ -113,17 +160,21 @@ am_homeis_OBJECTS = Helpers/homeis-logger.$(OBJEXT) \
 	Common/homeis-DateTime.$(OBJEXT) \
 	Common/homeis-HisBase.$(OBJEXT) \
 	Common/homeis-HisLock.$(OBJEXT) \
+	Auth/homeis-UserManager.$(OBJEXT) \
+	Auth/homeis-Session.$(OBJEXT) Auth/homeis-User.$(OBJEXT) \
+	Auth/homeis-Users.$(OBJEXT) \
 	Devices/Folder/homeis-HisDevFolder.$(OBJEXT) \
 	Devices/Folder/homeis-HisDevFolderRoot.$(OBJEXT) \
 	Devices/Folder/homeis-HisDevValueId.$(OBJEXT) \
 	Devices/Folder/homeis-HisExpressionIdHolder.$(OBJEXT) \
 	Devices/Handlers/homeis-BinnaryInputHandler.$(OBJEXT) \
+	Devices/Handlers/homeis-BinnaryOutputHandler.$(OBJEXT) \
 	Devices/Handlers/homeis-LOW_deviceID.$(OBJEXT) \
 	Devices/Handlers/homeis-LOW_deviceIDRaw.$(OBJEXT) \
 	Devices/Handlers/homeis-LOW_helper_crc.$(OBJEXT) \
-	Devices/Handlers/homeis-ModbusHandlers.$(OBJEXT) \
 	Devices/Handlers/homeis-OneWireHandler.$(OBJEXT) \
 	Devices/Handlers/homeis-RFIDHandler.$(OBJEXT) \
+	Devices/Handlers/homeis-ModbusHandlers.$(OBJEXT) \
 	Devices/Values/homeis-HisDevValue.$(OBJEXT) \
 	Devices/Values/homeis-HisDevValueBase.$(OBJEXT) \
 	Devices/Values/homeis-HisDevValueEmail.$(OBJEXT) \
@@ -163,7 +214,7 @@ am_homeis_OBJECTS = Helpers/homeis-logger.$(OBJEXT) \
 	homeis-HomeIsServer.$(OBJEXT) homeis-SignalTryCatch.$(OBJEXT) \
 	homeis-main.$(OBJEXT)
 homeis_OBJECTS = $(am_homeis_OBJECTS)
-homeis_DEPENDENCIES = ../src_3party/libsrc3party.la
+homeis_DEPENDENCIES =
 AM_V_lt = $(am__v_lt_$(V))
 am__v_lt_ = $(am__v_lt_$(AM_DEFAULT_VERBOSITY))
 am__v_lt_0 = --silent
@@ -187,10 +238,61 @@ DEFAULT_INCLUDES = -I. -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__maybe_remake_depfiles = depfiles
 am__depfiles_remade = ../src_3party/$(DEPDIR)/homeis-death_handler.Po \
+	../src_3party/$(DEPDIR)/homeis-linuxservice.Po \
+	../src_3party/linuxcs/$(DEPDIR)/homeis-linuxcs.Po \
+	../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lapi.Po \
+	../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lauxlib.Po \
+	../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lbaselib.Po \
+	../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lbitlib.Po \
+	../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lcode.Po \
+	../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lcorolib.Po \
+	../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lctype.Po \
+	../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-ldblib.Po \
+	../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-ldebug.Po \
+	../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-ldo.Po \
+	../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-ldump.Po \
+	../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lfunc.Po \
+	../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lgc.Po \
+	../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-linit.Po \
+	../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-liolib.Po \
+	../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-llex.Po \
+	../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lmathlib.Po \
+	../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lmem.Po \
+	../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-loadlib.Po \
+	../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lobject.Po \
+	../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lopcodes.Po \
+	../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-loslib.Po \
+	../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lparser.Po \
+	../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lstate.Po \
+	../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lstring.Po \
+	../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lstrlib.Po \
+	../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-ltable.Po \
+	../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-ltablib.Po \
+	../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-ltm.Po \
+	../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lua.Po \
+	../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-luac.Po \
+	../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lundump.Po \
+	../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lvm.Po \
+	../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lzio.Po \
+	../src_3party/uuid/$(DEPDIR)/homeis-clear.Po \
+	../src_3party/uuid/$(DEPDIR)/homeis-compare.Po \
+	../src_3party/uuid/$(DEPDIR)/homeis-copy.Po \
+	../src_3party/uuid/$(DEPDIR)/homeis-gen_uuid.Po \
+	../src_3party/uuid/$(DEPDIR)/homeis-isnull.Po \
+	../src_3party/uuid/$(DEPDIR)/homeis-pack.Po \
+	../src_3party/uuid/$(DEPDIR)/homeis-parse.Po \
+	../src_3party/uuid/$(DEPDIR)/homeis-tst_uuid.Po \
+	../src_3party/uuid/$(DEPDIR)/homeis-unpack.Po \
+	../src_3party/uuid/$(DEPDIR)/homeis-unparse.Po \
+	../src_3party/uuid/$(DEPDIR)/homeis-uuid_time.Po \
 	./$(DEPDIR)/homeis-HomeIsConfig.Po \
 	./$(DEPDIR)/homeis-HomeIsServer.Po \
 	./$(DEPDIR)/homeis-SignalTryCatch.Po \
-	./$(DEPDIR)/homeis-main.Po Common/$(DEPDIR)/homeis-Base64.Po \
+	./$(DEPDIR)/homeis-main.Po Auth/$(DEPDIR)/homeis-Session.Po \
+	Auth/$(DEPDIR)/homeis-User.Po \
+	Auth/$(DEPDIR)/homeis-UserManager.Po \
+	Auth/$(DEPDIR)/homeis-Users.Po \
+	Common/$(DEPDIR)/homeis-Base64.Po \
 	Common/$(DEPDIR)/homeis-CUUID.Po \
 	Common/$(DEPDIR)/homeis-DateTime.Po \
 	Common/$(DEPDIR)/homeis-HisBase.Po \
@@ -206,6 +308,7 @@ am__depfiles_remade = ../src_3party/$(DEPDIR)/homeis-death_handler.Po \
 	Devices/Folder/$(DEPDIR)/homeis-HisDevValueId.Po \
 	Devices/Folder/$(DEPDIR)/homeis-HisExpressionIdHolder.Po \
 	Devices/Handlers/$(DEPDIR)/homeis-BinnaryInputHandler.Po \
+	Devices/Handlers/$(DEPDIR)/homeis-BinnaryOutputHandler.Po \
 	Devices/Handlers/$(DEPDIR)/homeis-LOW_deviceID.Po \
 	Devices/Handlers/$(DEPDIR)/homeis-LOW_deviceIDRaw.Po \
 	Devices/Handlers/$(DEPDIR)/homeis-LOW_helper_crc.Po \
@@ -246,24 +349,6 @@ am__depfiles_remade = ../src_3party/$(DEPDIR)/homeis-death_handler.Po \
 	Services/$(DEPDIR)/homeis-VersionService.Po \
 	Tags/$(DEPDIR)/homeis-TagBase.Po
 am__mv = mv -f
-CXXCOMPILE = $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
-	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
-LTCXXCOMPILE = $(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) \
-	$(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) \
-	$(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) \
-	$(AM_CXXFLAGS) $(CXXFLAGS)
-AM_V_CXX = $(am__v_CXX_$(V))
-am__v_CXX_ = $(am__v_CXX_$(AM_DEFAULT_VERBOSITY))
-am__v_CXX_0 = @echo "  CXX     " $@;
-am__v_CXX_1 = 
-CXXLD = $(CXX)
-CXXLINK = $(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) \
-	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(AM_CXXFLAGS) \
-	$(CXXFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
-AM_V_CXXLD = $(am__v_CXXLD_$(V))
-am__v_CXXLD_ = $(am__v_CXXLD_$(AM_DEFAULT_VERBOSITY))
-am__v_CXXLD_0 = @echo "  CXXLD   " $@;
-am__v_CXXLD_1 = 
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 LTCOMPILE = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
@@ -282,6 +367,24 @@ AM_V_CCLD = $(am__v_CCLD_$(V))
 am__v_CCLD_ = $(am__v_CCLD_$(AM_DEFAULT_VERBOSITY))
 am__v_CCLD_0 = @echo "  CCLD    " $@;
 am__v_CCLD_1 = 
+CXXCOMPILE = $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
+	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
+LTCXXCOMPILE = $(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) \
+	$(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) \
+	$(AM_CXXFLAGS) $(CXXFLAGS)
+AM_V_CXX = $(am__v_CXX_$(V))
+am__v_CXX_ = $(am__v_CXX_$(AM_DEFAULT_VERBOSITY))
+am__v_CXX_0 = @echo "  CXX     " $@;
+am__v_CXX_1 = 
+CXXLD = $(CXX)
+CXXLINK = $(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(AM_CXXFLAGS) \
+	$(CXXFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
+AM_V_CXXLD = $(am__v_CXXLD_$(V))
+am__v_CXXLD_ = $(am__v_CXXLD_$(AM_DEFAULT_VERBOSITY))
+am__v_CXXLD_0 = @echo "  CXXLD   " $@;
+am__v_CXXLD_1 = 
 SOURCES = $(homeis_SOURCES)
 DIST_SOURCES = $(homeis_SOURCES)
 am__can_run_installinfo = \
@@ -364,11 +467,11 @@ OBJDUMP = arm-linux-gnueabihf-objdump
 OBJEXT = o
 OTOOL = 
 OTOOL64 = 
-PACKAGE = homeis
+PACKAGE = home-automation
 PACKAGE_BUGREPORT = BUG-REPORT-ADDRESS
-PACKAGE_NAME = homeis
-PACKAGE_STRING = homeis 1.0.0
-PACKAGE_TARNAME = homeis
+PACKAGE_NAME = Home automation
+PACKAGE_STRING = Home automation 1.0.0
+PACKAGE_TARNAME = home-automation
 PACKAGE_URL = 
 PACKAGE_VERSION = 1.0.0
 PATH_SEPARATOR = :
@@ -434,14 +537,24 @@ top_builddir = ..
 top_srcdir = ..
 
 # what flags you want to pass to the C compiler & linker
-AM_CXXFLAGS = -std=c++0x
-AM_LDFLAGS = -ldl -lpthread -lxml2 -lcurl -lz
-homeis_LDADD = ../src_3party/libsrc3party.la
+AM_CXXFLAGS = -g -std=c++11 -Wall -fPIC
+homeis_LDADD = -lpthread -lgnutls -ldl -lxml2 -lrt -lconfig++ -lcurl -lz -lcrypto -lmicrohttpd -lhttpserver -lnettle -lgmp -lhogweed -lidn2 -lp11-kit -ltasn1 -lunistring -lffi
 homeis_LDFLAGS = \
 -L../lib/libxml2-2.8.0/lib \
--L../lib/libcurl/lib 
+-L../lib/libcurl/lib \
+-L../lib/libmicrohttpd/lib \
+-L../lib/libz \
+-L../lib/libssl/lib \
+-L../lib/libhttpserver/lib \
+-L../lib/gnutls/lib \
+-L../lib/nettle/lib \
+-L../lib/gmplib/lib \
+-L../lib/libconfig/lib
 
 homeis_CPPFLAGS = \
+-DUSE_THREADS -DLUA_USE_MKSTEMP -DMEMWATCH \
+-I../src_3party/lua-5.2.1/src \
+-I../src_3party/lua-5.2.1/src \
 -I../lib/libxml2-2.8.0/include/libxml2 \
 -I../lib/libcurl/include \
 -I../lib/libssl/include \
@@ -452,12 +565,12 @@ homeis_CPPFLAGS = \
 -I../lib/libconfig/include \
 -I../lib/libmicrohttpd/include \
 -I../lib/libhttpserver/include \
+-I../lib/libssl \
 -I../src_3party \
 -I../src_3party/linuxcs \
 -I../src_3party/srutil \
 -I../src_3party/uuid \
 -I../src_3party/rapidjson \
--I../src_3party/lua-5.2.1/src \
 -I../src_3party/libcrash-master \
 -I../src_3party/gtest_src \
 -I../src_3party/FakeIt \
@@ -477,6 +590,53 @@ homeis_CPPFLAGS = \
 -I./Tags
 
 homeis_SOURCES = \
+../src_3party/linuxservice.cpp \
+../src_3party/linuxcs/linuxcs.cpp \
+../src_3party/lua-5.2.1/src/lapi.c \
+../src_3party/lua-5.2.1/src/lauxlib.c \
+../src_3party/lua-5.2.1/src/lbaselib.c \
+../src_3party/lua-5.2.1/src/lbitlib.c \
+../src_3party/lua-5.2.1/src/lcode.c \
+../src_3party/lua-5.2.1/src/lcorolib.c \
+../src_3party/lua-5.2.1/src/lctype.c \
+../src_3party/lua-5.2.1/src/ltm.c \
+../src_3party/lua-5.2.1/src/lmathlib.c \
+../src_3party/lua-5.2.1/src/ldblib.c \
+../src_3party/lua-5.2.1/src/ldebug.c \
+../src_3party/lua-5.2.1/src/ldo.c \
+../src_3party/lua-5.2.1/src/ldump.c \
+../src_3party/lua-5.2.1/src/lfunc.c \
+../src_3party/lua-5.2.1/src/lgc.c \
+../src_3party/lua-5.2.1/src/linit.c \
+../src_3party/lua-5.2.1/src/liolib.c \
+../src_3party/lua-5.2.1/src/llex.c \
+../src_3party/lua-5.2.1/src/lmem.c \
+../src_3party/lua-5.2.1/src/loadlib.c \
+../src_3party/lua-5.2.1/src/lobject.c \
+../src_3party/lua-5.2.1/src/lopcodes.c \
+../src_3party/lua-5.2.1/src/loslib.c \
+../src_3party/lua-5.2.1/src/lparser.c \
+../src_3party/lua-5.2.1/src/lstate.c \
+../src_3party/lua-5.2.1/src/lstring.c \
+../src_3party/lua-5.2.1/src/lstrlib.c \
+../src_3party/lua-5.2.1/src/ltable.c \
+../src_3party/lua-5.2.1/src/ltablib.c \
+../src_3party/lua-5.2.1/src/lua.c \
+../src_3party/lua-5.2.1/src/luac.c \
+../src_3party/lua-5.2.1/src/lundump.c \
+../src_3party/lua-5.2.1/src/lvm.c \
+../src_3party/lua-5.2.1/src/lzio.c \
+../src_3party/uuid/clear.c \
+../src_3party/uuid/compare.c \
+../src_3party/uuid/copy.c \
+../src_3party/uuid/gen_uuid.c \
+../src_3party/uuid/isnull.c \
+../src_3party/uuid/pack.c \
+../src_3party/uuid/parse.c \
+../src_3party/uuid/tst_uuid.c \
+../src_3party/uuid/unpack.c \
+../src_3party/uuid/unparse.c \
+../src_3party/uuid/uuid_time.c \
 Helpers/logger.cpp \
 ../src_3party/death_handler.cpp \
 Helpers/File.cpp \
@@ -487,17 +647,22 @@ Common/DateTime.cpp \
 Common/HisBase.cpp \
 Common/HisLock.cpp \
 Common/HisCollectionBase.hpp \
+Auth/UserManager.cpp \
+Auth/Session.cpp \
+Auth/User.cpp \
+Auth/Users.cpp \
 Devices/Folder/HisDevFolder.cpp \
 Devices/Folder/HisDevFolderRoot.cpp \
 Devices/Folder/HisDevValueId.cpp \
 Devices/Folder/HisExpressionIdHolder.cpp \
 Devices/Handlers/BinnaryInputHandler.cpp \
+Devices/Handlers/BinnaryOutputHandler.cpp \
 Devices/Handlers/LOW_deviceID.cpp \
 Devices/Handlers/LOW_deviceIDRaw.cpp \
 Devices/Handlers/LOW_helper_crc.cpp \
-Devices/Handlers/ModbusHandlers.cpp \
 Devices/Handlers/OneWireHandler.cpp \
 Devices/Handlers/RFIDHandler.cpp \
+Devices/Handlers/ModbusHandlers.cpp \
 Devices/Values/HisDevValue.cpp \
 Devices/Values/HisDevValueBase.cpp \
 Devices/Values/HisDevValueEmail.cpp \
@@ -544,7 +709,7 @@ main.cpp
 all: all-am
 
 .SUFFIXES:
-.SUFFIXES: .cpp .lo .o .obj
+.SUFFIXES: .c .cpp .lo .o .obj
 $(srcdir)/Makefile.in:  $(srcdir)/Makefile.am  $(am__configure_deps)
 	@for dep in $?; do \
 	  case '$(am__configure_deps)' in \
@@ -623,6 +788,171 @@ clean-binPROGRAMS:
 	list=`for p in $$list; do echo "$$p"; done | sed 's/$(EXEEXT)$$//'`; \
 	echo " rm -f" $$list; \
 	rm -f $$list
+../src_3party/$(am__dirstamp):
+	@$(MKDIR_P) ../src_3party
+	@: > ../src_3party/$(am__dirstamp)
+../src_3party/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) ../src_3party/$(DEPDIR)
+	@: > ../src_3party/$(DEPDIR)/$(am__dirstamp)
+../src_3party/homeis-linuxservice.$(OBJEXT):  \
+	../src_3party/$(am__dirstamp) \
+	../src_3party/$(DEPDIR)/$(am__dirstamp)
+../src_3party/linuxcs/$(am__dirstamp):
+	@$(MKDIR_P) ../src_3party/linuxcs
+	@: > ../src_3party/linuxcs/$(am__dirstamp)
+../src_3party/linuxcs/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) ../src_3party/linuxcs/$(DEPDIR)
+	@: > ../src_3party/linuxcs/$(DEPDIR)/$(am__dirstamp)
+../src_3party/linuxcs/homeis-linuxcs.$(OBJEXT):  \
+	../src_3party/linuxcs/$(am__dirstamp) \
+	../src_3party/linuxcs/$(DEPDIR)/$(am__dirstamp)
+../src_3party/lua-5.2.1/src/$(am__dirstamp):
+	@$(MKDIR_P) ../src_3party/lua-5.2.1/src
+	@: > ../src_3party/lua-5.2.1/src/$(am__dirstamp)
+../src_3party/lua-5.2.1/src/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) ../src_3party/lua-5.2.1/src/$(DEPDIR)
+	@: > ../src_3party/lua-5.2.1/src/$(DEPDIR)/$(am__dirstamp)
+../src_3party/lua-5.2.1/src/homeis-lapi.$(OBJEXT):  \
+	../src_3party/lua-5.2.1/src/$(am__dirstamp) \
+	../src_3party/lua-5.2.1/src/$(DEPDIR)/$(am__dirstamp)
+../src_3party/lua-5.2.1/src/homeis-lauxlib.$(OBJEXT):  \
+	../src_3party/lua-5.2.1/src/$(am__dirstamp) \
+	../src_3party/lua-5.2.1/src/$(DEPDIR)/$(am__dirstamp)
+../src_3party/lua-5.2.1/src/homeis-lbaselib.$(OBJEXT):  \
+	../src_3party/lua-5.2.1/src/$(am__dirstamp) \
+	../src_3party/lua-5.2.1/src/$(DEPDIR)/$(am__dirstamp)
+../src_3party/lua-5.2.1/src/homeis-lbitlib.$(OBJEXT):  \
+	../src_3party/lua-5.2.1/src/$(am__dirstamp) \
+	../src_3party/lua-5.2.1/src/$(DEPDIR)/$(am__dirstamp)
+../src_3party/lua-5.2.1/src/homeis-lcode.$(OBJEXT):  \
+	../src_3party/lua-5.2.1/src/$(am__dirstamp) \
+	../src_3party/lua-5.2.1/src/$(DEPDIR)/$(am__dirstamp)
+../src_3party/lua-5.2.1/src/homeis-lcorolib.$(OBJEXT):  \
+	../src_3party/lua-5.2.1/src/$(am__dirstamp) \
+	../src_3party/lua-5.2.1/src/$(DEPDIR)/$(am__dirstamp)
+../src_3party/lua-5.2.1/src/homeis-lctype.$(OBJEXT):  \
+	../src_3party/lua-5.2.1/src/$(am__dirstamp) \
+	../src_3party/lua-5.2.1/src/$(DEPDIR)/$(am__dirstamp)
+../src_3party/lua-5.2.1/src/homeis-ltm.$(OBJEXT):  \
+	../src_3party/lua-5.2.1/src/$(am__dirstamp) \
+	../src_3party/lua-5.2.1/src/$(DEPDIR)/$(am__dirstamp)
+../src_3party/lua-5.2.1/src/homeis-lmathlib.$(OBJEXT):  \
+	../src_3party/lua-5.2.1/src/$(am__dirstamp) \
+	../src_3party/lua-5.2.1/src/$(DEPDIR)/$(am__dirstamp)
+../src_3party/lua-5.2.1/src/homeis-ldblib.$(OBJEXT):  \
+	../src_3party/lua-5.2.1/src/$(am__dirstamp) \
+	../src_3party/lua-5.2.1/src/$(DEPDIR)/$(am__dirstamp)
+../src_3party/lua-5.2.1/src/homeis-ldebug.$(OBJEXT):  \
+	../src_3party/lua-5.2.1/src/$(am__dirstamp) \
+	../src_3party/lua-5.2.1/src/$(DEPDIR)/$(am__dirstamp)
+../src_3party/lua-5.2.1/src/homeis-ldo.$(OBJEXT):  \
+	../src_3party/lua-5.2.1/src/$(am__dirstamp) \
+	../src_3party/lua-5.2.1/src/$(DEPDIR)/$(am__dirstamp)
+../src_3party/lua-5.2.1/src/homeis-ldump.$(OBJEXT):  \
+	../src_3party/lua-5.2.1/src/$(am__dirstamp) \
+	../src_3party/lua-5.2.1/src/$(DEPDIR)/$(am__dirstamp)
+../src_3party/lua-5.2.1/src/homeis-lfunc.$(OBJEXT):  \
+	../src_3party/lua-5.2.1/src/$(am__dirstamp) \
+	../src_3party/lua-5.2.1/src/$(DEPDIR)/$(am__dirstamp)
+../src_3party/lua-5.2.1/src/homeis-lgc.$(OBJEXT):  \
+	../src_3party/lua-5.2.1/src/$(am__dirstamp) \
+	../src_3party/lua-5.2.1/src/$(DEPDIR)/$(am__dirstamp)
+../src_3party/lua-5.2.1/src/homeis-linit.$(OBJEXT):  \
+	../src_3party/lua-5.2.1/src/$(am__dirstamp) \
+	../src_3party/lua-5.2.1/src/$(DEPDIR)/$(am__dirstamp)
+../src_3party/lua-5.2.1/src/homeis-liolib.$(OBJEXT):  \
+	../src_3party/lua-5.2.1/src/$(am__dirstamp) \
+	../src_3party/lua-5.2.1/src/$(DEPDIR)/$(am__dirstamp)
+../src_3party/lua-5.2.1/src/homeis-llex.$(OBJEXT):  \
+	../src_3party/lua-5.2.1/src/$(am__dirstamp) \
+	../src_3party/lua-5.2.1/src/$(DEPDIR)/$(am__dirstamp)
+../src_3party/lua-5.2.1/src/homeis-lmem.$(OBJEXT):  \
+	../src_3party/lua-5.2.1/src/$(am__dirstamp) \
+	../src_3party/lua-5.2.1/src/$(DEPDIR)/$(am__dirstamp)
+../src_3party/lua-5.2.1/src/homeis-loadlib.$(OBJEXT):  \
+	../src_3party/lua-5.2.1/src/$(am__dirstamp) \
+	../src_3party/lua-5.2.1/src/$(DEPDIR)/$(am__dirstamp)
+../src_3party/lua-5.2.1/src/homeis-lobject.$(OBJEXT):  \
+	../src_3party/lua-5.2.1/src/$(am__dirstamp) \
+	../src_3party/lua-5.2.1/src/$(DEPDIR)/$(am__dirstamp)
+../src_3party/lua-5.2.1/src/homeis-lopcodes.$(OBJEXT):  \
+	../src_3party/lua-5.2.1/src/$(am__dirstamp) \
+	../src_3party/lua-5.2.1/src/$(DEPDIR)/$(am__dirstamp)
+../src_3party/lua-5.2.1/src/homeis-loslib.$(OBJEXT):  \
+	../src_3party/lua-5.2.1/src/$(am__dirstamp) \
+	../src_3party/lua-5.2.1/src/$(DEPDIR)/$(am__dirstamp)
+../src_3party/lua-5.2.1/src/homeis-lparser.$(OBJEXT):  \
+	../src_3party/lua-5.2.1/src/$(am__dirstamp) \
+	../src_3party/lua-5.2.1/src/$(DEPDIR)/$(am__dirstamp)
+../src_3party/lua-5.2.1/src/homeis-lstate.$(OBJEXT):  \
+	../src_3party/lua-5.2.1/src/$(am__dirstamp) \
+	../src_3party/lua-5.2.1/src/$(DEPDIR)/$(am__dirstamp)
+../src_3party/lua-5.2.1/src/homeis-lstring.$(OBJEXT):  \
+	../src_3party/lua-5.2.1/src/$(am__dirstamp) \
+	../src_3party/lua-5.2.1/src/$(DEPDIR)/$(am__dirstamp)
+../src_3party/lua-5.2.1/src/homeis-lstrlib.$(OBJEXT):  \
+	../src_3party/lua-5.2.1/src/$(am__dirstamp) \
+	../src_3party/lua-5.2.1/src/$(DEPDIR)/$(am__dirstamp)
+../src_3party/lua-5.2.1/src/homeis-ltable.$(OBJEXT):  \
+	../src_3party/lua-5.2.1/src/$(am__dirstamp) \
+	../src_3party/lua-5.2.1/src/$(DEPDIR)/$(am__dirstamp)
+../src_3party/lua-5.2.1/src/homeis-ltablib.$(OBJEXT):  \
+	../src_3party/lua-5.2.1/src/$(am__dirstamp) \
+	../src_3party/lua-5.2.1/src/$(DEPDIR)/$(am__dirstamp)
+../src_3party/lua-5.2.1/src/homeis-lua.$(OBJEXT):  \
+	../src_3party/lua-5.2.1/src/$(am__dirstamp) \
+	../src_3party/lua-5.2.1/src/$(DEPDIR)/$(am__dirstamp)
+../src_3party/lua-5.2.1/src/homeis-luac.$(OBJEXT):  \
+	../src_3party/lua-5.2.1/src/$(am__dirstamp) \
+	../src_3party/lua-5.2.1/src/$(DEPDIR)/$(am__dirstamp)
+../src_3party/lua-5.2.1/src/homeis-lundump.$(OBJEXT):  \
+	../src_3party/lua-5.2.1/src/$(am__dirstamp) \
+	../src_3party/lua-5.2.1/src/$(DEPDIR)/$(am__dirstamp)
+../src_3party/lua-5.2.1/src/homeis-lvm.$(OBJEXT):  \
+	../src_3party/lua-5.2.1/src/$(am__dirstamp) \
+	../src_3party/lua-5.2.1/src/$(DEPDIR)/$(am__dirstamp)
+../src_3party/lua-5.2.1/src/homeis-lzio.$(OBJEXT):  \
+	../src_3party/lua-5.2.1/src/$(am__dirstamp) \
+	../src_3party/lua-5.2.1/src/$(DEPDIR)/$(am__dirstamp)
+../src_3party/uuid/$(am__dirstamp):
+	@$(MKDIR_P) ../src_3party/uuid
+	@: > ../src_3party/uuid/$(am__dirstamp)
+../src_3party/uuid/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) ../src_3party/uuid/$(DEPDIR)
+	@: > ../src_3party/uuid/$(DEPDIR)/$(am__dirstamp)
+../src_3party/uuid/homeis-clear.$(OBJEXT):  \
+	../src_3party/uuid/$(am__dirstamp) \
+	../src_3party/uuid/$(DEPDIR)/$(am__dirstamp)
+../src_3party/uuid/homeis-compare.$(OBJEXT):  \
+	../src_3party/uuid/$(am__dirstamp) \
+	../src_3party/uuid/$(DEPDIR)/$(am__dirstamp)
+../src_3party/uuid/homeis-copy.$(OBJEXT):  \
+	../src_3party/uuid/$(am__dirstamp) \
+	../src_3party/uuid/$(DEPDIR)/$(am__dirstamp)
+../src_3party/uuid/homeis-gen_uuid.$(OBJEXT):  \
+	../src_3party/uuid/$(am__dirstamp) \
+	../src_3party/uuid/$(DEPDIR)/$(am__dirstamp)
+../src_3party/uuid/homeis-isnull.$(OBJEXT):  \
+	../src_3party/uuid/$(am__dirstamp) \
+	../src_3party/uuid/$(DEPDIR)/$(am__dirstamp)
+../src_3party/uuid/homeis-pack.$(OBJEXT):  \
+	../src_3party/uuid/$(am__dirstamp) \
+	../src_3party/uuid/$(DEPDIR)/$(am__dirstamp)
+../src_3party/uuid/homeis-parse.$(OBJEXT):  \
+	../src_3party/uuid/$(am__dirstamp) \
+	../src_3party/uuid/$(DEPDIR)/$(am__dirstamp)
+../src_3party/uuid/homeis-tst_uuid.$(OBJEXT):  \
+	../src_3party/uuid/$(am__dirstamp) \
+	../src_3party/uuid/$(DEPDIR)/$(am__dirstamp)
+../src_3party/uuid/homeis-unpack.$(OBJEXT):  \
+	../src_3party/uuid/$(am__dirstamp) \
+	../src_3party/uuid/$(DEPDIR)/$(am__dirstamp)
+../src_3party/uuid/homeis-unparse.$(OBJEXT):  \
+	../src_3party/uuid/$(am__dirstamp) \
+	../src_3party/uuid/$(DEPDIR)/$(am__dirstamp)
+../src_3party/uuid/homeis-uuid_time.$(OBJEXT):  \
+	../src_3party/uuid/$(am__dirstamp) \
+	../src_3party/uuid/$(DEPDIR)/$(am__dirstamp)
 Helpers/$(am__dirstamp):
 	@$(MKDIR_P) Helpers
 	@: > Helpers/$(am__dirstamp)
@@ -631,12 +961,6 @@ Helpers/$(DEPDIR)/$(am__dirstamp):
 	@: > Helpers/$(DEPDIR)/$(am__dirstamp)
 Helpers/homeis-logger.$(OBJEXT): Helpers/$(am__dirstamp) \
 	Helpers/$(DEPDIR)/$(am__dirstamp)
-../src_3party/$(am__dirstamp):
-	@$(MKDIR_P) ../src_3party
-	@: > ../src_3party/$(am__dirstamp)
-../src_3party/$(DEPDIR)/$(am__dirstamp):
-	@$(MKDIR_P) ../src_3party/$(DEPDIR)
-	@: > ../src_3party/$(DEPDIR)/$(am__dirstamp)
 ../src_3party/homeis-death_handler.$(OBJEXT):  \
 	../src_3party/$(am__dirstamp) \
 	../src_3party/$(DEPDIR)/$(am__dirstamp)
@@ -660,6 +984,20 @@ Common/homeis-HisBase.$(OBJEXT): Common/$(am__dirstamp) \
 	Common/$(DEPDIR)/$(am__dirstamp)
 Common/homeis-HisLock.$(OBJEXT): Common/$(am__dirstamp) \
 	Common/$(DEPDIR)/$(am__dirstamp)
+Auth/$(am__dirstamp):
+	@$(MKDIR_P) Auth
+	@: > Auth/$(am__dirstamp)
+Auth/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) Auth/$(DEPDIR)
+	@: > Auth/$(DEPDIR)/$(am__dirstamp)
+Auth/homeis-UserManager.$(OBJEXT): Auth/$(am__dirstamp) \
+	Auth/$(DEPDIR)/$(am__dirstamp)
+Auth/homeis-Session.$(OBJEXT): Auth/$(am__dirstamp) \
+	Auth/$(DEPDIR)/$(am__dirstamp)
+Auth/homeis-User.$(OBJEXT): Auth/$(am__dirstamp) \
+	Auth/$(DEPDIR)/$(am__dirstamp)
+Auth/homeis-Users.$(OBJEXT): Auth/$(am__dirstamp) \
+	Auth/$(DEPDIR)/$(am__dirstamp)
 Devices/Folder/$(am__dirstamp):
 	@$(MKDIR_P) Devices/Folder
 	@: > Devices/Folder/$(am__dirstamp)
@@ -687,6 +1025,9 @@ Devices/Handlers/$(DEPDIR)/$(am__dirstamp):
 Devices/Handlers/homeis-BinnaryInputHandler.$(OBJEXT):  \
 	Devices/Handlers/$(am__dirstamp) \
 	Devices/Handlers/$(DEPDIR)/$(am__dirstamp)
+Devices/Handlers/homeis-BinnaryOutputHandler.$(OBJEXT):  \
+	Devices/Handlers/$(am__dirstamp) \
+	Devices/Handlers/$(DEPDIR)/$(am__dirstamp)
 Devices/Handlers/homeis-LOW_deviceID.$(OBJEXT):  \
 	Devices/Handlers/$(am__dirstamp) \
 	Devices/Handlers/$(DEPDIR)/$(am__dirstamp)
@@ -696,13 +1037,13 @@ Devices/Handlers/homeis-LOW_deviceIDRaw.$(OBJEXT):  \
 Devices/Handlers/homeis-LOW_helper_crc.$(OBJEXT):  \
 	Devices/Handlers/$(am__dirstamp) \
 	Devices/Handlers/$(DEPDIR)/$(am__dirstamp)
-Devices/Handlers/homeis-ModbusHandlers.$(OBJEXT):  \
-	Devices/Handlers/$(am__dirstamp) \
-	Devices/Handlers/$(DEPDIR)/$(am__dirstamp)
 Devices/Handlers/homeis-OneWireHandler.$(OBJEXT):  \
 	Devices/Handlers/$(am__dirstamp) \
 	Devices/Handlers/$(DEPDIR)/$(am__dirstamp)
 Devices/Handlers/homeis-RFIDHandler.$(OBJEXT):  \
+	Devices/Handlers/$(am__dirstamp) \
+	Devices/Handlers/$(DEPDIR)/$(am__dirstamp)
+Devices/Handlers/homeis-ModbusHandlers.$(OBJEXT):  \
 	Devices/Handlers/$(am__dirstamp) \
 	Devices/Handlers/$(DEPDIR)/$(am__dirstamp)
 Devices/Values/$(am__dirstamp):
@@ -849,6 +1190,10 @@ homeis$(EXEEXT): $(homeis_OBJECTS) $(homeis_DEPENDENCIES) $(EXTRA_homeis_DEPENDE
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
 	-rm -f ../src_3party/*.$(OBJEXT)
+	-rm -f ../src_3party/linuxcs/*.$(OBJEXT)
+	-rm -f ../src_3party/lua-5.2.1/src/*.$(OBJEXT)
+	-rm -f ../src_3party/uuid/*.$(OBJEXT)
+	-rm -f Auth/*.$(OBJEXT)
 	-rm -f Common/*.$(OBJEXT)
 	-rm -f Devices/*.$(OBJEXT)
 	-rm -f Devices/Folder/*.$(OBJEXT)
@@ -867,10 +1212,61 @@ distclean-compile:
 	-rm -f *.tab.c
 
 include ../src_3party/$(DEPDIR)/homeis-death_handler.Po # am--include-marker
+include ../src_3party/$(DEPDIR)/homeis-linuxservice.Po # am--include-marker
+include ../src_3party/linuxcs/$(DEPDIR)/homeis-linuxcs.Po # am--include-marker
+include ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lapi.Po # am--include-marker
+include ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lauxlib.Po # am--include-marker
+include ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lbaselib.Po # am--include-marker
+include ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lbitlib.Po # am--include-marker
+include ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lcode.Po # am--include-marker
+include ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lcorolib.Po # am--include-marker
+include ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lctype.Po # am--include-marker
+include ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-ldblib.Po # am--include-marker
+include ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-ldebug.Po # am--include-marker
+include ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-ldo.Po # am--include-marker
+include ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-ldump.Po # am--include-marker
+include ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lfunc.Po # am--include-marker
+include ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lgc.Po # am--include-marker
+include ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-linit.Po # am--include-marker
+include ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-liolib.Po # am--include-marker
+include ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-llex.Po # am--include-marker
+include ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lmathlib.Po # am--include-marker
+include ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lmem.Po # am--include-marker
+include ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-loadlib.Po # am--include-marker
+include ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lobject.Po # am--include-marker
+include ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lopcodes.Po # am--include-marker
+include ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-loslib.Po # am--include-marker
+include ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lparser.Po # am--include-marker
+include ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lstate.Po # am--include-marker
+include ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lstring.Po # am--include-marker
+include ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lstrlib.Po # am--include-marker
+include ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-ltable.Po # am--include-marker
+include ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-ltablib.Po # am--include-marker
+include ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-ltm.Po # am--include-marker
+include ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lua.Po # am--include-marker
+include ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-luac.Po # am--include-marker
+include ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lundump.Po # am--include-marker
+include ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lvm.Po # am--include-marker
+include ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lzio.Po # am--include-marker
+include ../src_3party/uuid/$(DEPDIR)/homeis-clear.Po # am--include-marker
+include ../src_3party/uuid/$(DEPDIR)/homeis-compare.Po # am--include-marker
+include ../src_3party/uuid/$(DEPDIR)/homeis-copy.Po # am--include-marker
+include ../src_3party/uuid/$(DEPDIR)/homeis-gen_uuid.Po # am--include-marker
+include ../src_3party/uuid/$(DEPDIR)/homeis-isnull.Po # am--include-marker
+include ../src_3party/uuid/$(DEPDIR)/homeis-pack.Po # am--include-marker
+include ../src_3party/uuid/$(DEPDIR)/homeis-parse.Po # am--include-marker
+include ../src_3party/uuid/$(DEPDIR)/homeis-tst_uuid.Po # am--include-marker
+include ../src_3party/uuid/$(DEPDIR)/homeis-unpack.Po # am--include-marker
+include ../src_3party/uuid/$(DEPDIR)/homeis-unparse.Po # am--include-marker
+include ../src_3party/uuid/$(DEPDIR)/homeis-uuid_time.Po # am--include-marker
 include ./$(DEPDIR)/homeis-HomeIsConfig.Po # am--include-marker
 include ./$(DEPDIR)/homeis-HomeIsServer.Po # am--include-marker
 include ./$(DEPDIR)/homeis-SignalTryCatch.Po # am--include-marker
 include ./$(DEPDIR)/homeis-main.Po # am--include-marker
+include Auth/$(DEPDIR)/homeis-Session.Po # am--include-marker
+include Auth/$(DEPDIR)/homeis-User.Po # am--include-marker
+include Auth/$(DEPDIR)/homeis-UserManager.Po # am--include-marker
+include Auth/$(DEPDIR)/homeis-Users.Po # am--include-marker
 include Common/$(DEPDIR)/homeis-Base64.Po # am--include-marker
 include Common/$(DEPDIR)/homeis-CUUID.Po # am--include-marker
 include Common/$(DEPDIR)/homeis-DateTime.Po # am--include-marker
@@ -887,6 +1283,7 @@ include Devices/Folder/$(DEPDIR)/homeis-HisDevFolderRoot.Po # am--include-marker
 include Devices/Folder/$(DEPDIR)/homeis-HisDevValueId.Po # am--include-marker
 include Devices/Folder/$(DEPDIR)/homeis-HisExpressionIdHolder.Po # am--include-marker
 include Devices/Handlers/$(DEPDIR)/homeis-BinnaryInputHandler.Po # am--include-marker
+include Devices/Handlers/$(DEPDIR)/homeis-BinnaryOutputHandler.Po # am--include-marker
 include Devices/Handlers/$(DEPDIR)/homeis-LOW_deviceID.Po # am--include-marker
 include Devices/Handlers/$(DEPDIR)/homeis-LOW_deviceIDRaw.Po # am--include-marker
 include Devices/Handlers/$(DEPDIR)/homeis-LOW_helper_crc.Po # am--include-marker
@@ -933,6 +1330,660 @@ $(am__depfiles_remade):
 
 am--depfiles: $(am__depfiles_remade)
 
+.c.o:
+	$(AM_V_CC)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.o$$||'`;\
+	$(COMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ $< &&\
+	$(am__mv) $$depbase.Tpo $$depbase.Po
+#	$(AM_V_CC)source='$<' object='$@' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(COMPILE) -c -o $@ $<
+
+.c.obj:
+	$(AM_V_CC)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.obj$$||'`;\
+	$(COMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ `$(CYGPATH_W) '$<'` &&\
+	$(am__mv) $$depbase.Tpo $$depbase.Po
+#	$(AM_V_CC)source='$<' object='$@' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(COMPILE) -c -o $@ `$(CYGPATH_W) '$<'`
+
+.c.lo:
+	$(AM_V_CC)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.lo$$||'`;\
+	$(LTCOMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ $< &&\
+	$(am__mv) $$depbase.Tpo $$depbase.Plo
+#	$(AM_V_CC)source='$<' object='$@' libtool=yes \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(LTCOMPILE) -c -o $@ $<
+
+../src_3party/lua-5.2.1/src/homeis-lapi.o: ../src_3party/lua-5.2.1/src/lapi.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT ../src_3party/lua-5.2.1/src/homeis-lapi.o -MD -MP -MF ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lapi.Tpo -c -o ../src_3party/lua-5.2.1/src/homeis-lapi.o `test -f '../src_3party/lua-5.2.1/src/lapi.c' || echo '$(srcdir)/'`../src_3party/lua-5.2.1/src/lapi.c
+	$(AM_V_at)$(am__mv) ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lapi.Tpo ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lapi.Po
+#	$(AM_V_CC)source='../src_3party/lua-5.2.1/src/lapi.c' object='../src_3party/lua-5.2.1/src/homeis-lapi.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o ../src_3party/lua-5.2.1/src/homeis-lapi.o `test -f '../src_3party/lua-5.2.1/src/lapi.c' || echo '$(srcdir)/'`../src_3party/lua-5.2.1/src/lapi.c
+
+../src_3party/lua-5.2.1/src/homeis-lapi.obj: ../src_3party/lua-5.2.1/src/lapi.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT ../src_3party/lua-5.2.1/src/homeis-lapi.obj -MD -MP -MF ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lapi.Tpo -c -o ../src_3party/lua-5.2.1/src/homeis-lapi.obj `if test -f '../src_3party/lua-5.2.1/src/lapi.c'; then $(CYGPATH_W) '../src_3party/lua-5.2.1/src/lapi.c'; else $(CYGPATH_W) '$(srcdir)/../src_3party/lua-5.2.1/src/lapi.c'; fi`
+	$(AM_V_at)$(am__mv) ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lapi.Tpo ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lapi.Po
+#	$(AM_V_CC)source='../src_3party/lua-5.2.1/src/lapi.c' object='../src_3party/lua-5.2.1/src/homeis-lapi.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o ../src_3party/lua-5.2.1/src/homeis-lapi.obj `if test -f '../src_3party/lua-5.2.1/src/lapi.c'; then $(CYGPATH_W) '../src_3party/lua-5.2.1/src/lapi.c'; else $(CYGPATH_W) '$(srcdir)/../src_3party/lua-5.2.1/src/lapi.c'; fi`
+
+../src_3party/lua-5.2.1/src/homeis-lauxlib.o: ../src_3party/lua-5.2.1/src/lauxlib.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT ../src_3party/lua-5.2.1/src/homeis-lauxlib.o -MD -MP -MF ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lauxlib.Tpo -c -o ../src_3party/lua-5.2.1/src/homeis-lauxlib.o `test -f '../src_3party/lua-5.2.1/src/lauxlib.c' || echo '$(srcdir)/'`../src_3party/lua-5.2.1/src/lauxlib.c
+	$(AM_V_at)$(am__mv) ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lauxlib.Tpo ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lauxlib.Po
+#	$(AM_V_CC)source='../src_3party/lua-5.2.1/src/lauxlib.c' object='../src_3party/lua-5.2.1/src/homeis-lauxlib.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o ../src_3party/lua-5.2.1/src/homeis-lauxlib.o `test -f '../src_3party/lua-5.2.1/src/lauxlib.c' || echo '$(srcdir)/'`../src_3party/lua-5.2.1/src/lauxlib.c
+
+../src_3party/lua-5.2.1/src/homeis-lauxlib.obj: ../src_3party/lua-5.2.1/src/lauxlib.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT ../src_3party/lua-5.2.1/src/homeis-lauxlib.obj -MD -MP -MF ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lauxlib.Tpo -c -o ../src_3party/lua-5.2.1/src/homeis-lauxlib.obj `if test -f '../src_3party/lua-5.2.1/src/lauxlib.c'; then $(CYGPATH_W) '../src_3party/lua-5.2.1/src/lauxlib.c'; else $(CYGPATH_W) '$(srcdir)/../src_3party/lua-5.2.1/src/lauxlib.c'; fi`
+	$(AM_V_at)$(am__mv) ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lauxlib.Tpo ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lauxlib.Po
+#	$(AM_V_CC)source='../src_3party/lua-5.2.1/src/lauxlib.c' object='../src_3party/lua-5.2.1/src/homeis-lauxlib.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o ../src_3party/lua-5.2.1/src/homeis-lauxlib.obj `if test -f '../src_3party/lua-5.2.1/src/lauxlib.c'; then $(CYGPATH_W) '../src_3party/lua-5.2.1/src/lauxlib.c'; else $(CYGPATH_W) '$(srcdir)/../src_3party/lua-5.2.1/src/lauxlib.c'; fi`
+
+../src_3party/lua-5.2.1/src/homeis-lbaselib.o: ../src_3party/lua-5.2.1/src/lbaselib.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT ../src_3party/lua-5.2.1/src/homeis-lbaselib.o -MD -MP -MF ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lbaselib.Tpo -c -o ../src_3party/lua-5.2.1/src/homeis-lbaselib.o `test -f '../src_3party/lua-5.2.1/src/lbaselib.c' || echo '$(srcdir)/'`../src_3party/lua-5.2.1/src/lbaselib.c
+	$(AM_V_at)$(am__mv) ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lbaselib.Tpo ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lbaselib.Po
+#	$(AM_V_CC)source='../src_3party/lua-5.2.1/src/lbaselib.c' object='../src_3party/lua-5.2.1/src/homeis-lbaselib.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o ../src_3party/lua-5.2.1/src/homeis-lbaselib.o `test -f '../src_3party/lua-5.2.1/src/lbaselib.c' || echo '$(srcdir)/'`../src_3party/lua-5.2.1/src/lbaselib.c
+
+../src_3party/lua-5.2.1/src/homeis-lbaselib.obj: ../src_3party/lua-5.2.1/src/lbaselib.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT ../src_3party/lua-5.2.1/src/homeis-lbaselib.obj -MD -MP -MF ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lbaselib.Tpo -c -o ../src_3party/lua-5.2.1/src/homeis-lbaselib.obj `if test -f '../src_3party/lua-5.2.1/src/lbaselib.c'; then $(CYGPATH_W) '../src_3party/lua-5.2.1/src/lbaselib.c'; else $(CYGPATH_W) '$(srcdir)/../src_3party/lua-5.2.1/src/lbaselib.c'; fi`
+	$(AM_V_at)$(am__mv) ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lbaselib.Tpo ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lbaselib.Po
+#	$(AM_V_CC)source='../src_3party/lua-5.2.1/src/lbaselib.c' object='../src_3party/lua-5.2.1/src/homeis-lbaselib.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o ../src_3party/lua-5.2.1/src/homeis-lbaselib.obj `if test -f '../src_3party/lua-5.2.1/src/lbaselib.c'; then $(CYGPATH_W) '../src_3party/lua-5.2.1/src/lbaselib.c'; else $(CYGPATH_W) '$(srcdir)/../src_3party/lua-5.2.1/src/lbaselib.c'; fi`
+
+../src_3party/lua-5.2.1/src/homeis-lbitlib.o: ../src_3party/lua-5.2.1/src/lbitlib.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT ../src_3party/lua-5.2.1/src/homeis-lbitlib.o -MD -MP -MF ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lbitlib.Tpo -c -o ../src_3party/lua-5.2.1/src/homeis-lbitlib.o `test -f '../src_3party/lua-5.2.1/src/lbitlib.c' || echo '$(srcdir)/'`../src_3party/lua-5.2.1/src/lbitlib.c
+	$(AM_V_at)$(am__mv) ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lbitlib.Tpo ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lbitlib.Po
+#	$(AM_V_CC)source='../src_3party/lua-5.2.1/src/lbitlib.c' object='../src_3party/lua-5.2.1/src/homeis-lbitlib.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o ../src_3party/lua-5.2.1/src/homeis-lbitlib.o `test -f '../src_3party/lua-5.2.1/src/lbitlib.c' || echo '$(srcdir)/'`../src_3party/lua-5.2.1/src/lbitlib.c
+
+../src_3party/lua-5.2.1/src/homeis-lbitlib.obj: ../src_3party/lua-5.2.1/src/lbitlib.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT ../src_3party/lua-5.2.1/src/homeis-lbitlib.obj -MD -MP -MF ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lbitlib.Tpo -c -o ../src_3party/lua-5.2.1/src/homeis-lbitlib.obj `if test -f '../src_3party/lua-5.2.1/src/lbitlib.c'; then $(CYGPATH_W) '../src_3party/lua-5.2.1/src/lbitlib.c'; else $(CYGPATH_W) '$(srcdir)/../src_3party/lua-5.2.1/src/lbitlib.c'; fi`
+	$(AM_V_at)$(am__mv) ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lbitlib.Tpo ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lbitlib.Po
+#	$(AM_V_CC)source='../src_3party/lua-5.2.1/src/lbitlib.c' object='../src_3party/lua-5.2.1/src/homeis-lbitlib.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o ../src_3party/lua-5.2.1/src/homeis-lbitlib.obj `if test -f '../src_3party/lua-5.2.1/src/lbitlib.c'; then $(CYGPATH_W) '../src_3party/lua-5.2.1/src/lbitlib.c'; else $(CYGPATH_W) '$(srcdir)/../src_3party/lua-5.2.1/src/lbitlib.c'; fi`
+
+../src_3party/lua-5.2.1/src/homeis-lcode.o: ../src_3party/lua-5.2.1/src/lcode.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT ../src_3party/lua-5.2.1/src/homeis-lcode.o -MD -MP -MF ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lcode.Tpo -c -o ../src_3party/lua-5.2.1/src/homeis-lcode.o `test -f '../src_3party/lua-5.2.1/src/lcode.c' || echo '$(srcdir)/'`../src_3party/lua-5.2.1/src/lcode.c
+	$(AM_V_at)$(am__mv) ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lcode.Tpo ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lcode.Po
+#	$(AM_V_CC)source='../src_3party/lua-5.2.1/src/lcode.c' object='../src_3party/lua-5.2.1/src/homeis-lcode.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o ../src_3party/lua-5.2.1/src/homeis-lcode.o `test -f '../src_3party/lua-5.2.1/src/lcode.c' || echo '$(srcdir)/'`../src_3party/lua-5.2.1/src/lcode.c
+
+../src_3party/lua-5.2.1/src/homeis-lcode.obj: ../src_3party/lua-5.2.1/src/lcode.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT ../src_3party/lua-5.2.1/src/homeis-lcode.obj -MD -MP -MF ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lcode.Tpo -c -o ../src_3party/lua-5.2.1/src/homeis-lcode.obj `if test -f '../src_3party/lua-5.2.1/src/lcode.c'; then $(CYGPATH_W) '../src_3party/lua-5.2.1/src/lcode.c'; else $(CYGPATH_W) '$(srcdir)/../src_3party/lua-5.2.1/src/lcode.c'; fi`
+	$(AM_V_at)$(am__mv) ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lcode.Tpo ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lcode.Po
+#	$(AM_V_CC)source='../src_3party/lua-5.2.1/src/lcode.c' object='../src_3party/lua-5.2.1/src/homeis-lcode.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o ../src_3party/lua-5.2.1/src/homeis-lcode.obj `if test -f '../src_3party/lua-5.2.1/src/lcode.c'; then $(CYGPATH_W) '../src_3party/lua-5.2.1/src/lcode.c'; else $(CYGPATH_W) '$(srcdir)/../src_3party/lua-5.2.1/src/lcode.c'; fi`
+
+../src_3party/lua-5.2.1/src/homeis-lcorolib.o: ../src_3party/lua-5.2.1/src/lcorolib.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT ../src_3party/lua-5.2.1/src/homeis-lcorolib.o -MD -MP -MF ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lcorolib.Tpo -c -o ../src_3party/lua-5.2.1/src/homeis-lcorolib.o `test -f '../src_3party/lua-5.2.1/src/lcorolib.c' || echo '$(srcdir)/'`../src_3party/lua-5.2.1/src/lcorolib.c
+	$(AM_V_at)$(am__mv) ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lcorolib.Tpo ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lcorolib.Po
+#	$(AM_V_CC)source='../src_3party/lua-5.2.1/src/lcorolib.c' object='../src_3party/lua-5.2.1/src/homeis-lcorolib.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o ../src_3party/lua-5.2.1/src/homeis-lcorolib.o `test -f '../src_3party/lua-5.2.1/src/lcorolib.c' || echo '$(srcdir)/'`../src_3party/lua-5.2.1/src/lcorolib.c
+
+../src_3party/lua-5.2.1/src/homeis-lcorolib.obj: ../src_3party/lua-5.2.1/src/lcorolib.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT ../src_3party/lua-5.2.1/src/homeis-lcorolib.obj -MD -MP -MF ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lcorolib.Tpo -c -o ../src_3party/lua-5.2.1/src/homeis-lcorolib.obj `if test -f '../src_3party/lua-5.2.1/src/lcorolib.c'; then $(CYGPATH_W) '../src_3party/lua-5.2.1/src/lcorolib.c'; else $(CYGPATH_W) '$(srcdir)/../src_3party/lua-5.2.1/src/lcorolib.c'; fi`
+	$(AM_V_at)$(am__mv) ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lcorolib.Tpo ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lcorolib.Po
+#	$(AM_V_CC)source='../src_3party/lua-5.2.1/src/lcorolib.c' object='../src_3party/lua-5.2.1/src/homeis-lcorolib.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o ../src_3party/lua-5.2.1/src/homeis-lcorolib.obj `if test -f '../src_3party/lua-5.2.1/src/lcorolib.c'; then $(CYGPATH_W) '../src_3party/lua-5.2.1/src/lcorolib.c'; else $(CYGPATH_W) '$(srcdir)/../src_3party/lua-5.2.1/src/lcorolib.c'; fi`
+
+../src_3party/lua-5.2.1/src/homeis-lctype.o: ../src_3party/lua-5.2.1/src/lctype.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT ../src_3party/lua-5.2.1/src/homeis-lctype.o -MD -MP -MF ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lctype.Tpo -c -o ../src_3party/lua-5.2.1/src/homeis-lctype.o `test -f '../src_3party/lua-5.2.1/src/lctype.c' || echo '$(srcdir)/'`../src_3party/lua-5.2.1/src/lctype.c
+	$(AM_V_at)$(am__mv) ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lctype.Tpo ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lctype.Po
+#	$(AM_V_CC)source='../src_3party/lua-5.2.1/src/lctype.c' object='../src_3party/lua-5.2.1/src/homeis-lctype.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o ../src_3party/lua-5.2.1/src/homeis-lctype.o `test -f '../src_3party/lua-5.2.1/src/lctype.c' || echo '$(srcdir)/'`../src_3party/lua-5.2.1/src/lctype.c
+
+../src_3party/lua-5.2.1/src/homeis-lctype.obj: ../src_3party/lua-5.2.1/src/lctype.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT ../src_3party/lua-5.2.1/src/homeis-lctype.obj -MD -MP -MF ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lctype.Tpo -c -o ../src_3party/lua-5.2.1/src/homeis-lctype.obj `if test -f '../src_3party/lua-5.2.1/src/lctype.c'; then $(CYGPATH_W) '../src_3party/lua-5.2.1/src/lctype.c'; else $(CYGPATH_W) '$(srcdir)/../src_3party/lua-5.2.1/src/lctype.c'; fi`
+	$(AM_V_at)$(am__mv) ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lctype.Tpo ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lctype.Po
+#	$(AM_V_CC)source='../src_3party/lua-5.2.1/src/lctype.c' object='../src_3party/lua-5.2.1/src/homeis-lctype.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o ../src_3party/lua-5.2.1/src/homeis-lctype.obj `if test -f '../src_3party/lua-5.2.1/src/lctype.c'; then $(CYGPATH_W) '../src_3party/lua-5.2.1/src/lctype.c'; else $(CYGPATH_W) '$(srcdir)/../src_3party/lua-5.2.1/src/lctype.c'; fi`
+
+../src_3party/lua-5.2.1/src/homeis-ltm.o: ../src_3party/lua-5.2.1/src/ltm.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT ../src_3party/lua-5.2.1/src/homeis-ltm.o -MD -MP -MF ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-ltm.Tpo -c -o ../src_3party/lua-5.2.1/src/homeis-ltm.o `test -f '../src_3party/lua-5.2.1/src/ltm.c' || echo '$(srcdir)/'`../src_3party/lua-5.2.1/src/ltm.c
+	$(AM_V_at)$(am__mv) ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-ltm.Tpo ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-ltm.Po
+#	$(AM_V_CC)source='../src_3party/lua-5.2.1/src/ltm.c' object='../src_3party/lua-5.2.1/src/homeis-ltm.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o ../src_3party/lua-5.2.1/src/homeis-ltm.o `test -f '../src_3party/lua-5.2.1/src/ltm.c' || echo '$(srcdir)/'`../src_3party/lua-5.2.1/src/ltm.c
+
+../src_3party/lua-5.2.1/src/homeis-ltm.obj: ../src_3party/lua-5.2.1/src/ltm.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT ../src_3party/lua-5.2.1/src/homeis-ltm.obj -MD -MP -MF ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-ltm.Tpo -c -o ../src_3party/lua-5.2.1/src/homeis-ltm.obj `if test -f '../src_3party/lua-5.2.1/src/ltm.c'; then $(CYGPATH_W) '../src_3party/lua-5.2.1/src/ltm.c'; else $(CYGPATH_W) '$(srcdir)/../src_3party/lua-5.2.1/src/ltm.c'; fi`
+	$(AM_V_at)$(am__mv) ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-ltm.Tpo ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-ltm.Po
+#	$(AM_V_CC)source='../src_3party/lua-5.2.1/src/ltm.c' object='../src_3party/lua-5.2.1/src/homeis-ltm.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o ../src_3party/lua-5.2.1/src/homeis-ltm.obj `if test -f '../src_3party/lua-5.2.1/src/ltm.c'; then $(CYGPATH_W) '../src_3party/lua-5.2.1/src/ltm.c'; else $(CYGPATH_W) '$(srcdir)/../src_3party/lua-5.2.1/src/ltm.c'; fi`
+
+../src_3party/lua-5.2.1/src/homeis-lmathlib.o: ../src_3party/lua-5.2.1/src/lmathlib.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT ../src_3party/lua-5.2.1/src/homeis-lmathlib.o -MD -MP -MF ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lmathlib.Tpo -c -o ../src_3party/lua-5.2.1/src/homeis-lmathlib.o `test -f '../src_3party/lua-5.2.1/src/lmathlib.c' || echo '$(srcdir)/'`../src_3party/lua-5.2.1/src/lmathlib.c
+	$(AM_V_at)$(am__mv) ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lmathlib.Tpo ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lmathlib.Po
+#	$(AM_V_CC)source='../src_3party/lua-5.2.1/src/lmathlib.c' object='../src_3party/lua-5.2.1/src/homeis-lmathlib.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o ../src_3party/lua-5.2.1/src/homeis-lmathlib.o `test -f '../src_3party/lua-5.2.1/src/lmathlib.c' || echo '$(srcdir)/'`../src_3party/lua-5.2.1/src/lmathlib.c
+
+../src_3party/lua-5.2.1/src/homeis-lmathlib.obj: ../src_3party/lua-5.2.1/src/lmathlib.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT ../src_3party/lua-5.2.1/src/homeis-lmathlib.obj -MD -MP -MF ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lmathlib.Tpo -c -o ../src_3party/lua-5.2.1/src/homeis-lmathlib.obj `if test -f '../src_3party/lua-5.2.1/src/lmathlib.c'; then $(CYGPATH_W) '../src_3party/lua-5.2.1/src/lmathlib.c'; else $(CYGPATH_W) '$(srcdir)/../src_3party/lua-5.2.1/src/lmathlib.c'; fi`
+	$(AM_V_at)$(am__mv) ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lmathlib.Tpo ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lmathlib.Po
+#	$(AM_V_CC)source='../src_3party/lua-5.2.1/src/lmathlib.c' object='../src_3party/lua-5.2.1/src/homeis-lmathlib.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o ../src_3party/lua-5.2.1/src/homeis-lmathlib.obj `if test -f '../src_3party/lua-5.2.1/src/lmathlib.c'; then $(CYGPATH_W) '../src_3party/lua-5.2.1/src/lmathlib.c'; else $(CYGPATH_W) '$(srcdir)/../src_3party/lua-5.2.1/src/lmathlib.c'; fi`
+
+../src_3party/lua-5.2.1/src/homeis-ldblib.o: ../src_3party/lua-5.2.1/src/ldblib.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT ../src_3party/lua-5.2.1/src/homeis-ldblib.o -MD -MP -MF ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-ldblib.Tpo -c -o ../src_3party/lua-5.2.1/src/homeis-ldblib.o `test -f '../src_3party/lua-5.2.1/src/ldblib.c' || echo '$(srcdir)/'`../src_3party/lua-5.2.1/src/ldblib.c
+	$(AM_V_at)$(am__mv) ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-ldblib.Tpo ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-ldblib.Po
+#	$(AM_V_CC)source='../src_3party/lua-5.2.1/src/ldblib.c' object='../src_3party/lua-5.2.1/src/homeis-ldblib.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o ../src_3party/lua-5.2.1/src/homeis-ldblib.o `test -f '../src_3party/lua-5.2.1/src/ldblib.c' || echo '$(srcdir)/'`../src_3party/lua-5.2.1/src/ldblib.c
+
+../src_3party/lua-5.2.1/src/homeis-ldblib.obj: ../src_3party/lua-5.2.1/src/ldblib.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT ../src_3party/lua-5.2.1/src/homeis-ldblib.obj -MD -MP -MF ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-ldblib.Tpo -c -o ../src_3party/lua-5.2.1/src/homeis-ldblib.obj `if test -f '../src_3party/lua-5.2.1/src/ldblib.c'; then $(CYGPATH_W) '../src_3party/lua-5.2.1/src/ldblib.c'; else $(CYGPATH_W) '$(srcdir)/../src_3party/lua-5.2.1/src/ldblib.c'; fi`
+	$(AM_V_at)$(am__mv) ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-ldblib.Tpo ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-ldblib.Po
+#	$(AM_V_CC)source='../src_3party/lua-5.2.1/src/ldblib.c' object='../src_3party/lua-5.2.1/src/homeis-ldblib.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o ../src_3party/lua-5.2.1/src/homeis-ldblib.obj `if test -f '../src_3party/lua-5.2.1/src/ldblib.c'; then $(CYGPATH_W) '../src_3party/lua-5.2.1/src/ldblib.c'; else $(CYGPATH_W) '$(srcdir)/../src_3party/lua-5.2.1/src/ldblib.c'; fi`
+
+../src_3party/lua-5.2.1/src/homeis-ldebug.o: ../src_3party/lua-5.2.1/src/ldebug.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT ../src_3party/lua-5.2.1/src/homeis-ldebug.o -MD -MP -MF ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-ldebug.Tpo -c -o ../src_3party/lua-5.2.1/src/homeis-ldebug.o `test -f '../src_3party/lua-5.2.1/src/ldebug.c' || echo '$(srcdir)/'`../src_3party/lua-5.2.1/src/ldebug.c
+	$(AM_V_at)$(am__mv) ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-ldebug.Tpo ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-ldebug.Po
+#	$(AM_V_CC)source='../src_3party/lua-5.2.1/src/ldebug.c' object='../src_3party/lua-5.2.1/src/homeis-ldebug.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o ../src_3party/lua-5.2.1/src/homeis-ldebug.o `test -f '../src_3party/lua-5.2.1/src/ldebug.c' || echo '$(srcdir)/'`../src_3party/lua-5.2.1/src/ldebug.c
+
+../src_3party/lua-5.2.1/src/homeis-ldebug.obj: ../src_3party/lua-5.2.1/src/ldebug.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT ../src_3party/lua-5.2.1/src/homeis-ldebug.obj -MD -MP -MF ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-ldebug.Tpo -c -o ../src_3party/lua-5.2.1/src/homeis-ldebug.obj `if test -f '../src_3party/lua-5.2.1/src/ldebug.c'; then $(CYGPATH_W) '../src_3party/lua-5.2.1/src/ldebug.c'; else $(CYGPATH_W) '$(srcdir)/../src_3party/lua-5.2.1/src/ldebug.c'; fi`
+	$(AM_V_at)$(am__mv) ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-ldebug.Tpo ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-ldebug.Po
+#	$(AM_V_CC)source='../src_3party/lua-5.2.1/src/ldebug.c' object='../src_3party/lua-5.2.1/src/homeis-ldebug.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o ../src_3party/lua-5.2.1/src/homeis-ldebug.obj `if test -f '../src_3party/lua-5.2.1/src/ldebug.c'; then $(CYGPATH_W) '../src_3party/lua-5.2.1/src/ldebug.c'; else $(CYGPATH_W) '$(srcdir)/../src_3party/lua-5.2.1/src/ldebug.c'; fi`
+
+../src_3party/lua-5.2.1/src/homeis-ldo.o: ../src_3party/lua-5.2.1/src/ldo.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT ../src_3party/lua-5.2.1/src/homeis-ldo.o -MD -MP -MF ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-ldo.Tpo -c -o ../src_3party/lua-5.2.1/src/homeis-ldo.o `test -f '../src_3party/lua-5.2.1/src/ldo.c' || echo '$(srcdir)/'`../src_3party/lua-5.2.1/src/ldo.c
+	$(AM_V_at)$(am__mv) ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-ldo.Tpo ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-ldo.Po
+#	$(AM_V_CC)source='../src_3party/lua-5.2.1/src/ldo.c' object='../src_3party/lua-5.2.1/src/homeis-ldo.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o ../src_3party/lua-5.2.1/src/homeis-ldo.o `test -f '../src_3party/lua-5.2.1/src/ldo.c' || echo '$(srcdir)/'`../src_3party/lua-5.2.1/src/ldo.c
+
+../src_3party/lua-5.2.1/src/homeis-ldo.obj: ../src_3party/lua-5.2.1/src/ldo.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT ../src_3party/lua-5.2.1/src/homeis-ldo.obj -MD -MP -MF ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-ldo.Tpo -c -o ../src_3party/lua-5.2.1/src/homeis-ldo.obj `if test -f '../src_3party/lua-5.2.1/src/ldo.c'; then $(CYGPATH_W) '../src_3party/lua-5.2.1/src/ldo.c'; else $(CYGPATH_W) '$(srcdir)/../src_3party/lua-5.2.1/src/ldo.c'; fi`
+	$(AM_V_at)$(am__mv) ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-ldo.Tpo ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-ldo.Po
+#	$(AM_V_CC)source='../src_3party/lua-5.2.1/src/ldo.c' object='../src_3party/lua-5.2.1/src/homeis-ldo.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o ../src_3party/lua-5.2.1/src/homeis-ldo.obj `if test -f '../src_3party/lua-5.2.1/src/ldo.c'; then $(CYGPATH_W) '../src_3party/lua-5.2.1/src/ldo.c'; else $(CYGPATH_W) '$(srcdir)/../src_3party/lua-5.2.1/src/ldo.c'; fi`
+
+../src_3party/lua-5.2.1/src/homeis-ldump.o: ../src_3party/lua-5.2.1/src/ldump.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT ../src_3party/lua-5.2.1/src/homeis-ldump.o -MD -MP -MF ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-ldump.Tpo -c -o ../src_3party/lua-5.2.1/src/homeis-ldump.o `test -f '../src_3party/lua-5.2.1/src/ldump.c' || echo '$(srcdir)/'`../src_3party/lua-5.2.1/src/ldump.c
+	$(AM_V_at)$(am__mv) ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-ldump.Tpo ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-ldump.Po
+#	$(AM_V_CC)source='../src_3party/lua-5.2.1/src/ldump.c' object='../src_3party/lua-5.2.1/src/homeis-ldump.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o ../src_3party/lua-5.2.1/src/homeis-ldump.o `test -f '../src_3party/lua-5.2.1/src/ldump.c' || echo '$(srcdir)/'`../src_3party/lua-5.2.1/src/ldump.c
+
+../src_3party/lua-5.2.1/src/homeis-ldump.obj: ../src_3party/lua-5.2.1/src/ldump.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT ../src_3party/lua-5.2.1/src/homeis-ldump.obj -MD -MP -MF ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-ldump.Tpo -c -o ../src_3party/lua-5.2.1/src/homeis-ldump.obj `if test -f '../src_3party/lua-5.2.1/src/ldump.c'; then $(CYGPATH_W) '../src_3party/lua-5.2.1/src/ldump.c'; else $(CYGPATH_W) '$(srcdir)/../src_3party/lua-5.2.1/src/ldump.c'; fi`
+	$(AM_V_at)$(am__mv) ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-ldump.Tpo ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-ldump.Po
+#	$(AM_V_CC)source='../src_3party/lua-5.2.1/src/ldump.c' object='../src_3party/lua-5.2.1/src/homeis-ldump.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o ../src_3party/lua-5.2.1/src/homeis-ldump.obj `if test -f '../src_3party/lua-5.2.1/src/ldump.c'; then $(CYGPATH_W) '../src_3party/lua-5.2.1/src/ldump.c'; else $(CYGPATH_W) '$(srcdir)/../src_3party/lua-5.2.1/src/ldump.c'; fi`
+
+../src_3party/lua-5.2.1/src/homeis-lfunc.o: ../src_3party/lua-5.2.1/src/lfunc.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT ../src_3party/lua-5.2.1/src/homeis-lfunc.o -MD -MP -MF ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lfunc.Tpo -c -o ../src_3party/lua-5.2.1/src/homeis-lfunc.o `test -f '../src_3party/lua-5.2.1/src/lfunc.c' || echo '$(srcdir)/'`../src_3party/lua-5.2.1/src/lfunc.c
+	$(AM_V_at)$(am__mv) ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lfunc.Tpo ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lfunc.Po
+#	$(AM_V_CC)source='../src_3party/lua-5.2.1/src/lfunc.c' object='../src_3party/lua-5.2.1/src/homeis-lfunc.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o ../src_3party/lua-5.2.1/src/homeis-lfunc.o `test -f '../src_3party/lua-5.2.1/src/lfunc.c' || echo '$(srcdir)/'`../src_3party/lua-5.2.1/src/lfunc.c
+
+../src_3party/lua-5.2.1/src/homeis-lfunc.obj: ../src_3party/lua-5.2.1/src/lfunc.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT ../src_3party/lua-5.2.1/src/homeis-lfunc.obj -MD -MP -MF ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lfunc.Tpo -c -o ../src_3party/lua-5.2.1/src/homeis-lfunc.obj `if test -f '../src_3party/lua-5.2.1/src/lfunc.c'; then $(CYGPATH_W) '../src_3party/lua-5.2.1/src/lfunc.c'; else $(CYGPATH_W) '$(srcdir)/../src_3party/lua-5.2.1/src/lfunc.c'; fi`
+	$(AM_V_at)$(am__mv) ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lfunc.Tpo ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lfunc.Po
+#	$(AM_V_CC)source='../src_3party/lua-5.2.1/src/lfunc.c' object='../src_3party/lua-5.2.1/src/homeis-lfunc.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o ../src_3party/lua-5.2.1/src/homeis-lfunc.obj `if test -f '../src_3party/lua-5.2.1/src/lfunc.c'; then $(CYGPATH_W) '../src_3party/lua-5.2.1/src/lfunc.c'; else $(CYGPATH_W) '$(srcdir)/../src_3party/lua-5.2.1/src/lfunc.c'; fi`
+
+../src_3party/lua-5.2.1/src/homeis-lgc.o: ../src_3party/lua-5.2.1/src/lgc.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT ../src_3party/lua-5.2.1/src/homeis-lgc.o -MD -MP -MF ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lgc.Tpo -c -o ../src_3party/lua-5.2.1/src/homeis-lgc.o `test -f '../src_3party/lua-5.2.1/src/lgc.c' || echo '$(srcdir)/'`../src_3party/lua-5.2.1/src/lgc.c
+	$(AM_V_at)$(am__mv) ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lgc.Tpo ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lgc.Po
+#	$(AM_V_CC)source='../src_3party/lua-5.2.1/src/lgc.c' object='../src_3party/lua-5.2.1/src/homeis-lgc.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o ../src_3party/lua-5.2.1/src/homeis-lgc.o `test -f '../src_3party/lua-5.2.1/src/lgc.c' || echo '$(srcdir)/'`../src_3party/lua-5.2.1/src/lgc.c
+
+../src_3party/lua-5.2.1/src/homeis-lgc.obj: ../src_3party/lua-5.2.1/src/lgc.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT ../src_3party/lua-5.2.1/src/homeis-lgc.obj -MD -MP -MF ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lgc.Tpo -c -o ../src_3party/lua-5.2.1/src/homeis-lgc.obj `if test -f '../src_3party/lua-5.2.1/src/lgc.c'; then $(CYGPATH_W) '../src_3party/lua-5.2.1/src/lgc.c'; else $(CYGPATH_W) '$(srcdir)/../src_3party/lua-5.2.1/src/lgc.c'; fi`
+	$(AM_V_at)$(am__mv) ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lgc.Tpo ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lgc.Po
+#	$(AM_V_CC)source='../src_3party/lua-5.2.1/src/lgc.c' object='../src_3party/lua-5.2.1/src/homeis-lgc.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o ../src_3party/lua-5.2.1/src/homeis-lgc.obj `if test -f '../src_3party/lua-5.2.1/src/lgc.c'; then $(CYGPATH_W) '../src_3party/lua-5.2.1/src/lgc.c'; else $(CYGPATH_W) '$(srcdir)/../src_3party/lua-5.2.1/src/lgc.c'; fi`
+
+../src_3party/lua-5.2.1/src/homeis-linit.o: ../src_3party/lua-5.2.1/src/linit.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT ../src_3party/lua-5.2.1/src/homeis-linit.o -MD -MP -MF ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-linit.Tpo -c -o ../src_3party/lua-5.2.1/src/homeis-linit.o `test -f '../src_3party/lua-5.2.1/src/linit.c' || echo '$(srcdir)/'`../src_3party/lua-5.2.1/src/linit.c
+	$(AM_V_at)$(am__mv) ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-linit.Tpo ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-linit.Po
+#	$(AM_V_CC)source='../src_3party/lua-5.2.1/src/linit.c' object='../src_3party/lua-5.2.1/src/homeis-linit.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o ../src_3party/lua-5.2.1/src/homeis-linit.o `test -f '../src_3party/lua-5.2.1/src/linit.c' || echo '$(srcdir)/'`../src_3party/lua-5.2.1/src/linit.c
+
+../src_3party/lua-5.2.1/src/homeis-linit.obj: ../src_3party/lua-5.2.1/src/linit.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT ../src_3party/lua-5.2.1/src/homeis-linit.obj -MD -MP -MF ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-linit.Tpo -c -o ../src_3party/lua-5.2.1/src/homeis-linit.obj `if test -f '../src_3party/lua-5.2.1/src/linit.c'; then $(CYGPATH_W) '../src_3party/lua-5.2.1/src/linit.c'; else $(CYGPATH_W) '$(srcdir)/../src_3party/lua-5.2.1/src/linit.c'; fi`
+	$(AM_V_at)$(am__mv) ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-linit.Tpo ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-linit.Po
+#	$(AM_V_CC)source='../src_3party/lua-5.2.1/src/linit.c' object='../src_3party/lua-5.2.1/src/homeis-linit.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o ../src_3party/lua-5.2.1/src/homeis-linit.obj `if test -f '../src_3party/lua-5.2.1/src/linit.c'; then $(CYGPATH_W) '../src_3party/lua-5.2.1/src/linit.c'; else $(CYGPATH_W) '$(srcdir)/../src_3party/lua-5.2.1/src/linit.c'; fi`
+
+../src_3party/lua-5.2.1/src/homeis-liolib.o: ../src_3party/lua-5.2.1/src/liolib.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT ../src_3party/lua-5.2.1/src/homeis-liolib.o -MD -MP -MF ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-liolib.Tpo -c -o ../src_3party/lua-5.2.1/src/homeis-liolib.o `test -f '../src_3party/lua-5.2.1/src/liolib.c' || echo '$(srcdir)/'`../src_3party/lua-5.2.1/src/liolib.c
+	$(AM_V_at)$(am__mv) ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-liolib.Tpo ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-liolib.Po
+#	$(AM_V_CC)source='../src_3party/lua-5.2.1/src/liolib.c' object='../src_3party/lua-5.2.1/src/homeis-liolib.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o ../src_3party/lua-5.2.1/src/homeis-liolib.o `test -f '../src_3party/lua-5.2.1/src/liolib.c' || echo '$(srcdir)/'`../src_3party/lua-5.2.1/src/liolib.c
+
+../src_3party/lua-5.2.1/src/homeis-liolib.obj: ../src_3party/lua-5.2.1/src/liolib.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT ../src_3party/lua-5.2.1/src/homeis-liolib.obj -MD -MP -MF ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-liolib.Tpo -c -o ../src_3party/lua-5.2.1/src/homeis-liolib.obj `if test -f '../src_3party/lua-5.2.1/src/liolib.c'; then $(CYGPATH_W) '../src_3party/lua-5.2.1/src/liolib.c'; else $(CYGPATH_W) '$(srcdir)/../src_3party/lua-5.2.1/src/liolib.c'; fi`
+	$(AM_V_at)$(am__mv) ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-liolib.Tpo ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-liolib.Po
+#	$(AM_V_CC)source='../src_3party/lua-5.2.1/src/liolib.c' object='../src_3party/lua-5.2.1/src/homeis-liolib.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o ../src_3party/lua-5.2.1/src/homeis-liolib.obj `if test -f '../src_3party/lua-5.2.1/src/liolib.c'; then $(CYGPATH_W) '../src_3party/lua-5.2.1/src/liolib.c'; else $(CYGPATH_W) '$(srcdir)/../src_3party/lua-5.2.1/src/liolib.c'; fi`
+
+../src_3party/lua-5.2.1/src/homeis-llex.o: ../src_3party/lua-5.2.1/src/llex.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT ../src_3party/lua-5.2.1/src/homeis-llex.o -MD -MP -MF ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-llex.Tpo -c -o ../src_3party/lua-5.2.1/src/homeis-llex.o `test -f '../src_3party/lua-5.2.1/src/llex.c' || echo '$(srcdir)/'`../src_3party/lua-5.2.1/src/llex.c
+	$(AM_V_at)$(am__mv) ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-llex.Tpo ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-llex.Po
+#	$(AM_V_CC)source='../src_3party/lua-5.2.1/src/llex.c' object='../src_3party/lua-5.2.1/src/homeis-llex.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o ../src_3party/lua-5.2.1/src/homeis-llex.o `test -f '../src_3party/lua-5.2.1/src/llex.c' || echo '$(srcdir)/'`../src_3party/lua-5.2.1/src/llex.c
+
+../src_3party/lua-5.2.1/src/homeis-llex.obj: ../src_3party/lua-5.2.1/src/llex.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT ../src_3party/lua-5.2.1/src/homeis-llex.obj -MD -MP -MF ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-llex.Tpo -c -o ../src_3party/lua-5.2.1/src/homeis-llex.obj `if test -f '../src_3party/lua-5.2.1/src/llex.c'; then $(CYGPATH_W) '../src_3party/lua-5.2.1/src/llex.c'; else $(CYGPATH_W) '$(srcdir)/../src_3party/lua-5.2.1/src/llex.c'; fi`
+	$(AM_V_at)$(am__mv) ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-llex.Tpo ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-llex.Po
+#	$(AM_V_CC)source='../src_3party/lua-5.2.1/src/llex.c' object='../src_3party/lua-5.2.1/src/homeis-llex.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o ../src_3party/lua-5.2.1/src/homeis-llex.obj `if test -f '../src_3party/lua-5.2.1/src/llex.c'; then $(CYGPATH_W) '../src_3party/lua-5.2.1/src/llex.c'; else $(CYGPATH_W) '$(srcdir)/../src_3party/lua-5.2.1/src/llex.c'; fi`
+
+../src_3party/lua-5.2.1/src/homeis-lmem.o: ../src_3party/lua-5.2.1/src/lmem.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT ../src_3party/lua-5.2.1/src/homeis-lmem.o -MD -MP -MF ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lmem.Tpo -c -o ../src_3party/lua-5.2.1/src/homeis-lmem.o `test -f '../src_3party/lua-5.2.1/src/lmem.c' || echo '$(srcdir)/'`../src_3party/lua-5.2.1/src/lmem.c
+	$(AM_V_at)$(am__mv) ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lmem.Tpo ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lmem.Po
+#	$(AM_V_CC)source='../src_3party/lua-5.2.1/src/lmem.c' object='../src_3party/lua-5.2.1/src/homeis-lmem.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o ../src_3party/lua-5.2.1/src/homeis-lmem.o `test -f '../src_3party/lua-5.2.1/src/lmem.c' || echo '$(srcdir)/'`../src_3party/lua-5.2.1/src/lmem.c
+
+../src_3party/lua-5.2.1/src/homeis-lmem.obj: ../src_3party/lua-5.2.1/src/lmem.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT ../src_3party/lua-5.2.1/src/homeis-lmem.obj -MD -MP -MF ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lmem.Tpo -c -o ../src_3party/lua-5.2.1/src/homeis-lmem.obj `if test -f '../src_3party/lua-5.2.1/src/lmem.c'; then $(CYGPATH_W) '../src_3party/lua-5.2.1/src/lmem.c'; else $(CYGPATH_W) '$(srcdir)/../src_3party/lua-5.2.1/src/lmem.c'; fi`
+	$(AM_V_at)$(am__mv) ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lmem.Tpo ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lmem.Po
+#	$(AM_V_CC)source='../src_3party/lua-5.2.1/src/lmem.c' object='../src_3party/lua-5.2.1/src/homeis-lmem.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o ../src_3party/lua-5.2.1/src/homeis-lmem.obj `if test -f '../src_3party/lua-5.2.1/src/lmem.c'; then $(CYGPATH_W) '../src_3party/lua-5.2.1/src/lmem.c'; else $(CYGPATH_W) '$(srcdir)/../src_3party/lua-5.2.1/src/lmem.c'; fi`
+
+../src_3party/lua-5.2.1/src/homeis-loadlib.o: ../src_3party/lua-5.2.1/src/loadlib.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT ../src_3party/lua-5.2.1/src/homeis-loadlib.o -MD -MP -MF ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-loadlib.Tpo -c -o ../src_3party/lua-5.2.1/src/homeis-loadlib.o `test -f '../src_3party/lua-5.2.1/src/loadlib.c' || echo '$(srcdir)/'`../src_3party/lua-5.2.1/src/loadlib.c
+	$(AM_V_at)$(am__mv) ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-loadlib.Tpo ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-loadlib.Po
+#	$(AM_V_CC)source='../src_3party/lua-5.2.1/src/loadlib.c' object='../src_3party/lua-5.2.1/src/homeis-loadlib.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o ../src_3party/lua-5.2.1/src/homeis-loadlib.o `test -f '../src_3party/lua-5.2.1/src/loadlib.c' || echo '$(srcdir)/'`../src_3party/lua-5.2.1/src/loadlib.c
+
+../src_3party/lua-5.2.1/src/homeis-loadlib.obj: ../src_3party/lua-5.2.1/src/loadlib.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT ../src_3party/lua-5.2.1/src/homeis-loadlib.obj -MD -MP -MF ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-loadlib.Tpo -c -o ../src_3party/lua-5.2.1/src/homeis-loadlib.obj `if test -f '../src_3party/lua-5.2.1/src/loadlib.c'; then $(CYGPATH_W) '../src_3party/lua-5.2.1/src/loadlib.c'; else $(CYGPATH_W) '$(srcdir)/../src_3party/lua-5.2.1/src/loadlib.c'; fi`
+	$(AM_V_at)$(am__mv) ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-loadlib.Tpo ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-loadlib.Po
+#	$(AM_V_CC)source='../src_3party/lua-5.2.1/src/loadlib.c' object='../src_3party/lua-5.2.1/src/homeis-loadlib.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o ../src_3party/lua-5.2.1/src/homeis-loadlib.obj `if test -f '../src_3party/lua-5.2.1/src/loadlib.c'; then $(CYGPATH_W) '../src_3party/lua-5.2.1/src/loadlib.c'; else $(CYGPATH_W) '$(srcdir)/../src_3party/lua-5.2.1/src/loadlib.c'; fi`
+
+../src_3party/lua-5.2.1/src/homeis-lobject.o: ../src_3party/lua-5.2.1/src/lobject.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT ../src_3party/lua-5.2.1/src/homeis-lobject.o -MD -MP -MF ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lobject.Tpo -c -o ../src_3party/lua-5.2.1/src/homeis-lobject.o `test -f '../src_3party/lua-5.2.1/src/lobject.c' || echo '$(srcdir)/'`../src_3party/lua-5.2.1/src/lobject.c
+	$(AM_V_at)$(am__mv) ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lobject.Tpo ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lobject.Po
+#	$(AM_V_CC)source='../src_3party/lua-5.2.1/src/lobject.c' object='../src_3party/lua-5.2.1/src/homeis-lobject.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o ../src_3party/lua-5.2.1/src/homeis-lobject.o `test -f '../src_3party/lua-5.2.1/src/lobject.c' || echo '$(srcdir)/'`../src_3party/lua-5.2.1/src/lobject.c
+
+../src_3party/lua-5.2.1/src/homeis-lobject.obj: ../src_3party/lua-5.2.1/src/lobject.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT ../src_3party/lua-5.2.1/src/homeis-lobject.obj -MD -MP -MF ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lobject.Tpo -c -o ../src_3party/lua-5.2.1/src/homeis-lobject.obj `if test -f '../src_3party/lua-5.2.1/src/lobject.c'; then $(CYGPATH_W) '../src_3party/lua-5.2.1/src/lobject.c'; else $(CYGPATH_W) '$(srcdir)/../src_3party/lua-5.2.1/src/lobject.c'; fi`
+	$(AM_V_at)$(am__mv) ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lobject.Tpo ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lobject.Po
+#	$(AM_V_CC)source='../src_3party/lua-5.2.1/src/lobject.c' object='../src_3party/lua-5.2.1/src/homeis-lobject.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o ../src_3party/lua-5.2.1/src/homeis-lobject.obj `if test -f '../src_3party/lua-5.2.1/src/lobject.c'; then $(CYGPATH_W) '../src_3party/lua-5.2.1/src/lobject.c'; else $(CYGPATH_W) '$(srcdir)/../src_3party/lua-5.2.1/src/lobject.c'; fi`
+
+../src_3party/lua-5.2.1/src/homeis-lopcodes.o: ../src_3party/lua-5.2.1/src/lopcodes.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT ../src_3party/lua-5.2.1/src/homeis-lopcodes.o -MD -MP -MF ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lopcodes.Tpo -c -o ../src_3party/lua-5.2.1/src/homeis-lopcodes.o `test -f '../src_3party/lua-5.2.1/src/lopcodes.c' || echo '$(srcdir)/'`../src_3party/lua-5.2.1/src/lopcodes.c
+	$(AM_V_at)$(am__mv) ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lopcodes.Tpo ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lopcodes.Po
+#	$(AM_V_CC)source='../src_3party/lua-5.2.1/src/lopcodes.c' object='../src_3party/lua-5.2.1/src/homeis-lopcodes.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o ../src_3party/lua-5.2.1/src/homeis-lopcodes.o `test -f '../src_3party/lua-5.2.1/src/lopcodes.c' || echo '$(srcdir)/'`../src_3party/lua-5.2.1/src/lopcodes.c
+
+../src_3party/lua-5.2.1/src/homeis-lopcodes.obj: ../src_3party/lua-5.2.1/src/lopcodes.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT ../src_3party/lua-5.2.1/src/homeis-lopcodes.obj -MD -MP -MF ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lopcodes.Tpo -c -o ../src_3party/lua-5.2.1/src/homeis-lopcodes.obj `if test -f '../src_3party/lua-5.2.1/src/lopcodes.c'; then $(CYGPATH_W) '../src_3party/lua-5.2.1/src/lopcodes.c'; else $(CYGPATH_W) '$(srcdir)/../src_3party/lua-5.2.1/src/lopcodes.c'; fi`
+	$(AM_V_at)$(am__mv) ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lopcodes.Tpo ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lopcodes.Po
+#	$(AM_V_CC)source='../src_3party/lua-5.2.1/src/lopcodes.c' object='../src_3party/lua-5.2.1/src/homeis-lopcodes.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o ../src_3party/lua-5.2.1/src/homeis-lopcodes.obj `if test -f '../src_3party/lua-5.2.1/src/lopcodes.c'; then $(CYGPATH_W) '../src_3party/lua-5.2.1/src/lopcodes.c'; else $(CYGPATH_W) '$(srcdir)/../src_3party/lua-5.2.1/src/lopcodes.c'; fi`
+
+../src_3party/lua-5.2.1/src/homeis-loslib.o: ../src_3party/lua-5.2.1/src/loslib.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT ../src_3party/lua-5.2.1/src/homeis-loslib.o -MD -MP -MF ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-loslib.Tpo -c -o ../src_3party/lua-5.2.1/src/homeis-loslib.o `test -f '../src_3party/lua-5.2.1/src/loslib.c' || echo '$(srcdir)/'`../src_3party/lua-5.2.1/src/loslib.c
+	$(AM_V_at)$(am__mv) ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-loslib.Tpo ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-loslib.Po
+#	$(AM_V_CC)source='../src_3party/lua-5.2.1/src/loslib.c' object='../src_3party/lua-5.2.1/src/homeis-loslib.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o ../src_3party/lua-5.2.1/src/homeis-loslib.o `test -f '../src_3party/lua-5.2.1/src/loslib.c' || echo '$(srcdir)/'`../src_3party/lua-5.2.1/src/loslib.c
+
+../src_3party/lua-5.2.1/src/homeis-loslib.obj: ../src_3party/lua-5.2.1/src/loslib.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT ../src_3party/lua-5.2.1/src/homeis-loslib.obj -MD -MP -MF ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-loslib.Tpo -c -o ../src_3party/lua-5.2.1/src/homeis-loslib.obj `if test -f '../src_3party/lua-5.2.1/src/loslib.c'; then $(CYGPATH_W) '../src_3party/lua-5.2.1/src/loslib.c'; else $(CYGPATH_W) '$(srcdir)/../src_3party/lua-5.2.1/src/loslib.c'; fi`
+	$(AM_V_at)$(am__mv) ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-loslib.Tpo ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-loslib.Po
+#	$(AM_V_CC)source='../src_3party/lua-5.2.1/src/loslib.c' object='../src_3party/lua-5.2.1/src/homeis-loslib.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o ../src_3party/lua-5.2.1/src/homeis-loslib.obj `if test -f '../src_3party/lua-5.2.1/src/loslib.c'; then $(CYGPATH_W) '../src_3party/lua-5.2.1/src/loslib.c'; else $(CYGPATH_W) '$(srcdir)/../src_3party/lua-5.2.1/src/loslib.c'; fi`
+
+../src_3party/lua-5.2.1/src/homeis-lparser.o: ../src_3party/lua-5.2.1/src/lparser.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT ../src_3party/lua-5.2.1/src/homeis-lparser.o -MD -MP -MF ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lparser.Tpo -c -o ../src_3party/lua-5.2.1/src/homeis-lparser.o `test -f '../src_3party/lua-5.2.1/src/lparser.c' || echo '$(srcdir)/'`../src_3party/lua-5.2.1/src/lparser.c
+	$(AM_V_at)$(am__mv) ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lparser.Tpo ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lparser.Po
+#	$(AM_V_CC)source='../src_3party/lua-5.2.1/src/lparser.c' object='../src_3party/lua-5.2.1/src/homeis-lparser.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o ../src_3party/lua-5.2.1/src/homeis-lparser.o `test -f '../src_3party/lua-5.2.1/src/lparser.c' || echo '$(srcdir)/'`../src_3party/lua-5.2.1/src/lparser.c
+
+../src_3party/lua-5.2.1/src/homeis-lparser.obj: ../src_3party/lua-5.2.1/src/lparser.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT ../src_3party/lua-5.2.1/src/homeis-lparser.obj -MD -MP -MF ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lparser.Tpo -c -o ../src_3party/lua-5.2.1/src/homeis-lparser.obj `if test -f '../src_3party/lua-5.2.1/src/lparser.c'; then $(CYGPATH_W) '../src_3party/lua-5.2.1/src/lparser.c'; else $(CYGPATH_W) '$(srcdir)/../src_3party/lua-5.2.1/src/lparser.c'; fi`
+	$(AM_V_at)$(am__mv) ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lparser.Tpo ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lparser.Po
+#	$(AM_V_CC)source='../src_3party/lua-5.2.1/src/lparser.c' object='../src_3party/lua-5.2.1/src/homeis-lparser.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o ../src_3party/lua-5.2.1/src/homeis-lparser.obj `if test -f '../src_3party/lua-5.2.1/src/lparser.c'; then $(CYGPATH_W) '../src_3party/lua-5.2.1/src/lparser.c'; else $(CYGPATH_W) '$(srcdir)/../src_3party/lua-5.2.1/src/lparser.c'; fi`
+
+../src_3party/lua-5.2.1/src/homeis-lstate.o: ../src_3party/lua-5.2.1/src/lstate.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT ../src_3party/lua-5.2.1/src/homeis-lstate.o -MD -MP -MF ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lstate.Tpo -c -o ../src_3party/lua-5.2.1/src/homeis-lstate.o `test -f '../src_3party/lua-5.2.1/src/lstate.c' || echo '$(srcdir)/'`../src_3party/lua-5.2.1/src/lstate.c
+	$(AM_V_at)$(am__mv) ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lstate.Tpo ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lstate.Po
+#	$(AM_V_CC)source='../src_3party/lua-5.2.1/src/lstate.c' object='../src_3party/lua-5.2.1/src/homeis-lstate.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o ../src_3party/lua-5.2.1/src/homeis-lstate.o `test -f '../src_3party/lua-5.2.1/src/lstate.c' || echo '$(srcdir)/'`../src_3party/lua-5.2.1/src/lstate.c
+
+../src_3party/lua-5.2.1/src/homeis-lstate.obj: ../src_3party/lua-5.2.1/src/lstate.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT ../src_3party/lua-5.2.1/src/homeis-lstate.obj -MD -MP -MF ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lstate.Tpo -c -o ../src_3party/lua-5.2.1/src/homeis-lstate.obj `if test -f '../src_3party/lua-5.2.1/src/lstate.c'; then $(CYGPATH_W) '../src_3party/lua-5.2.1/src/lstate.c'; else $(CYGPATH_W) '$(srcdir)/../src_3party/lua-5.2.1/src/lstate.c'; fi`
+	$(AM_V_at)$(am__mv) ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lstate.Tpo ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lstate.Po
+#	$(AM_V_CC)source='../src_3party/lua-5.2.1/src/lstate.c' object='../src_3party/lua-5.2.1/src/homeis-lstate.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o ../src_3party/lua-5.2.1/src/homeis-lstate.obj `if test -f '../src_3party/lua-5.2.1/src/lstate.c'; then $(CYGPATH_W) '../src_3party/lua-5.2.1/src/lstate.c'; else $(CYGPATH_W) '$(srcdir)/../src_3party/lua-5.2.1/src/lstate.c'; fi`
+
+../src_3party/lua-5.2.1/src/homeis-lstring.o: ../src_3party/lua-5.2.1/src/lstring.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT ../src_3party/lua-5.2.1/src/homeis-lstring.o -MD -MP -MF ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lstring.Tpo -c -o ../src_3party/lua-5.2.1/src/homeis-lstring.o `test -f '../src_3party/lua-5.2.1/src/lstring.c' || echo '$(srcdir)/'`../src_3party/lua-5.2.1/src/lstring.c
+	$(AM_V_at)$(am__mv) ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lstring.Tpo ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lstring.Po
+#	$(AM_V_CC)source='../src_3party/lua-5.2.1/src/lstring.c' object='../src_3party/lua-5.2.1/src/homeis-lstring.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o ../src_3party/lua-5.2.1/src/homeis-lstring.o `test -f '../src_3party/lua-5.2.1/src/lstring.c' || echo '$(srcdir)/'`../src_3party/lua-5.2.1/src/lstring.c
+
+../src_3party/lua-5.2.1/src/homeis-lstring.obj: ../src_3party/lua-5.2.1/src/lstring.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT ../src_3party/lua-5.2.1/src/homeis-lstring.obj -MD -MP -MF ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lstring.Tpo -c -o ../src_3party/lua-5.2.1/src/homeis-lstring.obj `if test -f '../src_3party/lua-5.2.1/src/lstring.c'; then $(CYGPATH_W) '../src_3party/lua-5.2.1/src/lstring.c'; else $(CYGPATH_W) '$(srcdir)/../src_3party/lua-5.2.1/src/lstring.c'; fi`
+	$(AM_V_at)$(am__mv) ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lstring.Tpo ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lstring.Po
+#	$(AM_V_CC)source='../src_3party/lua-5.2.1/src/lstring.c' object='../src_3party/lua-5.2.1/src/homeis-lstring.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o ../src_3party/lua-5.2.1/src/homeis-lstring.obj `if test -f '../src_3party/lua-5.2.1/src/lstring.c'; then $(CYGPATH_W) '../src_3party/lua-5.2.1/src/lstring.c'; else $(CYGPATH_W) '$(srcdir)/../src_3party/lua-5.2.1/src/lstring.c'; fi`
+
+../src_3party/lua-5.2.1/src/homeis-lstrlib.o: ../src_3party/lua-5.2.1/src/lstrlib.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT ../src_3party/lua-5.2.1/src/homeis-lstrlib.o -MD -MP -MF ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lstrlib.Tpo -c -o ../src_3party/lua-5.2.1/src/homeis-lstrlib.o `test -f '../src_3party/lua-5.2.1/src/lstrlib.c' || echo '$(srcdir)/'`../src_3party/lua-5.2.1/src/lstrlib.c
+	$(AM_V_at)$(am__mv) ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lstrlib.Tpo ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lstrlib.Po
+#	$(AM_V_CC)source='../src_3party/lua-5.2.1/src/lstrlib.c' object='../src_3party/lua-5.2.1/src/homeis-lstrlib.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o ../src_3party/lua-5.2.1/src/homeis-lstrlib.o `test -f '../src_3party/lua-5.2.1/src/lstrlib.c' || echo '$(srcdir)/'`../src_3party/lua-5.2.1/src/lstrlib.c
+
+../src_3party/lua-5.2.1/src/homeis-lstrlib.obj: ../src_3party/lua-5.2.1/src/lstrlib.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT ../src_3party/lua-5.2.1/src/homeis-lstrlib.obj -MD -MP -MF ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lstrlib.Tpo -c -o ../src_3party/lua-5.2.1/src/homeis-lstrlib.obj `if test -f '../src_3party/lua-5.2.1/src/lstrlib.c'; then $(CYGPATH_W) '../src_3party/lua-5.2.1/src/lstrlib.c'; else $(CYGPATH_W) '$(srcdir)/../src_3party/lua-5.2.1/src/lstrlib.c'; fi`
+	$(AM_V_at)$(am__mv) ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lstrlib.Tpo ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lstrlib.Po
+#	$(AM_V_CC)source='../src_3party/lua-5.2.1/src/lstrlib.c' object='../src_3party/lua-5.2.1/src/homeis-lstrlib.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o ../src_3party/lua-5.2.1/src/homeis-lstrlib.obj `if test -f '../src_3party/lua-5.2.1/src/lstrlib.c'; then $(CYGPATH_W) '../src_3party/lua-5.2.1/src/lstrlib.c'; else $(CYGPATH_W) '$(srcdir)/../src_3party/lua-5.2.1/src/lstrlib.c'; fi`
+
+../src_3party/lua-5.2.1/src/homeis-ltable.o: ../src_3party/lua-5.2.1/src/ltable.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT ../src_3party/lua-5.2.1/src/homeis-ltable.o -MD -MP -MF ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-ltable.Tpo -c -o ../src_3party/lua-5.2.1/src/homeis-ltable.o `test -f '../src_3party/lua-5.2.1/src/ltable.c' || echo '$(srcdir)/'`../src_3party/lua-5.2.1/src/ltable.c
+	$(AM_V_at)$(am__mv) ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-ltable.Tpo ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-ltable.Po
+#	$(AM_V_CC)source='../src_3party/lua-5.2.1/src/ltable.c' object='../src_3party/lua-5.2.1/src/homeis-ltable.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o ../src_3party/lua-5.2.1/src/homeis-ltable.o `test -f '../src_3party/lua-5.2.1/src/ltable.c' || echo '$(srcdir)/'`../src_3party/lua-5.2.1/src/ltable.c
+
+../src_3party/lua-5.2.1/src/homeis-ltable.obj: ../src_3party/lua-5.2.1/src/ltable.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT ../src_3party/lua-5.2.1/src/homeis-ltable.obj -MD -MP -MF ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-ltable.Tpo -c -o ../src_3party/lua-5.2.1/src/homeis-ltable.obj `if test -f '../src_3party/lua-5.2.1/src/ltable.c'; then $(CYGPATH_W) '../src_3party/lua-5.2.1/src/ltable.c'; else $(CYGPATH_W) '$(srcdir)/../src_3party/lua-5.2.1/src/ltable.c'; fi`
+	$(AM_V_at)$(am__mv) ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-ltable.Tpo ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-ltable.Po
+#	$(AM_V_CC)source='../src_3party/lua-5.2.1/src/ltable.c' object='../src_3party/lua-5.2.1/src/homeis-ltable.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o ../src_3party/lua-5.2.1/src/homeis-ltable.obj `if test -f '../src_3party/lua-5.2.1/src/ltable.c'; then $(CYGPATH_W) '../src_3party/lua-5.2.1/src/ltable.c'; else $(CYGPATH_W) '$(srcdir)/../src_3party/lua-5.2.1/src/ltable.c'; fi`
+
+../src_3party/lua-5.2.1/src/homeis-ltablib.o: ../src_3party/lua-5.2.1/src/ltablib.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT ../src_3party/lua-5.2.1/src/homeis-ltablib.o -MD -MP -MF ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-ltablib.Tpo -c -o ../src_3party/lua-5.2.1/src/homeis-ltablib.o `test -f '../src_3party/lua-5.2.1/src/ltablib.c' || echo '$(srcdir)/'`../src_3party/lua-5.2.1/src/ltablib.c
+	$(AM_V_at)$(am__mv) ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-ltablib.Tpo ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-ltablib.Po
+#	$(AM_V_CC)source='../src_3party/lua-5.2.1/src/ltablib.c' object='../src_3party/lua-5.2.1/src/homeis-ltablib.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o ../src_3party/lua-5.2.1/src/homeis-ltablib.o `test -f '../src_3party/lua-5.2.1/src/ltablib.c' || echo '$(srcdir)/'`../src_3party/lua-5.2.1/src/ltablib.c
+
+../src_3party/lua-5.2.1/src/homeis-ltablib.obj: ../src_3party/lua-5.2.1/src/ltablib.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT ../src_3party/lua-5.2.1/src/homeis-ltablib.obj -MD -MP -MF ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-ltablib.Tpo -c -o ../src_3party/lua-5.2.1/src/homeis-ltablib.obj `if test -f '../src_3party/lua-5.2.1/src/ltablib.c'; then $(CYGPATH_W) '../src_3party/lua-5.2.1/src/ltablib.c'; else $(CYGPATH_W) '$(srcdir)/../src_3party/lua-5.2.1/src/ltablib.c'; fi`
+	$(AM_V_at)$(am__mv) ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-ltablib.Tpo ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-ltablib.Po
+#	$(AM_V_CC)source='../src_3party/lua-5.2.1/src/ltablib.c' object='../src_3party/lua-5.2.1/src/homeis-ltablib.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o ../src_3party/lua-5.2.1/src/homeis-ltablib.obj `if test -f '../src_3party/lua-5.2.1/src/ltablib.c'; then $(CYGPATH_W) '../src_3party/lua-5.2.1/src/ltablib.c'; else $(CYGPATH_W) '$(srcdir)/../src_3party/lua-5.2.1/src/ltablib.c'; fi`
+
+../src_3party/lua-5.2.1/src/homeis-lua.o: ../src_3party/lua-5.2.1/src/lua.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT ../src_3party/lua-5.2.1/src/homeis-lua.o -MD -MP -MF ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lua.Tpo -c -o ../src_3party/lua-5.2.1/src/homeis-lua.o `test -f '../src_3party/lua-5.2.1/src/lua.c' || echo '$(srcdir)/'`../src_3party/lua-5.2.1/src/lua.c
+	$(AM_V_at)$(am__mv) ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lua.Tpo ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lua.Po
+#	$(AM_V_CC)source='../src_3party/lua-5.2.1/src/lua.c' object='../src_3party/lua-5.2.1/src/homeis-lua.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o ../src_3party/lua-5.2.1/src/homeis-lua.o `test -f '../src_3party/lua-5.2.1/src/lua.c' || echo '$(srcdir)/'`../src_3party/lua-5.2.1/src/lua.c
+
+../src_3party/lua-5.2.1/src/homeis-lua.obj: ../src_3party/lua-5.2.1/src/lua.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT ../src_3party/lua-5.2.1/src/homeis-lua.obj -MD -MP -MF ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lua.Tpo -c -o ../src_3party/lua-5.2.1/src/homeis-lua.obj `if test -f '../src_3party/lua-5.2.1/src/lua.c'; then $(CYGPATH_W) '../src_3party/lua-5.2.1/src/lua.c'; else $(CYGPATH_W) '$(srcdir)/../src_3party/lua-5.2.1/src/lua.c'; fi`
+	$(AM_V_at)$(am__mv) ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lua.Tpo ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lua.Po
+#	$(AM_V_CC)source='../src_3party/lua-5.2.1/src/lua.c' object='../src_3party/lua-5.2.1/src/homeis-lua.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o ../src_3party/lua-5.2.1/src/homeis-lua.obj `if test -f '../src_3party/lua-5.2.1/src/lua.c'; then $(CYGPATH_W) '../src_3party/lua-5.2.1/src/lua.c'; else $(CYGPATH_W) '$(srcdir)/../src_3party/lua-5.2.1/src/lua.c'; fi`
+
+../src_3party/lua-5.2.1/src/homeis-luac.o: ../src_3party/lua-5.2.1/src/luac.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT ../src_3party/lua-5.2.1/src/homeis-luac.o -MD -MP -MF ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-luac.Tpo -c -o ../src_3party/lua-5.2.1/src/homeis-luac.o `test -f '../src_3party/lua-5.2.1/src/luac.c' || echo '$(srcdir)/'`../src_3party/lua-5.2.1/src/luac.c
+	$(AM_V_at)$(am__mv) ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-luac.Tpo ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-luac.Po
+#	$(AM_V_CC)source='../src_3party/lua-5.2.1/src/luac.c' object='../src_3party/lua-5.2.1/src/homeis-luac.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o ../src_3party/lua-5.2.1/src/homeis-luac.o `test -f '../src_3party/lua-5.2.1/src/luac.c' || echo '$(srcdir)/'`../src_3party/lua-5.2.1/src/luac.c
+
+../src_3party/lua-5.2.1/src/homeis-luac.obj: ../src_3party/lua-5.2.1/src/luac.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT ../src_3party/lua-5.2.1/src/homeis-luac.obj -MD -MP -MF ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-luac.Tpo -c -o ../src_3party/lua-5.2.1/src/homeis-luac.obj `if test -f '../src_3party/lua-5.2.1/src/luac.c'; then $(CYGPATH_W) '../src_3party/lua-5.2.1/src/luac.c'; else $(CYGPATH_W) '$(srcdir)/../src_3party/lua-5.2.1/src/luac.c'; fi`
+	$(AM_V_at)$(am__mv) ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-luac.Tpo ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-luac.Po
+#	$(AM_V_CC)source='../src_3party/lua-5.2.1/src/luac.c' object='../src_3party/lua-5.2.1/src/homeis-luac.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o ../src_3party/lua-5.2.1/src/homeis-luac.obj `if test -f '../src_3party/lua-5.2.1/src/luac.c'; then $(CYGPATH_W) '../src_3party/lua-5.2.1/src/luac.c'; else $(CYGPATH_W) '$(srcdir)/../src_3party/lua-5.2.1/src/luac.c'; fi`
+
+../src_3party/lua-5.2.1/src/homeis-lundump.o: ../src_3party/lua-5.2.1/src/lundump.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT ../src_3party/lua-5.2.1/src/homeis-lundump.o -MD -MP -MF ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lundump.Tpo -c -o ../src_3party/lua-5.2.1/src/homeis-lundump.o `test -f '../src_3party/lua-5.2.1/src/lundump.c' || echo '$(srcdir)/'`../src_3party/lua-5.2.1/src/lundump.c
+	$(AM_V_at)$(am__mv) ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lundump.Tpo ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lundump.Po
+#	$(AM_V_CC)source='../src_3party/lua-5.2.1/src/lundump.c' object='../src_3party/lua-5.2.1/src/homeis-lundump.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o ../src_3party/lua-5.2.1/src/homeis-lundump.o `test -f '../src_3party/lua-5.2.1/src/lundump.c' || echo '$(srcdir)/'`../src_3party/lua-5.2.1/src/lundump.c
+
+../src_3party/lua-5.2.1/src/homeis-lundump.obj: ../src_3party/lua-5.2.1/src/lundump.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT ../src_3party/lua-5.2.1/src/homeis-lundump.obj -MD -MP -MF ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lundump.Tpo -c -o ../src_3party/lua-5.2.1/src/homeis-lundump.obj `if test -f '../src_3party/lua-5.2.1/src/lundump.c'; then $(CYGPATH_W) '../src_3party/lua-5.2.1/src/lundump.c'; else $(CYGPATH_W) '$(srcdir)/../src_3party/lua-5.2.1/src/lundump.c'; fi`
+	$(AM_V_at)$(am__mv) ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lundump.Tpo ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lundump.Po
+#	$(AM_V_CC)source='../src_3party/lua-5.2.1/src/lundump.c' object='../src_3party/lua-5.2.1/src/homeis-lundump.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o ../src_3party/lua-5.2.1/src/homeis-lundump.obj `if test -f '../src_3party/lua-5.2.1/src/lundump.c'; then $(CYGPATH_W) '../src_3party/lua-5.2.1/src/lundump.c'; else $(CYGPATH_W) '$(srcdir)/../src_3party/lua-5.2.1/src/lundump.c'; fi`
+
+../src_3party/lua-5.2.1/src/homeis-lvm.o: ../src_3party/lua-5.2.1/src/lvm.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT ../src_3party/lua-5.2.1/src/homeis-lvm.o -MD -MP -MF ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lvm.Tpo -c -o ../src_3party/lua-5.2.1/src/homeis-lvm.o `test -f '../src_3party/lua-5.2.1/src/lvm.c' || echo '$(srcdir)/'`../src_3party/lua-5.2.1/src/lvm.c
+	$(AM_V_at)$(am__mv) ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lvm.Tpo ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lvm.Po
+#	$(AM_V_CC)source='../src_3party/lua-5.2.1/src/lvm.c' object='../src_3party/lua-5.2.1/src/homeis-lvm.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o ../src_3party/lua-5.2.1/src/homeis-lvm.o `test -f '../src_3party/lua-5.2.1/src/lvm.c' || echo '$(srcdir)/'`../src_3party/lua-5.2.1/src/lvm.c
+
+../src_3party/lua-5.2.1/src/homeis-lvm.obj: ../src_3party/lua-5.2.1/src/lvm.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT ../src_3party/lua-5.2.1/src/homeis-lvm.obj -MD -MP -MF ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lvm.Tpo -c -o ../src_3party/lua-5.2.1/src/homeis-lvm.obj `if test -f '../src_3party/lua-5.2.1/src/lvm.c'; then $(CYGPATH_W) '../src_3party/lua-5.2.1/src/lvm.c'; else $(CYGPATH_W) '$(srcdir)/../src_3party/lua-5.2.1/src/lvm.c'; fi`
+	$(AM_V_at)$(am__mv) ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lvm.Tpo ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lvm.Po
+#	$(AM_V_CC)source='../src_3party/lua-5.2.1/src/lvm.c' object='../src_3party/lua-5.2.1/src/homeis-lvm.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o ../src_3party/lua-5.2.1/src/homeis-lvm.obj `if test -f '../src_3party/lua-5.2.1/src/lvm.c'; then $(CYGPATH_W) '../src_3party/lua-5.2.1/src/lvm.c'; else $(CYGPATH_W) '$(srcdir)/../src_3party/lua-5.2.1/src/lvm.c'; fi`
+
+../src_3party/lua-5.2.1/src/homeis-lzio.o: ../src_3party/lua-5.2.1/src/lzio.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT ../src_3party/lua-5.2.1/src/homeis-lzio.o -MD -MP -MF ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lzio.Tpo -c -o ../src_3party/lua-5.2.1/src/homeis-lzio.o `test -f '../src_3party/lua-5.2.1/src/lzio.c' || echo '$(srcdir)/'`../src_3party/lua-5.2.1/src/lzio.c
+	$(AM_V_at)$(am__mv) ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lzio.Tpo ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lzio.Po
+#	$(AM_V_CC)source='../src_3party/lua-5.2.1/src/lzio.c' object='../src_3party/lua-5.2.1/src/homeis-lzio.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o ../src_3party/lua-5.2.1/src/homeis-lzio.o `test -f '../src_3party/lua-5.2.1/src/lzio.c' || echo '$(srcdir)/'`../src_3party/lua-5.2.1/src/lzio.c
+
+../src_3party/lua-5.2.1/src/homeis-lzio.obj: ../src_3party/lua-5.2.1/src/lzio.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT ../src_3party/lua-5.2.1/src/homeis-lzio.obj -MD -MP -MF ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lzio.Tpo -c -o ../src_3party/lua-5.2.1/src/homeis-lzio.obj `if test -f '../src_3party/lua-5.2.1/src/lzio.c'; then $(CYGPATH_W) '../src_3party/lua-5.2.1/src/lzio.c'; else $(CYGPATH_W) '$(srcdir)/../src_3party/lua-5.2.1/src/lzio.c'; fi`
+	$(AM_V_at)$(am__mv) ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lzio.Tpo ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lzio.Po
+#	$(AM_V_CC)source='../src_3party/lua-5.2.1/src/lzio.c' object='../src_3party/lua-5.2.1/src/homeis-lzio.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o ../src_3party/lua-5.2.1/src/homeis-lzio.obj `if test -f '../src_3party/lua-5.2.1/src/lzio.c'; then $(CYGPATH_W) '../src_3party/lua-5.2.1/src/lzio.c'; else $(CYGPATH_W) '$(srcdir)/../src_3party/lua-5.2.1/src/lzio.c'; fi`
+
+../src_3party/uuid/homeis-clear.o: ../src_3party/uuid/clear.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT ../src_3party/uuid/homeis-clear.o -MD -MP -MF ../src_3party/uuid/$(DEPDIR)/homeis-clear.Tpo -c -o ../src_3party/uuid/homeis-clear.o `test -f '../src_3party/uuid/clear.c' || echo '$(srcdir)/'`../src_3party/uuid/clear.c
+	$(AM_V_at)$(am__mv) ../src_3party/uuid/$(DEPDIR)/homeis-clear.Tpo ../src_3party/uuid/$(DEPDIR)/homeis-clear.Po
+#	$(AM_V_CC)source='../src_3party/uuid/clear.c' object='../src_3party/uuid/homeis-clear.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o ../src_3party/uuid/homeis-clear.o `test -f '../src_3party/uuid/clear.c' || echo '$(srcdir)/'`../src_3party/uuid/clear.c
+
+../src_3party/uuid/homeis-clear.obj: ../src_3party/uuid/clear.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT ../src_3party/uuid/homeis-clear.obj -MD -MP -MF ../src_3party/uuid/$(DEPDIR)/homeis-clear.Tpo -c -o ../src_3party/uuid/homeis-clear.obj `if test -f '../src_3party/uuid/clear.c'; then $(CYGPATH_W) '../src_3party/uuid/clear.c'; else $(CYGPATH_W) '$(srcdir)/../src_3party/uuid/clear.c'; fi`
+	$(AM_V_at)$(am__mv) ../src_3party/uuid/$(DEPDIR)/homeis-clear.Tpo ../src_3party/uuid/$(DEPDIR)/homeis-clear.Po
+#	$(AM_V_CC)source='../src_3party/uuid/clear.c' object='../src_3party/uuid/homeis-clear.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o ../src_3party/uuid/homeis-clear.obj `if test -f '../src_3party/uuid/clear.c'; then $(CYGPATH_W) '../src_3party/uuid/clear.c'; else $(CYGPATH_W) '$(srcdir)/../src_3party/uuid/clear.c'; fi`
+
+../src_3party/uuid/homeis-compare.o: ../src_3party/uuid/compare.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT ../src_3party/uuid/homeis-compare.o -MD -MP -MF ../src_3party/uuid/$(DEPDIR)/homeis-compare.Tpo -c -o ../src_3party/uuid/homeis-compare.o `test -f '../src_3party/uuid/compare.c' || echo '$(srcdir)/'`../src_3party/uuid/compare.c
+	$(AM_V_at)$(am__mv) ../src_3party/uuid/$(DEPDIR)/homeis-compare.Tpo ../src_3party/uuid/$(DEPDIR)/homeis-compare.Po
+#	$(AM_V_CC)source='../src_3party/uuid/compare.c' object='../src_3party/uuid/homeis-compare.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o ../src_3party/uuid/homeis-compare.o `test -f '../src_3party/uuid/compare.c' || echo '$(srcdir)/'`../src_3party/uuid/compare.c
+
+../src_3party/uuid/homeis-compare.obj: ../src_3party/uuid/compare.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT ../src_3party/uuid/homeis-compare.obj -MD -MP -MF ../src_3party/uuid/$(DEPDIR)/homeis-compare.Tpo -c -o ../src_3party/uuid/homeis-compare.obj `if test -f '../src_3party/uuid/compare.c'; then $(CYGPATH_W) '../src_3party/uuid/compare.c'; else $(CYGPATH_W) '$(srcdir)/../src_3party/uuid/compare.c'; fi`
+	$(AM_V_at)$(am__mv) ../src_3party/uuid/$(DEPDIR)/homeis-compare.Tpo ../src_3party/uuid/$(DEPDIR)/homeis-compare.Po
+#	$(AM_V_CC)source='../src_3party/uuid/compare.c' object='../src_3party/uuid/homeis-compare.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o ../src_3party/uuid/homeis-compare.obj `if test -f '../src_3party/uuid/compare.c'; then $(CYGPATH_W) '../src_3party/uuid/compare.c'; else $(CYGPATH_W) '$(srcdir)/../src_3party/uuid/compare.c'; fi`
+
+../src_3party/uuid/homeis-copy.o: ../src_3party/uuid/copy.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT ../src_3party/uuid/homeis-copy.o -MD -MP -MF ../src_3party/uuid/$(DEPDIR)/homeis-copy.Tpo -c -o ../src_3party/uuid/homeis-copy.o `test -f '../src_3party/uuid/copy.c' || echo '$(srcdir)/'`../src_3party/uuid/copy.c
+	$(AM_V_at)$(am__mv) ../src_3party/uuid/$(DEPDIR)/homeis-copy.Tpo ../src_3party/uuid/$(DEPDIR)/homeis-copy.Po
+#	$(AM_V_CC)source='../src_3party/uuid/copy.c' object='../src_3party/uuid/homeis-copy.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o ../src_3party/uuid/homeis-copy.o `test -f '../src_3party/uuid/copy.c' || echo '$(srcdir)/'`../src_3party/uuid/copy.c
+
+../src_3party/uuid/homeis-copy.obj: ../src_3party/uuid/copy.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT ../src_3party/uuid/homeis-copy.obj -MD -MP -MF ../src_3party/uuid/$(DEPDIR)/homeis-copy.Tpo -c -o ../src_3party/uuid/homeis-copy.obj `if test -f '../src_3party/uuid/copy.c'; then $(CYGPATH_W) '../src_3party/uuid/copy.c'; else $(CYGPATH_W) '$(srcdir)/../src_3party/uuid/copy.c'; fi`
+	$(AM_V_at)$(am__mv) ../src_3party/uuid/$(DEPDIR)/homeis-copy.Tpo ../src_3party/uuid/$(DEPDIR)/homeis-copy.Po
+#	$(AM_V_CC)source='../src_3party/uuid/copy.c' object='../src_3party/uuid/homeis-copy.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o ../src_3party/uuid/homeis-copy.obj `if test -f '../src_3party/uuid/copy.c'; then $(CYGPATH_W) '../src_3party/uuid/copy.c'; else $(CYGPATH_W) '$(srcdir)/../src_3party/uuid/copy.c'; fi`
+
+../src_3party/uuid/homeis-gen_uuid.o: ../src_3party/uuid/gen_uuid.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT ../src_3party/uuid/homeis-gen_uuid.o -MD -MP -MF ../src_3party/uuid/$(DEPDIR)/homeis-gen_uuid.Tpo -c -o ../src_3party/uuid/homeis-gen_uuid.o `test -f '../src_3party/uuid/gen_uuid.c' || echo '$(srcdir)/'`../src_3party/uuid/gen_uuid.c
+	$(AM_V_at)$(am__mv) ../src_3party/uuid/$(DEPDIR)/homeis-gen_uuid.Tpo ../src_3party/uuid/$(DEPDIR)/homeis-gen_uuid.Po
+#	$(AM_V_CC)source='../src_3party/uuid/gen_uuid.c' object='../src_3party/uuid/homeis-gen_uuid.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o ../src_3party/uuid/homeis-gen_uuid.o `test -f '../src_3party/uuid/gen_uuid.c' || echo '$(srcdir)/'`../src_3party/uuid/gen_uuid.c
+
+../src_3party/uuid/homeis-gen_uuid.obj: ../src_3party/uuid/gen_uuid.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT ../src_3party/uuid/homeis-gen_uuid.obj -MD -MP -MF ../src_3party/uuid/$(DEPDIR)/homeis-gen_uuid.Tpo -c -o ../src_3party/uuid/homeis-gen_uuid.obj `if test -f '../src_3party/uuid/gen_uuid.c'; then $(CYGPATH_W) '../src_3party/uuid/gen_uuid.c'; else $(CYGPATH_W) '$(srcdir)/../src_3party/uuid/gen_uuid.c'; fi`
+	$(AM_V_at)$(am__mv) ../src_3party/uuid/$(DEPDIR)/homeis-gen_uuid.Tpo ../src_3party/uuid/$(DEPDIR)/homeis-gen_uuid.Po
+#	$(AM_V_CC)source='../src_3party/uuid/gen_uuid.c' object='../src_3party/uuid/homeis-gen_uuid.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o ../src_3party/uuid/homeis-gen_uuid.obj `if test -f '../src_3party/uuid/gen_uuid.c'; then $(CYGPATH_W) '../src_3party/uuid/gen_uuid.c'; else $(CYGPATH_W) '$(srcdir)/../src_3party/uuid/gen_uuid.c'; fi`
+
+../src_3party/uuid/homeis-isnull.o: ../src_3party/uuid/isnull.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT ../src_3party/uuid/homeis-isnull.o -MD -MP -MF ../src_3party/uuid/$(DEPDIR)/homeis-isnull.Tpo -c -o ../src_3party/uuid/homeis-isnull.o `test -f '../src_3party/uuid/isnull.c' || echo '$(srcdir)/'`../src_3party/uuid/isnull.c
+	$(AM_V_at)$(am__mv) ../src_3party/uuid/$(DEPDIR)/homeis-isnull.Tpo ../src_3party/uuid/$(DEPDIR)/homeis-isnull.Po
+#	$(AM_V_CC)source='../src_3party/uuid/isnull.c' object='../src_3party/uuid/homeis-isnull.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o ../src_3party/uuid/homeis-isnull.o `test -f '../src_3party/uuid/isnull.c' || echo '$(srcdir)/'`../src_3party/uuid/isnull.c
+
+../src_3party/uuid/homeis-isnull.obj: ../src_3party/uuid/isnull.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT ../src_3party/uuid/homeis-isnull.obj -MD -MP -MF ../src_3party/uuid/$(DEPDIR)/homeis-isnull.Tpo -c -o ../src_3party/uuid/homeis-isnull.obj `if test -f '../src_3party/uuid/isnull.c'; then $(CYGPATH_W) '../src_3party/uuid/isnull.c'; else $(CYGPATH_W) '$(srcdir)/../src_3party/uuid/isnull.c'; fi`
+	$(AM_V_at)$(am__mv) ../src_3party/uuid/$(DEPDIR)/homeis-isnull.Tpo ../src_3party/uuid/$(DEPDIR)/homeis-isnull.Po
+#	$(AM_V_CC)source='../src_3party/uuid/isnull.c' object='../src_3party/uuid/homeis-isnull.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o ../src_3party/uuid/homeis-isnull.obj `if test -f '../src_3party/uuid/isnull.c'; then $(CYGPATH_W) '../src_3party/uuid/isnull.c'; else $(CYGPATH_W) '$(srcdir)/../src_3party/uuid/isnull.c'; fi`
+
+../src_3party/uuid/homeis-pack.o: ../src_3party/uuid/pack.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT ../src_3party/uuid/homeis-pack.o -MD -MP -MF ../src_3party/uuid/$(DEPDIR)/homeis-pack.Tpo -c -o ../src_3party/uuid/homeis-pack.o `test -f '../src_3party/uuid/pack.c' || echo '$(srcdir)/'`../src_3party/uuid/pack.c
+	$(AM_V_at)$(am__mv) ../src_3party/uuid/$(DEPDIR)/homeis-pack.Tpo ../src_3party/uuid/$(DEPDIR)/homeis-pack.Po
+#	$(AM_V_CC)source='../src_3party/uuid/pack.c' object='../src_3party/uuid/homeis-pack.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o ../src_3party/uuid/homeis-pack.o `test -f '../src_3party/uuid/pack.c' || echo '$(srcdir)/'`../src_3party/uuid/pack.c
+
+../src_3party/uuid/homeis-pack.obj: ../src_3party/uuid/pack.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT ../src_3party/uuid/homeis-pack.obj -MD -MP -MF ../src_3party/uuid/$(DEPDIR)/homeis-pack.Tpo -c -o ../src_3party/uuid/homeis-pack.obj `if test -f '../src_3party/uuid/pack.c'; then $(CYGPATH_W) '../src_3party/uuid/pack.c'; else $(CYGPATH_W) '$(srcdir)/../src_3party/uuid/pack.c'; fi`
+	$(AM_V_at)$(am__mv) ../src_3party/uuid/$(DEPDIR)/homeis-pack.Tpo ../src_3party/uuid/$(DEPDIR)/homeis-pack.Po
+#	$(AM_V_CC)source='../src_3party/uuid/pack.c' object='../src_3party/uuid/homeis-pack.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o ../src_3party/uuid/homeis-pack.obj `if test -f '../src_3party/uuid/pack.c'; then $(CYGPATH_W) '../src_3party/uuid/pack.c'; else $(CYGPATH_W) '$(srcdir)/../src_3party/uuid/pack.c'; fi`
+
+../src_3party/uuid/homeis-parse.o: ../src_3party/uuid/parse.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT ../src_3party/uuid/homeis-parse.o -MD -MP -MF ../src_3party/uuid/$(DEPDIR)/homeis-parse.Tpo -c -o ../src_3party/uuid/homeis-parse.o `test -f '../src_3party/uuid/parse.c' || echo '$(srcdir)/'`../src_3party/uuid/parse.c
+	$(AM_V_at)$(am__mv) ../src_3party/uuid/$(DEPDIR)/homeis-parse.Tpo ../src_3party/uuid/$(DEPDIR)/homeis-parse.Po
+#	$(AM_V_CC)source='../src_3party/uuid/parse.c' object='../src_3party/uuid/homeis-parse.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o ../src_3party/uuid/homeis-parse.o `test -f '../src_3party/uuid/parse.c' || echo '$(srcdir)/'`../src_3party/uuid/parse.c
+
+../src_3party/uuid/homeis-parse.obj: ../src_3party/uuid/parse.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT ../src_3party/uuid/homeis-parse.obj -MD -MP -MF ../src_3party/uuid/$(DEPDIR)/homeis-parse.Tpo -c -o ../src_3party/uuid/homeis-parse.obj `if test -f '../src_3party/uuid/parse.c'; then $(CYGPATH_W) '../src_3party/uuid/parse.c'; else $(CYGPATH_W) '$(srcdir)/../src_3party/uuid/parse.c'; fi`
+	$(AM_V_at)$(am__mv) ../src_3party/uuid/$(DEPDIR)/homeis-parse.Tpo ../src_3party/uuid/$(DEPDIR)/homeis-parse.Po
+#	$(AM_V_CC)source='../src_3party/uuid/parse.c' object='../src_3party/uuid/homeis-parse.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o ../src_3party/uuid/homeis-parse.obj `if test -f '../src_3party/uuid/parse.c'; then $(CYGPATH_W) '../src_3party/uuid/parse.c'; else $(CYGPATH_W) '$(srcdir)/../src_3party/uuid/parse.c'; fi`
+
+../src_3party/uuid/homeis-tst_uuid.o: ../src_3party/uuid/tst_uuid.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT ../src_3party/uuid/homeis-tst_uuid.o -MD -MP -MF ../src_3party/uuid/$(DEPDIR)/homeis-tst_uuid.Tpo -c -o ../src_3party/uuid/homeis-tst_uuid.o `test -f '../src_3party/uuid/tst_uuid.c' || echo '$(srcdir)/'`../src_3party/uuid/tst_uuid.c
+	$(AM_V_at)$(am__mv) ../src_3party/uuid/$(DEPDIR)/homeis-tst_uuid.Tpo ../src_3party/uuid/$(DEPDIR)/homeis-tst_uuid.Po
+#	$(AM_V_CC)source='../src_3party/uuid/tst_uuid.c' object='../src_3party/uuid/homeis-tst_uuid.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o ../src_3party/uuid/homeis-tst_uuid.o `test -f '../src_3party/uuid/tst_uuid.c' || echo '$(srcdir)/'`../src_3party/uuid/tst_uuid.c
+
+../src_3party/uuid/homeis-tst_uuid.obj: ../src_3party/uuid/tst_uuid.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT ../src_3party/uuid/homeis-tst_uuid.obj -MD -MP -MF ../src_3party/uuid/$(DEPDIR)/homeis-tst_uuid.Tpo -c -o ../src_3party/uuid/homeis-tst_uuid.obj `if test -f '../src_3party/uuid/tst_uuid.c'; then $(CYGPATH_W) '../src_3party/uuid/tst_uuid.c'; else $(CYGPATH_W) '$(srcdir)/../src_3party/uuid/tst_uuid.c'; fi`
+	$(AM_V_at)$(am__mv) ../src_3party/uuid/$(DEPDIR)/homeis-tst_uuid.Tpo ../src_3party/uuid/$(DEPDIR)/homeis-tst_uuid.Po
+#	$(AM_V_CC)source='../src_3party/uuid/tst_uuid.c' object='../src_3party/uuid/homeis-tst_uuid.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o ../src_3party/uuid/homeis-tst_uuid.obj `if test -f '../src_3party/uuid/tst_uuid.c'; then $(CYGPATH_W) '../src_3party/uuid/tst_uuid.c'; else $(CYGPATH_W) '$(srcdir)/../src_3party/uuid/tst_uuid.c'; fi`
+
+../src_3party/uuid/homeis-unpack.o: ../src_3party/uuid/unpack.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT ../src_3party/uuid/homeis-unpack.o -MD -MP -MF ../src_3party/uuid/$(DEPDIR)/homeis-unpack.Tpo -c -o ../src_3party/uuid/homeis-unpack.o `test -f '../src_3party/uuid/unpack.c' || echo '$(srcdir)/'`../src_3party/uuid/unpack.c
+	$(AM_V_at)$(am__mv) ../src_3party/uuid/$(DEPDIR)/homeis-unpack.Tpo ../src_3party/uuid/$(DEPDIR)/homeis-unpack.Po
+#	$(AM_V_CC)source='../src_3party/uuid/unpack.c' object='../src_3party/uuid/homeis-unpack.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o ../src_3party/uuid/homeis-unpack.o `test -f '../src_3party/uuid/unpack.c' || echo '$(srcdir)/'`../src_3party/uuid/unpack.c
+
+../src_3party/uuid/homeis-unpack.obj: ../src_3party/uuid/unpack.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT ../src_3party/uuid/homeis-unpack.obj -MD -MP -MF ../src_3party/uuid/$(DEPDIR)/homeis-unpack.Tpo -c -o ../src_3party/uuid/homeis-unpack.obj `if test -f '../src_3party/uuid/unpack.c'; then $(CYGPATH_W) '../src_3party/uuid/unpack.c'; else $(CYGPATH_W) '$(srcdir)/../src_3party/uuid/unpack.c'; fi`
+	$(AM_V_at)$(am__mv) ../src_3party/uuid/$(DEPDIR)/homeis-unpack.Tpo ../src_3party/uuid/$(DEPDIR)/homeis-unpack.Po
+#	$(AM_V_CC)source='../src_3party/uuid/unpack.c' object='../src_3party/uuid/homeis-unpack.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o ../src_3party/uuid/homeis-unpack.obj `if test -f '../src_3party/uuid/unpack.c'; then $(CYGPATH_W) '../src_3party/uuid/unpack.c'; else $(CYGPATH_W) '$(srcdir)/../src_3party/uuid/unpack.c'; fi`
+
+../src_3party/uuid/homeis-unparse.o: ../src_3party/uuid/unparse.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT ../src_3party/uuid/homeis-unparse.o -MD -MP -MF ../src_3party/uuid/$(DEPDIR)/homeis-unparse.Tpo -c -o ../src_3party/uuid/homeis-unparse.o `test -f '../src_3party/uuid/unparse.c' || echo '$(srcdir)/'`../src_3party/uuid/unparse.c
+	$(AM_V_at)$(am__mv) ../src_3party/uuid/$(DEPDIR)/homeis-unparse.Tpo ../src_3party/uuid/$(DEPDIR)/homeis-unparse.Po
+#	$(AM_V_CC)source='../src_3party/uuid/unparse.c' object='../src_3party/uuid/homeis-unparse.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o ../src_3party/uuid/homeis-unparse.o `test -f '../src_3party/uuid/unparse.c' || echo '$(srcdir)/'`../src_3party/uuid/unparse.c
+
+../src_3party/uuid/homeis-unparse.obj: ../src_3party/uuid/unparse.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT ../src_3party/uuid/homeis-unparse.obj -MD -MP -MF ../src_3party/uuid/$(DEPDIR)/homeis-unparse.Tpo -c -o ../src_3party/uuid/homeis-unparse.obj `if test -f '../src_3party/uuid/unparse.c'; then $(CYGPATH_W) '../src_3party/uuid/unparse.c'; else $(CYGPATH_W) '$(srcdir)/../src_3party/uuid/unparse.c'; fi`
+	$(AM_V_at)$(am__mv) ../src_3party/uuid/$(DEPDIR)/homeis-unparse.Tpo ../src_3party/uuid/$(DEPDIR)/homeis-unparse.Po
+#	$(AM_V_CC)source='../src_3party/uuid/unparse.c' object='../src_3party/uuid/homeis-unparse.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o ../src_3party/uuid/homeis-unparse.obj `if test -f '../src_3party/uuid/unparse.c'; then $(CYGPATH_W) '../src_3party/uuid/unparse.c'; else $(CYGPATH_W) '$(srcdir)/../src_3party/uuid/unparse.c'; fi`
+
+../src_3party/uuid/homeis-uuid_time.o: ../src_3party/uuid/uuid_time.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT ../src_3party/uuid/homeis-uuid_time.o -MD -MP -MF ../src_3party/uuid/$(DEPDIR)/homeis-uuid_time.Tpo -c -o ../src_3party/uuid/homeis-uuid_time.o `test -f '../src_3party/uuid/uuid_time.c' || echo '$(srcdir)/'`../src_3party/uuid/uuid_time.c
+	$(AM_V_at)$(am__mv) ../src_3party/uuid/$(DEPDIR)/homeis-uuid_time.Tpo ../src_3party/uuid/$(DEPDIR)/homeis-uuid_time.Po
+#	$(AM_V_CC)source='../src_3party/uuid/uuid_time.c' object='../src_3party/uuid/homeis-uuid_time.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o ../src_3party/uuid/homeis-uuid_time.o `test -f '../src_3party/uuid/uuid_time.c' || echo '$(srcdir)/'`../src_3party/uuid/uuid_time.c
+
+../src_3party/uuid/homeis-uuid_time.obj: ../src_3party/uuid/uuid_time.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT ../src_3party/uuid/homeis-uuid_time.obj -MD -MP -MF ../src_3party/uuid/$(DEPDIR)/homeis-uuid_time.Tpo -c -o ../src_3party/uuid/homeis-uuid_time.obj `if test -f '../src_3party/uuid/uuid_time.c'; then $(CYGPATH_W) '../src_3party/uuid/uuid_time.c'; else $(CYGPATH_W) '$(srcdir)/../src_3party/uuid/uuid_time.c'; fi`
+	$(AM_V_at)$(am__mv) ../src_3party/uuid/$(DEPDIR)/homeis-uuid_time.Tpo ../src_3party/uuid/$(DEPDIR)/homeis-uuid_time.Po
+#	$(AM_V_CC)source='../src_3party/uuid/uuid_time.c' object='../src_3party/uuid/homeis-uuid_time.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o ../src_3party/uuid/homeis-uuid_time.obj `if test -f '../src_3party/uuid/uuid_time.c'; then $(CYGPATH_W) '../src_3party/uuid/uuid_time.c'; else $(CYGPATH_W) '$(srcdir)/../src_3party/uuid/uuid_time.c'; fi`
+
 .cpp.o:
 	$(AM_V_CXX)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.o$$||'`;\
 	$(CXXCOMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ $< &&\
@@ -956,6 +2007,34 @@ am--depfiles: $(am__depfiles_remade)
 #	$(AM_V_CXX)source='$<' object='$@' libtool=yes \
 #	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
 #	$(AM_V_CXX_no)$(LTCXXCOMPILE) -c -o $@ $<
+
+../src_3party/homeis-linuxservice.o: ../src_3party/linuxservice.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT ../src_3party/homeis-linuxservice.o -MD -MP -MF ../src_3party/$(DEPDIR)/homeis-linuxservice.Tpo -c -o ../src_3party/homeis-linuxservice.o `test -f '../src_3party/linuxservice.cpp' || echo '$(srcdir)/'`../src_3party/linuxservice.cpp
+	$(AM_V_at)$(am__mv) ../src_3party/$(DEPDIR)/homeis-linuxservice.Tpo ../src_3party/$(DEPDIR)/homeis-linuxservice.Po
+#	$(AM_V_CXX)source='../src_3party/linuxservice.cpp' object='../src_3party/homeis-linuxservice.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o ../src_3party/homeis-linuxservice.o `test -f '../src_3party/linuxservice.cpp' || echo '$(srcdir)/'`../src_3party/linuxservice.cpp
+
+../src_3party/homeis-linuxservice.obj: ../src_3party/linuxservice.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT ../src_3party/homeis-linuxservice.obj -MD -MP -MF ../src_3party/$(DEPDIR)/homeis-linuxservice.Tpo -c -o ../src_3party/homeis-linuxservice.obj `if test -f '../src_3party/linuxservice.cpp'; then $(CYGPATH_W) '../src_3party/linuxservice.cpp'; else $(CYGPATH_W) '$(srcdir)/../src_3party/linuxservice.cpp'; fi`
+	$(AM_V_at)$(am__mv) ../src_3party/$(DEPDIR)/homeis-linuxservice.Tpo ../src_3party/$(DEPDIR)/homeis-linuxservice.Po
+#	$(AM_V_CXX)source='../src_3party/linuxservice.cpp' object='../src_3party/homeis-linuxservice.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o ../src_3party/homeis-linuxservice.obj `if test -f '../src_3party/linuxservice.cpp'; then $(CYGPATH_W) '../src_3party/linuxservice.cpp'; else $(CYGPATH_W) '$(srcdir)/../src_3party/linuxservice.cpp'; fi`
+
+../src_3party/linuxcs/homeis-linuxcs.o: ../src_3party/linuxcs/linuxcs.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT ../src_3party/linuxcs/homeis-linuxcs.o -MD -MP -MF ../src_3party/linuxcs/$(DEPDIR)/homeis-linuxcs.Tpo -c -o ../src_3party/linuxcs/homeis-linuxcs.o `test -f '../src_3party/linuxcs/linuxcs.cpp' || echo '$(srcdir)/'`../src_3party/linuxcs/linuxcs.cpp
+	$(AM_V_at)$(am__mv) ../src_3party/linuxcs/$(DEPDIR)/homeis-linuxcs.Tpo ../src_3party/linuxcs/$(DEPDIR)/homeis-linuxcs.Po
+#	$(AM_V_CXX)source='../src_3party/linuxcs/linuxcs.cpp' object='../src_3party/linuxcs/homeis-linuxcs.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o ../src_3party/linuxcs/homeis-linuxcs.o `test -f '../src_3party/linuxcs/linuxcs.cpp' || echo '$(srcdir)/'`../src_3party/linuxcs/linuxcs.cpp
+
+../src_3party/linuxcs/homeis-linuxcs.obj: ../src_3party/linuxcs/linuxcs.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT ../src_3party/linuxcs/homeis-linuxcs.obj -MD -MP -MF ../src_3party/linuxcs/$(DEPDIR)/homeis-linuxcs.Tpo -c -o ../src_3party/linuxcs/homeis-linuxcs.obj `if test -f '../src_3party/linuxcs/linuxcs.cpp'; then $(CYGPATH_W) '../src_3party/linuxcs/linuxcs.cpp'; else $(CYGPATH_W) '$(srcdir)/../src_3party/linuxcs/linuxcs.cpp'; fi`
+	$(AM_V_at)$(am__mv) ../src_3party/linuxcs/$(DEPDIR)/homeis-linuxcs.Tpo ../src_3party/linuxcs/$(DEPDIR)/homeis-linuxcs.Po
+#	$(AM_V_CXX)source='../src_3party/linuxcs/linuxcs.cpp' object='../src_3party/linuxcs/homeis-linuxcs.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o ../src_3party/linuxcs/homeis-linuxcs.obj `if test -f '../src_3party/linuxcs/linuxcs.cpp'; then $(CYGPATH_W) '../src_3party/linuxcs/linuxcs.cpp'; else $(CYGPATH_W) '$(srcdir)/../src_3party/linuxcs/linuxcs.cpp'; fi`
 
 Helpers/homeis-logger.o: Helpers/logger.cpp
 	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Helpers/homeis-logger.o -MD -MP -MF Helpers/$(DEPDIR)/homeis-logger.Tpo -c -o Helpers/homeis-logger.o `test -f 'Helpers/logger.cpp' || echo '$(srcdir)/'`Helpers/logger.cpp
@@ -1083,6 +2162,62 @@ Common/homeis-HisLock.obj: Common/HisLock.cpp
 #	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
 #	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Common/homeis-HisLock.obj `if test -f 'Common/HisLock.cpp'; then $(CYGPATH_W) 'Common/HisLock.cpp'; else $(CYGPATH_W) '$(srcdir)/Common/HisLock.cpp'; fi`
 
+Auth/homeis-UserManager.o: Auth/UserManager.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Auth/homeis-UserManager.o -MD -MP -MF Auth/$(DEPDIR)/homeis-UserManager.Tpo -c -o Auth/homeis-UserManager.o `test -f 'Auth/UserManager.cpp' || echo '$(srcdir)/'`Auth/UserManager.cpp
+	$(AM_V_at)$(am__mv) Auth/$(DEPDIR)/homeis-UserManager.Tpo Auth/$(DEPDIR)/homeis-UserManager.Po
+#	$(AM_V_CXX)source='Auth/UserManager.cpp' object='Auth/homeis-UserManager.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Auth/homeis-UserManager.o `test -f 'Auth/UserManager.cpp' || echo '$(srcdir)/'`Auth/UserManager.cpp
+
+Auth/homeis-UserManager.obj: Auth/UserManager.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Auth/homeis-UserManager.obj -MD -MP -MF Auth/$(DEPDIR)/homeis-UserManager.Tpo -c -o Auth/homeis-UserManager.obj `if test -f 'Auth/UserManager.cpp'; then $(CYGPATH_W) 'Auth/UserManager.cpp'; else $(CYGPATH_W) '$(srcdir)/Auth/UserManager.cpp'; fi`
+	$(AM_V_at)$(am__mv) Auth/$(DEPDIR)/homeis-UserManager.Tpo Auth/$(DEPDIR)/homeis-UserManager.Po
+#	$(AM_V_CXX)source='Auth/UserManager.cpp' object='Auth/homeis-UserManager.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Auth/homeis-UserManager.obj `if test -f 'Auth/UserManager.cpp'; then $(CYGPATH_W) 'Auth/UserManager.cpp'; else $(CYGPATH_W) '$(srcdir)/Auth/UserManager.cpp'; fi`
+
+Auth/homeis-Session.o: Auth/Session.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Auth/homeis-Session.o -MD -MP -MF Auth/$(DEPDIR)/homeis-Session.Tpo -c -o Auth/homeis-Session.o `test -f 'Auth/Session.cpp' || echo '$(srcdir)/'`Auth/Session.cpp
+	$(AM_V_at)$(am__mv) Auth/$(DEPDIR)/homeis-Session.Tpo Auth/$(DEPDIR)/homeis-Session.Po
+#	$(AM_V_CXX)source='Auth/Session.cpp' object='Auth/homeis-Session.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Auth/homeis-Session.o `test -f 'Auth/Session.cpp' || echo '$(srcdir)/'`Auth/Session.cpp
+
+Auth/homeis-Session.obj: Auth/Session.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Auth/homeis-Session.obj -MD -MP -MF Auth/$(DEPDIR)/homeis-Session.Tpo -c -o Auth/homeis-Session.obj `if test -f 'Auth/Session.cpp'; then $(CYGPATH_W) 'Auth/Session.cpp'; else $(CYGPATH_W) '$(srcdir)/Auth/Session.cpp'; fi`
+	$(AM_V_at)$(am__mv) Auth/$(DEPDIR)/homeis-Session.Tpo Auth/$(DEPDIR)/homeis-Session.Po
+#	$(AM_V_CXX)source='Auth/Session.cpp' object='Auth/homeis-Session.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Auth/homeis-Session.obj `if test -f 'Auth/Session.cpp'; then $(CYGPATH_W) 'Auth/Session.cpp'; else $(CYGPATH_W) '$(srcdir)/Auth/Session.cpp'; fi`
+
+Auth/homeis-User.o: Auth/User.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Auth/homeis-User.o -MD -MP -MF Auth/$(DEPDIR)/homeis-User.Tpo -c -o Auth/homeis-User.o `test -f 'Auth/User.cpp' || echo '$(srcdir)/'`Auth/User.cpp
+	$(AM_V_at)$(am__mv) Auth/$(DEPDIR)/homeis-User.Tpo Auth/$(DEPDIR)/homeis-User.Po
+#	$(AM_V_CXX)source='Auth/User.cpp' object='Auth/homeis-User.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Auth/homeis-User.o `test -f 'Auth/User.cpp' || echo '$(srcdir)/'`Auth/User.cpp
+
+Auth/homeis-User.obj: Auth/User.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Auth/homeis-User.obj -MD -MP -MF Auth/$(DEPDIR)/homeis-User.Tpo -c -o Auth/homeis-User.obj `if test -f 'Auth/User.cpp'; then $(CYGPATH_W) 'Auth/User.cpp'; else $(CYGPATH_W) '$(srcdir)/Auth/User.cpp'; fi`
+	$(AM_V_at)$(am__mv) Auth/$(DEPDIR)/homeis-User.Tpo Auth/$(DEPDIR)/homeis-User.Po
+#	$(AM_V_CXX)source='Auth/User.cpp' object='Auth/homeis-User.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Auth/homeis-User.obj `if test -f 'Auth/User.cpp'; then $(CYGPATH_W) 'Auth/User.cpp'; else $(CYGPATH_W) '$(srcdir)/Auth/User.cpp'; fi`
+
+Auth/homeis-Users.o: Auth/Users.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Auth/homeis-Users.o -MD -MP -MF Auth/$(DEPDIR)/homeis-Users.Tpo -c -o Auth/homeis-Users.o `test -f 'Auth/Users.cpp' || echo '$(srcdir)/'`Auth/Users.cpp
+	$(AM_V_at)$(am__mv) Auth/$(DEPDIR)/homeis-Users.Tpo Auth/$(DEPDIR)/homeis-Users.Po
+#	$(AM_V_CXX)source='Auth/Users.cpp' object='Auth/homeis-Users.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Auth/homeis-Users.o `test -f 'Auth/Users.cpp' || echo '$(srcdir)/'`Auth/Users.cpp
+
+Auth/homeis-Users.obj: Auth/Users.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Auth/homeis-Users.obj -MD -MP -MF Auth/$(DEPDIR)/homeis-Users.Tpo -c -o Auth/homeis-Users.obj `if test -f 'Auth/Users.cpp'; then $(CYGPATH_W) 'Auth/Users.cpp'; else $(CYGPATH_W) '$(srcdir)/Auth/Users.cpp'; fi`
+	$(AM_V_at)$(am__mv) Auth/$(DEPDIR)/homeis-Users.Tpo Auth/$(DEPDIR)/homeis-Users.Po
+#	$(AM_V_CXX)source='Auth/Users.cpp' object='Auth/homeis-Users.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Auth/homeis-Users.obj `if test -f 'Auth/Users.cpp'; then $(CYGPATH_W) 'Auth/Users.cpp'; else $(CYGPATH_W) '$(srcdir)/Auth/Users.cpp'; fi`
+
 Devices/Folder/homeis-HisDevFolder.o: Devices/Folder/HisDevFolder.cpp
 	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Devices/Folder/homeis-HisDevFolder.o -MD -MP -MF Devices/Folder/$(DEPDIR)/homeis-HisDevFolder.Tpo -c -o Devices/Folder/homeis-HisDevFolder.o `test -f 'Devices/Folder/HisDevFolder.cpp' || echo '$(srcdir)/'`Devices/Folder/HisDevFolder.cpp
 	$(AM_V_at)$(am__mv) Devices/Folder/$(DEPDIR)/homeis-HisDevFolder.Tpo Devices/Folder/$(DEPDIR)/homeis-HisDevFolder.Po
@@ -1153,6 +2288,20 @@ Devices/Handlers/homeis-BinnaryInputHandler.obj: Devices/Handlers/BinnaryInputHa
 #	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
 #	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Devices/Handlers/homeis-BinnaryInputHandler.obj `if test -f 'Devices/Handlers/BinnaryInputHandler.cpp'; then $(CYGPATH_W) 'Devices/Handlers/BinnaryInputHandler.cpp'; else $(CYGPATH_W) '$(srcdir)/Devices/Handlers/BinnaryInputHandler.cpp'; fi`
 
+Devices/Handlers/homeis-BinnaryOutputHandler.o: Devices/Handlers/BinnaryOutputHandler.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Devices/Handlers/homeis-BinnaryOutputHandler.o -MD -MP -MF Devices/Handlers/$(DEPDIR)/homeis-BinnaryOutputHandler.Tpo -c -o Devices/Handlers/homeis-BinnaryOutputHandler.o `test -f 'Devices/Handlers/BinnaryOutputHandler.cpp' || echo '$(srcdir)/'`Devices/Handlers/BinnaryOutputHandler.cpp
+	$(AM_V_at)$(am__mv) Devices/Handlers/$(DEPDIR)/homeis-BinnaryOutputHandler.Tpo Devices/Handlers/$(DEPDIR)/homeis-BinnaryOutputHandler.Po
+#	$(AM_V_CXX)source='Devices/Handlers/BinnaryOutputHandler.cpp' object='Devices/Handlers/homeis-BinnaryOutputHandler.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Devices/Handlers/homeis-BinnaryOutputHandler.o `test -f 'Devices/Handlers/BinnaryOutputHandler.cpp' || echo '$(srcdir)/'`Devices/Handlers/BinnaryOutputHandler.cpp
+
+Devices/Handlers/homeis-BinnaryOutputHandler.obj: Devices/Handlers/BinnaryOutputHandler.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Devices/Handlers/homeis-BinnaryOutputHandler.obj -MD -MP -MF Devices/Handlers/$(DEPDIR)/homeis-BinnaryOutputHandler.Tpo -c -o Devices/Handlers/homeis-BinnaryOutputHandler.obj `if test -f 'Devices/Handlers/BinnaryOutputHandler.cpp'; then $(CYGPATH_W) 'Devices/Handlers/BinnaryOutputHandler.cpp'; else $(CYGPATH_W) '$(srcdir)/Devices/Handlers/BinnaryOutputHandler.cpp'; fi`
+	$(AM_V_at)$(am__mv) Devices/Handlers/$(DEPDIR)/homeis-BinnaryOutputHandler.Tpo Devices/Handlers/$(DEPDIR)/homeis-BinnaryOutputHandler.Po
+#	$(AM_V_CXX)source='Devices/Handlers/BinnaryOutputHandler.cpp' object='Devices/Handlers/homeis-BinnaryOutputHandler.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Devices/Handlers/homeis-BinnaryOutputHandler.obj `if test -f 'Devices/Handlers/BinnaryOutputHandler.cpp'; then $(CYGPATH_W) 'Devices/Handlers/BinnaryOutputHandler.cpp'; else $(CYGPATH_W) '$(srcdir)/Devices/Handlers/BinnaryOutputHandler.cpp'; fi`
+
 Devices/Handlers/homeis-LOW_deviceID.o: Devices/Handlers/LOW_deviceID.cpp
 	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Devices/Handlers/homeis-LOW_deviceID.o -MD -MP -MF Devices/Handlers/$(DEPDIR)/homeis-LOW_deviceID.Tpo -c -o Devices/Handlers/homeis-LOW_deviceID.o `test -f 'Devices/Handlers/LOW_deviceID.cpp' || echo '$(srcdir)/'`Devices/Handlers/LOW_deviceID.cpp
 	$(AM_V_at)$(am__mv) Devices/Handlers/$(DEPDIR)/homeis-LOW_deviceID.Tpo Devices/Handlers/$(DEPDIR)/homeis-LOW_deviceID.Po
@@ -1195,20 +2344,6 @@ Devices/Handlers/homeis-LOW_helper_crc.obj: Devices/Handlers/LOW_helper_crc.cpp
 #	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
 #	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Devices/Handlers/homeis-LOW_helper_crc.obj `if test -f 'Devices/Handlers/LOW_helper_crc.cpp'; then $(CYGPATH_W) 'Devices/Handlers/LOW_helper_crc.cpp'; else $(CYGPATH_W) '$(srcdir)/Devices/Handlers/LOW_helper_crc.cpp'; fi`
 
-Devices/Handlers/homeis-ModbusHandlers.o: Devices/Handlers/ModbusHandlers.cpp
-	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Devices/Handlers/homeis-ModbusHandlers.o -MD -MP -MF Devices/Handlers/$(DEPDIR)/homeis-ModbusHandlers.Tpo -c -o Devices/Handlers/homeis-ModbusHandlers.o `test -f 'Devices/Handlers/ModbusHandlers.cpp' || echo '$(srcdir)/'`Devices/Handlers/ModbusHandlers.cpp
-	$(AM_V_at)$(am__mv) Devices/Handlers/$(DEPDIR)/homeis-ModbusHandlers.Tpo Devices/Handlers/$(DEPDIR)/homeis-ModbusHandlers.Po
-#	$(AM_V_CXX)source='Devices/Handlers/ModbusHandlers.cpp' object='Devices/Handlers/homeis-ModbusHandlers.o' libtool=no \
-#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
-#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Devices/Handlers/homeis-ModbusHandlers.o `test -f 'Devices/Handlers/ModbusHandlers.cpp' || echo '$(srcdir)/'`Devices/Handlers/ModbusHandlers.cpp
-
-Devices/Handlers/homeis-ModbusHandlers.obj: Devices/Handlers/ModbusHandlers.cpp
-	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Devices/Handlers/homeis-ModbusHandlers.obj -MD -MP -MF Devices/Handlers/$(DEPDIR)/homeis-ModbusHandlers.Tpo -c -o Devices/Handlers/homeis-ModbusHandlers.obj `if test -f 'Devices/Handlers/ModbusHandlers.cpp'; then $(CYGPATH_W) 'Devices/Handlers/ModbusHandlers.cpp'; else $(CYGPATH_W) '$(srcdir)/Devices/Handlers/ModbusHandlers.cpp'; fi`
-	$(AM_V_at)$(am__mv) Devices/Handlers/$(DEPDIR)/homeis-ModbusHandlers.Tpo Devices/Handlers/$(DEPDIR)/homeis-ModbusHandlers.Po
-#	$(AM_V_CXX)source='Devices/Handlers/ModbusHandlers.cpp' object='Devices/Handlers/homeis-ModbusHandlers.obj' libtool=no \
-#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
-#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Devices/Handlers/homeis-ModbusHandlers.obj `if test -f 'Devices/Handlers/ModbusHandlers.cpp'; then $(CYGPATH_W) 'Devices/Handlers/ModbusHandlers.cpp'; else $(CYGPATH_W) '$(srcdir)/Devices/Handlers/ModbusHandlers.cpp'; fi`
-
 Devices/Handlers/homeis-OneWireHandler.o: Devices/Handlers/OneWireHandler.cpp
 	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Devices/Handlers/homeis-OneWireHandler.o -MD -MP -MF Devices/Handlers/$(DEPDIR)/homeis-OneWireHandler.Tpo -c -o Devices/Handlers/homeis-OneWireHandler.o `test -f 'Devices/Handlers/OneWireHandler.cpp' || echo '$(srcdir)/'`Devices/Handlers/OneWireHandler.cpp
 	$(AM_V_at)$(am__mv) Devices/Handlers/$(DEPDIR)/homeis-OneWireHandler.Tpo Devices/Handlers/$(DEPDIR)/homeis-OneWireHandler.Po
@@ -1236,6 +2371,20 @@ Devices/Handlers/homeis-RFIDHandler.obj: Devices/Handlers/RFIDHandler.cpp
 #	$(AM_V_CXX)source='Devices/Handlers/RFIDHandler.cpp' object='Devices/Handlers/homeis-RFIDHandler.obj' libtool=no \
 #	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
 #	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Devices/Handlers/homeis-RFIDHandler.obj `if test -f 'Devices/Handlers/RFIDHandler.cpp'; then $(CYGPATH_W) 'Devices/Handlers/RFIDHandler.cpp'; else $(CYGPATH_W) '$(srcdir)/Devices/Handlers/RFIDHandler.cpp'; fi`
+
+Devices/Handlers/homeis-ModbusHandlers.o: Devices/Handlers/ModbusHandlers.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Devices/Handlers/homeis-ModbusHandlers.o -MD -MP -MF Devices/Handlers/$(DEPDIR)/homeis-ModbusHandlers.Tpo -c -o Devices/Handlers/homeis-ModbusHandlers.o `test -f 'Devices/Handlers/ModbusHandlers.cpp' || echo '$(srcdir)/'`Devices/Handlers/ModbusHandlers.cpp
+	$(AM_V_at)$(am__mv) Devices/Handlers/$(DEPDIR)/homeis-ModbusHandlers.Tpo Devices/Handlers/$(DEPDIR)/homeis-ModbusHandlers.Po
+#	$(AM_V_CXX)source='Devices/Handlers/ModbusHandlers.cpp' object='Devices/Handlers/homeis-ModbusHandlers.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Devices/Handlers/homeis-ModbusHandlers.o `test -f 'Devices/Handlers/ModbusHandlers.cpp' || echo '$(srcdir)/'`Devices/Handlers/ModbusHandlers.cpp
+
+Devices/Handlers/homeis-ModbusHandlers.obj: Devices/Handlers/ModbusHandlers.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Devices/Handlers/homeis-ModbusHandlers.obj -MD -MP -MF Devices/Handlers/$(DEPDIR)/homeis-ModbusHandlers.Tpo -c -o Devices/Handlers/homeis-ModbusHandlers.obj `if test -f 'Devices/Handlers/ModbusHandlers.cpp'; then $(CYGPATH_W) 'Devices/Handlers/ModbusHandlers.cpp'; else $(CYGPATH_W) '$(srcdir)/Devices/Handlers/ModbusHandlers.cpp'; fi`
+	$(AM_V_at)$(am__mv) Devices/Handlers/$(DEPDIR)/homeis-ModbusHandlers.Tpo Devices/Handlers/$(DEPDIR)/homeis-ModbusHandlers.Po
+#	$(AM_V_CXX)source='Devices/Handlers/ModbusHandlers.cpp' object='Devices/Handlers/homeis-ModbusHandlers.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Devices/Handlers/homeis-ModbusHandlers.obj `if test -f 'Devices/Handlers/ModbusHandlers.cpp'; then $(CYGPATH_W) 'Devices/Handlers/ModbusHandlers.cpp'; else $(CYGPATH_W) '$(srcdir)/Devices/Handlers/ModbusHandlers.cpp'; fi`
 
 Devices/Values/homeis-HisDevValue.o: Devices/Values/HisDevValue.cpp
 	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(homeis_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Devices/Values/homeis-HisDevValue.o -MD -MP -MF Devices/Values/$(DEPDIR)/homeis-HisDevValue.Tpo -c -o Devices/Values/homeis-HisDevValue.o `test -f 'Devices/Values/HisDevValue.cpp' || echo '$(srcdir)/'`Devices/Values/HisDevValue.cpp
@@ -1923,6 +3072,14 @@ distclean-generic:
 	-test . = "$(srcdir)" || test -z "$(CONFIG_CLEAN_VPATH_FILES)" || rm -f $(CONFIG_CLEAN_VPATH_FILES)
 	-rm -f ../src_3party/$(DEPDIR)/$(am__dirstamp)
 	-rm -f ../src_3party/$(am__dirstamp)
+	-rm -f ../src_3party/linuxcs/$(DEPDIR)/$(am__dirstamp)
+	-rm -f ../src_3party/linuxcs/$(am__dirstamp)
+	-rm -f ../src_3party/lua-5.2.1/src/$(DEPDIR)/$(am__dirstamp)
+	-rm -f ../src_3party/lua-5.2.1/src/$(am__dirstamp)
+	-rm -f ../src_3party/uuid/$(DEPDIR)/$(am__dirstamp)
+	-rm -f ../src_3party/uuid/$(am__dirstamp)
+	-rm -f Auth/$(DEPDIR)/$(am__dirstamp)
+	-rm -f Auth/$(am__dirstamp)
 	-rm -f Common/$(DEPDIR)/$(am__dirstamp)
 	-rm -f Common/$(am__dirstamp)
 	-rm -f Devices/$(DEPDIR)/$(am__dirstamp)
@@ -1959,10 +3116,61 @@ clean-am: clean-binPROGRAMS clean-generic clean-libtool mostlyclean-am
 
 distclean: distclean-am
 		-rm -f ../src_3party/$(DEPDIR)/homeis-death_handler.Po
+	-rm -f ../src_3party/$(DEPDIR)/homeis-linuxservice.Po
+	-rm -f ../src_3party/linuxcs/$(DEPDIR)/homeis-linuxcs.Po
+	-rm -f ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lapi.Po
+	-rm -f ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lauxlib.Po
+	-rm -f ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lbaselib.Po
+	-rm -f ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lbitlib.Po
+	-rm -f ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lcode.Po
+	-rm -f ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lcorolib.Po
+	-rm -f ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lctype.Po
+	-rm -f ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-ldblib.Po
+	-rm -f ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-ldebug.Po
+	-rm -f ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-ldo.Po
+	-rm -f ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-ldump.Po
+	-rm -f ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lfunc.Po
+	-rm -f ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lgc.Po
+	-rm -f ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-linit.Po
+	-rm -f ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-liolib.Po
+	-rm -f ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-llex.Po
+	-rm -f ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lmathlib.Po
+	-rm -f ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lmem.Po
+	-rm -f ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-loadlib.Po
+	-rm -f ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lobject.Po
+	-rm -f ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lopcodes.Po
+	-rm -f ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-loslib.Po
+	-rm -f ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lparser.Po
+	-rm -f ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lstate.Po
+	-rm -f ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lstring.Po
+	-rm -f ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lstrlib.Po
+	-rm -f ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-ltable.Po
+	-rm -f ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-ltablib.Po
+	-rm -f ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-ltm.Po
+	-rm -f ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lua.Po
+	-rm -f ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-luac.Po
+	-rm -f ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lundump.Po
+	-rm -f ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lvm.Po
+	-rm -f ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lzio.Po
+	-rm -f ../src_3party/uuid/$(DEPDIR)/homeis-clear.Po
+	-rm -f ../src_3party/uuid/$(DEPDIR)/homeis-compare.Po
+	-rm -f ../src_3party/uuid/$(DEPDIR)/homeis-copy.Po
+	-rm -f ../src_3party/uuid/$(DEPDIR)/homeis-gen_uuid.Po
+	-rm -f ../src_3party/uuid/$(DEPDIR)/homeis-isnull.Po
+	-rm -f ../src_3party/uuid/$(DEPDIR)/homeis-pack.Po
+	-rm -f ../src_3party/uuid/$(DEPDIR)/homeis-parse.Po
+	-rm -f ../src_3party/uuid/$(DEPDIR)/homeis-tst_uuid.Po
+	-rm -f ../src_3party/uuid/$(DEPDIR)/homeis-unpack.Po
+	-rm -f ../src_3party/uuid/$(DEPDIR)/homeis-unparse.Po
+	-rm -f ../src_3party/uuid/$(DEPDIR)/homeis-uuid_time.Po
 	-rm -f ./$(DEPDIR)/homeis-HomeIsConfig.Po
 	-rm -f ./$(DEPDIR)/homeis-HomeIsServer.Po
 	-rm -f ./$(DEPDIR)/homeis-SignalTryCatch.Po
 	-rm -f ./$(DEPDIR)/homeis-main.Po
+	-rm -f Auth/$(DEPDIR)/homeis-Session.Po
+	-rm -f Auth/$(DEPDIR)/homeis-User.Po
+	-rm -f Auth/$(DEPDIR)/homeis-UserManager.Po
+	-rm -f Auth/$(DEPDIR)/homeis-Users.Po
 	-rm -f Common/$(DEPDIR)/homeis-Base64.Po
 	-rm -f Common/$(DEPDIR)/homeis-CUUID.Po
 	-rm -f Common/$(DEPDIR)/homeis-DateTime.Po
@@ -1979,6 +3187,7 @@ distclean: distclean-am
 	-rm -f Devices/Folder/$(DEPDIR)/homeis-HisDevValueId.Po
 	-rm -f Devices/Folder/$(DEPDIR)/homeis-HisExpressionIdHolder.Po
 	-rm -f Devices/Handlers/$(DEPDIR)/homeis-BinnaryInputHandler.Po
+	-rm -f Devices/Handlers/$(DEPDIR)/homeis-BinnaryOutputHandler.Po
 	-rm -f Devices/Handlers/$(DEPDIR)/homeis-LOW_deviceID.Po
 	-rm -f Devices/Handlers/$(DEPDIR)/homeis-LOW_deviceIDRaw.Po
 	-rm -f Devices/Handlers/$(DEPDIR)/homeis-LOW_helper_crc.Po
@@ -2064,10 +3273,61 @@ installcheck-am:
 
 maintainer-clean: maintainer-clean-am
 		-rm -f ../src_3party/$(DEPDIR)/homeis-death_handler.Po
+	-rm -f ../src_3party/$(DEPDIR)/homeis-linuxservice.Po
+	-rm -f ../src_3party/linuxcs/$(DEPDIR)/homeis-linuxcs.Po
+	-rm -f ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lapi.Po
+	-rm -f ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lauxlib.Po
+	-rm -f ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lbaselib.Po
+	-rm -f ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lbitlib.Po
+	-rm -f ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lcode.Po
+	-rm -f ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lcorolib.Po
+	-rm -f ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lctype.Po
+	-rm -f ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-ldblib.Po
+	-rm -f ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-ldebug.Po
+	-rm -f ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-ldo.Po
+	-rm -f ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-ldump.Po
+	-rm -f ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lfunc.Po
+	-rm -f ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lgc.Po
+	-rm -f ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-linit.Po
+	-rm -f ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-liolib.Po
+	-rm -f ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-llex.Po
+	-rm -f ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lmathlib.Po
+	-rm -f ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lmem.Po
+	-rm -f ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-loadlib.Po
+	-rm -f ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lobject.Po
+	-rm -f ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lopcodes.Po
+	-rm -f ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-loslib.Po
+	-rm -f ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lparser.Po
+	-rm -f ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lstate.Po
+	-rm -f ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lstring.Po
+	-rm -f ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lstrlib.Po
+	-rm -f ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-ltable.Po
+	-rm -f ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-ltablib.Po
+	-rm -f ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-ltm.Po
+	-rm -f ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lua.Po
+	-rm -f ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-luac.Po
+	-rm -f ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lundump.Po
+	-rm -f ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lvm.Po
+	-rm -f ../src_3party/lua-5.2.1/src/$(DEPDIR)/homeis-lzio.Po
+	-rm -f ../src_3party/uuid/$(DEPDIR)/homeis-clear.Po
+	-rm -f ../src_3party/uuid/$(DEPDIR)/homeis-compare.Po
+	-rm -f ../src_3party/uuid/$(DEPDIR)/homeis-copy.Po
+	-rm -f ../src_3party/uuid/$(DEPDIR)/homeis-gen_uuid.Po
+	-rm -f ../src_3party/uuid/$(DEPDIR)/homeis-isnull.Po
+	-rm -f ../src_3party/uuid/$(DEPDIR)/homeis-pack.Po
+	-rm -f ../src_3party/uuid/$(DEPDIR)/homeis-parse.Po
+	-rm -f ../src_3party/uuid/$(DEPDIR)/homeis-tst_uuid.Po
+	-rm -f ../src_3party/uuid/$(DEPDIR)/homeis-unpack.Po
+	-rm -f ../src_3party/uuid/$(DEPDIR)/homeis-unparse.Po
+	-rm -f ../src_3party/uuid/$(DEPDIR)/homeis-uuid_time.Po
 	-rm -f ./$(DEPDIR)/homeis-HomeIsConfig.Po
 	-rm -f ./$(DEPDIR)/homeis-HomeIsServer.Po
 	-rm -f ./$(DEPDIR)/homeis-SignalTryCatch.Po
 	-rm -f ./$(DEPDIR)/homeis-main.Po
+	-rm -f Auth/$(DEPDIR)/homeis-Session.Po
+	-rm -f Auth/$(DEPDIR)/homeis-User.Po
+	-rm -f Auth/$(DEPDIR)/homeis-UserManager.Po
+	-rm -f Auth/$(DEPDIR)/homeis-Users.Po
 	-rm -f Common/$(DEPDIR)/homeis-Base64.Po
 	-rm -f Common/$(DEPDIR)/homeis-CUUID.Po
 	-rm -f Common/$(DEPDIR)/homeis-DateTime.Po
@@ -2084,6 +3344,7 @@ maintainer-clean: maintainer-clean-am
 	-rm -f Devices/Folder/$(DEPDIR)/homeis-HisDevValueId.Po
 	-rm -f Devices/Folder/$(DEPDIR)/homeis-HisExpressionIdHolder.Po
 	-rm -f Devices/Handlers/$(DEPDIR)/homeis-BinnaryInputHandler.Po
+	-rm -f Devices/Handlers/$(DEPDIR)/homeis-BinnaryOutputHandler.Po
 	-rm -f Devices/Handlers/$(DEPDIR)/homeis-LOW_deviceID.Po
 	-rm -f Devices/Handlers/$(DEPDIR)/homeis-LOW_deviceIDRaw.Po
 	-rm -f Devices/Handlers/$(DEPDIR)/homeis-LOW_helper_crc.Po

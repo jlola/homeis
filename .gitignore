@@ -4,3 +4,10 @@
 Debug/
 Debug test/
 Release/
+.deps/
+*.la
+*.o
+*.plo
+*.po
+*.Po
+autom4te.cache
