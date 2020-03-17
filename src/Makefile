@@ -87,7 +87,7 @@ NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = x86_64-pc-linux-gnu
-host_triplet = arm-unknown-linux-gnueabihf
+host_triplet = x86_64-pc-linux-gnu
 bin_PROGRAMS = homeis$(EXEEXT)
 subdir = src
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
@@ -219,9 +219,6 @@ AM_V_lt = $(am__v_lt_$(V))
 am__v_lt_ = $(am__v_lt_$(AM_DEFAULT_VERBOSITY))
 am__v_lt_0 = --silent
 am__v_lt_1 = 
-homeis_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) \
-	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(AM_CXXFLAGS) \
-	$(CXXFLAGS) $(homeis_LDFLAGS) $(LDFLAGS) -o $@
 AM_V_P = $(am__v_P_$(V))
 am__v_P_ = $(am__v_P_$(AM_DEFAULT_VERBOSITY))
 am__v_P_0 = false
@@ -416,19 +413,18 @@ DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 ACLOCAL = ${SHELL} /home/pc/homeis/homeis/missing aclocal-1.16
 AMTAR = $${TAR-tar}
 AM_DEFAULT_VERBOSITY = 1
-AR = arm-linux-gnueabihf-ar
+AR = ar
 AUTOCONF = ${SHELL} /home/pc/homeis/homeis/missing autoconf
 AUTOHEADER = ${SHELL} /home/pc/homeis/homeis/missing autoheader
 AUTOMAKE = ${SHELL} /home/pc/homeis/homeis/missing automake-1.16
 AWK = mawk
-CC = arm-linux-gnueabihf-gcc
+CC = gcc
 CCDEPMODE = depmode=gcc3
 CFLAGS = -g -O2
-CPP = arm-linux-gnueabihf-gcc -E
-CPPFLAGS = -Ilib/libxml2-2.8.0/include/libxml2 -Ilib/libconfig/include -Ilib/libcurl/include
-
-CXX = arm-linux-gnueabihf-g++
-CXXCPP = arm-linux-gnueabihf-g++ -E
+CPP = gcc -E
+CPPFLAGS = -I/usr/include/libxml2 -I/usr/include/x86_64-linux-gnu -I/usr/local/include
+CXX = g++
+CXXCPP = g++ -E
 CXXDEPMODE = depmode=gcc3
 CXXFLAGS = -g -O2
 CYGPATH_W = echo
@@ -449,7 +445,7 @@ INSTALL_DATA = ${INSTALL} -m 644
 INSTALL_PROGRAM = ${INSTALL}
 INSTALL_SCRIPT = ${INSTALL}
 INSTALL_STRIP_PROGRAM = $(install_sh) -c -s
-LD = /usr/arm-linux-gnueabihf/bin/ld
+LD = /usr/bin/ld -m elf_x86_64
 LDFLAGS = 
 LIBOBJS = 
 LIBS = 
@@ -461,9 +457,9 @@ LT_SYS_LIBRARY_PATH =
 MAKEINFO = ${SHELL} /home/pc/homeis/homeis/missing makeinfo
 MANIFEST_TOOL = :
 MKDIR_P = /usr/bin/mkdir -p
-NM = /usr/bin/arm-linux-gnueabihf-nm -B
+NM = /usr/bin/nm -B
 NMEDIT = 
-OBJDUMP = arm-linux-gnueabihf-objdump
+OBJDUMP = objdump
 OBJEXT = o
 OTOOL = 
 OTOOL64 = 
@@ -475,19 +471,19 @@ PACKAGE_TARNAME = home-automation
 PACKAGE_URL = 
 PACKAGE_VERSION = 1.0.0
 PATH_SEPARATOR = :
-RANLIB = arm-linux-gnueabihf-ranlib
+RANLIB = ranlib
 SED = /usr/bin/sed
 SET_MAKE = 
 SHELL = /bin/bash
-STRIP = arm-linux-gnueabihf-strip
+STRIP = strip
 VERSION = 1.0.0
 abs_builddir = /home/pc/homeis/homeis/src
 abs_srcdir = /home/pc/homeis/homeis/src
 abs_top_builddir = /home/pc/homeis/homeis
 abs_top_srcdir = /home/pc/homeis/homeis
-ac_ct_AR = 
-ac_ct_CC = 
-ac_ct_CXX = 
+ac_ct_AR = ar
+ac_ct_CC = gcc
+ac_ct_CXX = g++
 ac_ct_DUMPBIN = 
 am__include = include
 am__leading_dot = .
@@ -506,11 +502,11 @@ datarootdir = ${prefix}/share
 docdir = ${datarootdir}/doc/${PACKAGE_TARNAME}
 dvidir = ${docdir}
 exec_prefix = ${prefix}
-host = arm-unknown-linux-gnueabihf
-host_alias = arm-linux-gnueabihf
-host_cpu = arm
-host_os = linux-gnueabihf
-host_vendor = unknown
+host = x86_64-pc-linux-gnu
+host_alias = 
+host_cpu = x86_64
+host_os = linux-gnu
+host_vendor = pc
 htmldir = ${docdir}
 includedir = ${prefix}/include
 infodir = ${datarootdir}/info
@@ -538,34 +534,36 @@ top_srcdir = ..
 
 # what flags you want to pass to the C compiler & linker
 AM_CXXFLAGS = -g -std=c++11 -Wall -fPIC
-homeis_LDADD = -lpthread -lgnutls -ldl -lxml2 -lrt -lconfig++ -lcurl -lz -lcrypto -lmicrohttpd -lhttpserver -lnettle -lgmp -lhogweed -lidn2 -lp11-kit -ltasn1 -lunistring -lffi
-homeis_LDFLAGS = \
--L../lib/libxml2-2.8.0/lib \
--L../lib/libcurl/lib \
--L../lib/libmicrohttpd/lib \
--L../lib/libz \
--L../lib/libssl/lib \
--L../lib/libhttpserver/lib \
--L../lib/gnutls/lib \
--L../lib/nettle/lib \
--L../lib/gmplib/lib \
--L../lib/libconfig/lib
+homeis_LDADD = -lpthread -lgnutls -ldl -lxml2 -lrt -lconfig++ -lcurl -lz -lmicrohttpd -lhttpserver -lnettle -lgmp -lhogweed -lidn2 -lp11-kit -ltasn1 -lffi -lcrypto
 
+#-lunistring -lcrypto
+
+#homeis_LDFLAGS=\
+#-L../lib/libxml2-2.8.0/lib \
+#-L../lib/libcurl/lib \
+#-L../lib/libmicrohttpd/lib \
+#-L../lib/libz \
+#-L../lib/libssl/lib \
+#-L../lib/libhttpserver/lib \
+#-L../lib/gnutls/lib \
+#-L../lib/nettle/lib \
+#-L../lib/gmplib/lib \
+#-L../lib/libconfig/lib
+
+#-I../lib/libxml2-2.8.0/include/libxml2 \
+#-I../lib/libcurl/include \
+#-I../lib/libssl/include \
+#-I../lib/libz/include \
+#-I../lib/nettle/include \
+#-I../lib/gmplib/include \
+#-I../lib/gnutls/include \
+#-I../lib/libconfig/include \
+#-I../lib/libmicrohttpd/include \
+#-I../lib/libhttpserver/include \
+#-I../lib/libssl 
 homeis_CPPFLAGS = \
 -DUSE_THREADS -DLUA_USE_MKSTEMP -DMEMWATCH \
 -I../src_3party/lua-5.2.1/src \
--I../src_3party/lua-5.2.1/src \
--I../lib/libxml2-2.8.0/include/libxml2 \
--I../lib/libcurl/include \
--I../lib/libssl/include \
--I../lib/libz/include \
--I../lib/nettle/include \
--I../lib/gmplib/include \
--I../lib/gnutls/include \
--I../lib/libconfig/include \
--I../lib/libmicrohttpd/include \
--I../lib/libhttpserver/include \
--I../lib/libssl \
 -I../src_3party \
 -I../src_3party/linuxcs \
 -I../src_3party/srutil \
@@ -1185,7 +1183,7 @@ Tags/homeis-TagBase.$(OBJEXT): Tags/$(am__dirstamp) \
 
 homeis$(EXEEXT): $(homeis_OBJECTS) $(homeis_DEPENDENCIES) $(EXTRA_homeis_DEPENDENCIES) 
 	@rm -f homeis$(EXEEXT)
-	$(AM_V_CXXLD)$(homeis_LINK) $(homeis_OBJECTS) $(homeis_LDADD) $(LIBS)
+	$(AM_V_CXXLD)$(CXXLINK) $(homeis_OBJECTS) $(homeis_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)

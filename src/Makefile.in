@@ -219,9 +219,6 @@ AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
 am__v_lt_0 = --silent
 am__v_lt_1 = 
-homeis_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) \
-	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(AM_CXXFLAGS) \
-	$(CXXFLAGS) $(homeis_LDFLAGS) $(LDFLAGS) -o $@
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
 am__v_P_0 = false
@@ -537,34 +534,36 @@ top_srcdir = @top_srcdir@
 
 # what flags you want to pass to the C compiler & linker
 AM_CXXFLAGS = -g -std=c++11 -Wall -fPIC
-homeis_LDADD = -lpthread -lgnutls -ldl -lxml2 -lrt -lconfig++ -lcurl -lz -lcrypto -lmicrohttpd -lhttpserver -lnettle -lgmp -lhogweed -lidn2 -lp11-kit -ltasn1 -lunistring -lffi
-homeis_LDFLAGS = \
--L../lib/libxml2-2.8.0/lib \
--L../lib/libcurl/lib \
--L../lib/libmicrohttpd/lib \
--L../lib/libz \
--L../lib/libssl/lib \
--L../lib/libhttpserver/lib \
--L../lib/gnutls/lib \
--L../lib/nettle/lib \
--L../lib/gmplib/lib \
--L../lib/libconfig/lib
+homeis_LDADD = -lpthread -lgnutls -ldl -lxml2 -lrt -lconfig++ -lcurl -lz -lmicrohttpd -lhttpserver -lnettle -lgmp -lhogweed -lidn2 -lp11-kit -ltasn1 -lffi -lcrypto
 
+#-lunistring -lcrypto
+
+#homeis_LDFLAGS=\
+#-L../lib/libxml2-2.8.0/lib \
+#-L../lib/libcurl/lib \
+#-L../lib/libmicrohttpd/lib \
+#-L../lib/libz \
+#-L../lib/libssl/lib \
+#-L../lib/libhttpserver/lib \
+#-L../lib/gnutls/lib \
+#-L../lib/nettle/lib \
+#-L../lib/gmplib/lib \
+#-L../lib/libconfig/lib
+
+#-I../lib/libxml2-2.8.0/include/libxml2 \
+#-I../lib/libcurl/include \
+#-I../lib/libssl/include \
+#-I../lib/libz/include \
+#-I../lib/nettle/include \
+#-I../lib/gmplib/include \
+#-I../lib/gnutls/include \
+#-I../lib/libconfig/include \
+#-I../lib/libmicrohttpd/include \
+#-I../lib/libhttpserver/include \
+#-I../lib/libssl 
 homeis_CPPFLAGS = \
 -DUSE_THREADS -DLUA_USE_MKSTEMP -DMEMWATCH \
 -I../src_3party/lua-5.2.1/src \
--I../src_3party/lua-5.2.1/src \
--I../lib/libxml2-2.8.0/include/libxml2 \
--I../lib/libcurl/include \
--I../lib/libssl/include \
--I../lib/libz/include \
--I../lib/nettle/include \
--I../lib/gmplib/include \
--I../lib/gnutls/include \
--I../lib/libconfig/include \
--I../lib/libmicrohttpd/include \
--I../lib/libhttpserver/include \
--I../lib/libssl \
 -I../src_3party \
 -I../src_3party/linuxcs \
 -I../src_3party/srutil \
@@ -1184,7 +1183,7 @@ Tags/homeis-TagBase.$(OBJEXT): Tags/$(am__dirstamp) \
 
 homeis$(EXEEXT): $(homeis_OBJECTS) $(homeis_DEPENDENCIES) $(EXTRA_homeis_DEPENDENCIES) 
 	@rm -f homeis$(EXEEXT)
-	$(AM_V_CXXLD)$(homeis_LINK) $(homeis_OBJECTS) $(homeis_LDADD) $(LIBS)
+	$(AM_V_CXXLD)$(CXXLINK) $(homeis_OBJECTS) $(homeis_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)

@@ -16961,10 +16961,14 @@ ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $
 ac_compiler_gnu=$ac_cv_c_compiler_gnu
 
 
-CPPFLAGS="-Ilib/libxml2-2.8.0/include/libxml2 \
--Ilib/libconfig/include \
--Ilib/libcurl/include
-"
+#CPPFLAGS="-Ilib/libxml2-2.8.0/include/libxml2 \
+#-Ilib/libconfig/include \
+#-Ilib/libcurl/include \
+#"
+
+CPPFLAGS="-I/usr/include/libxml2 \
+-I/usr/include/x86_64-linux-gnu \
+-I/usr/local/include"
 
 ac_ext=cpp
 ac_cpp='$CXXCPP $CPPFLAGS'
@@ -17004,9 +17008,15 @@ fi
 
 
 
-#AC_CHECK_HEADER([httpserver.hpp],[],
-#	AC_MSG_ERROR(["httpserver.hpp not found"])
-#)
+ac_fn_cxx_check_header_mongrel "$LINENO" "httpserver.hpp" "ac_cv_header_httpserver_hpp" "$ac_includes_default"
+if test "x$ac_cv_header_httpserver_hpp" = xyes; then :
+
+else
+  as_fn_error $? "\"httpserver.hpp not found\"" "$LINENO" 5
+
+fi
+
+
 
 ac_ext=c
 ac_cpp='$CPP $CPPFLAGS'

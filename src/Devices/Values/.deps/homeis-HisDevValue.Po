@@ -1,4 +1,0 @@
-Devices/Values/homeis-HisDevValue.o: Devices/Values/HisDevValue.cpp \
- /usr/arm-linux-gnueabihf/include/stdc-predef.h
-
-/usr/arm-linux-gnueabihf/include/stdc-predef.h:

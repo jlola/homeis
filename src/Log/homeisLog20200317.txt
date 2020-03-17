@@ -1,0 +1,158 @@
+17.03.2020 16:34:34.19350|INFO|
+---------------------------------------
+Home information system 2.0.20181224
+---------------------------------------
+
+17.03.2020 16:34:34.19763|INFO|File /home/pc/homeis/homeis/src/homeis.cfg not exists and will be created with default params
+17.03.2020 16:34:34.20460|ERROR|Parse error at : in file /home/pc/homeis/homeis/src/homeis.cfg - at line: 10 syntax error
+17.03.2020 16:34:34.26131|ERROR|after EXITING the scope of: function Error at logger.cpp:172
+
+17.03.2020 16:34:34.27124|INFO|[31;1mAborted[0m (thread [33;1m140306368929344[0m, pid [33;1m5514[0m)
+17.03.2020 16:34:34.27779|INFO|
+Stack trace:
+
+17.03.2020 16:34:34.151449|INFO|[34;1m[__GI_raise][0m
+
+17.03.2020 16:34:34.151639|INFO|sysdeps/unix/sysv/linux/raise.c[32;1m:51 (discriminator 3)[0m
+
+17.03.2020 16:34:34.235486|INFO|[34;1m[__GI_abort][0m
+
+17.03.2020 16:34:34.235729|INFO|/build/glibc-vjB4T1/glibc-2.28/stdlib/abort.c[32;1m:81[0m
+
+17.03.2020 16:34:34.239066|INFO|[32;1m0x8C983[0m at /lib/x86_64-linux-gnu/libstdc++.so.6
+
+17.03.2020 16:34:34.243155|INFO|[34;1m[std::rethrow_exception(std::__exception_ptr::exception_ptr)][0m
+
+17.03.2020 16:34:34.243273|INFO|/lib/x86_64-linux-gnu/libstdc++.so.6[32;1m:0x928C6[0m
+
+17.03.2020 16:34:34.246280|INFO|[34;1m[std::terminate()][0m
+
+17.03.2020 16:34:34.246573|INFO|/lib/x86_64-linux-gnu/libstdc++.so.6[32;1m:0x92901[0m
+
+17.03.2020 16:34:34.253204|INFO|[34;1m[__cxa_rethrow][0m
+
+17.03.2020 16:34:34.253368|INFO|/lib/x86_64-linux-gnu/libstdc++.so.6[32;1m:0x92B89[0m
+
+17.03.2020 16:34:34.255817|INFO|[32;1m0x5644F3E986A7[0m at /home/pc/homeis/homeis/src/homeis
+
+17.03.2020 16:34:34.260623|INFO|[32;1m0x5644F3E99AE1[0m at /home/pc/homeis/homeis/src/homeis
+
+17.03.2020 16:34:34.340715|INFO|[34;1m[__libc_start_main][0m
+
+17.03.2020 16:34:34.340880|INFO|csu/libc-start.c[32;1m:342[0m
+
+17.03.2020 16:34:34.342973|INFO|[32;1m0x5644F3E99C8A[0m at /home/pc/homeis/homeis/src/homeis
+
+17.03.2020 16:35:14.656700|INFO|
+---------------------------------------
+Home information system 2.0.20181224
+---------------------------------------
+
+17.03.2020 16:35:14.658733|ERROR|Parse error at : in file /home/pc/homeis/homeis/src/homeis.cfg - at line: 10 syntax error
+17.03.2020 16:35:14.659122|ERROR|after EXITING the scope of: function Error at logger.cpp:172
+
+17.03.2020 16:35:14.659939|INFO|[31;1mAborted[0m (thread [33;1m140413951610432[0m, pid [33;1m5531[0m)
+17.03.2020 16:35:14.660104|INFO|
+Stack trace:
+
+17.03.2020 16:35:14.742126|INFO|[34;1m[__GI_raise][0m
+
+17.03.2020 16:35:14.742260|INFO|sysdeps/unix/sysv/linux/raise.c[32;1m:51 (discriminator 3)[0m
+
+17.03.2020 16:35:14.821436|INFO|[34;1m[__GI_abort][0m
+
+17.03.2020 16:35:14.821600|INFO|/build/glibc-vjB4T1/glibc-2.28/stdlib/abort.c[32;1m:81[0m
+
+17.03.2020 16:35:14.825812|INFO|[32;1m0x8C983[0m at /lib/x86_64-linux-gnu/libstdc++.so.6
+
+17.03.2020 16:35:14.830500|INFO|[34;1m[std::rethrow_exception(std::__exception_ptr::exception_ptr)][0m
+
+17.03.2020 16:35:14.830644|INFO|/lib/x86_64-linux-gnu/libstdc++.so.6[32;1m:0x928C6[0m
+
+17.03.2020 16:35:14.833973|INFO|[34;1m[std::terminate()][0m
+
+17.03.2020 16:35:14.834134|INFO|/lib/x86_64-linux-gnu/libstdc++.so.6[32;1m:0x92901[0m
+
+17.03.2020 16:35:14.838365|INFO|[34;1m[__cxa_rethrow][0m
+
+17.03.2020 16:35:14.838477|INFO|/lib/x86_64-linux-gnu/libstdc++.so.6[32;1m:0x92B89[0m
+
+17.03.2020 16:35:14.842306|INFO|[32;1m0x55FC71B706A7[0m at /home/pc/homeis/homeis/src/homeis
+
+17.03.2020 16:35:14.846273|INFO|[32;1m0x55FC71B71AE1[0m at /home/pc/homeis/homeis/src/homeis
+
+17.03.2020 16:35:14.924908|INFO|[34;1m[__libc_start_main][0m
+
+17.03.2020 16:35:14.925060|INFO|csu/libc-start.c[32;1m:342[0m
+
+17.03.2020 16:35:14.928221|INFO|[32;1m0x55FC71B71C8A[0m at /home/pc/homeis/homeis/src/homeis
+
+17.03.2020 16:38:18.141149|INFO|
+---------------------------------------
+Home information system 2.0.20181224
+---------------------------------------
+
+17.03.2020 16:38:18.141351|INFO|Set LogLevel=Info
+17.03.2020 16:38:18.141401|INFO|SmtpServer: smtp.seznam.cz
+17.03.2020 16:38:18.141422|INFO|SmtpUserName: 
+17.03.2020 16:38:18.141995|INFO|Strat thread HisDevRuntime::Refresh with threadid: 3614398208l
+17.03.2020 16:38:18.142755|INFO|Start homeis webserver with blocking starting thread
+17.03.2020 16:38:18.142939|INFO|Strat thread ExpressionRuntime::ThreadFunction with threadid: 3631183616l
+17.03.2020 16:38:18.143034|ERROR|    function InitWebServer at HomeIsServer.cpp:109
+after EXITING the scope of: function ExpressionService at ExpressionsService.cpp:23
+
+17.03.2020 16:38:18.143743|INFO|[31;1mAborted[0m (thread [33;1m140272968117824[0m, pid [33;1m5577[0m)
+17.03.2020 16:38:18.143963|INFO|
+Stack trace:
+
+17.03.2020 16:38:18.201341|INFO|[34;1m[__GI_raise][0m
+
+17.03.2020 16:38:18.201459|INFO|sysdeps/unix/sysv/linux/raise.c[32;1m:51 (discriminator 3)[0m
+
+17.03.2020 16:38:18.258604|INFO|[34;1m[__GI_abort][0m
+
+17.03.2020 16:38:18.258710|INFO|/build/glibc-vjB4T1/glibc-2.28/stdlib/abort.c[32;1m:81[0m
+
+17.03.2020 16:38:18.260849|INFO|[32;1m0x8C983[0m at /lib/x86_64-linux-gnu/libstdc++.so.6
+
+17.03.2020 16:38:18.262852|INFO|[34;1m[std::rethrow_exception(std::__exception_ptr::exception_ptr)][0m
+
+17.03.2020 16:38:18.262926|INFO|/lib/x86_64-linux-gnu/libstdc++.so.6[32;1m:0x928C6[0m
+
+17.03.2020 16:38:18.264932|INFO|[34;1m[std::terminate()][0m
+
+17.03.2020 16:38:18.265008|INFO|/lib/x86_64-linux-gnu/libstdc++.so.6[32;1m:0x92901[0m
+
+17.03.2020 16:38:18.267096|INFO|[34;1m[__cxa_throw][0m
+
+17.03.2020 16:38:18.267177|INFO|/lib/x86_64-linux-gnu/libstdc++.so.6[32;1m:0x92B34[0m
+
+17.03.2020 16:38:18.268640|INFO|[34;1m[httpserver::webserver::start(bool) [clone .cold.281]][0m
+
+17.03.2020 16:38:18.268709|INFO|webserver.cpp[32;1m:?[0m
+
+17.03.2020 16:38:18.270389|INFO|[32;1m0x5654194BABB2[0m at /home/pc/homeis/homeis/src/homeis
+
+17.03.2020 16:38:18.272722|INFO|[32;1m0x5654194BBD14[0m at /home/pc/homeis/homeis/src/homeis
+
+17.03.2020 16:38:18.274475|INFO|[32;1m0x5654194BBF9D[0m at /home/pc/homeis/homeis/src/homeis
+
+17.03.2020 16:38:18.276170|INFO|[32;1m0x565419403BF1[0m at /home/pc/homeis/homeis/src/homeis
+
+17.03.2020 16:38:18.331372|INFO|[34;1m[__libc_start_main][0m
+
+17.03.2020 16:38:18.331502|INFO|csu/libc-start.c[32;1m:342[0m
+
+17.03.2020 16:38:18.333566|INFO|[32;1m0x565419403C8A[0m at /home/pc/homeis/homeis/src/homeis
+
+17.03.2020 16:39:37.123853|INFO|
+---------------------------------------
+Home information system 2.0.20181224
+---------------------------------------
+
+17.03.2020 16:39:37.124238|INFO|Set LogLevel=Info
+17.03.2020 16:39:37.124323|INFO|SmtpServer: smtp.seznam.cz
+17.03.2020 16:39:37.124494|INFO|SmtpUserName: 
+17.03.2020 16:39:37.125751|INFO|Strat thread ExpressionRuntime::ThreadFunction with threadid: 2199037696l
+17.03.2020 16:39:37.126984|INFO|Strat thread HisDevRuntime::Refresh with threadid: 2182252288l
+17.03.2020 16:39:37.127367|INFO|Start homeis webserver with blocking starting thread

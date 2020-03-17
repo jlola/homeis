@@ -25,10 +25,14 @@ AC_PROG_CXX
 AC_PROG_CC
 AC_PROG_CPP
 
-CPPFLAGS="-Ilib/libxml2-2.8.0/include/libxml2 \
--Ilib/libconfig/include \
--Ilib/libcurl/include
-"
+#CPPFLAGS="-Ilib/libxml2-2.8.0/include/libxml2 \
+#-Ilib/libconfig/include \
+#-Ilib/libcurl/include \
+#"
+
+CPPFLAGS="-I/usr/include/libxml2 \
+-I/usr/include/x86_64-linux-gnu \
+-I/usr/local/include"
 
 AC_LANG_PUSH([C++])
 
@@ -44,9 +48,9 @@ AC_CHECK_HEADER([curl/curl.h],[],
 	AC_MSG_ERROR(["curl.h not found. Install libcurl-dev package."])
 )
 
-#AC_CHECK_HEADER([httpserver.hpp],[],
-#	AC_MSG_ERROR(["httpserver.hpp not found"])
-#)
+AC_CHECK_HEADER([httpserver.hpp],[],
+	AC_MSG_ERROR(["httpserver.hpp not found"])
+)
 
 AC_LANG_POP([C++])
 

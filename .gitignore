@@ -11,3 +11,5 @@ Release/
 *.po
 *.Po
 autom4te.cache
+.dirstamp
+

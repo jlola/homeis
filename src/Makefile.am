@@ -3,37 +3,38 @@ AM_CXXFLAGS = -g -std=c++11 -Wall -fPIC
 
 bin_PROGRAMS = homeis
 
-homeis_LDADD = -lpthread -lgnutls -ldl -lxml2 -lrt -lconfig++ -lcurl -lz -lcrypto -lmicrohttpd -lhttpserver -lnettle -lgmp -lhogweed -lidn2 -lp11-kit -ltasn1 -lunistring -lffi
+homeis_LDADD = -lpthread -lgnutls -ldl -lxml2 -lrt -lconfig++ -lcurl -lz -lmicrohttpd -lhttpserver -lnettle -lgmp -lhogweed -lidn2 -lp11-kit -ltasn1 -lffi -lcrypto
+
+#-lunistring -lcrypto
+
+#homeis_LDFLAGS=\
+#-L../lib/libxml2-2.8.0/lib \
+#-L../lib/libcurl/lib \
+#-L../lib/libmicrohttpd/lib \
+#-L../lib/libz \
+#-L../lib/libssl/lib \
+#-L../lib/libhttpserver/lib \
+#-L../lib/gnutls/lib \
+#-L../lib/nettle/lib \
+#-L../lib/gmplib/lib \
+#-L../lib/libconfig/lib
 
 
+#-I../lib/libxml2-2.8.0/include/libxml2 \
+#-I../lib/libcurl/include \
+#-I../lib/libssl/include \
+#-I../lib/libz/include \
+#-I../lib/nettle/include \
+#-I../lib/gmplib/include \
+#-I../lib/gnutls/include \
+#-I../lib/libconfig/include \
+#-I../lib/libmicrohttpd/include \
+#-I../lib/libhttpserver/include \
+#-I../lib/libssl 
 
-homeis_LDFLAGS=\
--L../lib/libxml2-2.8.0/lib \
--L../lib/libcurl/lib \
--L../lib/libmicrohttpd/lib \
--L../lib/libz \
--L../lib/libssl/lib \
--L../lib/libhttpserver/lib \
--L../lib/gnutls/lib \
--L../lib/nettle/lib \
--L../lib/gmplib/lib \
--L../lib/libconfig/lib
-
-homeis_CPPFLAGS= \
+homeis_CPPFLAGS = \
 -DUSE_THREADS -DLUA_USE_MKSTEMP -DMEMWATCH \
 -I../src_3party/lua-5.2.1/src \
--I../src_3party/lua-5.2.1/src \
--I../lib/libxml2-2.8.0/include/libxml2 \
--I../lib/libcurl/include \
--I../lib/libssl/include \
--I../lib/libz/include \
--I../lib/nettle/include \
--I../lib/gmplib/include \
--I../lib/gnutls/include \
--I../lib/libconfig/include \
--I../lib/libmicrohttpd/include \
--I../lib/libhttpserver/include \
--I../lib/libssl \
 -I../src_3party \
 -I../src_3party/linuxcs \
 -I../src_3party/srutil \
