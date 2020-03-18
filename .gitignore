@@ -12,4 +12,9 @@ Release/
 *.Po
 autom4te.cache
 .dirstamp
-
+*.in
+*.log
+config.guess
+*.m4
+Makefile
+homeisd

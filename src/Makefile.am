@@ -1,9 +1,9 @@
 # what flags you want to pass to the C compiler & linker
 AM_CXXFLAGS = -g -std=c++11 -Wall -fPIC
 
-bin_PROGRAMS = homeis
+bin_PROGRAMS = homeisd
 
-homeis_LDADD = -lpthread -lgnutls -ldl -lxml2 -lrt -lconfig++ -lcurl -lz -lmicrohttpd -lhttpserver -lnettle -lgmp -lhogweed -lidn2 -lp11-kit -ltasn1 -lffi -lcrypto
+homeisd_LDADD = -lpthread -lgnutls -ldl -lxml2 -lrt -lconfig++ -lcurl -lz -lmicrohttpd -lhttpserver -lnettle -lgmp -lhogweed -lidn2 -lp11-kit -ltasn1 -lffi -lcrypto
 
 #-lunistring -lcrypto
 
@@ -32,7 +32,7 @@ homeis_LDADD = -lpthread -lgnutls -ldl -lxml2 -lrt -lconfig++ -lcurl -lz -lmicro
 #-I../lib/libhttpserver/include \
 #-I../lib/libssl 
 
-homeis_CPPFLAGS = \
+homeisd_CPPFLAGS = \
 -DUSE_THREADS -DLUA_USE_MKSTEMP -DMEMWATCH \
 -I../src_3party/lua-5.2.1/src \
 -I../src_3party \
@@ -58,7 +58,7 @@ homeis_CPPFLAGS = \
 -I./Services \
 -I./Tags
 
-homeis_SOURCES= \
+homeisd_SOURCES= \
 ../src_3party/linuxservice.cpp \
 ../src_3party/linuxcs/linuxcs.cpp \
 ../src_3party/lua-5.2.1/src/lapi.c \
