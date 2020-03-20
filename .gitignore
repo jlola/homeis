@@ -10,6 +10,7 @@ Release/
 *.plo
 *.po
 *.Po
+*.lo
 autom4te.cache
 .dirstamp
 *.in
@@ -17,4 +18,10 @@ autom4te.cache
 config.guess
 *.m4
 Makefile
+config.h.in~
+libsrc3party.a
+libsrc3party.la
 homeisd
+Makefile.in
+config.status
+Itmain.sh

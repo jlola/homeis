@@ -3,10 +3,12 @@
 
 AC_PREREQ([2.69])
 AC_INIT([Home automation], [1.0.0], [BUG-REPORT-ADDRESS])
-AM_INIT_AUTOMAKE([-Wall -Werror foreign subdir-objects])
+AM_INIT_AUTOMAKE([foreign subdir-objects])
 AC_CONFIG_SRCDIR([src/main.cpp])
 AC_CONFIG_HEADERS([config.h])
 LT_INIT([shared disable-static])
+
+AC_CONFIG_MACRO_DIR([m4])
 
 #sudo ./configure CC=arm-linux-gnueabihf-gcc CCP=arm-linux-gnueabihf-g++ --host=arm-linux-gnueabihf
 
@@ -77,5 +79,5 @@ AC_TYPE_UINT32_T
 AC_TYPE_UINT64_T
 AC_TYPE_UINT8_T
 AC_CHECK_TYPES([ptrdiff_t])
-AC_CONFIG_FILES([Makefile src/Makefile])
+AC_CONFIG_FILES([Makefile src_3party/Makefile src/Makefile])
 AC_OUTPUT
