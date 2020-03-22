@@ -271,7 +271,7 @@ bool ModifiedMdbus::getHoldings(uint16_t address,uint16_t offset,uint16_t count,
 	request.CRC = crc.calc((uint8_t*)&request, sizeof(request)-2);
 	string errormsg;
 
-	logger.Error("Error getHoldings: %d, offest: %d, count: %d, timeoutMs: %d",
+	logger.Trace("getHoldings: %d, offest: %d, count: %d, timeoutMs: %d",
 				address, offset, count, timeoutMs);
 
 	if (Send((uint8_t*)&request, sizeof(request),timeoutMs))
