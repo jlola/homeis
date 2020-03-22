@@ -104,7 +104,7 @@ void RFIDHandler::CreateOrValidTags(bool addnew)
 	}
 }
 
-void RFIDHandler::RefreshOutputs()
+void RFIDHandler::RefreshOutputs(bool force)
 {
 	STACK
 	if (newDataFlag!=NULL && srfidregs!=NULL)

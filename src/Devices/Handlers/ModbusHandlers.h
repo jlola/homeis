@@ -22,7 +22,7 @@ public:
 	bool Remove(CUUID id);
 	ModbusHandlers(HisDevModbus* dev,IHisDevFactory* factory);
 	bool Scan(bool addnew);
-	void RefreshOutputs();
+	void RefreshOutputs(bool force);
 	void Refresh(bool modbusSuccess);
 	void Load();
 	virtual ~ModbusHandlers();

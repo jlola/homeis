@@ -62,12 +62,12 @@ bool ModbusHandlers::Scan(bool addnew)
 	return result;
 }
 
-void ModbusHandlers::RefreshOutputs()
+void ModbusHandlers::RefreshOutputs(bool force)
 {
 	STACK
 	for(size_t i=0;i<handlers.size();i++)
 	{
-		handlers[i]->RefreshOutputs();
+		handlers[i]->RefreshOutputs(force);
 	}
 }
 void ModbusHandlers::Refresh(bool modbusSuccess)

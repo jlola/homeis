@@ -126,13 +126,13 @@ bool OneWireHandler::TriggerPeriodicScan()
 	return false;
 }
 
-void OneWireHandler::RefreshOutputs()
+void OneWireHandler::RefreshOutputs(bool force)
 {
 	STACK
 
 	if (scantag->GetValue()==true)
 	{
-		logger.Trace("Write to setHolding OW_SCAN_OFFSET to 1");
+		logger.Trace("Device %d. Write to setHolding OW_SCAN_OFFSET to 1",devModbus->GetAddress());
 		bool success = devModbus->setHolding(stypedef.OffsetOfType+OW_SCAN_OFFSET,scantag->GetValue());
 		if (success)
 		{

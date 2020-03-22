@@ -125,7 +125,7 @@ bool BinnaryInputHandler::Remove(CUUID id)
 	return false;
 }
 
-void BinnaryInputHandler::RefreshOutputs()
+void BinnaryInputHandler::RefreshOutputs(bool force)
 {
 
 }

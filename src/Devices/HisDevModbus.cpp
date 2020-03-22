@@ -143,6 +143,8 @@ bool HisDevModbus::Scan(bool addnew)
 {
 	STACK
 	HisLock lock(refreshscanmutex);
+
+	logger.Trace("Device %d Start scan",GetAddress());
 //	ReleaseResources();
 	if (connection==NULL)
 	{
@@ -150,9 +152,11 @@ bool HisDevModbus::Scan(bool addnew)
 		return false;
 	}
 
+	logger.Trace("Device %d read header",GetAddress());
 	uint16_t* pheader = reinterpret_cast<uint16_t*>(&header);
 	if (connection->getHoldings(address,0,sizeof(header)/2,pheader))
 	{
+		logger.Trace("Device %d read data",GetAddress());
 		SetError(false);
 		size = header.lastIndex+1;
 		data = new uint16_t[size];
@@ -246,8 +250,9 @@ void HisDevModbus::DoInternalRefresh(bool alarm)
 	{
 		if (Scan(false))
 		{
+			logger.Trace("Device %d refresh outputs after start or error",GetAddress());
 			//set outputs
-			handlers->RefreshOutputs();
+			handlers->RefreshOutputs(true);
 		}
 		else
 		{
@@ -264,10 +269,12 @@ void HisDevModbus::DoInternalRefresh(bool alarm)
 
 		if (refreshOutputs)
 		{
+			logger.Trace("Device %d refresh outputs after change",GetAddress());
 			refreshOutputs = false;
-			handlers->RefreshOutputs();
+			handlers->RefreshOutputs(false);
 		}
 
+		logger.Trace("Device %d read data",GetAddress());
 		bool modbusok = connection->getHoldings(address,0,size,data);
 		if (!modbusok)
 		{
@@ -281,8 +288,9 @@ void HisDevModbus::DoInternalRefresh(bool alarm)
 			{
 				if (Scan(false))
 				{
+					logger.Trace("Device %d refresh outputs after change size of module data.",GetAddress());
 					//set outputs
-					handlers->RefreshOutputs();
+					handlers->RefreshOutputs(true);
 				}
 				else
 				{
@@ -292,7 +300,7 @@ void HisDevModbus::DoInternalRefresh(bool alarm)
 
 			if (typesdefs==NULL)
 			{
-				logger.Info("Wrong data scanned. Var typesdefs is NULL.");
+				logger.Info("Device %d Wrong data scanned. Var typesdefs is NULL.",GetAddress());
 				return;
 			}
 

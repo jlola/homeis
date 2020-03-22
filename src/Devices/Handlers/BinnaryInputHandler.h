@@ -34,7 +34,7 @@ public:
 	bool Remove(CUUID id);
 	void CreateOrValidInputs(bool addnew);
 	bool Scan(bool addnew);
-	void RefreshOutputs();
+	void RefreshOutputs(bool force);
 	void Refresh(bool modbusSuccess);
 	void Load();
 	virtual ~BinnaryInputHandler();

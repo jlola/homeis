@@ -43,7 +43,7 @@ void HisDevRuntime::Refresh()
 	while(running)
 	{
 		devices.Refresh();
-		sleep(1);
+		usleep(10000);
 	}
 
 	logger.Info("End thread HisDevRuntime::Refresh with threadid: %ul",pthread_self());

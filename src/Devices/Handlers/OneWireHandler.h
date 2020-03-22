@@ -62,7 +62,7 @@ public:
 
 	bool Remove(CUUID id);
 
-	void RefreshOutputs();
+	void RefreshOutputs(bool force);
 
 	void Refresh(bool modbusSuccess);
 

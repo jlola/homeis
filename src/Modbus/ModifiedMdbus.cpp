@@ -15,6 +15,7 @@ using namespace std;
 #include "crc.h"
 #include "BlockingQueue.h"
 #include "PoppyDebugTools.h"
+#include "StringBuilder.h"
 
 string ModifiedMdbus::DriverName = "modbus";
 
@@ -53,6 +54,12 @@ string ModifiedMdbus::GetDriverName()
 bool ModifiedMdbus::Send(uint8_t* data,uint16_t len,const int timeoutMs)
 {
 	getholdingsBuffer.clear();
+	vector<uint8_t> vdata;
+	for(int i=0;i<len;i++)
+		vdata.push_back(data[i]);
+
+	string strdata = StringBuilder::join(vdata,",");
+	logger.Trace("Sended: %s",strdata.c_str());
 	serialPort.Write(data,len);
 	event.Reset();
 	auto signaled = event.Wait(timeoutMs);
@@ -89,6 +96,10 @@ void ModifiedMdbus::OnData(std::vector<uint8_t> data)
 
 	receiving = true;
 	bool isvalid;
+
+	string strdata = StringBuilder::join(data,",");
+	logger.Trace("Received: %s",strdata.c_str());
+
 	for (size_t i=0;i<data.size();i++)
 	{
 		buffer.push_back(data[i]);
@@ -107,7 +118,7 @@ void ModifiedMdbus::OnData(std::vector<uint8_t> data)
 			{
 				if (!checkFrameCrc(&buffer[0],buffer.size()))
 				{
-					CLogger::GetLogger().Error("Received wrong data first byte: %d",buffer[0]);
+					logger.Error("Received wrong data first byte: %d",buffer[0]);
 				}
 				else
 				{
@@ -198,18 +209,29 @@ bool ModifiedMdbus::setHolding(uint16_t address,uint16_t offset, uint16_t val)
 	request.StartingAddress = bswap_16(offset);
 	request.Count = bswap_16(val);
 	request.CRC = crc.calc((uint8_t*)&request, sizeof(request)-2);
+	string errormsg;
+
+	logger.Trace("SetHolding: %d, offset: %d, value: %d, timeout: %d",address, offset, val, timeoutMs);
 
 	if (Send((uint8_t*)&request, sizeof(request),timeoutMs))
 	{
 		ModbusRequest response = *(ModbusRequest*)&getholdingsBuffer[0];
-		if (response.Address == request.Address &&
-			response.CRC == request.CRC)
-			return true;
+		if (response.Address == request.Address)
+		{
+			if (response.CRC == request.CRC)
+				return true;
+			else
+				errormsg = "wrong CRC";
+		}
+		else
+			errormsg = "wrong response address";
 	}
 	else
-	{
-		logger.Error("Error setHolding: %d, error: %s",address,"timeout");
-	}
+		errormsg = "timeout";
+
+	logger.Error("Error setHolding: %d, offset: %d, value: %d, timeoutMs: %d error: %s",
+			address, offset, val, timeoutMs, errormsg.c_str());
+
 	return false;
 }
 
@@ -247,19 +269,22 @@ bool ModifiedMdbus::getHoldings(uint16_t address,uint16_t offset,uint16_t count,
 	request.StartingAddress = bswap_16(offset);
 	request.Count = bswap_16(count);
 	request.CRC = crc.calc((uint8_t*)&request, sizeof(request)-2);
+	string errormsg;
 
+	logger.Error("Error getHoldings: %d, offest: %d, count: %d, timeoutMs: %d",
+				address, offset, count, timeoutMs);
 
 	if (Send((uint8_t*)&request, sizeof(request),timeoutMs))
 	{
 		//check buffer
 		if (getholdingsBuffer[0]!=address)
-			logger.Error("Error getHolding: %d, error: %s",address,"wrong address");
+			errormsg = StringBuilder::Format("wrong address Sended: %d, Received: %d",address,getholdingsBuffer[0]);
 		else if (getholdingsBuffer[1]!=FUNC_GETHOLDINGS)
-			logger.Error("Error getHolding: %d, error: %s",address,"incorrect function");
+			errormsg = StringBuilder::Format("Incorrect function. Request:%d, Response: %d",FUNC_GETHOLDINGS, getholdingsBuffer[1]);
 		else if (getholdingsBuffer[2]!=count*2)
-			logger.Error("Error getHolding: %d, error: incorrect count of bytes request:%d, response:%d",address,count*2,getholdingsBuffer[2]);
+			errormsg =StringBuilder::Format("Incorrect count of bytes request:%d, response:%d",count*2,getholdingsBuffer[2]);
 		else if (!checkFrameCrc(&getholdingsBuffer[0],getholdingsBuffer.size()))
-			logger.Error("Error getHolding: %d, error: %s",address,"incorrect crc");
+			errormsg = "incorrect crc";
 		else
 		{
 			memcpy(target,&getholdingsBuffer[3],count*2);
@@ -271,9 +296,13 @@ bool ModifiedMdbus::getHoldings(uint16_t address,uint16_t offset,uint16_t count,
 	else
 	{
 		if (address!=1 ) {
-			logger.Error("Error getHolding: %d, error: %s",address,"timeout");
+			errormsg = "timeout";
 		}
 	}
+
+	logger.Error("Error getHoldings: %d, offest: %d, count: %d, timeoutMs: %d, error: %s",
+			address, offset, count, timeoutMs, errormsg.c_str());
+
 	return false;
 }
 

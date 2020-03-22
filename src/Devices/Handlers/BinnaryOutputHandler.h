@@ -37,7 +37,7 @@ public:
 	BinnaryOutputHandler(IHisDevModbus* devModbus,IHisDevFactory* factory);
 	bool Scan(bool addnew);
 	bool Remove(CUUID id);
-	void RefreshOutputs();
+	void RefreshOutputs(bool force);
 	void Refresh(bool modbusSuccess);
 	void Load();
 	void CreateOrValidOutputs(bool addnew);

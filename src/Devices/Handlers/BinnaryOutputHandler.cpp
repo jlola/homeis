@@ -22,9 +22,10 @@ BinnaryOutputHandler::BinnaryOutputHandler(IHisDevModbus* devModbus, IHisDevFact
 		throw ArgumentNullException(string("factory"));
 }
 
-void BinnaryOutputHandler::RefreshOutputs()
+void BinnaryOutputHandler::RefreshOutputs(bool force)
 {
 	STACK
+	auto & logger = CLogger::GetLogger();
 	for(size_t v=0;v<valuesOutput.size();v++)
 	{
 		int pinno = Converter::stoi(valuesOutput[v]->GetPinNumber());
@@ -40,11 +41,14 @@ void BinnaryOutputHandler::RefreshOutputs()
 		{
 			if (pinno==sbinoutputs[i].PinNumber)
 			{
-				//bool readedrror = sbinoutputs[i].Quality == 1 ? false : true;
-				sbinoutputs[i].Value = valuesOutput[v]->GetValue();
-				uint16_t writevalue = *((uint16_t*)&sbinoutputs[i]);
-				bool success = devModbus->setHolding(stypedef.OffsetOfType+i,writevalue);
-				valuesOutput[v]->ReadedValueFromDevice(valuesOutput[v]->GetValue(),!success);
+				if (force || sbinoutputs[i].Value != valuesOutput[v]->GetValue())
+				{
+					sbinoutputs[i].Value = valuesOutput[v]->GetValue();
+					uint16_t writevalue = *((uint16_t*)&sbinoutputs[i]);
+					logger.Trace("Write output: %d set pin: %d to value: %d",devModbus->GetAddress(),pinno, writevalue);
+					bool success = devModbus->setHolding(stypedef.OffsetOfType+i,writevalue);
+					valuesOutput[v]->ReadedValueFromDevice(valuesOutput[v]->GetValue(),!success);
+				}
 				break;
 			}
 		}

@@ -37,7 +37,8 @@ HisDevBase::HisDevBase(IHisDevFactory* factory) :
 		scanPeriodMs(10000),
 		error(true),
 		changed(false),
-		needRefresh(false)
+		needRefresh(false),
+		alarm(false)
 {
 	STACK
 	dataSource = EDataSource::Const;
@@ -52,7 +53,8 @@ HisDevBase::HisDevBase(xmlNodePtr node,IHisDevFactory* factory)
 	scanPeriodMs(10000),
 	error(true),
 	changed(false),
-	needRefresh(false)
+	needRefresh(false),
+	alarm(false)
 {
 	STACK
 	dataSource = EDataSource::Const;

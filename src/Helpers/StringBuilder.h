@@ -45,6 +45,16 @@ public:
 		return result;
 	}
 
+	static string join(vector<uint8_t> v, string separator)
+		{
+			string result;
+			for(size_t i=0;i<v.size();i++)
+			{
+				result += Format("%02X %s",v[i],i<v.size()-1?separator.c_str():"");
+			}
+			return result;
+		}
+
 	static std::vector<std::string> split(const std::string &text, char sep) {
 		std::vector<std::string> tokens;
 		std::size_t start = 0, end = 0;

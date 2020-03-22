@@ -15,7 +15,7 @@ class IModbusHandler
 public:
 	virtual bool Scan(bool addnew)=0;
 	virtual bool Remove(CUUID id)=0;
-	virtual void RefreshOutputs()=0;
+	virtual void RefreshOutputs(bool force)=0;
 	virtual void Refresh(bool modbusSuccess)=0;
 	virtual void Load()=0;
 	virtual ~IModbusHandler() {	}
