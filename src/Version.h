@@ -11,6 +11,6 @@
 
 #define VERSION_MAIN	2
 #define VERSION_SEC		0
-#define VERSION_BUILD	20181224
+#define VERSION_BUILD	20200323
 
 #endif /* SRC_VERSION_H_ */
