@@ -201,7 +201,7 @@ bool ModifiedMdbus::setHolding(uint16_t address,uint16_t offset, uint16_t val)
 		usleep(1000);
 
 	const int func = 0x06;
-	int timeoutMs = 50;
+	int timeoutMs = 200;
 
 	ModbusRequest request;
 	request.Address = address;
@@ -237,7 +237,7 @@ bool ModifiedMdbus::setHolding(uint16_t address,uint16_t offset, uint16_t val)
 
 bool ModifiedMdbus::getHolding(uint16_t address,uint16_t index,uint16_t* holding)
 {
-	return getHoldings(address,index,1,holding,50);
+	return getHoldings(address,index,1,holding,200);
 }
 bool ModifiedMdbus::getHolding(uint16_t address,uint16_t index,uint16_t* holding, uint32_t timeOut)
 {
@@ -245,7 +245,7 @@ bool ModifiedMdbus::getHolding(uint16_t address,uint16_t index,uint16_t* holding
 }
 bool ModifiedMdbus::getHoldings(uint16_t address,uint16_t offset,uint16_t count,uint16_t* target)
 {
-	return getHoldings(address,offset,count,target,50);
+	return getHoldings(address,offset,count,target,200);
 }
 
 bool ModifiedMdbus::checkFrameCrc(const uint8_t *p, uint8_t length) {
