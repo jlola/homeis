@@ -50,7 +50,7 @@ public:
 			string result;
 			for(size_t i=0;i<v.size();i++)
 			{
-				result += Format("%02X %s",v[i],i<v.size()-1?separator.c_str():"");
+				result += Format("%02X%s",v[i],i<v.size()-1?separator.c_str():"");
 			}
 			return result;
 		}

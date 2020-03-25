@@ -58,7 +58,7 @@ bool ModifiedMdbus::Send(uint8_t* data,uint16_t len,const int timeoutMs)
 	for(int i=0;i<len;i++)
 		vdata.push_back(data[i]);
 
-	string strdata = StringBuilder::join(vdata,",");
+	string strdata = StringBuilder::join(vdata," ");
 	logger.Trace("Sended: %s",strdata.c_str());
 	serialPort.Write(data,len);
 	event.Reset();
@@ -97,7 +97,7 @@ void ModifiedMdbus::OnData(std::vector<uint8_t> data)
 	receiving = true;
 	bool isvalid;
 
-	string strdata = StringBuilder::join(data,",");
+	string strdata = StringBuilder::join(data," ");
 	logger.Trace("Received: %s",strdata.c_str());
 
 	for (size_t i=0;i<data.size();i++)
@@ -118,7 +118,9 @@ void ModifiedMdbus::OnData(std::vector<uint8_t> data)
 			{
 				if (!checkFrameCrc(&buffer[0],buffer.size()))
 				{
-					logger.Error("Received wrong data first byte: %d",buffer[0]);
+					string strbuffer = StringBuilder::join(buffer," ");
+					logger.Error("Received wrong CRC data : %s",strbuffer);
+					break;
 				}
 				else
 				{
@@ -131,6 +133,7 @@ void ModifiedMdbus::OnData(std::vector<uint8_t> data)
 		else if (!isvalid)
 		{
 			buffer.clear();
+			break;
 		}
 	}
 
