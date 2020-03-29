@@ -130,6 +130,7 @@ vector<HisDevValue<bool>*> HisDevModbus::GetBoolItems()
 
 bool HisDevModbus::ResetAlarm()
 {
+	logger.Trace("Device: %d, reset alarm",GetAddress());
 	if (connection->setHolding(address,CHANGE_FLAG,1))
 	{
 		HisDevBase::ResetAlarm();
@@ -246,6 +247,12 @@ void HisDevModbus::DoInternalRefresh(bool alarm)
 
 	HisLock lock(refreshscanmutex);
 
+	if (alarm)
+	{
+		if (!ResetAlarm())
+			return;
+	}
+
 	if (GetError() || data==NULL)
 	{
 		if (Scan(false))
@@ -261,12 +268,6 @@ void HisDevModbus::DoInternalRefresh(bool alarm)
 	}
 	else
 	{
-		if (alarm)
-		{
-			if (!ResetAlarm())
-				return;
-		}
-
 		if (refreshOutputs)
 		{
 			logger.Trace("Device %d refresh outputs after change",GetAddress());

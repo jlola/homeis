@@ -70,7 +70,7 @@ HisDevBase *HisDevices::operator[](unsigned int i)
 void HisDevices::FireEvent(int adr)
 {
 	STACK
-
+	logger.Info("Fire Event addr: %d",adr);
 	auto devIndex = FindModbusDev(adr);
 	if (devIndex >=0)
 	{

@@ -16,6 +16,7 @@ using namespace std;
 #include "BlockingQueue.h"
 #include "PoppyDebugTools.h"
 #include "StringBuilder.h"
+#include "DateTime.h"
 
 string ModifiedMdbus::DriverName = "modbus";
 
@@ -96,6 +97,7 @@ void ModifiedMdbus::OnData(std::vector<uint8_t> data)
 
 	receiving = true;
 	bool isvalid;
+	uint8_t func;
 
 	string strdata = StringBuilder::join(data," ");
 	logger.Trace("Received: %s",strdata.c_str());
@@ -103,9 +105,9 @@ void ModifiedMdbus::OnData(std::vector<uint8_t> data)
 	for (size_t i=0;i<data.size();i++)
 	{
 		buffer.push_back(data[i]);
-		if (DataCompleted(isvalid))
+		if (DataCompleted(isvalid, func))
 		{
-			if (event.IsWaiting())
+			if (event.IsWaiting() && func!=FUNC_EVENT)
 			{
 				for(size_t c=0;c<buffer.size();c++)
 				{
@@ -114,12 +116,12 @@ void ModifiedMdbus::OnData(std::vector<uint8_t> data)
 				buffer.clear();
 				event.Signal();
 			}
-			else
+			else if (func==FUNC_EVENT)
 			{
 				if (!checkFrameCrc(&buffer[0],buffer.size()))
 				{
 					string strbuffer = StringBuilder::join(buffer," ");
-					logger.Error("Received wrong CRC data : %s",strbuffer);
+					logger.Error("Received wrong CRC data : %s",strbuffer.c_str());
 					break;
 				}
 				else
@@ -127,29 +129,35 @@ void ModifiedMdbus::OnData(std::vector<uint8_t> data)
 					//fire event on consumers
 					for(size_t i=0;i<consumers.size();i++)
 						consumers[i]->FireEvent(buffer[0]);
+					buffer.clear();
 				}
+			}
+			else
+			{
+				string strbuffer = StringBuilder::join(buffer," ");
+				logger.Error("Completed lost data: %s",strbuffer.c_str());
+				buffer.clear();
 			}
 		}
 		else if (!isvalid)
 		{
+			string strbuffer = StringBuilder::join(buffer," ");
+			logger.Error("Invalid lost data: %s",strbuffer.c_str());
 			buffer.clear();
 			break;
 		}
 	}
 
-	if (!event.IsWaiting())
-		buffer.clear();
-
-
 	receiving = false;
 }
 
-bool ModifiedMdbus::DataCompleted(bool & valid)
+bool ModifiedMdbus::DataCompleted(bool & valid, uint8_t & func)
 {
 	valid = true;
 	if (buffer.size() > OFFSET_FUNC)
 	{
-		if (buffer[OFFSET_FUNC]==FUNC_GETHOLDINGS)
+		func = buffer[OFFSET_FUNC];
+		if (func==FUNC_GETHOLDINGS || func==FUNC_EVENT)
 		{
 								/*addr + func + countValue+count+2crc*/
 			const size_t totalCount = 3 + buffer[OFFSET_COUNT] + 2;
@@ -276,7 +284,7 @@ bool ModifiedMdbus::getHoldings(uint16_t address,uint16_t offset,uint16_t count,
 
 	logger.Trace("getHoldings: %d, offest: %d, count: %d, timeoutMs: %d",
 				address, offset, count, timeoutMs);
-
+	auto start = DateTime::Now();
 	if (Send((uint8_t*)&request, sizeof(request),timeoutMs))
 	{
 		//check buffer
@@ -293,6 +301,12 @@ bool ModifiedMdbus::getHoldings(uint16_t address,uint16_t offset,uint16_t count,
 			memcpy(target,&getholdingsBuffer[3],count*2);
 			for (int i=0;i<count;i++)
 				target[i] = bswap_16(target[i]);
+
+			auto end = DateTime::Now();
+			auto duration = end - start;
+			logger.Trace("finished getHoldings: %d, offest: %d, count: %d, seconds: %f",
+					address, offset, count, duration);
+
 			return true;
 		}
 	}
@@ -302,6 +316,7 @@ bool ModifiedMdbus::getHoldings(uint16_t address,uint16_t offset,uint16_t count,
 			errormsg = "timeout";
 		}
 	}
+
 
 	logger.Error("Error getHoldings: %d, offest: %d, count: %d, timeoutMs: %d, error: %s",
 			address, offset, count, timeoutMs, errormsg.c_str());

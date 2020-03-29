@@ -30,6 +30,7 @@ using namespace CppLinuxSerial;
 
 #define FUNC_GETHOLDINGS 0x03
 #define FUNC_SETHOLDING 0x06
+#define FUNC_EVENT 0xF8
 
 #define OFFSET_FUNC 1
 #define OFFSET_COUNT 2
@@ -56,7 +57,7 @@ public:
 
 	void OnData(std::vector<uint8_t> data);
 
-	bool DataCompleted(bool & valid);
+	bool DataCompleted(bool & valid, uint8_t & func);
 
 	bool Init();
 

@@ -42,6 +42,8 @@ extern "C" {
 #include "SerialPort.hpp"
 #include "ModifiedMdbus.h"
 
+#ifndef HOMEISTEST
+
 using namespace mn;
 using namespace CppLinuxSerial;
 
@@ -70,28 +72,6 @@ Home information system %d.%d.%8d\n\
 
 	logger.SetLogLevel(config.GetLogLevel());
 	vector<SSerPortConfig> serports = config.GetSerialPorts();
-
-
-//	ModifiedMdbus modbus(serports[0]);
-//	modbus.Init();
-//
-//	//if (!modbus.Send((uint8_t*)&strtosend,strtosend.size()))
-//	uint16_t* array[1000];
-//
-//	while(1)
-//	{
-//
-//	if (modbus.getHoldings(0x06,0,1,(uint16_t* )array,50))
-//	{
-//		logger.Info("Received");
-//	}
-//	else
-//	{
-//		logger.Error("Timeout");
-//	}
-//	}
-
-
 
 	SSmtpSettings smtpsetttings = config.GetSmtpSettings();
 	ModbusProvider provider(serports);
@@ -142,4 +122,6 @@ void ConfigureByArgs(int argc, char **argv,bool & debug, bool & printversion)
 			sleep(5);
 		}
 }
+
+#endif
 

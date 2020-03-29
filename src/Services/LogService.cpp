@@ -79,11 +79,7 @@ const std::shared_ptr<http_response> LogService::GET(const http_request& req)
 		string logpath = StringBuilder::Format("%s/Log/%s",file.getexepath().c_str(),path_filename.c_str());
 		if (file.Exists(logpath))
 		{
-			string content = file.ReadWholeFile(logpath);
-			jsonvalue.SetString(content.c_str(),document.GetAllocator());
-			document.AddMember(path_filename.c_str(),jsonvalue,document.GetAllocator());
-			document.Accept(wr);
-			response_code = MHD_HTTP_OK;
+			return CreateResponseFile(logpath,MHD_HTTP_OK);
 		}
 		else
 		{

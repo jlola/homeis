@@ -36,6 +36,7 @@ protected:
 	Session* GetSession();
 	bool Authorize(const http_request& req);
 	const std::shared_ptr<http_response> CreateResponseString(string json,int response_code);
+	const std::shared_ptr<http_response> CreateResponseFile(string path,int response_code);
 	string GetErrorMessageJson(string message);
 	IHisDevFactory* GetFactory();
 public:

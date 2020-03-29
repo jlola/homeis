@@ -70,6 +70,14 @@ const std::shared_ptr<http_response> ServiceBase::CreateResponseString(string js
 	return response;
 }
 
+const std::shared_ptr<http_response> ServiceBase::CreateResponseFile(string path,int response_code)
+{
+	IHttpHeadersProvider* headersProvider = factory->GetHeadersProvider();
+	std::shared_ptr<http_response> response = std::shared_ptr<http_response>(new file_response(path, response_code, headersProvider->GetContentTypeAppJson()));
+	response = headersProvider->AddHeaders(response);
+	return response;
+}
+
 const std::shared_ptr<http_response> ServiceBase::render_GET(const http_request& req)
 {
 	return GET(req);
